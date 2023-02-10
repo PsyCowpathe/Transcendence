@@ -20,4 +20,4 @@ RUN cd project \
 
 EXPOSE 3000
 
-ENTRYPOINT ["echo" "npm" "run" "start"]
+#ENTRYPOINT  "echo" "npm" "run" "start" 
