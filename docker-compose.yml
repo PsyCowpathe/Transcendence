@@ -1,0 +1,23 @@
+version: "3"
+
+volumes:
+	tran_volumes:
+                name: tran_volumes
+                driver: local
+                driver_opts:
+                        type: none
+                        o: bind
+                        device: ~/Documents/trans_volumes
+
+
+services:
+	trans:
+		container_name: trans
+                image: trans
+                build: ./prototype
+                restart: on-failure
+                ports:
+                        - 3000:3000
+                volumes:
+                        - tran_volumes:/var/www
+
