@@ -15,7 +15,10 @@ RUN npm install -g @nestjs/cli
 
 RUN apt-get install -y git
 
-
-RUN sh -c "$(curl -fsSL -y hgit clone https://github.com/nestjs/typescript-starter.git projectttps://raw.githubsercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-
 EXPOSE 3000
+
+RUN zsh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" || true
+
+RUN ln -f /bin/zsh /bin/sh
+
+ENTRYPOINT ["zsh"]
