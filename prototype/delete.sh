@@ -1,10 +1,19 @@
-OUTPUT=$(docker container ps -aq)
-docker stop ${OUTPUT}
+OUTPUT=$( docker container ps -aq)
+if [ "$OUTPUT" != "" ]
+then
+	 docker stop ${OUTPUT}
+fi
 
-docker system prune -a -f
+ docker system prune -a -f
 
-OUTPUT=$(docker images -aq)
-docker rmi -f ${OUTPUT}
+OUTPUT=$( docker images -aq)
+if [ "$OUTPUT" != "" ]
+then
+	 docker rmi --force ${OUTPUT}
+fi
 
-OP=$(docker volume ls -q)
-docker volume rm ${OP}
+OP=$( docker volume ls -q)
+if [ "$OP" != "" ]
+then
+	 docker volume rm ${OP}
+fi
