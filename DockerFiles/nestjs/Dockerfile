@@ -32,9 +32,14 @@ COPY ./src/* /root/backend/src/
 
 COPY ./.env /root/backend/
 
+COPY ./tools/init.sh ./
+
+RUN chmod +x init.sh
+
 RUN cd \
 && cd backend \
 && yarn add dotenv \
+&& yarn add axios \
 && yarn add @nestjs/axios
 
 EXPOSE 3000
@@ -43,4 +48,4 @@ RUN zsh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zs
 
 RUN ln -f /bin/zsh /bin/sh
 
-ENTRYPOINT [ "" ]
+ENTRYPOINT [ "./init.sh" ]
