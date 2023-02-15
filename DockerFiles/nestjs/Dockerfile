@@ -19,21 +19,26 @@ RUN npm install -g npm@latest
 
 RUN npm install -g @nestjs/cli
 
-RUN cd \
-&& echo -n $'\034' | echo | nest new backend
+RUN cd \ 
+&& nest new backend -p yarn
 
 RUN rm -rf ~/backend/src
 
 RUN mkdir ~/backend/src/
 
-COPY ./Dockerfile ~/backend/src/
+COPY ./src/* /root/backend/src/
+
+COPY ./.env /root/backend/
 
 RUN cd \
 && cd backend \
-&& npm install dotenv --save 
+&& npm install dotenv --save \
+&& npm install --save @nestjs/axios axios
 
 EXPOSE 3000
 
 RUN zsh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" || true
 
 RUN ln -f /bin/zsh /bin/sh
+
+ENTRYPOINT [ "" ]
