@@ -1,23 +1,21 @@
-version: "3"
+version: "3.8"
 
 volumes:
-	tran_volumes:
-                name: tran_volumes
+        nest_volumes: 
+                name: nest_volumes
                 driver: local
-                driver_opts:
+                driver_opts: 
                         type: none
                         o: bind
-                        device: ~/Documents/trans_volumes
-
+                        device: /nfs/homes/$USER/stud/Transcendence/Dockerfiles/nestjs/src
 
 services:
-	trans:
-		container_name: trans
-                image: trans
-                build: ./prototype
+        nest:
+                container_name: nest
+                image: nest
+                build: ./DockerFiles/nestjs/
                 restart: on-failure
                 ports:
                         - 3000:3000
                 volumes:
-                        - tran_volumes:/var/www
-
+                        - trans_volumes:/root/backend/src/
