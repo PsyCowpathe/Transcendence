@@ -1,13 +1,13 @@
 version: "3.8"
 
 volumes:
-        nest_volumes: 
-                name: nest_volumes
+        nest_volume: 
+                name: nest_volume
                 driver: local
                 driver_opts: 
                         type: none
                         o: bind
-                        device: /nfs/homes/$USER/stud/Transcendence/Dockerfiles/nestjs/src
+                        device: ${PWD}/DockerFiles/nestjs/src
 
 services:
         nest:
@@ -18,4 +18,4 @@ services:
                 ports:
                         - 3000:3000
                 volumes:
-                        - trans_volumes:/root/backend/src/
+                        - nest_volume:/root/backend/src/
