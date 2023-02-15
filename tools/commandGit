@@ -1,0 +1,28 @@
+Cree nouvelle branche
+
+git checkout -b <name branche>
+
+Changer de branche :
+
+git checkout <aurel/leo/charles/master>
+
+Merge une branche sur sa branch :
+
+go sur la branch qui doit recevoir
+
+git merge <nom de la branch a merge sur la branch actuel>
+ 
+git push
+
+----------------
+        *
+       * *  
+      * | *
+     *  |  *
+    *   |   *
+   *         *
+  *     *     *
+ *             *
+*****************
+
+ne pas oublier le pull avant tout push bande de fdp
