@@ -1,0 +1,62 @@
+docker build -t <name> .
+docker run -it -p <port:port> <name> bash/zsh
+docker start <ID>
+docker exec -it <ID> zsh
+
+
+
+nest new <project name>
+
+npm run start (useless)
+npm run start:dev (you see whats new)
+
+
+
+
+
+for vue :
+
+npm init vue@latest
+
+answer all question 
+
+then 
+{
+  cd test
+  npm install
+  npm run lint
+  npm run dev
+}
+
+
+
+
+
+
+
+
+
+npm install --global serve
+vue create <name>
+
+-----------------------------------------------------------------------------------------------------
+npx create-react-app <project name>
+
+pm start
+    Starts the development server.
+
+  npm run build
+    Bundles the app into static files for production.
+
+  npm test
+    Starts the test runner.
+
+  npm run eject
+    Removes this tool and copies build dependencies, configuration files
+    and scripts into the app directory. If you do this, you can’t go back!
+
+We suggest that you begin by typing:
+
+  cd letest
+  npm start
+

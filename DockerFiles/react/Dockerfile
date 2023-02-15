@@ -11,10 +11,14 @@ RUN apt-get install -y curl
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && apt-get install -y nodejs
 
 RUN npm install -g npm@latest
+#RUN npm install -g @vue/cli
+
 
 RUN apt-get install -y git
 
-EXPOSE 5173
+
+
+EXPOSE 3000
 
 RUN zsh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" || true
 
