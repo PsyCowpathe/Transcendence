@@ -17,7 +17,9 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && apt-get install
 
 RUN npm install -g npm@latest
 
-RUN npm install -g @nestjs/cli
+RUN npm install --global yarn
+
+RUN yarn global add @nestjs/cli
 
 RUN cd \ 
 && nest new backend -p yarn
@@ -32,8 +34,8 @@ COPY ./.env /root/backend/
 
 RUN cd \
 && cd backend \
-&& npm install dotenv --save \
-&& npm install --save @nestjs/axios axios
+&& yarn add dotenv \
+&& yarn add @nestjs/axios
 
 EXPOSE 3000
 
