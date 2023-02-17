@@ -16,6 +16,6 @@ services:
                 build: ./DockerFiles/nestjs/
                 restart: on-failure
                 ports:
-                        - 3000:3000
+                        - 3630:3630
                 volumes:
                         - nest_volume:/root/backend/src/
