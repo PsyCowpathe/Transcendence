@@ -9,6 +9,13 @@ volumes:
                         o: bind
                         device: ${PWD}/DockerFiles/nestjs/src
 
+        react_volume: 
+                name: react_volume
+                driver: local
+                driver_opts: 
+                        type: none
+                        o: bind
+                        device: ${PWD}/DockerFiles/react/src
 services:
         nest:
                 container_name: nest
@@ -16,6 +23,15 @@ services:
                 build: ./DockerFiles/nestjs/
                 restart: on-failure
                 ports:
-                        - 3000:3000
+                        - 3630:3630
                 volumes:
                         - nest_volume:/root/backend/src/
+        react:
+                container_name: react
+                image: react
+                build: ./DockerFiles/react/
+                restart: on-failure
+                ports:
+                        - 3000:3000
+                volumes:
+                        - react_volume:/root/frontend/src/
