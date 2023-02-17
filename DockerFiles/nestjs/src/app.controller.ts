@@ -9,6 +9,7 @@ export class NewController
 	sendApiRequest() : string
 	{
 		const res = this.newService.sendApiRequest();
+		console.log(res);
 		return 'ok';
 	}
 }
