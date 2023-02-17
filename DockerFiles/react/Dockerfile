@@ -16,6 +16,23 @@ RUN npm install -g npm@latest
 
 RUN apt-get install -y git
 
+RUN npm install --global yarn
+
+
+
+RUN cd  && \
+echo 'y' | echo | npx create-react-app frontend
+
+RUN rm -rf ~/frontend/src
+
+RUN mkdir ~/frontend/src/
+
+COPY ./src/* /root/frontend/src/
+
+COPY ./tools/init.sh ./
+
+RUN chmod +x init.sh
+
 
 
 EXPOSE 3000
@@ -24,5 +41,5 @@ RUN zsh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zs
 
 RUN ln -f /bin/zsh /bin/sh
 
-ENTRYPOINT ["zsh"]
+ENTRYPOINT ["./init.sh"]
 
