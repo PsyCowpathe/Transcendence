@@ -17,23 +17,35 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && apt-get install
 
 RUN npm install -g npm@latest
 
-RUN npm install -g @nestjs/cli
+RUN npm install --global yarn
 
-RUN cd \
-&& echo -n $'\034' | echo | nest new backend
+RUN yarn global add @nestjs/cli
+
+RUN cd \ 
+&& nest new backend -p yarn
 
 RUN rm -rf ~/backend/src
 
 RUN mkdir ~/backend/src/
 
-COPY ./Dockerfile ~/backend/src/
+COPY ./src/* /root/backend/src/
+
+COPY ./.env /root/backend/
+
+COPY ./tools/init.sh ./
+
+RUN chmod +x init.sh
 
 RUN cd \
 && cd backend \
-&& npm install dotenv --save 
+&& yarn add dotenv \
+&& yarn add axios \
+&& yarn add @nestjs/axios
 
 EXPOSE 3000
 
 RUN zsh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" || true
 
 RUN ln -f /bin/zsh /bin/sh
+
+ENTRYPOINT [ "./init.sh" ]
