@@ -17,3 +17,5 @@ if [ "$OP" != "" ]
 then
 	 docker volume rm ${OP}
 fi
+
+docker builder prune
