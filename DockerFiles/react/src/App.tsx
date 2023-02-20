@@ -1,3 +1,4 @@
+import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 
@@ -7,11 +8,11 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload ptn je peux tester des truc mtn ca tue sa mere whala.
+          Edit <code>src/App.tsx</code> and save to reload.
         </p>
         <a
           className="App-link"
-          href="https://youtube.com"
+          href="https://reactjs.org"
           target="_blank"
           rel="noopener noreferrer"
         >
