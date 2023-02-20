@@ -6,9 +6,17 @@ export class NewController
 {
 	constructor(private readonly newService: NewService) {}
 	@Get('API')
-	sendApiRequest() : string
+	async sendApiRequest() : Promise<string>
 	{
-		const res = this.newService.sendApiRequest();
-		return 'ok';
+		const promise = await this.newService.sendApiRequest();
+		console.log(promise)
+		if (promise == '401')
+			console.error('401');
+		else
+		{
+			//console.log(promise);
+			this.newService.getUser(promise);
+		}
+		return ('api');
 	}
 }

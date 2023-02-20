@@ -16,6 +16,14 @@ volumes:
                         type: none
                         o: bind
                         device: ${PWD}/DockerFiles/react/src
+
+        db_volume: 
+                name: db_volume
+                driver: local
+                driver_opts: 
+                        type: none
+                        o: bind
+                        device: ${PWD}/DockerFiles/postgreSQL/src
 services:
         nest:
                 container_name: nest
@@ -24,8 +32,11 @@ services:
                 restart: on-failure
                 ports:
                         - 3630:3630
+                networks:
+                        - transcendence-network
                 volumes:
                         - nest_volume:/root/backend/src/
+
         react:
                 container_name: react
                 image: react
@@ -33,5 +44,25 @@ services:
                 restart: on-failure
                 ports:
                         - 3000:3000
+                networks:
+                        - transcendence-network
                 volumes:
                         - react_volume:/root/frontend/src/
+
+        postgres:
+                container_name: postgres
+                image: postgres
+                build: ./DockerFiles/postgreSQL/
+                restart: on-failure
+                env_file:
+                        - .env
+                ports:
+                        - 5432:5432
+                networks:
+                        - transcendence-network
+                volumes:
+                        - db_volume:/root/db/src/
+
+networks:
+        transcendence-network:
+            driver: bridge
