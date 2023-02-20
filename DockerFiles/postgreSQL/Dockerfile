@@ -30,6 +30,10 @@ COPY ./src/trust.conf /etc/postgresql/11/main/
 
 COPY ./src/pg_hba.conf /etc/postgresql/11/main/
 
+RUN echo "host	all		all		0.0.0.0/0		md5" >> /etc/postgresql/11/main/pg_hba.conf 
+
+RUN sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/" /etc/postgresql/11/main/postgresql.conf
+
 RUN mv /etc/postgresql/11/main/pg_hba.conf /etc/postgresql/11/main/protected.conf  
 
 RUN mv /etc/postgresql/11/main/trust.conf /etc/postgresql/11/main/pg_hba.conf  
@@ -41,3 +45,4 @@ COPY ./tools/init.sh ./
 RUN chmod +x init.sh
 
 ENTRYPOINT [ "./init.sh" ] 
+
