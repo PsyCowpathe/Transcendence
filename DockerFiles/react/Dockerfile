@@ -21,7 +21,7 @@ RUN npm install --global yarn
 
 
 RUN cd  && \
-echo 'y' | echo | npx create-react-app frontend
+echo 'y' | echo | npx create-react-app frontend --template=typescript
 
 RUN rm -rf ~/frontend/src
 
