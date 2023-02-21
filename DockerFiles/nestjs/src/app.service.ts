@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { lastValueFrom} from 'rxjs';
+import { InjectRepository} from '@nestjs/typeorm';
+import { Repository} from 'typeorm';
+import { User } from './app.entity'
 const axios = require('axios');
+
 
 /*const {data} = await axios.post('/user', document.querySelector('#my-form'), {
   headers: {
@@ -79,3 +83,18 @@ export class NewService
 		return (response);
 	}
 }
+
+
+@Injectable()
+export class UserService{
+	constructor(
+@InjectRepository(User)
+private readonly userRepository: Repository<User>,
+) {}
+
+async findAll(): Promise<User[]> {
+	return this.userRepository.find();
+}
+
+}
+
