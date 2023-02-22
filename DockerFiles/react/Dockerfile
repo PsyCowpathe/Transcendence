@@ -21,7 +21,7 @@ RUN npm install --global yarn
 
 
 RUN cd  && \
-echo 'y' | echo | npx create-react-app frontend --template=typescript
+echo 'y' | echo | yarn create react-app frontend --template=typescript && cd frontend && yarn add mini.css@3.0.1 && yarn add axios 
 
 RUN rm -rf ~/frontend/src
 
@@ -41,5 +41,5 @@ RUN zsh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zs
 
 RUN ln -f /bin/zsh /bin/sh
 
-ENTRYPOINT ["./init.sh"]
+ENTRYPOINT  ["./init.sh"]
 
