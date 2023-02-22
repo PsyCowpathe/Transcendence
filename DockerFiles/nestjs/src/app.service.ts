@@ -85,8 +85,8 @@ export class NewService
 }
 
 
-@Injectable()
-export class UserService{
+//@Injectable()
+/*export class UserService{
 	constructor(
 @InjectRepository(User)
 private readonly userRepository: Repository<User>,
@@ -96,5 +96,20 @@ async findAll(): Promise<User[]> {
 	return this.userRepository.find();
 }
 
+}*/
+
+@Injectable()
+export class UserService{
+	constructor(
+@InjectRepository(User)
+private readonly userRepository: Repository<User>,
+) {}
+
+async Create(user: User): Promise<User> {
+	const newUser = new User();
+	newUser.name = user.name;
+	newUser.password = user.password;
+	return this.userRepository.save(newUser);
+}
 }
 
