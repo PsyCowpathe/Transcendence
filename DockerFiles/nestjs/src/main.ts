@@ -1,3 +1,5 @@
+"use strict"
+
 import { NestFactory } from '@nestjs/core';
 import { NewModule } from './app.module';
 

@@ -1,10 +1,12 @@
+"use strict"
+
 import { Injectable } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
-import { firstValueFrom } from 'rxjs';
-import { lastValueFrom} from 'rxjs';
-import { InjectRepository} from '@nestjs/typeorm';
-import { Repository} from 'typeorm';
-import { User } from './app.entity'
+//import { HttpService } from '@nestjs/axios';
+//import { firstValueFrom } from 'rxjs';
+//import { lastValueFrom} from 'rxjs';
+//import { InjectRepository} from '@nestjs/typeorm';
+//import { Repository} from 'typeorm';
+//import { User } from './app.entity'
 const axios = require('axios');
 
 
@@ -59,15 +61,15 @@ export class NewService
 		}
 		const url = "https://api.intra.42.fr/oauth/token";
 
-		const response = await axios.post(url, user)
-		.catch ((error) =>
+		const response = await axios.post(url, user);
+		.catch ((error : any) =>
 		{
 			return (error);
 		});
 		return (response.data.access_token);
 	}
 
-	async getUser(token) : Promise<string>
+	async getUser(token : any) : Promise<string>
 	{
 		console.log(token);
 		const url = "https://api.intra.42.fr/v2/cursus/42/users";
@@ -75,7 +77,7 @@ export class NewService
 			{
 				headers: { 'Authorization': 'Bearer ' + token }
 			})
-		.catch ((error) =>
+		.catch ((error : any) =>
 		{
 			console.log(error.message);
 		});
@@ -85,7 +87,7 @@ export class NewService
 }
 
 
-@Injectable()
+/*@Injectable()
 export class UserService{
 	constructor(
 @InjectRepository(User)
@@ -96,5 +98,5 @@ async findAll(): Promise<User[]> {
 	return this.userRepository.find();
 }
 
-}
+}*/
 

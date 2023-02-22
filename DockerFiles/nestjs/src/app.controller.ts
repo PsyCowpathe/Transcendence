@@ -1,3 +1,5 @@
+"use strict"
+
 import { Controller, Get } from '@nestjs/common';
 import { NewService } from './app.service';
 

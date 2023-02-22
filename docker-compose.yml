@@ -30,6 +30,8 @@ services:
                 image: nest
                 build: ./DockerFiles/nestjs/
                 restart: on-failure
+                depends_on:
+                            - postgres
                 ports:
                         - 3630:3630
                 networks:
@@ -42,6 +44,8 @@ services:
                 image: react
                 build: ./DockerFiles/react/
                 restart: on-failure
+                depends_on:
+                            - postgres
                 ports:
                         - 3000:3000
                 networks:

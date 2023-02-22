@@ -22,7 +22,7 @@ RUN npm install --global yarn
 RUN yarn global add @nestjs/cli
 
 RUN cd \ 
-&& nest new backend -p yarn
+&& nest new --strict backend -p yarn
 
 RUN rm -rf ~/backend/src
 

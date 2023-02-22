@@ -12,3 +12,4 @@ synchronize:true,
 };
 
 export default typeOrmConfig;*/
+
