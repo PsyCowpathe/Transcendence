@@ -1,17 +1,12 @@
-"use strict"
-
 import { Module } from '@nestjs/common';
-import { HttpModule } from '@nestjs/axios';
-//import { TypeOrmModule } from '@nestjs/typeorm';
-//import typeOrmConfig from './typeorm.config';
- 
-import { NewController } from './app.controller';
 
-import { NewService } from './app.service';
+import { DbController } from './db/db.controller';
+import { DbModule } from './db/db.module';
+import { DbService } from './db/db.service';
+
+import { UserModule } from './db/user/user.module';
 
 @Module({
-	imports: [HttpModule],
-	controllers: [NewController],
-	providers: [NewService],
+  imports: [DbModule, UserModule],
 })
-export class NewModule {}
+export class AppModule {}

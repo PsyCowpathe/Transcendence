@@ -40,7 +40,7 @@ const [data, setdata] = useState([
       });
     }
   const makePost = async () => {
-      const pasresponse = axios.post("http://10.13.7.1:3630/send", {age: 1000251215612348612})
+      const pasresponse = axios.post("http://localhost:3630/user/create", {id: 3, name: "leo"})
       .then((json) =>
       {
         console.log("ca envois")

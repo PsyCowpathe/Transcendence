@@ -42,9 +42,10 @@ RUN cd \
 && yarn add dotenv \
 && yarn add axios \
 && yarn add @nestjs/axios\
-&& yarn add  @nestjs/typeorm typeorm pg\
-&& yarn add  @nestjs/typeorm typeorm\
-&& yarn add  @nestjs/typeorm typeorm
+&& yarn add @nestjs/typeorm typeorm pg \
+#&& yarn add  @nestjs/typeorm typeorm pg\
+#&& yarn add  @nestjs/typeorm typeorm\
+#&& yarn add  @nestjs/typeorm typeorm
 EXPOSE 3630
 
 RUN zsh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" || true
