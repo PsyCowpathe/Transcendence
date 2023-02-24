@@ -83,7 +83,7 @@ export class NewService
 		});
 		console.log(response);
 		return (response);
-	}
+	:
 }
 
 

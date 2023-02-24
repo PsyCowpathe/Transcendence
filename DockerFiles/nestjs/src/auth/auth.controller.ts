@@ -37,15 +37,22 @@ export class AuthController
 	printtoken(@Body() token: AuthDto)
 	{
 		console.log('dataaaaaa');
-		console.log(token);
-		if (token.first_state === undefined || token.code === undefined || token.second_state === undefined)
+		if (token.first_state === undefined || token.code === undefined
+			|| token.second_state === undefined)
 			console.log("Error code or state missing !")
 		else if (token.second_state !== token.first_state)
 			console.log("/!\ Error first state and second state are differents ! /!\\")
 		else
 		{
-			this.authService.getUserToken(token);
-			console.log(token);
+			const promise = this.authService.getUserToken(token);
+			promise.then((json: any) =>
+			{
+				console.log(json);
+			})
+			.catch((error : any) =>
+			{
+				console.log(error);
+			});
 		}
 	}
 
