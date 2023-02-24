@@ -6,7 +6,13 @@ import { DbService } from './db/db.service';
 
 import { UserModule } from './db/user/user.module';
 
-@Module({
-  imports: [DbModule, UserModule],
+import { AuthModule } from './auth/auth.module';
+
+@Module
+({
+	imports: [DbModule, UserModule, AuthModule],
 })
-export class AppModule {}
+export class AppModule
+{
+
+}

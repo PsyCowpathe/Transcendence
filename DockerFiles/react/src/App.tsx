@@ -25,7 +25,9 @@ const [data, setdata] = useState([
 
   const makeGet = async () => {
    
-      const response =  axios.get("http://10.13.7.1:3630/oui")
+
+	  axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
+      const response =  axios.get("http://10.13.7.1:3630/auth")
      .then((json) =>
       {
         console.log("merci charles")
@@ -35,6 +37,7 @@ const [data, setdata] = useState([
       .catch ((err) =>
       {
         console.log("ptn c est la faute d aurel")
+		console.log(err);
         alert(err.message)
         return (err);
       });

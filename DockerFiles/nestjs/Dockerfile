@@ -24,7 +24,8 @@ RUN yarn global add @nestjs/cli
 RUN cd \ 
 && nest new --strict backend -p yarn
 
-RUN rm -rf ~/backend/src
+RUN rm -rf ~/backend/src \
+&&	rm -rf ~/backend/tsconfig.build.json
 
 RUN mkdir ~/backend/src/
 
@@ -34,6 +35,9 @@ COPY ./.env /root/backend/
 
 COPY ./tools/init.sh ./
 
+COPY ./config/tsconfig.build.json /root/backend/
+
+COPY ./config/vimrc.local /etc/vim/
 
 RUN chmod +x init.sh
 
@@ -42,10 +46,8 @@ RUN cd \
 && yarn add dotenv \
 && yarn add axios \
 && yarn add @nestjs/axios\
-&& yarn add @nestjs/typeorm typeorm pg \
-#&& yarn add  @nestjs/typeorm typeorm pg\
-#&& yarn add  @nestjs/typeorm typeorm\
-#&& yarn add  @nestjs/typeorm typeorm
+&& yarn add @nestjs/typeorm typeorm pg
+
 EXPOSE 3630
 
 RUN zsh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" || true
