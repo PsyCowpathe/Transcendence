@@ -1,8 +1,6 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-<<<<<<< HEAD
-import {useEffect, useState } from 'react'
 import AuthToken from './Auth'
 import axios from 'axios';
 let first_states : string | null = "dwdadfegthyhgfdASYJTUNBFSDRGW48754454"
