@@ -1,7 +1,8 @@
-import { Controller, Get, Redirect, Res, Post, Body} from '@nestjs/common';
-import { AppService } from './app.service';
+/*import { Controller, Get, Redirect, Res, Post, Body} from '@nestjs/common';
+//import { AppService } from './app.service';
 import { Response } from 'express'
-import {CreateCatDto } from './create-cat.dto'
+
+import { CreateCatDto } from './create-cat.dto'
 
 @Controller()
 export class AppController {
@@ -13,6 +14,12 @@ export class AppController {
 		return this.appService.getHello(res);
 	}
 
+	@Get('db')
+	getData()
+	{
+		console.log('request to db done');
+	}
+
 	@Post('send')
 	getRequest(@Body() CatDto: CreateCatDto)
 	{
@@ -22,6 +29,6 @@ export class AppController {
 			console.log('il me manque des infoooo');
 		else
 			console.log('Ho non encore lui');
-		return ('OUIIIIII');
+		return ('OUIIIIIIIIII');
 	}
-}
+}*/

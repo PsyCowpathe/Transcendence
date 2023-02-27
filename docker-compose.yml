@@ -32,6 +32,8 @@ services:
                 restart: on-failure
                 depends_on:
                             - postgres
+                env_file:
+                        - .env
                 ports:
                         - 3630:3630
                 networks:
