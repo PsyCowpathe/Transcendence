@@ -18,18 +18,18 @@ export class AuthController
 	}
 
 	@Post('register')
-	async printtoken(@Body() token: AuthDto, @Res() res: Response)
+	async printtoken(@Body() tokenForm: AuthDto, @Res() res: Response)
 	{
-		console.log('dataaaaaa');
+		console.log('Request received');
 
-		console.log(token);
-		if (token.first_state === undefined || token.code === undefined
-			|| token.second_state === undefined)
+		console.log(tokenForm);
+		if (tokenForm.first_state === undefined || tokenForm.code === undefined
+			|| tokenForm.second_state === undefined)
 		{
 			console.log('ERROR 1');
 			return (sendError(res, -42, errorMessages.MISSING));
 		}
-		else if (token.second_state !== token.first_state)
+		else if (tokenForm.second_state !== tokenForm.first_state)
 		{
 			console.log('ERROR 2');
 			return (sendError(res, -43, errorMessages.DIFFERENT));
@@ -38,13 +38,17 @@ export class AuthController
 		{
 			try
 			{
-				const promise = await this.authService.getUserToken(token);
-				console.log(promise);
-				return (sendSuccess(res, 10, promise.data));
+				const tokenInfo = await this.authService.getUserToken(tokenForm);
+				console.log(tokenInfo);
+				await new Promise(r => setTimeout(r, 1000));
+				const userInfo = await this.authService.getMeInfo(tokenInfo.data.access_token);
+				//await this.authService.createUser(token)
+				return (sendSuccess(res, 10, tokenInfo.data));
 			}
 			catch (error)
 			{
-				console.log(error);
+				console.log("ERREEEEEUUUUUR");
+				console.log(error.message);
 				return (sendError(res, -44, errorMessages.INVALIDARG));
 			}
 		}

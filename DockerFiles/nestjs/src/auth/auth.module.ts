@@ -3,11 +3,13 @@ import { Module, NestModule, RequestMethod, MiddlewareConsumer } from '@nestjs/c
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 
+import { UserModule } from '../db/user/user.module';
+
 //import { HttpsRedirectMiddleware } from './auth.middleware';
 
 @Module
 ({
-	imports: [],
+	imports: [UserModule],
 	controllers: [AuthController],
 	providers: [AuthService],
 })

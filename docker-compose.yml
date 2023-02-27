@@ -33,7 +33,7 @@ services:
                 depends_on:
                             - postgres
                 env_file:
-                        - .env
+                        - .nest_env
                 ports:
                         - 3630:3630
                 networks:
@@ -48,6 +48,8 @@ services:
                 restart: on-failure
                 depends_on:
                             - postgres
+                env_file:
+                        -.react_env
                 ports:
                         - 3000:3000
                 networks:
@@ -61,7 +63,7 @@ services:
                 build: ./DockerFiles/postgreSQL/
                 restart: on-failure
                 env_file:
-                        - .env
+                        - .postgres_env
                 ports:
                         - 5432:5432
                 networks:
