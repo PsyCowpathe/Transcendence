@@ -1,24 +1,34 @@
-"use strict"
+/*import { Controller, Get, Redirect, Res, Post, Body} from '@nestjs/common';
+//import { AppService } from './app.service';
+import { Response } from 'express'
 
-import { Controller, Get } from '@nestjs/common';
-import { NewService } from './app.service';
+import { CreateCatDto } from './create-cat.dto'
 
 @Controller()
-export class NewController
-{
-	constructor(private readonly newService: NewService) {}
-	@Get('API')
-	async sendApiRequest() : Promise<string>
+export class AppController {
+  constructor(private readonly appService: AppService) {}
+
+	@Get('oui')
+	getHello(@Res() res: Response): Response<any>
 	{
-		const promise = await this.newService.sendApiRequest();
-		console.log(promise)
-		if (promise == '401')
-			console.error('401');
-		else
-		{
-			//console.log(promise);
-			this.newService.getUser(promise);
-		}
-		return ('api');
+		return this.appService.getHello(res);
 	}
-}
+
+	@Get('db')
+	getData()
+	{
+		console.log('request to db done');
+	}
+
+	@Post('send')
+	getRequest(@Body() CatDto: CreateCatDto)
+	{
+		console.log(CatDto);
+		console.log('name =' + CatDto.name);
+		if (CatDto.name === undefined || CatDto.age === undefined)
+			console.log('il me manque des infoooo');
+		else
+			console.log('Ho non encore lui');
+		return ('OUIIIIIIIIII');
+	}
+}*/

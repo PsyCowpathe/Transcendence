@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { AuthDto} from './auth.entity';
 
+import { urls } from '../common/global';
+
 const axios = require('axios');
 
 @Injectable()
@@ -15,17 +17,12 @@ export class AuthService
 			client_id: process.env.UID, 
 			client_secret: process.env.SECRET,
 			code: token.code,
-			redirect_uri : "http://localhost:3000",
-			//state: token.first_state,
+			redirect_uri : urls.URI,
+			state: token.first_state,
 		}
 		console.log(user);
 
-		const url = "https://api.intra.42.fr/oauth/token";
-		const response = axios.post(url, user)
-		.catch ((error : any) =>
-		{
-			return (error);
-		});
+		const response = axios.post(urls.TOKEN, user);
 		return (response);
 	}
 }

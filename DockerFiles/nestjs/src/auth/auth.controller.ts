@@ -1,18 +1,12 @@
-import { Controller, Get, Redirect, Header, Req, Post, Body} from '@nestjs/common';
+import { Controller, Get, Redirect, Header, Req, Post, Body, Res} from '@nestjs/common';
+import { Response } from 'express'; 
 
 import { AuthDto} from './auth.entity';
-
 import { AuthService } from './auth.service';
 
-let uid = "u-s4t2ud-21f144616dae6f0e27670562f16d1b3b8782bbad40c0d1ea5f0d1d54eae9d61f";
-let redirect = encodeURIComponent("http://localhost:3000");
-//let redirect = "https://reddit.com";
-let random = "dwdadfegthyhgfdASYJTUNBFSDRGW48754454"
+import { sendError, sendSuccess } from '../common/response';
+import { errorMessages } from '../common/global'; 
 
-const URL: string = `https://api.intra.42.fr/oauth/authorize?client_id=${uid}&redirect_uri=${redirect}&response_type=code&scope=public&state=${random}'`
-
-//const URL : string = "http://localhost:3000";
-//
 
 
 @Controller("auth")
@@ -23,37 +17,36 @@ export class AuthController
 
 	}
 
-	@Get()
-	//@Header('Access-Control-Allow-Origin', '*')
-	//@Redirect(URL, 302)
-	sayHello(@Req() request: Request)
-	{
-		//console.log(request);
-		console.log('Hello');
-		return (Request);
-	}
-
-	@Post('token')
-	printtoken(@Body() token: AuthDto)
+	@Post('register')
+	async printtoken(@Body() token: AuthDto, @Res() res: Response)
 	{
 		console.log('dataaaaaa');
+
+		console.log(token);
 		if (token.first_state === undefined || token.code === undefined
 			|| token.second_state === undefined)
-			console.log("Error code or state missing !")
+		{
+			console.log('ERROR 1');
+			return (sendError(res, -42, errorMessages.MISSING));
+		}
 		else if (token.second_state !== token.first_state)
-			console.log("/!\ Error first state and second state are differents ! /!\\")
+		{
+			console.log('ERROR 2');
+			return (sendError(res, -43, errorMessages.DIFFERENT));
+		}
 		else
 		{
-			const promise = this.authService.getUserToken(token);
-			promise.then((json: any) =>
+			try
 			{
-				console.log(json);
-			})
-			.catch((error : any) =>
+				const promise = await this.authService.getUserToken(token);
+				console.log(promise);
+				return (sendSuccess(res, 10, promise.data));
+			}
+			catch (error)
 			{
 				console.log(error);
-			});
+				return (sendError(res, -44, errorMessages.INVALIDARG));
+			}
 		}
 	}
-
 }
