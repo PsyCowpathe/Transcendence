@@ -31,8 +31,6 @@ RUN mkdir ~/backend/src/
 
 COPY ./src/* /root/backend/src/
 
-COPY ./.env /root/backend/
-
 COPY ./tools/init.sh ./
 
 COPY ./config/tsconfig.build.json /root/backend/
