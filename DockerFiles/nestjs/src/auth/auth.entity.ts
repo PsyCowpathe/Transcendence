@@ -1,8 +1,6 @@
 export class AuthDto
 {
-  first_state: string;
+  state: string;
   code: string;
-  second_state: string;
-	bla: string;
 }
 

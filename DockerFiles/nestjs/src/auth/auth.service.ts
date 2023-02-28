@@ -25,15 +25,18 @@ export class AuthService
 			client_secret: process.env.SECRET,
 			code: token.code,
 			redirect_uri : urls.URI,
-			state: token.first_state,
+			state: token.state,
 		}
-		console.log(user);
-
-		const response = axios.post(urls.TOKEN, user);
+		const response = axios.post(urls.TOKEN, user)
+		.catch ((error: any) =>
+		{
+			console.log("Erreur 5");
+			console.log(error);
+		});
 		return (response);
 	}
 
-	getMeInfo(token : string)
+	createUser(token : string)
 	{
 		const Header =
 		{
@@ -43,11 +46,8 @@ export class AuthService
 			}
 		}
 		const response = axios.get(urls.ME, Header);
-
 		response.then((json: any) =>
 		{
-			console.log("json = ");
-			console.log(json);
 			const newUser =
 			{
 				id : json.data.id,
@@ -55,15 +55,13 @@ export class AuthService
 				name : json.data.login,
 				uid : json.data.id,
 			}
-			console.log(newUser);
 			this.userService.create(newUser);
 		})
 		.catch((error: any) =>
 		{
-			console.log("error = ");
+			console.log("Erreur 4");
 			console.log(error);
 			return (error);
-
 		});
 		return (response);
 	}

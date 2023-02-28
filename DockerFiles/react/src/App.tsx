@@ -14,7 +14,7 @@ let random = "dwdadfegthyhgfdASYJTUNBFSDRGW48754454"
 const URL: string = `https://api.intra.42.fr/oauth/authorize?client_id=${uid}&redirect_uri=${redirect}&response_type=code&scope=public&state=${random}'`
 
 
-
+axios.defaults.withCredentials = true
 
 function App() {
   const handleClick = () => {
@@ -34,8 +34,8 @@ function App() {
 
   const handleToken = (token : any) => {
     console.log("test")
-    const response = axios.post("http://localhost:3630/auth/token", token)
-      .then(response => {
+    const response = axios.post("http://localhost:3630/auth/firstconnect")
+	.then(response => {
         console.log("tamere la pas pute")
 
         console.log(response.data);
