@@ -43,8 +43,10 @@ RUN cd \
 && cd backend \
 && yarn add dotenv \
 && yarn add axios \
-&& yarn add @nestjs/axios\
-&& yarn add @nestjs/typeorm typeorm pg
+&& yarn add @nestjs/axios \
+&& yarn add @nestjs/typeorm typeorm pg \
+&& yarn add cookie-parser \
+&& yarn add @types/cookie-parser
 
 EXPOSE 3630
 

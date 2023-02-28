@@ -2,6 +2,7 @@ import { Module, NestModule, RequestMethod, MiddlewareConsumer } from '@nestjs/c
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { AuthStrategy } from './auth.strategy';
 
 import { UserModule } from '../db/user/user.module';
 
@@ -11,7 +12,7 @@ import { UserModule } from '../db/user/user.module';
 ({
 	imports: [UserModule],
 	controllers: [AuthController],
-	providers: [AuthService],
+	providers: [AuthService, AuthStrategy],
 })
 export class AuthModule
 {
