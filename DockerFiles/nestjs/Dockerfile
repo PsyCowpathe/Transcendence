@@ -46,7 +46,9 @@ RUN cd \
 && yarn add @nestjs/axios \
 && yarn add @nestjs/typeorm typeorm pg \
 && yarn add cookie-parser \
-&& yarn add @types/cookie-parser
+&& yarn add @types/cookie-parser \
+&& yarn add bcrypt \
+&& yarn add @types/bcrypt
 
 EXPOSE 3630
 

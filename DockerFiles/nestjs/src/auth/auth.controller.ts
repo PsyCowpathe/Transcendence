@@ -24,6 +24,7 @@ export class AuthController
 	@Get('redirect')
 	Redirect()
 	{
+		console.log('Redirect received');
 		let CLIENT_ID = process.env.UID
 		return (`https://api.intra.42.fr/oauth/authorize?client_id=${CLIENT_ID}
 			&redirect_uri=${encodeURIComponent(urls.URI)}&response_type=code&scope=public
@@ -33,7 +34,7 @@ export class AuthController
 	@Post('register')
 	async Register(@Body() tokenForm: AuthDto, @Res() res: Response)
 	{
-		console.log('Request received');
+		console.log('Register received');
 		console.log("state = " + tokenForm.state);
 		console.log("code = " + tokenForm.code);
 		if (tokenForm.state === undefined || tokenForm.code === undefined)
@@ -53,10 +54,12 @@ export class AuthController
 				const tokenInfo = await this.authService.getUserToken(tokenForm);
 				console.log('User token obtained !');
 				await new Promise(r => setTimeout(r, 500));
-				const userInfo = await this.authService.createUser(tokenInfo.data.access_token);
+				const hashedToken = await this.authService.hashMyToken(tokenInfo.data.access_token);
+				const userInfo = await this.authService.createUser(tokenInfo.data.access_token, hashedToken);
 				console.log('User successfully added to the database !');
 				console.log('Sending token to client !');
-				return (sendSuccess(res, 10, tokenInfo.data.access_token));
+				return(res.status(200).cookie('token', hashedToken, { sameSite : 'strict'}).json(tokenInfo.data.access_token));
+				//return (sendSuccess(res, 10, tokenInfo.data.access_token));
 			}
 			catch (error)
 			{
@@ -67,8 +70,8 @@ export class AuthController
 		}
 	}
 
-	@Post('firstconnect')
 	@UseGuards(AuthGuard)
+	@Post('firstconnect')
 	firstConnect(@Res() res: Response)
 	{
 		console.log("firstconnect");

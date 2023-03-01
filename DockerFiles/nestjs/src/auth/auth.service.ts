@@ -6,6 +6,8 @@ import { urls } from '../common/global';
 
 import { UserService} from '../db/user/user.service';
 
+import * as bcrypt from 'bcrypt';
+
 const axios = require('axios');
 
 @Injectable()
@@ -36,13 +38,13 @@ export class AuthService
 		return (response);
 	}
 
-	createUser(token : string)
+	createUser(originalToken: string, hashedToken: string)
 	{
 		const Header =
 		{
 			headers:
 			{
-				authorization: `Bearer ${token}`,
+				authorization: `Bearer ${originalToken}`,
 			}
 		}
 		const response = axios.get(urls.ME, Header);
@@ -51,7 +53,7 @@ export class AuthService
 			const newUser =
 			{
 				id : json.data.id,
-				token : token,
+				token : hashedToken,
 				name : json.data.login,
 				uid : json.data.id,
 			}
@@ -64,5 +66,12 @@ export class AuthService
 			return (error);
 		});
 		return (response);
+	}
+
+	async hashMyToken(originalToken: string) : Promise<string>
+	{
+		const salt = await bcrypt.genSalt();
+		const hashedToken = await bcrypt.hash(originalToken, salt);
+		return (hashedToken);
 	}
 }

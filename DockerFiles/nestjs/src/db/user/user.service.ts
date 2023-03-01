@@ -14,8 +14,12 @@ export class UserService
 
 	findOne(id: number): Promise<User | null>
 	{
-		console.log('findOne');
 		return this.usersRepository.findOneBy({ id });
+	}
+
+	findOneByToken(token: string): Promise<User | null>
+	{
+		return this.usersRepository.findOneBy({ token });
 	}
 
 	create(newUser : User)
