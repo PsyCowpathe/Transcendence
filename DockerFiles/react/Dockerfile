@@ -21,7 +21,7 @@ RUN npm install --global yarn
 
 
 RUN cd  && \
-echo 'y' | echo | yarn create react-app frontend --template=typescript && cd frontend && yarn add mini.css@3.0.1 && yarn add axios 
+echo 'y' | echo | yarn create react-app frontend --template=typescript && cd frontend && yarn add mini.css@3.0.1 && yarn add axios && yarn add react-router-dom@latest 
 
 RUN rm -rf ~/frontend/src
 
