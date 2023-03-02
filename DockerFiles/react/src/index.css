@@ -11,3 +11,65 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.center {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+
+
+.center-with-sidebar {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin-left: 90px;
+}
+
+.flex-container {
+  display: flex;
+}
+
+.flex-row {
+  width: 1300px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  /* TESTING */
+  width: 80vw;
+  flex-wrap: wrap;
+  /* flex: 80vw; */
+
+  /*vertical version :
+  justify-content: center;
+  */
+
+  /* ADJUSTMENT for screens of width < 1578px */
+  @media only screen and (max-width: 1578px) {
+      flex-direction: column;
+      align-content: center;
+  }
+}
+
+
+.container {
+  display: block;
+  margin: auto;
+  height: auto;
+}
+
+#canvas {
+  width: 100%;
+  height: 100%;
+  border: 1px solid black;
+
+  background: url('https://image.freepik.com/free-vector/unicorn-background-design_1324-79.jpg');
+  background-size: 100% 100%;
+}
