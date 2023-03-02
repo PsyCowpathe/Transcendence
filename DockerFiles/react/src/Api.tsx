@@ -1,13 +1,3 @@
-// import axios from 'axios';
-// import { useState, useEffect } from 'react';
-// let uid = "u-s4t2ud-21f144616dae6f0e27670562f16d1b3b8782bbad40c0d1ea5f0d1d54eae9d61f";
-// let redirect = encodeURIComponent("http://localhost:3000");
-// //let redirect = "https://reddit.com";
-// let random = "dwdadfegthyhgfdASYJTUNBFSDRGW48754454"
-// const URL: string = `https://api.intra.42.fr/oauth/authorize?client_id=${uid}&redirect_uri=${redirect}&response_type=code&scope=public&state=${random}'`
-// let recup : any;
-
-// export default function TryLogin() {
 
 export default function test(){
     console.log("bite")

@@ -36,7 +36,7 @@ export default function AuthToken({token, setToken, setCookie, cookies}: any){
         if (token.code != null)
         {
           console.log("je send un truc")
-           await axios.post("http://10.12.3.8:3630/auth/register", token)
+           await axios.post("https://10.12.3.8:3630/auth/register", token)
           .then(response => {
             window.location.assign('/');
             console.log("REPONSE VALIDE")

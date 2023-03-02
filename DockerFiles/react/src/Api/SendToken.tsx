@@ -3,7 +3,7 @@ import { CookiesProvider } from "react-cookie";
 
 
 
-export async  function  handleToken({token, setCookie}  : any)
+export async  function  handleToken({token}  : any)
 {
   console.log("je rentre dans le token")
   
@@ -16,18 +16,9 @@ export async  function  handleToken({token, setCookie}  : any)
           method: 'POST',
           withCredentials: true
           })*/
-           await axios.post("http://10.13.7.1:3630/auth/register",  token)
+           await axios.post("https://10.13.7.1:3630/auth/register",  token)
           .then(response => {
             console.log("CA SEND")
-		      // setCookie('token', response.data,{
-          //     path :'/',
-          //     Domain:'localhost',
-          //     HostOnly:'false',
-          //     SameSite:'None'})
-                       axios.post('http://10.13.7.1:3630/auth/firstconnect', {
-
-                      headers:{Cookie:"token=123"}
-                      })
           })
           .catch(error => {
             alert(error)

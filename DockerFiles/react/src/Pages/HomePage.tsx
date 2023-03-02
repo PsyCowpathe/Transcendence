@@ -12,7 +12,7 @@ import Button from "../bouton/Button";
 
 
 
-export function HomePage ({cookie, setCookie, token, setToken} : any)
+export function HomePage ({token, setToken} : any)
 {
 	console.log("debut de fonction")
 	async function onClick ()
@@ -31,8 +31,8 @@ export function HomePage ({cookie, setCookie, token, setToken} : any)
 	
 	async function sendToken()
 	{
-		await handleToken({token, setCookie})
-		window.location.assign('/')
+		await handleToken({token})
+		//window.location.assign('/')
 
 	}
     
