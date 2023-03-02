@@ -10,6 +10,6 @@ export enum errorMessages
 export enum urls
 {
 	TOKEN = "https://api.intra.42.fr/oauth/token",
-	URI = "http://localhost:3000",
+	URI = "https://localhost:3000",
 	ME = "https://api.intra.42.fr/v2/me",
 }

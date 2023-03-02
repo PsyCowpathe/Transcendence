@@ -90,4 +90,12 @@ export class AuthService
 		const hashedToken = await bcrypt.hash(originalToken, salt);
 		return (hashedToken);
 	}
+
+	async isTokenValid(token: string): Promise<boolean>
+	{
+		const user = await this.userService.findOneByToken(token);
+		if (user === null)
+			return (false);
+		return (true);
+	}
 }

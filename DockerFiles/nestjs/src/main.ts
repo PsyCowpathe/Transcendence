@@ -17,14 +17,14 @@ async function bootstrap()
   		key: fs.readFileSync('./secret/cert.key'),
   		cert: fs.readFileSync('./secret/cert.crt'),
 	};
-  	const app = await NestFactory.create(AppModule, {httpsOptions,});
+  	const app = await NestFactory.create(AppModule, { httpsOptions, });
 	app.use(cookieParser());
 
 	app.enableCors
 	({
 		allowedHeaders: ['content-type', '*'],
 		credentials : true,
-		origin: ['http://localhost:3000'],
+		origin: ['https://localhost:3000'],
 		methods: 'GET, POST',
 
 		//preflightContinue: false,

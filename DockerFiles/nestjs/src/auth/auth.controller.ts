@@ -12,6 +12,8 @@ import { errorMessages, urls } from '../common/global';
 let crypto = require("crypto");
 let random = crypto.randomBytes(20).toString('hex');
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 @Controller("auth")
 export class AuthController
 {
@@ -20,19 +22,23 @@ export class AuthController
 
 	}
 
-
-
 	@Get('redirect')
-	Redirect(@Req() req: Request)
+	async Redirect(@Req() req: Request)
 	{
-		//Si TOKEN VALIDE
-		console.log("redir = " + req.cookies.token);
-		//SI PAS DE TOKEN VALIDE
-		console.log('Redirect received');
-		let CLIENT_ID = process.env.UID
-		return (`https://api.intra.42.fr/oauth/authorize?client_id=${CLIENT_ID}
+		let ret = await this.authService.isTokenValid(req.cookies.token);
+		/*if (ret === true)
+		{
+			console.log('Token valide');
+			return (`urls.URI`);
+		}
+		else
+		{*/
+			console.log('Token invalide');
+			let CLIENT_ID = process.env.UID
+			return (`https://api.intra.42.fr/oauth/authorize?client_id=${CLIENT_ID}
 			&redirect_uri=${encodeURIComponent(urls.URI)}&response_type=code&scope=public
 			&state=${random}`);
+		//}
 	}
 
 	@Post('register')
@@ -53,6 +59,7 @@ export class AuthController
 		}
 		else
 		{
+			//const tokenInfo = await this.authService.getUserToken(tokenForm);
 			try
 			{
 				const tokenInfo = await this.authService.getUserToken(tokenForm);
@@ -62,7 +69,7 @@ export class AuthController
 				const userInfo = await this.authService.createUser(tokenInfo.data.access_token, hashedToken);
 				console.log('User successfully added to the database !');
 				console.log('Sending token to client !');
-				return(res.status(200).cookie('token', hashedToken, { sameSite : 'lax'}).json(tokenInfo.data.access_token));
+				return(res.status(200).cookie('token', hashedToken, { sameSite : 'none', secure : true}).json(tokenInfo.data.access_token));
 				//return (sendSuccess(res, 10, tokenInfo.data.access_token));
 			}
 			catch (error)
