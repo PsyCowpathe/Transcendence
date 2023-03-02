@@ -4,3 +4,7 @@ export class AuthDto
   code: string;
 }
 
+export class RegisterDto
+{
+	name: string;
+}

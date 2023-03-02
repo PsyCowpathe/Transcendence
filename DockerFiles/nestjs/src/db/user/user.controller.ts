@@ -27,7 +27,7 @@ export class UserController
 	@Get(':id')
 	getUser(@Param() params : any, @Res() res : Response)
 	{
-		const promise = this.userService.findOne(params.id);
+		const promise = this.userService.findOneById(params.id);
 		promise
 		.then ((data) =>
 		{

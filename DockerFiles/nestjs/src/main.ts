@@ -7,9 +7,17 @@ import { AppModule } from './app.module';
 
 import * as cookieParser from 'cookie-parser'
 
+import * as fs from 'fs';
+
 async function bootstrap()
 {
-  	const app = await NestFactory.create(AppModule);
+
+	const httpsOptions =
+	{
+  		key: fs.readFileSync('./secret/cert.key'),
+  		cert: fs.readFileSync('./secret/cert.crt'),
+	};
+  	const app = await NestFactory.create(AppModule, {httpsOptions,});
 	app.use(cookieParser());
 
 	app.enableCors

@@ -1,7 +1,7 @@
 import { Controller, Get, Redirect, Header, Req, Post, Body, Res, UseGuards } from '@nestjs/common';
-import { Response } from 'express'; 
+import { Response, Request } from 'express'; 
 
-import { AuthDto} from './auth.entity';
+import { AuthDto, RegisterDto } from './auth.entity';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 
@@ -21,9 +21,13 @@ export class AuthController
 	}
 
 
+
 	@Get('redirect')
-	Redirect()
+	Redirect(@Req() req: Request)
 	{
+		//Si TOKEN VALIDE
+		console.log("redir = " + req.cookies.token);
+		//SI PAS DE TOKEN VALIDE
 		console.log('Redirect received');
 		let CLIENT_ID = process.env.UID
 		return (`https://api.intra.42.fr/oauth/authorize?client_id=${CLIENT_ID}
@@ -58,22 +62,32 @@ export class AuthController
 				const userInfo = await this.authService.createUser(tokenInfo.data.access_token, hashedToken);
 				console.log('User successfully added to the database !');
 				console.log('Sending token to client !');
-				return(res.status(200).cookie('token', hashedToken, { sameSite : 'strict'}).json(tokenInfo.data.access_token));
+				return(res.status(200).cookie('token', hashedToken, { sameSite : 'lax'}).json(tokenInfo.data.access_token));
 				//return (sendSuccess(res, 10, tokenInfo.data.access_token));
 			}
 			catch (error)
 			{
 				console.log("Erreur 3");
-				console.log(error);
+				//console.log(error);
 				return (sendError(res, -44, errorMessages.INVALIDARG));
 			}
 		}
 	}
 
-	@UseGuards(AuthGuard)
+	//@UseGuards(AuthGuard)
 	@Post('firstconnect')
-	firstConnect(@Res() res: Response)
+	async firstConnect(@Body() registerForm: RegisterDto, @Res() res: Response)
 	{
-		console.log("firstconnect");
+		console.log("firstconnect = " + registerForm.name);
+		if (registerForm.name === undefined)
+		{
+			console.log('ERROR 11');
+			return (sendError(res, -44, errorMessages.NONAME));
+		}
+		let ret = await this.authService.defineName(registerForm.name);
+		if (ret === false)
+			return (sendError(res, -45, errorMessages.ALREADYTAKEN));
+		let user = await this.authService.getUserInfos(registerForm.name);
+		return (sendSuccess(res, 11, user));
 	}
 }

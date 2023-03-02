@@ -27,6 +27,10 @@ RUN cd \
 RUN rm -rf ~/backend/src \
 &&	rm -rf ~/backend/tsconfig.build.json
 
+RUN mkdir ~/backend/secret \
+&& cd ~/backend/secret \
+&& openssl req -x509 -nodes -days 365 -subj "/C=FR/ST=France/L=Lyon/O=42/OU=42/CN=agirona" -newkey rsa:4096 -keyout ./cert.key -out ./cert.crt
+
 RUN mkdir ~/backend/src/
 
 COPY ./src/* /root/backend/src/

@@ -12,7 +12,7 @@ export class UserService
 
 	}
 
-	findOne(id: number): Promise<User | null>
+	findOneById(id: number): Promise<User | null>
 	{
 		return this.usersRepository.findOneBy({ id });
 	}
@@ -20,6 +20,16 @@ export class UserService
 	findOneByToken(token: string): Promise<User | null>
 	{
 		return this.usersRepository.findOneBy({ token });
+	}
+
+	findOneByName(name: string): Promise<User | null>
+	{
+		return this.usersRepository.findOneBy({ name });
+	}
+
+	updateName(newName: string, user: User)
+	{
+		return this.usersRepository.update(user.id, {name: newName});
 	}
 
 	create(newUser : User)

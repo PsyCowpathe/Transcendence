@@ -4,7 +4,8 @@ import { AuthDto} from './auth.entity';
 
 import { urls } from '../common/global';
 
-import { UserService} from '../db/user/user.service';
+import { UserService } from '../db/user/user.service';
+import { User } from '../db/user/user.entity';
 
 import * as bcrypt from 'bcrypt';
 
@@ -33,7 +34,6 @@ export class AuthService
 		.catch ((error: any) =>
 		{
 			console.log("Erreur 5");
-			console.log(error);
 		});
 		return (response);
 	}
@@ -62,10 +62,26 @@ export class AuthService
 		.catch((error: any) =>
 		{
 			console.log("Erreur 4");
-			console.log(error);
 			return (error);
 		});
 		return (response);
+	}
+
+	async defineName(name: string) : Promise<boolean>
+	{
+		let ret = await this.userService.findOneByName(name);
+		if (ret !== null)
+			return (false);
+
+
+	//	let user = await this.userService.findOneByToken(token);
+		//await this.userService.updateName(name, user);
+		return (true);
+	}
+
+	async getUserInfos(name: string) : Promise<User | null>
+	{
+		return (this.userService.findOneByName(name));
 	}
 
 	async hashMyToken(originalToken: string) : Promise<string>
