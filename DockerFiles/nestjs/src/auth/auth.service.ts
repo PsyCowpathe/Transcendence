@@ -19,7 +19,7 @@ export class AuthService
 
 	}
 
-	getUserToken(token : AuthDto)
+	async getUserToken(token : AuthDto)
 	{
 		let user =
 		{
@@ -30,15 +30,19 @@ export class AuthService
 			redirect_uri : urls.URI,
 			state: token.state,
 		}
-		const response = axios.post(urls.TOKEN, user)
+		const response = await axios.post(urls.TOKEN, user)
 		.catch ((error: any) =>
 		{
 			console.log("Erreur 5");
+			//console.log(error);
+			return (error);
 		});
-		return (response);
+		if (response.data === undefined)
+			return (undefined)
+		return (response.data.access_token);
 	}
 
-	createUser(originalToken: string, hashedToken: string)
+	async createUser(originalToken: string, hashedToken: string)
 	{
 		const Header =
 		{
@@ -47,41 +51,57 @@ export class AuthService
 				authorization: `Bearer ${originalToken}`,
 			}
 		}
-		const response = axios.get(urls.ME, Header);
-		response.then((json: any) =>
-		{
-			const newUser =
-			{
-				id : json.data.id,
-				token : hashedToken,
-				name : json.data.login,
-				uid : json.data.id,
-			}
-			this.userService.create(newUser);
-		})
+		const response = await axios.get(urls.ME, Header)
 		.catch((error: any) =>
 		{
 			console.log("Erreur 4");
 			return (error);
 		});
+		const user = await this.getUserInfos(undefined, response.data.id);
+		if (user === null)
+		{
+			const newUser =
+			{
+				id : response.data.id,
+				token : hashedToken,
+				name : response.data.login,
+				uid : response.data.id,
+				registered: false,
+			}
+			this.userService.create(newUser);
+			console.log('User successfully added to the database !');
+		}
+		else
+		{
+			await this.userService.updateToken(hashedToken, user);
+			console.log('User already exist, updating token in db !');
+		}
 		return (response);
 	}
 
-	async defineName(name: string) : Promise<boolean>
+
+	async defineName(name: string, token: string | undefined) : Promise<boolean>
 	{
+		console.log(token);
 		let ret = await this.userService.findOneByName(name);
 		if (ret !== null)
 			return (false);
-
-
-	//	let user = await this.userService.findOneByToken(token);
-		//await this.userService.updateName(name, user);
+		let user = await this.userService.findOneByToken(token);
+		if (user !== null)
+		{
+			await this.userService.updateName(name, user);
+			await this.userService.updateRegister(true, user);
+		}
 		return (true);
 	}
 
-	async getUserInfos(name: string) : Promise<User | null>
+	async getUserInfos(name?: string, uid?: number) : Promise<User | null>
 	{
-		return (this.userService.findOneByName(name));
+		if (name !== undefined)
+			return (this.userService.findOneByName(name));
+		else if (uid !== undefined)
+			return (this.userService.findOneByUid(uid));
+		return (null);
 	}
 
 	async hashMyToken(originalToken: string) : Promise<string>
@@ -91,8 +111,11 @@ export class AuthService
 		return (hashedToken);
 	}
 
-	async isTokenValid(token: string): Promise<boolean>
+	async isTokenValid(token: string | undefined): Promise<boolean>
 	{
+		console.log("token = " + token);
+		if (token === undefined)
+			return (false);
 		const user = await this.userService.findOneByToken(token);
 		if (user === null)
 			return (false);

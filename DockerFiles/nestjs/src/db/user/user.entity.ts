@@ -7,12 +7,14 @@ export class User
 	id: number;
 
 	@Column()
-	token: string
+	token: string;
 
 	@Column()
-	uid: number
+	uid: number;
 
 	@Column()
 	name: string;
 
+	@Column()
+	registered: boolean;
 }

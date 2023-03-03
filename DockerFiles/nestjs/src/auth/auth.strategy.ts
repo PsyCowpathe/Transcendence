@@ -16,20 +16,20 @@ export class AuthStrategy
 	checkRequest(request : any) : Promise<boolean>
 	{
 		console.log('jsuis dans lstartegy');
-		console.log("strat = " + request.cookies.token);
-		const promise = this.userService.findOneByToken(request.cookies.token)
+		console.log("strat = " + request.headers.authorization);
+		const promise = this.userService.findOneByToken(request.headers.authorization)
 		.then((user) =>
 		{
 			if (user === null)
+				return (false);
+			else if (user.token === request.headers.authorization)
 				return (true);
-			else if (user.token === request.cookies.tolen)
-				return (true);
-			return (true);
+			return (false);
 		})
 		.catch((error) =>
 		{
 			console.log("Error 10");
-			return (error);
+			return (false);
 		});
 		return (promise);
 	}
