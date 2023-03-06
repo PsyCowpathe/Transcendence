@@ -67,9 +67,9 @@ export class AuthController
 				console.log('User token obtained !');
 				await new Promise(r => setTimeout(r, 500));
 				const hashedToken = await this.authService.hashMyToken(apiToken);
-				const userInfo = await this.authService.createUser(apiToken, hashedToken);
+				const data = await this.authService.createUser(apiToken, hashedToken);
 				console.log('Sending token to client !');
-				return (sendSuccess(res, 10, hashedToken));
+				return (sendSuccess(res, 10, data));
 			}
 			catch (error)
 			{
@@ -80,11 +80,11 @@ export class AuthController
 		}
 	}
 
-	@Post('firstconnect')
+	@Post('loginchange')
 	@UseGuards(AuthGuard)
 	async firstConnect(@Body() registerForm: RegisterDto, @Res() res: Response, @Req() req: Request)
 	{
-		console.log("firstconnect = " + registerForm.name);
+		console.log("changement de login = " + registerForm.name);
 		if (registerForm.name === undefined)
 		{
 			console.log('ERROR 11');
@@ -92,9 +92,10 @@ export class AuthController
 		}
 		console.log(req.headers.authorization);
 		let ret = await this.authService.defineName(registerForm.name, req.headers.authorization);
-		if (ret === false)
+		if (ret === -1)
 			return (sendError(res, -45, errorMessages.ALREADYTAKEN));
 		let user = await this.authService.getUserInfos(registerForm.name);
-		return (sendSuccess(res, 11, user));
+		let data = this.authService.createProfile(true, user);
+		return (sendSuccess(res, 11, data));
 	}
 }

@@ -50,6 +50,6 @@ export class UserService
 
 	create(newUser : User)
 	{
-		const ret = this.usersRepository.save(newUser)
+		return (this.usersRepository.save(newUser));
 	}
 }

@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 
-import { DbController } from './db/db.controller';
 import { DbModule } from './db/db.module';
 import { DbService } from './db/db.service';
 
@@ -8,9 +7,13 @@ import { UserModule } from './db/user/user.module';
 
 import { AuthModule } from './auth/auth.module';
 
+import { HomeModule } from './home/home.module';
+
+import { RelationModule } from './db/relation/relation.module'; 
+
 @Module
 ({
-	imports: [DbModule, UserModule, AuthModule],
+	imports: [DbModule, UserModule, RelationModule, AuthModule, HomeModule],
 })
 export class AppModule
 {

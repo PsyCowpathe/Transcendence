@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { DbController } from './db.controller';
 import { DbService } from './db.service'
 
 import { User } from './user/user.entity';
+
+import { Relation } from './relation/relation.entity';
 
 @Module
 ({
@@ -16,13 +17,13 @@ import { User } from './user/user.entity';
       		host: 'postgres',
       		port: 5432,
       		username: 'postgres',
-			password: 'daddy', //remove !!
+			password: process.env.DB_PSWD, //remove !!
       		database: 'postgres',
-      		entities: [User],
+      		entities: [User, Relation],
 			synchronize: true,
 		}),
 	],
-	controllers: [DbController],
+	controllers: [],
 	providers: [DbService],
 })
 export class DbModule {}

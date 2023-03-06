@@ -7,6 +7,8 @@ import { urls } from '../common/global';
 import { UserService } from '../db/user/user.service';
 import { User } from '../db/user/user.entity';
 
+import { Profile } from './auth.entity';
+
 import * as bcrypt from 'bcrypt';
 
 const axios = require('axios');
@@ -42,8 +44,10 @@ export class AuthService
 		return (response.data.access_token);
 	}
 
-	async createUser(originalToken: string, hashedToken: string)
+	async createUser(originalToken: string, hashedToken: string) : Promise<Profile>
 	{
+		let data: Profile;
+
 		const Header =
 		{
 			headers:
@@ -69,30 +73,46 @@ export class AuthService
 				registered: false,
 			}
 			this.userService.create(newUser);
+			data = this.createProfile(false, user, hashedToken);
 			console.log('User successfully added to the database !');
 		}
-		else
+		else 
 		{
 			await this.userService.updateToken(hashedToken, user);
+			data = this.createProfile(true, user, hashedToken);
 			console.log('User already exist, updating token in db !');
 		}
-		return (response);
+		return (data);
 	}
 
 
-	async defineName(name: string, token: string | undefined) : Promise<boolean>
+	createProfile(registered: boolean, userInfos: any, hashedToken?: string) : Profile
+	{
+		let data: Profile;
+		console.log("info ");
+		console.dir(userInfos, { depth: null })
+		data =
+		{
+			name : userInfos.name,
+			registered : registered,
+			newtoken : hashedToken,
+		};
+		return (data);
+	}
+
+	async defineName(name: string, token: string | undefined) : Promise<number>
 	{
 		console.log(token);
 		let ret = await this.userService.findOneByName(name);
 		if (ret !== null)
-			return (false);
+			return (-1);
 		let user = await this.userService.findOneByToken(token);
 		if (user !== null)
 		{
 			await this.userService.updateName(name, user);
 			await this.userService.updateRegister(true, user);
 		}
-		return (true);
+		return (1);
 	}
 
 	async getUserInfos(name?: string, uid?: number) : Promise<User | null>

@@ -5,6 +5,7 @@ export enum errorMessages
 	INVALIDARG = "The value for one of the fields in the request was invalid.",
 	NONAME = "Parameter name is missing !",
 	ALREADYTAKEN = "This user name is already taken !",
+	ALREADYREGISTER = "You already set your name !",
 	CODEINVALID = "The code sent has already been used !",
 }
 
