@@ -18,7 +18,7 @@ export const Chat = () => {
   };
 
   return (
-    <div>
+    <div style={{ height: "100vh"}}>
       <ChatList messages={messages} />
       <ChatForm onSendMessage={handleSendMessage} />
     </div>

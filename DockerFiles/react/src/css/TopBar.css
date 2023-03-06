@@ -1,0 +1,35 @@
+
+  .topbar {
+    background-color: rgb(57, 161, 221);
+    color: white;
+    display: flex;
+    /* justify-content: center; */
+    padding: 10px;
+    justify-content: space-between;
+  }
+
+  .navlinks {
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
+    padding: 0;
+    width: 70%;
+  }  
+
+  
+  .navlink {
+    color: white;
+    text-decoration: none;
+    padding: 1px;
+    font-weight: bold;
+  }
+  
+  .navlink:hover {
+    color: #4b68db;
+  }
+  
+  .active-navlink {
+    color: #96c468;
+    background-color: #666;
+  }

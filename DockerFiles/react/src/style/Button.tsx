@@ -1,5 +1,5 @@
 import React from "react";
-import "./Buttons.css"; // fichier CSS pour la mise en forme du bouton
+import "../css/Buttons.css"; // fichier CSS pour la mise en forme du bouton
 
 const Button = ({ onClick, children } : any) => {
   return (

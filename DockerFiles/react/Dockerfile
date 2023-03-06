@@ -16,18 +16,23 @@ RUN npm install -g npm@latest
 
 RUN apt-get install -y git
 
-RUN npm install --global yarn
+RUN npm install --global yarn@latest
 
 
 
 RUN cd  && \
-echo 'y' | echo | yarn create react-app frontend --template=typescript && cd frontend && yarn add mini.css@3.0.1 && yarn add axios && yarn add react-router-dom@latest && yarn add react-cookie 
+echo 'y' | echo | yarn create react-app frontend --template=typescript 
+
+RUN cd && cd frontend && yarn add mini.css@3.0.1 && yarn add axios && yarn add react-cookie@latest 
+
+RUN cd && cd frontend && yarn add @types/react-icons@latest && yarn upgrade @types/react-icons@latest && yarn add react-router-dom@latest @types/react-router-dom@latest && yarn upgrade react-router-dom@latest &&  yarn upgrade @types/react-router-dom@latest && yarn upgrade react-scripts && yarn install
 
 RUN rm -rf ~/frontend/src
 
 RUN mkdir ~/frontend/src/
 
 COPY ./src/* /root/frontend/src/
+RUN cd && cd frontend && rm package.json && cd src && mv package.json ..
 
 COPY ./tools/init.sh ./
 

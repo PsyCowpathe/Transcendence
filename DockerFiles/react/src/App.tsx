@@ -1,24 +1,27 @@
 
 import { NavLink } from "react-router-dom";
-
-import './App.css';
+import './css/App.css';
 import {useState, useEffect} from 'react'
-import AuthToken from './Auth'
 import axios from 'axios';
-import { CookiesProvider, useCookies } from "react-cookie";
-import { BrowserRouter, Route, Routes } from "react-router-dom"
+// import { CookiesProvider, useCookies } from 'react-cookie';
+import { BrowserRouter} from 'react-router-dom'
+import {  Routes, Route } from 'react-router-dom';
+import LoadingPage from "./Pages/LoadingPage";
 import { HomePage } from './Pages/HomePage';
-import { AuthRedirectionPage } from './Pages/AuthRedirect';
-import { ChangeLogin } from "./Api/changeLogin";
-import LogOutPage from './Pages/loginPage';
+import { ChangeLogin } from "./Pages/LoginPage";
 import { Chat } from "./chat/ChatComp";
-let first_states : string | null = "dwdadfegthyhgfdASYJTUNBFSDRGW48754454"
+import "./css/List.css"; 
+import "./css/NavLink.css"; 
+import "./css/TopBar.css"
+import MyNavLink from "./style/MynavLink";
+import AffMyUserPage from "./Pages/UserPage";
+
 
 function App() 
 {
-    const [login, setLogin] = useState("")
 
-	const [cookies, setCookie] = useCookies(['token']);
+
+	//const [cookies, setCookie] = useCookies(['token']);
 
 	interface mabite
 	{
@@ -26,19 +29,39 @@ function App()
 		state : string | null
 	}
 	
-	const [token, setToken] = useState<mabite>({state: null, code: null})
+	const [tokenForm, setToken] = useState<mabite>({state: null, code: null})
 
 	
 	//ade3b5ea214ca737f53ce0bce98938c2.jpg
 	return (
 		<BrowserRouter>
-		<li><NavLink to="/">Login</NavLink></li>
-		<li><NavLink to="/change">change your login</NavLink></li>
-		<li><NavLink to="/chat">chat</NavLink></li>
-			<Routes>
-			<Route path='/' element={<HomePage  token={token} setToken={setToken}/>}/>
-			<Route path='/change' element={<ChangeLogin login={login} setLogin={setLogin}/>}/>
-			<Route path='/chat' element={<Chat/>}/>
+		<nav className="topbar">
+		<li><MyNavLink to="/" label="Login"/></li>
+		{/* <li><MyNavLink to="/change" label="change your login"/></li> */}
+		<li><MyNavLink to="/chat" label="chat"/></li>
+		<li><MyNavLink to="/affUser" label="My User page"/></li>
+		</nav>
+	
+	<Routes>
+				{/* <Switch>
+        <Route exact path="/">
+          {<HomePage  tokenForm={tokenForm} setToken={setToken}/>}
+        </Route>
+        <Route path="/change">
+          {<ChangeLogin/>}
+        </Route>
+        <Route path="/chat">
+          {<Chat/>}
+        </Route>
+		<Route path='/affUser'>
+          {<AffMyUserPage/>}
+        </Route>
+      </Switch> */}
+			<Route path='/' element={<HomePage  tokenForm={tokenForm} setToken={setToken}/>}/> 
+			 <Route path='/change' element={<ChangeLogin/>}/> 
+			 <Route path='/chat' element={<Chat/>}/>
+			<Route path='/affUser' element={<AffMyUserPage/>}/>
+			<Route path='/LoadingPage' element={<LoadingPage/>}/>
 			</Routes>
 		</BrowserRouter>
 		

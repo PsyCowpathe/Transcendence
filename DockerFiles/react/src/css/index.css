@@ -1,11 +1,11 @@
-body {
+/* body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+  -moz-osx-font-smoothing: grayscale; 
+} */
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
@@ -13,7 +13,7 @@ code {
 }
 .center {
   width: 100%;
-  height: 100vh;
+  height: max-content;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -24,7 +24,7 @@ code {
 
 .center-with-sidebar {
   width: 100%;
-  height: 100vh;
+  height: max-content;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -39,17 +39,10 @@ code {
 .flex-row {
   width: 1300px;
   display: flex;
-  flex-direction: row;
+  flex-direction:column;
   justify-content: space-between;
 
-  /* TESTING */
-  width: 80vw;
-  flex-wrap: wrap;
-  /* flex: 80vw; */
 
-  /*vertical version :
-  justify-content: center;
-  */
 
   /* ADJUSTMENT for screens of width < 1578px */
   @media only screen and (max-width: 1578px) {
@@ -60,16 +53,27 @@ code {
 
 
 .container {
-  display: block;
+  display:flex;
   margin: auto;
-  height: auto;
+  height: max-content;
 }
 
-#canvas {
-  width: 100%;
-  height: 100%;
-  border: 1px solid black;
 
-  background: url('https://image.freepik.com/free-vector/unicorn-background-design_1324-79.jpg');
-  background-size: 100% 100%;
+.loader {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.loader img {
+  width: 150%;
+  max-width: 400px;
+  margin-bottom: 1em;
+}
+
+.loading-text {
+  font-size: 1.5em;
+  color: #999;
 }

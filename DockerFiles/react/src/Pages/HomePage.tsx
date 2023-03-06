@@ -1,19 +1,24 @@
-import { redirectTo42API } from "../Api/AuthPage"
-import logo from '../ade3b5ea214ca737f53ce0bce98938c2.jpg';
+import { redirectTo42API } from "../Api/AuthRequest"
 import {useEffect } from 'react'
-import {useState } from 'react'
-import axios from 'axios';
-import { handleToken } from "../Api/SendToken";
-import { AuthRedirectionPage } from "./AuthRedirect";
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import {useState} from 'react'
 import React from "react";
-import Button from "../bouton/Button";
+import Button from "../style/Button";
+import { SendTokenRequest } from "../Api/SendToken";
+import '../css/App.css'
+
+import { useNavigate } from 'react-router-dom'
 
 
 
 
-export function HomePage ({token, setToken} : any)
+export function HomePage ({tokenForm, setToken} : any)
 {
+	const [Mybool, setMybool] = useState<boolean>(false)
+	const [Registered, setReg] = useState<boolean>(false)
+
+	const navigate = useNavigate();
+
+	const localStorage = window.localStorage;
 	console.log("debut de fonction")
 	async function onClick ()
 	{
@@ -28,16 +33,62 @@ export function HomePage ({token, setToken} : any)
 			console.error(e)
 		}
 	}
+
+
+	async  function  handleToken()
+	{
+		console.log("je rentre dans le token")
+		const localStorage = window.localStorage;
 	
+		if (tokenForm.code != null)
+		{
+			console.log("je send un truc")
+			console.log(tokenForm.code)
+			await SendTokenRequest(tokenForm)
+			.then(response => 
+			{
+				console.log("CA SEND")
+				console.log(response.data)
+				if (response.data != null)
+				{
+					console.log(`voila la data de la reponse ${response.data.newtoken}`)
+					localStorage.setItem('Token', response.data.newtoken);
+					const date : any = localStorage.getItem('Token')
+					console.log("tema le Token")
+					console.log(date)
+					console.log(response.data)
+					let reg : boolean = response.data.registered
+					if (reg === true)
+					{
+						setReg(true)	
+						//register --> profil user
+					}
+					else
+						setMybool(true)
+						//nope so first connect
+				}
+			})
+			.catch(error => 
+			{
+				//alert(error)
+				console.log("REPONSE ERREUR : ");
+				console.log(error.response)
+			});
+				console.log("wtf")
+	    }
+	}
+
 	async function sendToken()
 	{
-		await handleToken({token})
-		//window.location.assign('/')
+		 handleToken()
+	    const date : string | null = localStorage.getItem('Token')
+		console.log("tema le Token1")
+		console.log(date)
 
 	}
-    
-    const handleUrlSearchParams = async() => 
-    {
+	
+	const handleUrlSearchParams = async() => 
+	{
         console.log("wesh les params changent")
         const urlSearchParams = new URLSearchParams(window.location.search);
         let codes : string | null = urlSearchParams.get('code')
@@ -46,65 +97,52 @@ export function HomePage ({token, setToken} : any)
 		{
 			setToken({state: second_states, code: codes})
         	console.log("wesh le token")
-        	console.log(token)
-        	sendToken();
-			console.log("j ai le tooken shala")
+    		console.log(tokenForm)
+    		sendToken();
 		}
-			//window.location.assign('/')
-
     }
+
 
     useEffect(() => 
     {
         console.log("wesh le useeffect")
-        handleUrlSearchParams();
-			//window.location.assign('/')
+        handleUrlSearchParams(); 
+    }, [tokenForm.code]);
+	
+	useEffect(() =>
+	{
+		if (Mybool !== false)
+		{
+			setMybool(false)
+			navigate('/change')
+		}
+	}, [Mybool])
+	
+	useEffect(() =>
+	{
+		if (Registered !== false)
+		{
+			setReg(false)
+			navigate('/affUser')
+		}		
+	}, [Registered])
 
-    }, [token.code]);
-
-/*
-	const myImage = (
-		<img
-		  src="https://example.com/image.jpg"
-		  alt="example image"
-		  className="img-fluid mr-3"
-		  style={{ maxWidth: "200px", float: "left" }}
-		/>
-	  );*/
-			//window.location.assign('/')
 
 	return (
-		<div className="App">
-			<header className="App-header" >
-				{/* <img src={logo} className="App-logo" alt="logo" /> */}
-				<h1>Ft_trancendence <br/>
-				</h1>
-				<img
-				src={logo}
-				alt="logo"
-				className="img-fluid float-left mr-3"
-				style={{ maxWidth: "200px", float: "left" }}
-				 />
-					<Button  style={{ maxWidth:"20000000px",  float: "left" }} onClick={onClick} >login</Button>
+			<div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh" }}>
+			  {/* <img src={Logimg} alt="imgs/360_F_122719584_A863mvJEcEAnqmGQ4ky6RbXEhsHKw95x.jpg" style={{ maxWidth: "100%", maxHeight: "80%" }} /> */}
+			  <Button onClick={onClick} >login</Button>
+			</div>
+		  );
 
-			</header>
-		</div>
-	)
+		// <div >
+		// 		<h1 className="h1t">Ft_trancendence <br/>
+		// 		</h1>
+		// 			<Button onClick={onClick} >login</Button>
+
+
+		// </div>
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
