@@ -1,6 +1,13 @@
- | 
-react     | (node:25) [DEP_WEBPACK_DEV_SERVER_ON_AFTER_SETUP_MIDDLEWARE] DeprecationWarning: 'onAfterSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
-react     | (Use `node --trace-deprecation ...` to show where the warning was created)
-react     | (node:25) [DEP_WEBPACK_DEV_SERVER_ON_BEFORE_SETUP_MIDDLEWARE] DeprecationWarning: 'onBeforeSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
-react     | Starting the development server...
+vous pouvez utiliser avec la méthode toast.success() de react-toast-notifications :
 
+    content: le contenu de la notification (texte, JSX)
+    appearance: l'apparence de la notification (par défaut: "success")
+    autoDismiss: délai en millisecondes avant que la notification ne se ferme automatiquement (par défaut: true, 5000ms)
+    pauseOnHover: si la notification doit être mise en pause au survol de la souris (par défaut: true)
+    transitionDuration: durée de l'animation de transition en millisecondes (par défaut: 220ms)
+    hideProgressBar: si la barre de progression doit être masquée (par défaut: false)
+    progressClassName: nom de la classe CSS à appliquer à la barre de progression (par défaut: undefined)
+    progressStyle: styles CSS à appliquer à la barre de progression (par défaut: undefined)
+    onDismiss: fonction à exécuter lorsque la notification est fermée (par défaut: undefined)
+    onClick: fonction à exécuter lorsqu'on clique sur la notification (par défaut: undefined)
+    key: clé unique pour la notification (par défaut: générée automatiquement)

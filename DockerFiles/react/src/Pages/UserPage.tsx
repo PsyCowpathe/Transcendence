@@ -1,6 +1,9 @@
 import react from 'react'
 
 import Profil from '../imgs/360_F_122719584_A863mvJEcEAnqmGQ4ky6RbXEhsHKw95x.jpg';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 import React from 'react';
 import { FaCog } from 'react-icons/fa';
@@ -27,6 +30,12 @@ export function AffMyUserPage ()
     //     return{}
 
     // })
+    const Notif = () => {
+      // afficher une notification de succès
+      toast.success('Success Notification !', {
+        position: toast.POSITION.TOP_RIGHT
+    });
+    };
 
     return (
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "2em", height: "100vh" }}>
@@ -38,6 +47,7 @@ export function AffMyUserPage ()
         <p style={{ fontSize: "1.2em", marginBottom: "1em", textAlign: "center", maxWidth: "600px" }}>hey bro ca va frero </p>
         <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
           <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"><button style={{ fontSize: "1.2em", padding: "0.5em 2em", borderRadius: "5px", backgroundColor: "#4285F4", color: "#FFFFFF", border: "none", boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)", cursor: "pointer" }}>Visiter mon site web</button></a>
+        <button onClick={Notif}>NOTIF</button><ToastContainer/>
         </div>
       </div>
     );

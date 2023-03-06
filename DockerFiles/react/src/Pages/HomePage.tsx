@@ -5,7 +5,6 @@ import React from "react";
 import Button from "../style/Button";
 import { SendTokenRequest } from "../Api/SendToken";
 import '../css/App.css'
-
 import { useNavigate } from 'react-router-dom'
 
 
@@ -48,6 +47,7 @@ export function HomePage ({tokenForm, setToken} : any)
 			.then(response => 
 			{
 				console.log("CA SEND")
+				// alt.emit('notify:sendMessage', {iconType: 0, title: 'notification', message: 'this is a notification send from the client', color: 'F88F01', width: 244, duration: 3000})
 				console.log(response.data)
 				if (response.data != null)
 				{
