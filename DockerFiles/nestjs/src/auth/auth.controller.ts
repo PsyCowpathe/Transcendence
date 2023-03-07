@@ -1,7 +1,7 @@
 import { Controller, Get, Redirect, Header, Req, Post, Body, Res, UseGuards } from '@nestjs/common';
-import { Response } from 'express'; 
+import { Response, Request } from 'express'; 
 
-import { AuthDto} from './auth.entity';
+import { AuthDto, RegisterDto, TokenDto } from './auth.entity';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 
@@ -10,7 +10,7 @@ import { sendError, sendSuccess } from '../common/response';
 import { errorMessages, urls } from '../common/global'; 
 
 let crypto = require("crypto");
-let random = crypto.randomBytes(20).toString('hex');
+let random: string; 
 
 @Controller("auth")
 export class AuthController
@@ -20,15 +20,25 @@ export class AuthController
 
 	}
 
-
 	@Get('redirect')
-	Redirect()
+	async Redirect(@Req() req: Request)
 	{
-		console.log('Redirect received');
-		let CLIENT_ID = process.env.UID
-		return (`https://api.intra.42.fr/oauth/authorize?client_id=${CLIENT_ID}
+		console.log("redir req = " + req.headers.authorization);
+		let ret = await this.authService.isTokenValid(req.headers.authorization);
+		if (ret === true)
+		{
+			console.log('Token valide');
+			return (`/`);
+		}
+		else
+		{
+			console.log('Token invalide');
+			let CLIENT_ID = process.env.UID
+			random = crypto.randomBytes(20).toString('hex');
+			return (`https://api.intra.42.fr/oauth/authorize?client_id=${CLIENT_ID}
 			&redirect_uri=${encodeURIComponent(urls.URI)}&response_type=code&scope=public
 			&state=${random}`);
+		}
 	}
 
 	@Post('register')
@@ -51,15 +61,15 @@ export class AuthController
 		{
 			try
 			{
-				const tokenInfo = await this.authService.getUserToken(tokenForm);
+				const apiToken = await this.authService.getUserToken(tokenForm);
+				if (apiToken === undefined)
+					return (sendError(res, -45, errorMessages.CODEINVALID));
 				console.log('User token obtained !');
 				await new Promise(r => setTimeout(r, 500));
-				const hashedToken = await this.authService.hashMyToken(tokenInfo.data.access_token);
-				const userInfo = await this.authService.createUser(tokenInfo.data.access_token, hashedToken);
-				console.log('User successfully added to the database !');
+				const hashedToken = await this.authService.hashMyToken(apiToken);
+				const data = await this.authService.createUser(apiToken, hashedToken);
 				console.log('Sending token to client !');
-				return(res.status(200).cookie('token', hashedToken, { sameSite : 'strict'}).json(tokenInfo.data.access_token));
-				//return (sendSuccess(res, 10, tokenInfo.data.access_token));
+				return (sendSuccess(res, 10, data));
 			}
 			catch (error)
 			{
@@ -70,10 +80,22 @@ export class AuthController
 		}
 	}
 
+	@Post('loginchange')
 	@UseGuards(AuthGuard)
-	@Post('firstconnect')
-	firstConnect(@Res() res: Response)
+	async firstConnect(@Body() registerForm: RegisterDto, @Res() res: Response, @Req() req: Request)
 	{
-		console.log("firstconnect");
+		console.log("changement de login = " + registerForm.name);
+		if (registerForm.name === undefined)
+		{
+			console.log('ERROR 11');
+			return (sendError(res, -44, errorMessages.NONAME));
+		}
+		console.log(req.headers.authorization);
+		let ret = await this.authService.defineName(registerForm.name, req.headers.authorization);
+		if (ret === -1)
+			return (sendError(res, -45, errorMessages.ALREADYTAKEN));
+		let user = await this.authService.getUserInfos(registerForm.name);
+		let data = this.authService.createProfile(true, user);
+		return (sendSuccess(res, 11, data));
 	}
 }

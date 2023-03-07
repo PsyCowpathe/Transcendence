@@ -4,3 +4,21 @@ export class AuthDto
   code: string;
 }
 
+export class RegisterDto
+{
+	name: string;
+}
+
+export class TokenDto
+{
+	token: string;
+}
+
+export class Profile
+{
+	name: string;
+	registered: boolean;
+	newtoken: string | undefined;
+	//status: boolean;
+	//avatar; image;
+}

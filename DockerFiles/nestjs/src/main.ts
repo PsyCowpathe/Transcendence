@@ -7,16 +7,26 @@ import { AppModule } from './app.module';
 
 import * as cookieParser from 'cookie-parser'
 
+import * as fs from 'fs';
+
+import { urls } from './common/global'; 
+
 async function bootstrap()
 {
+
+	/*const httpsOptions =
+	{
+  		key: fs.readFileSync('./secret/cert.key'),
+  		cert: fs.readFileSync('./secret/cert.crt'),
+	};*/
   	const app = await NestFactory.create(AppModule);
 	app.use(cookieParser());
 
 	app.enableCors
 	({
-		allowedHeaders: ['content-type', '*'],
+		allowedHeaders: ['content-type', 'authorization'],
 		credentials : true,
-		origin: ['http://localhost:3000'],
+		origin: [urls.ORIGIN],
 		methods: 'GET, POST',
 
 		//preflightContinue: false,

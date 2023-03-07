@@ -12,18 +12,44 @@ export class UserService
 
 	}
 
-	findOne(id: number): Promise<User | null>
+	findOneById(id: number): Promise<User | null>
 	{
 		return this.usersRepository.findOneBy({ id });
 	}
 
-	findOneByToken(token: string): Promise<User | null>
+	findOneByToken(token: string | undefined): Promise<User | null>
 	{
 		return this.usersRepository.findOneBy({ token });
 	}
 
+	findOneByName(name: string): Promise<User | null>
+	{
+		return this.usersRepository.findOneBy({ name });
+	}
+	
+	findOneByUid(uid: number): Promise<User | null>
+	{
+		return this.usersRepository.findOneBy({ uid });
+	}
+
+	updateName(newName: string, user: User)
+	{
+		return this.usersRepository.update(user.id, {name: newName});
+	}
+
+	updateToken(token: string, user: User)
+	{
+		return this.usersRepository.update(user.id, {token: token});
+	}
+
+
+	updateRegister(bool: boolean, user: User)
+	{
+		return this.usersRepository.update(user.id, {registered: bool});
+	}
+
 	create(newUser : User)
 	{
-		const ret = this.usersRepository.save(newUser)
+		return (this.usersRepository.save(newUser));
 	}
 }
