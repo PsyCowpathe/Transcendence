@@ -7,7 +7,9 @@ import { SendTokenRequest } from "../Api/SendToken";
 import '../css/App.css'
 import { useNavigate } from 'react-router-dom'
 
-
+const info = {
+	name : 'name'
+}
 
 
 export function HomePage ({tokenForm, setToken} : any)
@@ -57,6 +59,7 @@ export function HomePage ({tokenForm, setToken} : any)
 					console.log("tema le Token")
 					console.log(date)
 					console.log(response.data)
+
 					let reg : boolean = response.data.registered
 					if (reg === true)
 					{
@@ -122,7 +125,7 @@ export function HomePage ({tokenForm, setToken} : any)
 	{
 		if (Registered !== false)
 		{
-			setReg(false)
+			setReg(false)   
 			navigate('/affUser')
 		}		
 	}, [Registered])

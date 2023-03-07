@@ -25,14 +25,15 @@ echo 'y' | echo | yarn create react-app frontend --template=typescript
 
 RUN cd && cd frontend && yarn add mini.css@3.0.1 && yarn add axios && yarn add react-cookie@latest 
 
-RUN cd && cd frontend && yarn add @types/react-icons@latest && yarn upgrade @types/react-icons@latest && yarn add react-router-dom@latest @types/react-router-dom@latest && yarn upgrade react-router-dom@latest &&  yarn upgrade @types/react-router-dom@latest && yarn upgrade react-scripts && yarn add --save react-toastify && yarn install
+RUN cd && cd frontend && yarn add @types/react-icons@latest && yarn upgrade @types/react-icons@latest && yarn add react-router-dom@latest @types/react-router-dom@latest && yarn upgrade react-router-dom@latest &&  yarn upgrade @types/react-router-dom@latest && yarn upgrade react-scripts && yarn add react-toastify
+
+RUN cd && cd frontend &&  yarn add @types/socket.io-client &&  yarn install 
 
 RUN rm -rf ~/frontend/src
 
 RUN mkdir ~/frontend/src/
 
 COPY ./src/* /root/frontend/src/
-RUN cd && cd frontend && rm package.json && cd src && mv package.json ..
 
 COPY ./tools/init.sh ./
 

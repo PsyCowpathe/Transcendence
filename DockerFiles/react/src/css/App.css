@@ -4,15 +4,11 @@
 
 
 div{
+  min-height: "100vh";
+  height: auto;
+}
 
-  height: "100%"
-}
-@media (prefers-reduced-motion: no-preference) 
-{
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
+
 .h1t {
   font-family:  Comic Sans MS, Comic Sans, cursive;
   font-size: 24px;
@@ -31,14 +27,14 @@ a{
   
 }
 li {
-  height: max-content;
+  /* height: max-content; */
 
   font-family: sans-serif;
   margin-left: 10px;
   color: rgb(192, 21, 21);
 
 }
-ul.header {
+/* ul.header {
   display: inline;
   list-style-type: none;
   margin: 0;
@@ -56,11 +52,11 @@ ul.header  a {
   display: inline-block;
   
 }
-
-.content  {
+ */
+/* .content  {
   margin-bottom: 10px;
 
-}
+} */
 .App-header {
   background-color: #37002a;
   min-height: max-content;
@@ -71,21 +67,20 @@ ul.header  a {
   /* font-size: calc(10px + 2vmin); */
   color: rgb(48, 223, 176);
 }
-.content h2 
+/* .content h2 
 {
     padding: 0;
     margin: 0;
-}
+} */
 
 .App-link {
   color: #8b230c;
 }
 body
 {
-  margin: 0;
-  background-size:cover;
-  /* background-color: #49c8d3; */
-
+  /* margin: 0; */
+  /* background-size:cover; */
+  /* background : #64ce44; */
    background: linear-gradient(to bottom, #87CEEB, #FFFFFF); 
-    height: max-content;
-}
+    height: auto;
+} 
