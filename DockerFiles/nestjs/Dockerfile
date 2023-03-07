@@ -52,7 +52,8 @@ RUN cd \
 && yarn add cookie-parser \
 && yarn add @types/cookie-parser \
 && yarn add bcrypt \
-&& yarn add @types/bcrypt
+&& yarn add @types/bcrypt \
+&& yarn add @nestjs/websockets @nestjs/platform-socket.io
 
 EXPOSE 3630
 

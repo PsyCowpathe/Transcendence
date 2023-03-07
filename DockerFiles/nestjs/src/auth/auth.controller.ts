@@ -80,6 +80,7 @@ export class AuthController
 		}
 	}
 
+
 	@Post('loginchange')
 	@UseGuards(AuthGuard)
 	async firstConnect(@Body() registerForm: RegisterDto, @Res() res: Response, @Req() req: Request)

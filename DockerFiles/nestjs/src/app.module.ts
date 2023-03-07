@@ -11,9 +11,11 @@ import { HomeModule } from './home/home.module';
 
 import { RelationModule } from './db/relation/relation.module'; 
 
+import { EventsModule } from './websocket/event.module'; 
+
 @Module
 ({
-	imports: [DbModule, UserModule, RelationModule, AuthModule, HomeModule],
+	imports: [DbModule, UserModule, RelationModule, AuthModule, HomeModule, EventsModule],
 })
 export class AppModule
 {
