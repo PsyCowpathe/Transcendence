@@ -15,6 +15,7 @@ import "./css/NavLink.css";
 import "./css/TopBar.css"
 import MyNavLink from "./style/MynavLink";
 import AffMyUserPage from "./Pages/UserPage";
+// import ProfilePictureForm from "./Pages/NewProfilPic";
 
 
 function App() 
@@ -40,6 +41,7 @@ function App()
 		{/* <li><MyNavLink to="/change" label="change your login"/></li> */}
 		<li><MyNavLink to="/chat" label="chat"/></li>
 		<li><MyNavLink to="/affUser" label="My User page"/></li>
+		{/* <li><MyNavLink to="/changepic" label="change my pic"/></li> */}
 		</nav>
 	
 	<Routes>
@@ -62,6 +64,7 @@ function App()
 			 <Route path='/chat' element={<Chat/>}/>
 			<Route path='/affUser' element={<AffMyUserPage/>}/>
 			<Route path='/LoadingPage' element={<LoadingPage/>}/>
+			{/* <Route path='/changepic' element={<ProfilePictureForm />}/> */}
 			</Routes>
 		</BrowserRouter>
 		
