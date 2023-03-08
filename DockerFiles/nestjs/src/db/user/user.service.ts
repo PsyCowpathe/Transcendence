@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Socket } from 'socket.io';
 
 import { User } from './user.entity';
 
@@ -41,7 +42,6 @@ export class UserService
 	{
 		return this.usersRepository.update(user.id, {token: token});
 	}
-
 
 	updateRegister(bool: boolean, user: User)
 	{

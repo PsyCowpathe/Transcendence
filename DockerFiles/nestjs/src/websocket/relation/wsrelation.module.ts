@@ -4,10 +4,13 @@ import { WsRelationGateway } from './wsrelation.gateway';
 import { SocketStrategy } from '../guard/socket.strategy';
 
 import { UserModule } from '../../db/user/user.module';
+import { RelationModule } from '../../db/relation/relation.module';
+
+import { WsRelationService } from './wsrelation.service';
 
 @Module
 ({
-	imports: [UserModule],
-	providers: [WsRelationGateway, SocketStrategy],
+	imports: [UserModule, RelationModule],
+	providers: [WsRelationGateway, SocketStrategy, WsRelationService],
 })
 export class WsRelationModule {}

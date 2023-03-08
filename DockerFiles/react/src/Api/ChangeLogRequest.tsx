@@ -9,10 +9,33 @@ import io from 'socket.io-client';
 export async function RequestChangeLogin(wait : any)
 {
     const config = VraimentIlSaoule()
-    console.log(`btaunez ${config}`)
-    //return await axios.post(`http://localhost:3631/events`, config)
-	const newSocket = io("http://localhost:3631/");
-	let ret = newSocket.emit('events');
-	console.log("ret = " + ret, { depth: null});
+    //return await axios.post(`http://localhost:3630/auth/loginchange`, wait, config)
+	const newSocket = io("http://localhost:3631",
+	{
+  		auth:
+		{
+    		token: "$2b$10$8g5hRoRAnulG6sHtCcYjF.U5Z7.QJ63e6dFrN3zmUtnL0R7dlMRUm" //aurel
+    		//token: "$2b$10$QeZgSMwqa.lTxA5l7/bz8uxLrLJBGzsLOSaZ4OfXYYKUu5iebkdD6" //charle
+		}
+	});
+	console.log("le message send = " + wait);
+	let ret = await newSocket.emit('newlink', wait);
+	newSocket.on('newlink', (msg) =>
+	{
+		console.log("msg = " + msg);
+	});
+	/*let rett = await newSocket.emit('sendfriendrequest', wait);
+	newSocket.on('sendfriendrequest', (msg) =>
+	{
+		console.log("msg = " + msg);
+	});*/
+
+	let rettt = await newSocket.emit('acceptfriendrequest', wait);
+	newSocket.on('acceptfriendrequest', (msg) =>
+	{
+		console.log("msg = " + msg);
+	});
+
+	//console.log("ret = " + ret, { depth: null});
     //return await axios.post(`http://localhost:3630/auth/loginchange`, wait, config)
 }  

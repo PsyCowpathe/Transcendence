@@ -18,6 +18,46 @@ export class RelationService
 		return this.relationRepository.findOneBy({ id });
 	}
 
+	async getRelationStatus(id1: User, id2: User) : Promise<string>
+	{
+		let ret = await this.relationRepository
+			.find
+			({
+				where:
+				[
+					{user1: id1, user2: id2},
+					{user1: id2, user2: id1},
+				]
+			});
+		if (ret[0] === undefined)
+			return ("neutral");
+		console.log("ret = ");
+		console.log(ret);
+		if (ret[0].type === -1 || ret[1].type === -1)
+			return ("enemy");
+		else if (ret[0].type === 2)
+			return ("ally");
+		else if (ret[0].type === 1 && ret[1].type === 1)
+			return ("++");
+		else if (ret[0].type === 0 && ret[1].type === 1)
+		{
+			if (ret[1].user2.id === id1.id)
+				return ("-+")
+			else
+				return ("+-")
+		}
+		else if (ret[0].type === 1 && ret[1].type === 0)
+		{
+			if (ret[0].user2.id === id1.id)
+				return ("-+")
+			else
+				return ("+-")
+		}
+
+		else
+			return ("neutral");
+	}
+
 	/*
 	 * -1 = Bloqué
 	 * 0 = Neutre

@@ -1,4 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Socket } from 'socket.io';
 
 @Entity()
 export class User
