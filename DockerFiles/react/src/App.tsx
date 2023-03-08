@@ -14,9 +14,10 @@ import "./css/List.css";
 import "./css/NavLink.css"; 
 import "./css/TopBar.css"
 import MyNavLink from "./style/MynavLink";
-import AffMyUserPage from "./Pages/UserPage";
+import {AffMyUserPage} from "./Pages/UserPage";
 import ProfilePictureForm from "./Pages/NewProfilPic";
 import { Chat } from "./chat/compTest";
+import { AskFriend } from "./Pages/AskFrindPage";
 function App() 
 {
 	const ProfilePicturePage = () => {
@@ -54,6 +55,7 @@ function App()
 		<li><MyNavLink to="/chatoune" label="chatTest"/></li>
 		<li><MyNavLink to="/affUser" label="My User page"/></li>
 		<li><MyNavLink to="/changepic" label="change my pic"/></li>
+		<li><MyNavLink to="/askFriend" label="demande d ami"/></li>
 		</nav>
 	
 	<Routes>
@@ -74,10 +76,11 @@ function App()
 			<Route path='/' element={<HomePage  tokenForm={tokenForm} setToken={setToken}/>}/> 
 			 <Route path='/change' element={<ChangeLogin/>}/> 
 			 {/* <Route path='/chat' element={<Chat/>}/> */}
-			 <Route path="/chatoune" element ={<Chat username="Alice" />} />
+			 <Route path="/chatoune" element ={<Chat username={"Alice"} />} />
 			<Route path='/affUser' element={<AffMyUserPage/>}/>
 			<Route path='/LoadingPage' element={<LoadingPage/>}/>
 			<Route path='/changepic' element={<ProfilePicturePage />}/>
+			<Route  path='/askFriend' element={<AskFriend />}/>
 			</Routes>
 		</BrowserRouter>
 		

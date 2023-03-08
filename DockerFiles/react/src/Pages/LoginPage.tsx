@@ -2,6 +2,8 @@ import React from "react";
 import {useState, useEffect} from 'react'
 import { RequestChangeLogin } from "../Api/ChangeLogRequest";
 
+
+
 export function ChangeLogin()
 {
     const [login, setLogin] = useState("")
@@ -16,7 +18,7 @@ export function ChangeLogin()
     const replaceLog = (event : any) =>
     {         
         event.preventDefault()
-        console.log(`le nouveau login : ${wait}`)
+        console.log(`le nouveau login : ${wait.name}`)
         RequestChangeLogin(wait)
         
         .then(response => 
@@ -28,7 +30,7 @@ export function ChangeLogin()
         .catch(error =>
         {
             console.log("ERROR AVEC  UN LOGIN")
-            console.log(error)
+            console.log(error.message)
         })
         setwait({name:''})
     }
@@ -40,7 +42,7 @@ export function ChangeLogin()
     useEffect(() =>
     {
         if (Ok === true )
-            window.location.assign('/chat') ///change to profile page
+            window.location.assign('/affUser') ///change to profile page
     }, [Ok])
  
     return(

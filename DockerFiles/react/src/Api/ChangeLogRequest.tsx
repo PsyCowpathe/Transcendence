@@ -6,9 +6,8 @@ import { VraimentIlSaoule } from '../aurelcassecouilles/VraimentIlEstCasseCouill
 
 export async function RequestChangeLogin(wait : any)
 {
-    const config = VraimentIlSaoule()
-    console.log(`btaunez ${config}`)
-    // return await axios.post(`http://10.13.7.1:3631/events`, wait, config)
-
-    return await axios.post(`${urls.SERVER}/auth/loginchnage`, wait, config)
+    let config = VraimentIlSaoule()
+    console.log(`btaunez ${config.headers.Authorization}`)
+    console.log(`ptn de sa mere : ${urls.SERVER}`)
+    return await axios.post(`${urls.SERVER}/auth/loginchange`, wait, config)
 } 

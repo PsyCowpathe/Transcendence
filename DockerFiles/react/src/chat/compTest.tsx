@@ -2,53 +2,86 @@ import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
 import "./chat.css";
 import { urls } from '../global'
+import { VraimentIlSaoule } from "../aurelcassecouilles/VraimentIlEstCasseCouille";
+import SocketManager from "../MesSockets";
+let socket : any
+// let config : any
+let test : boolean = false
+// const config = VraimentIlSaoule().headers.Authorization
+// const socket = io("http://10.14.2.7:3631/",  {
+//   auth:
+//   {
+//     token : config
+//   },
+//   // reconnection: true,
+// }); // Connecter à l'instance Socket.IO
 
-const socket = io("http://10.13.7.1:3631/"); // Connecter à l'instance Socket.IO
-
-interface ChatMessage {
-  username: string;
-  message: string;
-}
+  interface ChatMessage {
+    username: string;
+    message: string;
+  }
 
 interface ChatProps {
   username: string;
 }
+export function Chat( username : ChatProps){
 
-export function Chat( username : any){
+  if (test === false)
+  {
+  //    config = VraimentIlSaoule().headers.Authorization
+  //    socket = io("http://10.14.2.7:3631/",  {
+  //     auth:
+  //     {
+  //       token : config
+  //     },
+  //     // reconnection: true,
+  //   }); // Connecter à l'instance Socket.IO
+  console.log("sadasdasfadsgfbhjasdf-----------------------------")
+  const socketManager = new SocketManager();
+   socket = socketManager.getSocket1(); 
+    test = true    
+  }
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   
   useEffect(() => {
     console.log("biiiite2")
-
+     
     // écoute l'événement de réception de message depuis le serveur
     socket.on("events", (message: ChatMessage) => {
       setMessages([...messages, message]);  
-      console.log(message)
+      console.log("la rep :")
+      console.log(messages)
     });
+    
+   
   }, [messages]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (inputValue) {
       const message = {
-        username,
+        username : username.username,
         message: inputValue,
       };
-    console.log("biiiite")
-
+      console.log(`le user ${message.username}`)
+      console.log("biiiite")
+      
+      // console.log(`config ${config}`)
       // Envoie le message au serveur
-      socket.emit("events", message);
+     // let reponse : any ;
+      console.log(`je send ${message.message}`)
+      await socket.emit("events", message);
+      //console.log(`reponse : ${reponse.data}`)
       setInputValue("");
     }
   };
-
+    
   return (
-    <div style={{height: "100vh"}}className="chat-container">
+    <div style={{height: "50vh"}}className="chat-container">
       <div className="messages-container">
         {messages.map((message, index) => (
           <div className="message" key={index}>
@@ -73,4 +106,4 @@ export function Chat( username : any){
   );
 };
 
-// export de Chat;
+     

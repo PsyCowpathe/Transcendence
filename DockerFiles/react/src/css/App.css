@@ -81,6 +81,7 @@ body
   /* margin: 0; */
   /* background-size:cover; */
   /* background : #64ce44; */
+  height: fit-content;
    background: linear-gradient(to bottom, #87CEEB, #FFFFFF); 
     height: auto;
 } 

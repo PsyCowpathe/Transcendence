@@ -30,10 +30,17 @@ export function AffMyUserPage ()
     //     return{}
 
     // })
+
+  const handleNotificationClick = () => {
+    // Naviguer vers une autre page
+    navigate('/changepic')
+  };
+
     const Notif = () => {
       // afficher une notification de succès
       toast.success('Success Notification !', {
-        position: toast.POSITION.TOP_RIGHT
+        position: toast.POSITION.TOP_RIGHT,
+        onClick: handleNotificationClick
     });
     };
 
@@ -54,4 +61,4 @@ export function AffMyUserPage ()
   }
   
   
-  export default AffMyUserPage;
+  // export default AffMyUserPage;

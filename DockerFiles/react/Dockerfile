@@ -27,7 +27,7 @@ RUN cd && cd frontend && yarn add mini.css@3.0.1 && yarn add axios && yarn add r
 
 RUN cd && cd frontend && yarn add @types/react-icons@latest && yarn upgrade @types/react-icons@latest && yarn add react-router-dom@latest @types/react-router-dom@latest && yarn upgrade react-router-dom@latest &&  yarn upgrade @types/react-router-dom@latest && yarn upgrade react-scripts && yarn add react-toastify
 
-RUN cd && cd frontend &&  yarn add @types/socket.io-client &&  yarn install 
+RUN cd && cd frontend &&  yarn add @types/socket.io-client && yarn add @types/react-dropzone &&  yarn install 
 
 RUN rm -rf ~/frontend/src
 
