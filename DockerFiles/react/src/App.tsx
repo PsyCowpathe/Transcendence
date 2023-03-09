@@ -20,6 +20,7 @@ import { Chat } from "./chat/compTest";
 import { AskFriend } from "./Pages/AskFrindPage";
 function App() 
 {
+
 	const ProfilePicturePage = () => {
 		const handleSubmit = (formData: FormData) => {
 		  // Submit form data to backend API
