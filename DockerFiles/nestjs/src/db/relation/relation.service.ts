@@ -6,11 +6,15 @@ import { Relation } from './relation.entity';
 import { User } from '../user/user.entity';
 
 /*
-* -1	= Bloqué
-* 0 	= Neutre
-* 1 	= Demande
-* 2 	= Amis
-*/
+ * XV		= User1 a bloquer User2
+ * VX		= User2 a bloquer User1
+ * enemy	= Les deux users se sont ignoré
+ * neutral 	= Les deux users sont neutre
+ * +-		= User1 a demander User2 en amis
+ * -+		= User2 a demander User1 en amis
+ * ++		= Les deux users on demander l'amitié
+ * ally		= Les deux users sont amis
+ */
 
 @Injectable()
 export class RelationService
@@ -38,17 +42,20 @@ export class RelationService
 			});
 		if (ret[0] === undefined)
 			return ("neutral");
+		//console.log(ret)
+		if (ret[0].type === -1 && ret[1].type === -1)
+			return ("enemy");
 		else if (ret[0].type === -1)
 		{
 			if (ret[0].user1.id === id1.id)
-				return ("--++");
-			return ("++--");
+				return ("XV"); //user 1 a blocker user 2
+			return ("VX"); //user 2 a blocker user 1
 		}
 		else if (ret[1].type === -1)
 		{
-			if (ret[0].user1.id === id1.id)
-				return ("--++");
-			return ("++--");
+			if (ret[1].user1.id === id1.id)
+				return ("XV"); //user 1 a blocker user 2
+			return ("VX");//user 2 a blocker user 1
 		}
 		else if (ret[0].type === 2)
 			return ("ally");
@@ -85,6 +92,14 @@ export class RelationService
 			return (false);
 		return (true);
 	}
+
+
+/*
+* -1	= Bloqué
+* 0 	= Neutre
+* 1 	= Demande
+* 2 	= Amis
+*/
 
 	async createRequest(sender: User, receiver: User)
 	{
@@ -161,7 +176,7 @@ export class RelationService
 		{
 			await this.relationRepository.createQueryBuilder()
 				.update(Relation)
-				.where("user1 = :id1 AND user2 = :id2", {id1: annoyingMan.id, id2: angryMan.id})
+				.where("user1 = :id1 AND user2 = :id2 AND type = 2", {id1: annoyingMan.id, id2: angryMan.id})
 				.set({type:0})
 				.execute();
 		}

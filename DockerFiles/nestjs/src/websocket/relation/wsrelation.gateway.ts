@@ -52,7 +52,16 @@ export class WsRelationGateway
 			return (client.emit("sendfriendrequest", errorMessages.YOUAREIGNORED));
 		if (ret === -3)
 			return (client.emit("sendfriendrequest", errorMessages.ALREADYFRIEND));
-		client.emit("sendfriendrequest", `Request successfully send to ${data.user} !`);
+		if (ret === -4)
+			return (client.emit("sendfriendrequest", errorMessages.REQUESTTOIGNORE));
+		if (ret === -5)
+			return (client.emit("sendfriendrequest", errorMessages.ALREADYREQUESTED));
+		let test =
+			{
+				message : `Request successfully send to ${data.user} !`,
+				name : data.user
+			}
+		client.emit("sendfriendrequest", test);
 		return ;
 	}
 
@@ -71,6 +80,8 @@ export class WsRelationGateway
 		if (ret === -1)
 			return (client.emit("acceptfriendrequest", errorMessages.INVALIDNAME));
 		if (ret === -2)
+			return (client.emit("acceptfriendrequest", errorMessages.ALREADYFRIEND));
+		if (ret === -3)
 			return (client.emit("acceptfriendrequest", errorMessages.NOREQUEST));
 		client.emit("acceptfriendrequest", `You and ${data.user} are now friends !`);
 	}
@@ -127,7 +138,8 @@ export class WsRelationGateway
 		let ret = await this.wsRelationService.blockUser(sender, data.user);
 		if (ret === -1)
 			return (client.emit("blockuser", errorMessages.INVALIDNAME));
-
+		if (ret === -2)
+			return (client.emit("blockuser", errorMessages.ALREADYIGNORED));
 		client.emit("blockuser", `You now ignore ${data.user} !`);
 	}
 
@@ -147,24 +159,6 @@ export class WsRelationGateway
 			return (client.emit("unblockuser", errorMessages.INVALIDNAME));
 		if (ret === -2)
 			return (client.emit("unblockuser", errorMessages.NOTIGNORED));
-		client.emit("unblockuser", `You now longer ignore ${data.user} !`);
+		client.emit("unblockuser", `You no longer ignore ${data.user} !`);
 	}
-
-
-	/*@UseGuards(SocketGuard)
-	@SubscribeMessage('events')
-	async identity(client: Socket, data: any): Promise<string>
-	{
-		console.log("EVENTS");
-		if (data)
-		{
-			console.log(data, { depth: null});
-			console.log("Data received : " + data.message);
-		}
-		client.emit("events", "test123");
-		if (data)
-			return (data.message);
-		return ("prout");
-		//this.server.sockets.emit('identity', data);
-	}*/
 }

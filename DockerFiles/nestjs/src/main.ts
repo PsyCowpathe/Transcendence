@@ -26,7 +26,7 @@ async function bootstrap()
 	({
 		allowedHeaders: ['content-type', 'authorization'],
 		credentials : true,
-		origin: [urls.ORIGIN],
+		origin: [urls.ORIGIN, "http://10.14.2.7:3000"],
 		methods: 'GET, POST',
 
 		//preflightContinue: false,
@@ -35,4 +35,3 @@ async function bootstrap()
   	await app.listen(3630);
 }
 bootstrap();
-

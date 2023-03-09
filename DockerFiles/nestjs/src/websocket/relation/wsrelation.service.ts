@@ -21,7 +21,7 @@ export class WsRelationService
 		if (user !== null)
 		{
 			this.sockets.set(user.id, client);
-			console.log("New socket saved : " + user.id + " with " + client);
+			console.log("New socket saved : " + user.name);
 		}
 	}
 
@@ -29,7 +29,6 @@ export class WsRelationService
 	{
   		for (let [key, current] of this.sockets.entries())
 		{
-			console.log(key);
     		if (current === socket)
       			return key;
   		}
@@ -42,10 +41,14 @@ export class WsRelationService
 		if (requestedUser === null || askMan === null)
 			return (-1);
 		let ret = await this.relationService.getRelationStatus(askMan, requestedUser);
-		if (ret === "--++" || ret === "++--")
+		if (ret === "VX")
 			return (-2);
 		if (ret === "ally")
 			return (-3);
+		if (ret === "XV" || ret === "enemy")
+			return (-4);
+		if (ret === "++" || ret == "+-")
+			return (-5);
 		this.relationService.createRequest(askMan, requestedUser);
 		let clientToNotify = this.sockets.get(requestedUser.id);
 		if (clientToNotify !== undefined)
@@ -60,15 +63,17 @@ export class WsRelationService
 		if (askMan === null || yesMan === null)
 			return (-1);
 		let ret = await this.relationService.getRelationStatus(yesMan, askMan);
-		if (ret === "++" || ret === "-+")
+		if (ret === "ally")
+			return (-2);
+		if (ret === "-+" || ret === "++")
 		{
 			this.relationService.acceptRequest(yesMan, askMan);
+			let clientToNotify = this.sockets.get(askMan.id);
+			if (clientToNotify !== undefined)
+				clientToNotify.emit("acceptfriendrequest", `${yesMan.name} accepted your friend request !`);
 			return (1);
 		}
-		let clientToNotify = this.sockets.get(askMan.id);
-		if (clientToNotify !== undefined)
-			clientToNotify.emit("acceptfriendrequest", `${yesMan.name} accepted your friend request !`);
-		return (-2);
+		return (-3);
 	}
 
 	async refuseFriendRequest(sender: number, target: string) : Promise<number>
@@ -81,11 +86,11 @@ export class WsRelationService
 		if (ret === "++"|| ret === "-+")
 		{
 			this.relationService.refuseRequest(noMan, askMan);
+			let clientToNotify = this.sockets.get(askMan.id);
+			if (clientToNotify !== undefined)
+				clientToNotify.emit("refusefriendrequest", `${noMan.name} refused your friend request !`);
 			return (1);
 		}
-		let clientToNotify = this.sockets.get(askMan.id);
-		if (clientToNotify !== undefined)
-			clientToNotify.emit("refusefriendrequest", `${noMan.name} refused your friend request !`);
 		return (-2);
 	}
 
@@ -100,11 +105,11 @@ export class WsRelationService
 		if (ret === "ally")
 		{
 			this.relationService.deleteFriend(deletor, victim);
+			let clientToNotify = this.sockets.get(victim.id);
+			if (clientToNotify !== undefined)
+				clientToNotify.emit("deletefriend", `You are no longer friend with ${deletor.name} !`);
 			return (1);
 		}
-		let clientToNotify = this.sockets.get(victim.id);
-		if (clientToNotify !== undefined)
-			clientToNotify.emit("deletefriend", `You are no longer friend with ${deletor.name} !`);
 		return (-2);
 	}
 
@@ -114,6 +119,9 @@ export class WsRelationService
 		let annoyingMan = await this.userService.findOneByName(target);
 		if (annoyingMan === null || angryMan === null)
 			return (-1);
+		let ret = await this.relationService.getRelationStatus(angryMan, annoyingMan);
+		if (ret === "XV" || ret === "enemy")
+			return (-2);
 		this.relationService.Ignore(angryMan, annoyingMan);
 		let clientToNotify = this.sockets.get(annoyingMan.id);
 		if (clientToNotify !== undefined)
@@ -128,7 +136,7 @@ export class WsRelationService
 		if (forgivedMan === null || forgivingMan === null)
 			return (-1);
 		let ret = await this.relationService.getRelationStatus(forgivingMan, forgivedMan);
-		if (ret !== "--++") 
+		if (ret !== "XV" && ret !== "enemy") 
 			return (-2);
 		this.relationService.unIgnore(forgivingMan, forgivedMan);
 		let clientToNotify = this.sockets.get(forgivedMan.id);

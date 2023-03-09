@@ -10,11 +10,14 @@ export enum errorMessages
 	MISSINGNAME = "No name specified in the request !",
 	NOTREGISTERED = "Socket is not registered !",
 	INVALIDNAME = "The user requested dont exist !",
-	YOUAREIGNORED = "This user and you cannot interact !",
+	YOUAREIGNORED = "This user blocked you !",
 	ALREADYFRIEND = "This user and you are already friends !",
+	ALREADYIGNORED = "You already ignored this user !",
 	NOREQUEST = "This user didn't asked to be your friend !",
 	NOTFRIEND = "This user and you arn't friend !",
 	NOTIGNORED = "You dont ignore this user !",
+	REQUESTTOIGNORE = "You cant send a friend request to an user you blocked !",
+	ALREADYREQUESTED = "You already sent a friend request to this user !",
 }
 
 export enum urls
