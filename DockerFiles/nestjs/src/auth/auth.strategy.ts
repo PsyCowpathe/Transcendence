@@ -15,8 +15,7 @@ export class AuthStrategy
 
 	checkRequest(request : any) : Promise<boolean>
 	{
-		console.log('jsuis dans lstartegy');
-		console.log("strat = " + request.headers.authorization);
+		//console.log("strat = " + request.headers.authorization);
 		const promise = this.userService.findOneByToken(request.headers.authorization)
 		.then((user) =>
 		{

@@ -1,3 +1,5 @@
+import { IsNotEmpty, IsString } from 'class-validator';
+
 export class AuthDto
 {
   state: string;
@@ -6,6 +8,8 @@ export class AuthDto
 
 export class RegisterDto
 {
+	@IsNotEmpty()
+	@IsString()
 	name: string;
 }
 
