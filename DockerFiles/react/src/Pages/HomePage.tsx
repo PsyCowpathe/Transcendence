@@ -8,6 +8,8 @@ import '../css/App.css'
 import { useNavigate } from 'react-router-dom'
 import socketManager from "../MesSockets";
 import { VraimentIlSaoule } from "../aurelcassecouilles/VraimentIlEstCasseCouille";
+import { ToastContainer, toast, ToastOptions } from 'react-toastify';
+
 // let Mysocks : any = new SocketManager
 const info = {
 	name : 'name'
@@ -131,6 +133,15 @@ export function HomePage ({tokenForm, setToken} : any)
 			setReg(false)
 			// socketManager.initializeChatSocket(VraimentIlSaoule().headers.Authorization)
 			socketManager.initializeFriendRequestSocket(VraimentIlSaoule().headers.Authorization)
+			// socket.on("sendfriendrequest", (reponse: any) => 
+			// {
+			// 	toast.success(reponse, {
+			// 		position: toast.POSITION.TOP_RIGHT, 
+						  
+			// 	});
+			// 	console.log("la rep :")
+			// 	console.log(reponse)
+			// });
 			// socketManager.initializePogSocket(VraimentIlSaoule().headers.Authorization)
 			console.log(socketManager.getChatSocket())
 			console.log("c bon frere j ai cree ta merde")

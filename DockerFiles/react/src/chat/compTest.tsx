@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
-import io from "socket.io-client";
 import "./chat.css";
 import {socketManager} from "../Pages/HomePage";
-import { HomePage } from "../Pages/HomePage";
 import { VraimentIlSaoule } from "../aurelcassecouilles/VraimentIlEstCasseCouille";
-// let socket : any
-// let config : any
 let test : boolean = false
 let socket: any
 

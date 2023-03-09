@@ -1,9 +1,5 @@
 
-import { NavLink } from "react-router-dom";
-// import './css/App.css';
-import {useState, useEffect} from 'react'
-import axios from 'axios';
-// import { CookiesProvider, useCookies } from 'react-cookie';
+import {useState} from 'react'
 import { BrowserRouter} from 'react-router-dom'
 import {  Routes, Route } from 'react-router-dom';
 import LoadingPage from "./Pages/LoadingPage";
@@ -15,8 +11,6 @@ import "./css/NavLink.css";
 import "./css/TopBar.css"
 import MyNavLink from "./style/MynavLink";
 import {AffMyUserPage} from "./Pages/UserPage";
-import ProfilePictureForm from "./Pages/NewProfilPic";
-import { Chat } from "./chat/compTest";
 import { AskFriend } from "./Pages/AskFrindPage";
 function App() 
 {

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { FaSpinner } from "react-icons/fa";
 import '../css/index.css'
 import Logo from '../imgs/chargement.png'
 

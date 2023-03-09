@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { VraimentIlSaoule } from '../aurelcassecouilles/VraimentIlEstCasseCouille'
-import io from "socket.io-client";
 import '../css/Buttons.css'
-import Button from "../style/Button";
-import { HomePage } from "./HomePage";
 import { socketManager } from '../Pages/HomePage'
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast, ToastOptions } from 'react-toastify';
 
 let test : boolean = false
 let socket: any
@@ -16,7 +13,7 @@ export  function AskFriend()
 {
 	//console.log(socket )
 	
-	if (tt ===true && socket && socket.connected != false)
+	if (tt === true && socket && socket.connected !== false)
 	{
 		console.log("ta mere l groooooosse pute")
 		tt = false ;
@@ -37,7 +34,7 @@ export  function AskFriend()
 				test = true
 			}
 		}
-		if (socket && socket.connected != false)
+		if (socket && socket.connected !== false)
 		{
 			console.log("ta mere l groooooosse pute")
 			tt = false ;
@@ -49,9 +46,49 @@ export  function AskFriend()
 	{
 		user : string;
 	}
+// 	type ConfirmationToastProps = {
+// 		response: string;
+// 		Refusednow: (user: user) => void;
+// 		Acceptnow: (user: user) => void;
+// 		user: user;
+// 	  };
+// function ConfirmationToast({ response, Refusednow, Acceptnow, user } : ConfirmationToastProps) {
+//   const handleYesClick = () => {
+// 	  toast.dismiss();
+// 	  Acceptnow(user);
+// };
+
+// const handleNoClick = () => {
+// 	toast.dismiss();
+// 	Refusednow(user);
+//   };
+
+//   const actionButtons = (
+//     <div>
+//       <button onClick={handleYesClick}>Oui</button>
+//       <button onClick={handleNoClick}>Non</button>
+//     </div>
+//   );
+
+//   toast.success(response, {
+//     closeButton: false,
+//     autoClose: false,
+//     // actionButtons: actionButtons,
+//   });
+
+//   return null;
+// }
+
 	
-	
-	
+const MyCustomToast = ({response, Acceptnow, Refusednow} : any) => {
+	return (
+	  <div>
+		<p> |{response.message}|</p>
+		<button onClick={ () => {Acceptnow(response)}}>Oui</button>
+		<button onClick={ () => {Refusednow(response)}}>Non</button>
+	  </div>
+	);
+  };
 	
 	
 	///////////////////////////////////////////////////////////////////////// request send      ///////////////////////////////////////////////////////
@@ -63,12 +100,20 @@ export  function AskFriend()
 		// écoute l'événement de réception de message depuis le serveur
 		socket.on("sendfriendrequest", (reponse: any) => 
 		{
-			toast.success(reponse, {
-				position: toast.POSITION.TOP_RIGHT
+			// ConfirmationToast
+			// ({
+			// 	response: reponse,
+			// 	Refusednow: Refusednow,
+			// 	Acceptnow: Acceptnow,
+			// 	user: userAsk
+			// });
+				toast.success( <MyCustomToast response={reponse} Acceptnow={Acceptnow} Refusednow={Refusednow} usera={userAc} />, {
+					position: toast.POSITION.TOP_RIGHT, 
+						
+				});
+				console.log("la rep :")
+				console.log(reponse)
 			});
-			console.log("la rep :")
-			console.log(reponse)
-		});
 		
 		return () => socket.off("aurel sais pas coder et il pense que ca viens de moi")
 	}, [])
@@ -95,10 +140,16 @@ export  function AskFriend()
 		socket.removeListener('acceptfriendrequest');
 		console.log("demande d amis listen")
 		// écoute l'événement de réception de message depuis le serveur
-		socket.on("acceptfriendrequest", (reponse: any) => 
+		socket.on("acceptfriendrequest", (reponse : any) => 
 		{
 			toast.success(reponse, {
-        position: toast.POSITION.TOP_RIGHT
+        position: toast.POSITION.TOP_RIGHT,
+		// closeButton: (
+		// 	<div>
+		// 	  <button onClick={Acceptnow(userAc)}>Bouton 1</button>
+		// 	  <button onClick={Refusednow(userAc)}>Bouton 2</button>
+		// 	</div>
+		//   ),
     });
 			console.log("la rep :")
 			console.log(reponse)
@@ -114,12 +165,22 @@ export  function AskFriend()
 		await socket.emit("acceptfriendrequest", userAc);
 		setUserAccept({user:''})
 	}
+
 	const ChangeAccept = ((event : any) =>
 	{
 		setUserAccept({user : event.target.value})
 	})
+
+	const Acceptnow = async(userAs : user) =>
+	{
+		console.log(userAs)
+		await socket.emit("acceptfriendrequest", userAs);
+
+	}
 	
 	///////////////////////////////////////////////////////////////////////// request refused      ///////////////////////////////////////////////////////
+
+
 
 	const [userRefuse, setUserRefused] = useState<user>({user:''})
 	useEffect(() =>
@@ -150,6 +211,12 @@ export  function AskFriend()
 	{
 		setUserRefused({user : event.target.value})
 	})
+	const Refusednow = async (userRef : user) =>
+	{
+		console.log(userRef)
+		await socket.emit("refusefriendrequest", userRef);
+
+	}
 
 	///////////////////////////////////////////////////////////////////////// request block      ///////////////////////////////////////////////////////
 
@@ -297,48 +364,48 @@ export  function AskFriend()
 		<br /><br /><br /><br /><br /><br />
 		{/* ///////////////////////////////////////////////////////////////////////// request block      /////////////////////////////////////////////////////// */}
 	
-	<form action="submit" onSubmit={block}>
-	<input 
-	
-	value={userblock.user}
-	type="text"
-	placeholder='friend'
-	onChange={Changeblock}
-	/>
-	<button>block</button>
-	</form><ToastContainer/>
+		<form action="submit" onSubmit={block}>
+		<input 
+
+		value={userblock.user}
+		type="text"
+		placeholder='friend'
+		onChange={Changeblock}
+		/>
+		<button>block</button>
+		</form><ToastContainer/>
+		
+ 		<br /><br /><br /><br /><br /><br />
+		
+		 {/* ///////////////////////////////////////////////////////////////////////// request delete      /////////////////////////////////////////////////////// */}
+
+
+		 <form action="submit" onSubmit={deleteU}>
+		<input 
+
+		value={userdelete.user}
+		type="text"
+		placeholder='friend'
+		onChange={Changedelete}
+		/>
+		<button>delete</button>
+		</form><ToastContainer/>
+
+		<br /><br /><br /><br /><br /><br />
+		
+		{/* ///////////////////////////////////////////////////////////////////////// request unblock      /////////////////////////////////////////////////////// */}
+
+
+		<form action="submit" onSubmit={unblock}>
+ 		<input 
  
- 	<br /><br /><br /><br /><br /><br />
-	
-	 {/* ///////////////////////////////////////////////////////////////////////// request delete      /////////////////////////////////////////////////////// */}
-
-
-	 <form action="submit" onSubmit={deleteU}>
-	<input 
-	
-	value={userdelete.user}
-	type="text"
-	placeholder='friend'
-	onChange={Changedelete}
-	/>
-	<button>delete</button>
-	</form><ToastContainer/>
-
-	<br /><br /><br /><br /><br /><br />
-	
-	{/* ///////////////////////////////////////////////////////////////////////// request unblock      /////////////////////////////////////////////////////// */}
-
-
-	<form action="submit" onSubmit={unblock}>
- <input 
- 
- value={userunblock.user}
- type="text"
- placeholder='friend'
- onChange={Changeunblock}
- />
- <button>unblock</button>
- </form><ToastContainer/>
+ 		value={userunblock.user}
+ 		type="text"
+ 		placeholder='friend'
+ 		onChange={Changeunblock}
+ 		/>
+ 		<button>unblock</button>
+ 		</form><ToastContainer/>
 
 		</div>
 		);

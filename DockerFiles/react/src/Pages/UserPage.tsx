@@ -1,4 +1,3 @@
-import react from 'react'
 
 import Profil from '../imgs/360_F_122719584_A863mvJEcEAnqmGQ4ky6RbXEhsHKw95x.jpg';
 import { ToastContainer, toast } from 'react-toastify';
@@ -8,9 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import React from 'react';
 import { FaCog } from 'react-icons/fa';
 import '../css/Buttons.css';
-import { ChangeLogin } from './LoginPage';
 import { useNavigate } from 'react-router-dom'
-import { BrowserRouter, Route } from 'react-router-dom';
 
 
 
