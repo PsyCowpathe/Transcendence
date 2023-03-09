@@ -39,7 +39,7 @@ export  function AskFriend()
 		}
 		if (socket && socket.connected != false)
 		{
-			console.log("ta mere l groooooosse pute")
+			console.log("ta mere l groooooosse pute")  
 			tt = false ;
 		}
 		console.log(socket)
