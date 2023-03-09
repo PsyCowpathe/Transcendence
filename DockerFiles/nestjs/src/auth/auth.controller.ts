@@ -69,6 +69,7 @@ export class AuthController
 				const hashedToken = await this.authService.hashMyToken(apiToken);
 				const data = await this.authService.createUser(apiToken, hashedToken);
 				console.log('Sending token to client !');
+				console.log(hashedToken);
 				return (sendSuccess(res, 10, data));
 			}
 			catch (error)

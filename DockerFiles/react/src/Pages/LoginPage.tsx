@@ -25,7 +25,7 @@ export function ChangeLogin()
         {
             setOk(true)
             console.log("JE SEND UN LOGIN")   
-            console.log(response.data)
+            console.log(response)
         })
         .catch(error =>
         {
@@ -41,8 +41,13 @@ export function ChangeLogin()
     })
     useEffect(() =>
     {
+<<<<<<< HEAD
         if (Ok === true )
             window.location.assign('/affUser') ///change to profile page
+=======
+        //if (Ok === true )
+          //  window.location.assign('/chat') ///change to profile page
+>>>>>>> master
     }, [Ok])
  
     return(

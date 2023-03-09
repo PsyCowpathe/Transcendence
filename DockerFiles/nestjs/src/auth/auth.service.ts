@@ -61,19 +61,16 @@ export class AuthService
 			console.log("Erreur 4");
 			return (error);
 		});
-		const user = await this.getUserInfos(undefined, response.data.id);
+		let user = await this.getUserInfos(undefined, response.data.id);
 		if (user === null)
 		{
-			const newUser =
-			{
-				id : response.data.id,
-				token : hashedToken,
-				name : response.data.login,
-				uid : response.data.id,
-				registered: false,
-			}
+			let newUser : User = new User(); 
+			newUser.token = hashedToken;
+			newUser.name = response.data.login;
+			newUser.uid = response.data.id;
+			newUser.registered = false;
 			this.userService.create(newUser);
-			data = this.createProfile(false, user, hashedToken);
+			data = this.createProfile(false, newUser, hashedToken);
 			console.log('User successfully added to the database !');
 		}
 		else 
