@@ -56,7 +56,7 @@ export class WsRelationService
 			let response =
 			{
 				message : `${askMan.name} send you a friend request !`,
-				name : askMan.name,
+				user : askMan.name,
 			}
 			clientToNotify.emit("sendfriendrequest", response);
 		}
