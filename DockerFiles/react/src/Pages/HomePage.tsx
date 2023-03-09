@@ -6,7 +6,9 @@ import Button from "../style/Button";
 import { SendTokenRequest } from "../Api/SendToken";
 import '../css/App.css'
 import { useNavigate } from 'react-router-dom'
-
+import socketManager from "../MesSockets";
+import { VraimentIlSaoule } from "../aurelcassecouilles/VraimentIlEstCasseCouille";
+// let Mysocks : any = new SocketManager
 const info = {
 	name : 'name'
 }
@@ -56,6 +58,7 @@ export function HomePage ({tokenForm, setToken} : any)
 					console.log(`voila la data de la reponse ${response.data.newtoken}`)
 					localStorage.setItem('Token', response.data.newtoken);
 					const date : any = localStorage.getItem('Token')
+
 					console.log("tema le Token")
 					console.log(date)
 					console.log(response.data)
@@ -125,11 +128,16 @@ export function HomePage ({tokenForm, setToken} : any)
 	{
 		if (Registered !== false)
 		{
-			setReg(false)   
+			setReg(false)
+			// socketManager.initializeChatSocket(VraimentIlSaoule().headers.Authorization)
+			socketManager.initializeFriendRequestSocket(VraimentIlSaoule().headers.Authorization)
+			// socketManager.initializePogSocket(VraimentIlSaoule().headers.Authorization)
+			console.log(socketManager.getChatSocket())
+			console.log("c bon frere j ai cree ta merde")
 			navigate('/affUser')
 		}		
 	}, [Registered])
-
+	
 
 	return (
 			<div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh" }}>
@@ -142,10 +150,11 @@ export function HomePage ({tokenForm, setToken} : any)
 		// 		<h1 className="h1t">Ft_trancendence <br/>
 		// 		</h1>
 		// 			<Button onClick={onClick} >login</Button>
-
-
+		
+		
 		// </div>
-}
+	}
+	export {socketManager};
 
 
 

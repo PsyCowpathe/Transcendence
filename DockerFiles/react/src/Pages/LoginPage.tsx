@@ -7,12 +7,12 @@ import { RequestChangeLogin } from "../Api/ChangeLogRequest";
 export function ChangeLogin()
 {
     const [login, setLogin] = useState("")
-	interface mabite
+	interface user
 	{
 		name : string;
 	}
 
-    const [wait, setwait] = useState<mabite>({name:''})
+    const [wait, setwait] = useState<user>({name:''})
     const [Ok, setOk] = useState<boolean>(false)
     
     const replaceLog = (event : any) =>

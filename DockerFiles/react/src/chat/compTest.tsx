@@ -1,46 +1,41 @@
 import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
 import "./chat.css";
-import { urls } from '../global'
+import {socketManager} from "../Pages/HomePage";
+import { HomePage } from "../Pages/HomePage";
 import { VraimentIlSaoule } from "../aurelcassecouilles/VraimentIlEstCasseCouille";
-import SocketManager from "../MesSockets";
-let socket : any
+// let socket : any
 // let config : any
 let test : boolean = false
-// const config = VraimentIlSaoule().headers.Authorization
-// const socket = io("http://10.14.2.7:3631/",  {
-//   auth:
-//   {
-//     token : config
-//   },
-//   // reconnection: true,
-// }); // Connecter à l'instance Socket.IO
+let socket: any
 
-  interface ChatMessage {
-    username: string;
+
+interface ChatMessage {
+  username: string;
     message: string;
   }
-
-interface ChatProps {
-  username: string;
-}
-export function Chat( username : ChatProps){
-
-  if (test === false)
-  {
-  //    config = VraimentIlSaoule().headers.Authorization
-  //    socket = io("http://10.14.2.7:3631/",  {
-  //     auth:
-  //     {
-  //       token : config
-  //     },
-  //     // reconnection: true,
-  //   }); // Connecter à l'instance Socket.IO
-  console.log("sadasdasfadsgfbhjasdf-----------------------------")
-  const socketManager = new SocketManager();
-   socket = socketManager.getSocket1(); 
-    test = true    
+  
+  interface ChatProps {
+    username: string;
   }
+  export function Chat( username : ChatProps){
+   socket = socketManager.getChatSocket()
+    
+    console.log("je suis null1")
+    
+    if (socket == null)
+    { 
+      console.log("je suis null2")
+    if ( test === false && VraimentIlSaoule().headers.Authorization !== null)
+    {
+      console.log("je suis null3")
+      socket = socketManager.initializeChatSocket(VraimentIlSaoule().headers.Authorization)
+      console.log(socket )
+      
+      test = true
+    }
+  }
+    
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   
