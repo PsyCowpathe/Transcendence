@@ -52,7 +52,14 @@ export class WsRelationService
 		this.relationService.createRequest(askMan, requestedUser);
 		let clientToNotify = this.sockets.get(requestedUser.id);
 		if (clientToNotify !== undefined)
-			clientToNotify.emit("sendfriendrequest", `${askMan.name} send you a friend request !`);
+		{
+			let response =
+			{
+				message : `${askMan.name} send you a friend request !`,
+				name : askMan.name,
+			}
+			clientToNotify.emit("sendfriendrequest", response);
+		}
 		return (1);
 	}
 

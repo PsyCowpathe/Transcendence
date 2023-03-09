@@ -56,12 +56,7 @@ export class WsRelationGateway
 			return (client.emit("sendfriendrequest", errorMessages.REQUESTTOIGNORE));
 		if (ret === -5)
 			return (client.emit("sendfriendrequest", errorMessages.ALREADYREQUESTED));
-		let test =
-			{
-				message : `Request successfully send to ${data.user} !`,
-				name : data.user
-			}
-		client.emit("sendfriendrequest", test);
+		client.emit("sendfriendrequest", `Request successfully send to ${data.user} !`);
 		return ;
 	}
 
