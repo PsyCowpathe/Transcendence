@@ -1,0 +1,21 @@
+
+
+
+----------------------------------HTTPS CERT SSL-------------------------------
+
+L'erreur que vous rencontrez est probablement due à l'utilisation du protocole HTTPS sur votre serveur local. Pour résoudre ce problème, vous pouvez essayer de suivre les étapes suivantes :
+
+    Assurez-vous que vous avez généré un certificat SSL pour votre application React. Vous pouvez utiliser des outils comme OpenSSL pour générer un certificat auto-signé.
+    Assurez-vous que vous avez installé les certificats SSL sur votre machine locale. Si vous utilisez Windows, vous pouvez les ajouter via les paramètres Internet de votre navigateur.
+    Modifiez votre script "start" dans le fichier package.json en ajoutant la variable d'environnement HTTPS=true. Le script devrait ressembler à ceci :
+
+json
+
+"start": "HTTPS=true react-scripts start"
+
+    Redémarrez votre application en exécutant la commande npm start.
+
+Cela devrait permettre à votre application React de s'exécuter sur le protocole HTTPS.
+
+
+-------------------------------------------------------------------
