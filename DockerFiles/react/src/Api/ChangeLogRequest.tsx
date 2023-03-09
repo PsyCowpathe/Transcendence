@@ -8,6 +8,7 @@ import io from 'socket.io-client';
 
 export async function RequestChangeLogin(wait : any)
 {
+	wait.user = wait.name;
     const config = VraimentIlSaoule()
     //return await axios.post(`http://localhost:3630/auth/loginchange`, wait, config)
 	const newSocket = io("http://localhost:3631",
@@ -24,17 +25,17 @@ export async function RequestChangeLogin(wait : any)
 	{
 		console.log("msg = " + msg);
 	});
-	/*let rett = await newSocket.emit('sendfriendrequest', wait);
+	let rett = await newSocket.emit('sendfriendrequest', wait);
 	newSocket.on('sendfriendrequest', (msg) =>
 	{
 		console.log("msg = " + msg);
-	});*/
+	});
 
-	let rettt = await newSocket.emit('acceptfriendrequest', wait);
+	/*let rettt = await newSocket.emit('acceptfriendrequest', wait);
 	newSocket.on('acceptfriendrequest', (msg) =>
 	{
 		console.log("msg = " + msg);
-	});
+	});*/
 
 	//console.log("ret = " + ret, { depth: null});
     //return await axios.post(`http://localhost:3630/auth/loginchange`, wait, config)
