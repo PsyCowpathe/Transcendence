@@ -53,7 +53,8 @@ RUN cd \
 && yarn add @types/cookie-parser \
 && yarn add bcrypt \
 && yarn add @types/bcrypt \
-&& yarn add @nestjs/websockets @nestjs/platform-socket.io
+&& yarn add @nestjs/websockets @nestjs/platform-socket.io \
+&& yarn add class-validator
 
 EXPOSE 3630
 

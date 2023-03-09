@@ -23,7 +23,7 @@ export class AuthController
 	@Get('redirect')
 	async Redirect(@Req() req: Request)
 	{
-		console.log("redir req = " + req.headers.authorization);
+		//console.log("redir req = " + req.headers.authorization);
 		let ret = await this.authService.isTokenValid(req.headers.authorization);
 		if (ret === true)
 		{
@@ -45,8 +45,8 @@ export class AuthController
 	async Register(@Body() tokenForm: AuthDto, @Res() res: Response)
 	{
 		console.log('Register received');
-		console.log("state = " + tokenForm.state);
-		console.log("code = " + tokenForm.code);
+		//console.log("state = " + tokenForm.state);
+		//console.log("code = " + tokenForm.code);
 		if (tokenForm.state === undefined || tokenForm.code === undefined)
 		{
 			console.log('ERROR 1');
@@ -69,7 +69,7 @@ export class AuthController
 				const hashedToken = await this.authService.hashMyToken(apiToken);
 				const data = await this.authService.createUser(apiToken, hashedToken);
 				console.log('Sending token to client !');
-				console.log(hashedToken);
+				//console.log(hashedToken);
 				return (sendSuccess(res, 10, data));
 			}
 			catch (error)

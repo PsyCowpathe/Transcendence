@@ -86,8 +86,6 @@ export class AuthService
 	createProfile(registered: boolean, userInfos: any, hashedToken?: string) : Profile
 	{
 		let data: Profile;
-		console.log("info ");
-		console.dir(userInfos, { depth: null })
 		data =
 		{
 			name : userInfos.name,
@@ -99,7 +97,6 @@ export class AuthService
 
 	async defineName(name: string, token: string | undefined) : Promise<number>
 	{
-		console.log(token);
 		let ret = await this.userService.findOneByName(name);
 		if (ret !== null)
 			return (-1);
@@ -130,7 +127,6 @@ export class AuthService
 
 	async isTokenValid(token: string | undefined): Promise<boolean>
 	{
-		console.log("token = " + token);
 		if (token === undefined)
 			return (false);
 		const user = await this.userService.findOneByToken(token);
