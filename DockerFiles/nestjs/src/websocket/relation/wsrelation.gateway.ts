@@ -30,7 +30,6 @@ export class WsRelationGateway
 		this.wsRelationService.saveRelationSocket(client, clientToken);
 	}
 
-
 	@UseGuards(SocketGuard)
 	@SubscribeMessage('sendfriendrequest')
 	async sendFriendRequest(client: Socket, data: any)
