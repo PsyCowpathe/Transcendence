@@ -211,11 +211,11 @@ const MyCustomToast = ({response, Acceptnow, Refusednow} : any) => {
 	{
 		setUserRefused({user : event.target.value})
 	})
+
 	const Refusednow = async (userRef : user) =>
 	{
 		console.log(userRef)
 		await socket.emit("refusefriendrequest", userRef);
-
 	}
 
 	///////////////////////////////////////////////////////////////////////// request block      ///////////////////////////////////////////////////////

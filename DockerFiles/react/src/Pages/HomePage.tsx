@@ -8,7 +8,6 @@ import '../css/App.css'
 import { useNavigate } from 'react-router-dom'
 import socketManager from "../MesSockets";
 import { VraimentIlSaoule } from "../aurelcassecouilles/VraimentIlEstCasseCouille";
-import { ToastContainer, toast, ToastOptions } from 'react-toastify';
 
 // let Mysocks : any = new SocketManager
 const info = {

@@ -69,9 +69,9 @@ function App()
         </Route>
       </Switch> */}
 			<Route path='/' element={<HomePage  tokenForm={tokenForm} setToken={setToken}/>}/> 
-			 <Route path='/change' element={<ChangeLogin/>}/> 
-			 {/* <Route path='/chat' element={<Chat/>}/> */}
-			 {/* <Route path="/chatoune" element ={<Chat username={"Alice"} />} /> */}
+			<Route path='/change' element={<ChangeLogin/>}/> 
+			{/* <Route path='/chat' element={<Chat/>}/> */}
+			{/* <Route path="/chatoune" element ={<Chat username={"Alice"} />} /> */}
 			<Route path='/affUser' element={<AffMyUserPage/>}/>
 			<Route path='/LoadingPage' element={<LoadingPage/>}/>
 			<Route path='/changepic' element={<ProfilePicturePage />}/>
