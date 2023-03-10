@@ -26,7 +26,7 @@ async function bootstrap()
 	({
 		allowedHeaders: ['content-type', 'authorization'],
 		credentials : true,
-		origin: [urls.ORIGIN, "http://10.14.2.7:3000"],
+		origin: [urls.ORIGIN],
 		methods: 'GET, POST',
 
 		//preflightContinue: false,

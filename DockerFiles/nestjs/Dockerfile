@@ -56,7 +56,7 @@ RUN cd \
 && yarn add @nestjs/websockets @nestjs/platform-socket.io \
 && yarn add class-validator
 
-EXPOSE 3630
+EXPOSE 3630 3631 3632
 
 RUN zsh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" || true
 
