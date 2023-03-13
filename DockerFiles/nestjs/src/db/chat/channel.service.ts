@@ -18,6 +18,11 @@ export class ChannelService
 		return (this.channelRepository.findOneBy({ id }));
 	}
 
+	findOneByName(name: string): Promise<Channel | null>
+	{
+		return (this.channelRepository.findOneBy({ name }));
+	}
+
 	create(newChannel: Channel)
 	{
 		return (this.channelRepository.save(newChannel));

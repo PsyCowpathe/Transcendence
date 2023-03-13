@@ -18,6 +18,14 @@ export enum errorMessages
 	NOTIGNORED = "You dont ignore this user !",
 	REQUESTTOIGNORE = "You cant send a friend request to an user you blocked !",
 	ALREADYREQUESTED = "You already sent a friend request to this user !",
+	CHANNELALREADYEXIST = "This channel name is already used !",
+	PRIVATEORPASSWORD = "You cant specify a password when creating a private channel !",
+	CHANNELDONTEXIST = "The channel specified dont exist !",
+	ALREADYADMIN = "This user is already an adminstrator of this channel !",
+	NOTANADMINISTRATOR = "This user is not an administrator of this channel !",
+	NOTINTHISCHANNEL = "This user is not in this channel !",
+	ALREADYINCHANNEL = "You are already in this ",
+	INCORRECTPASSWORD = "The password provided dont match !",
 }
 
 export enum urls

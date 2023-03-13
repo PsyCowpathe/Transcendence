@@ -16,7 +16,7 @@ export class Channel
 	owner: User;
 
 	@Column()
-	visibility: number;
+	visibility: string;
 
 	@Column()
 	password: string;
@@ -75,6 +75,21 @@ export class Mutes
 
 @Entity()
 export class JoinChannel
+{
+	@PrimaryGeneratedColumn()
+	id: number;
+
+	@OneToOne(() => Channel)
+	@JoinColumn()
+	channel: Channel
+
+	@OneToOne(() => User)
+	@JoinColumn()
+	user: User;
+}
+
+@Entity()
+export class InviteList
 {
 	@PrimaryGeneratedColumn()
 	id: number;

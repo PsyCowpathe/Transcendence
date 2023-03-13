@@ -18,6 +18,22 @@ export class JoinChannelService
 		return (this.joinChannelRepository.findOneBy({ id }));
 	}
 
+	async findOneByJoined(channel: Channel, user: User): Promise<JoinChannel | null>
+	{
+
+		let ret = await this.joinChannelRepository
+			.find
+			({
+				where:
+				[
+					{channel: channel, user: user}
+				]
+			});
+			if (ret[0] === undefined)
+				return (null);
+			return (ret[0]);
+	}
+
 	create(newJoin: JoinChannel)
 	{
 		return (this.joinChannelRepository.save(newJoin));

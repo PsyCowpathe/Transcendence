@@ -6,7 +6,7 @@ import { Channel, Admins } from './chat.entity';
 import { User } from '../user/user.entity';
 
 @Injectable()
-export class AdminService
+export class AdminsService
 {
 	constructor(@InjectRepository(Admins) private adminsRepository: Repository<Admins>,)
 	{
@@ -16,6 +16,21 @@ export class AdminService
 	findOneById(id: number): Promise<Admins | null>
 	{
 		return (this.adminsRepository.findOneBy({ id }));
+	}
+
+	async findOneByAdmin(channel: Channel, admin: User): Promise<Admins | null>
+	{
+		let ret = await this.adminsRepository
+			.find
+			({
+				where:
+				[
+					{channel: channel, user: admin}
+				]
+			});
+			if (ret[0] === undefined)
+				return (null);
+			return (ret[0]);
 	}
 
 	create(newAdmin: Admins)

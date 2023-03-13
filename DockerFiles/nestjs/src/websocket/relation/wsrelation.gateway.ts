@@ -40,10 +40,7 @@ export class WsRelationGateway
 			return (client.emit("sendfriendrequest", errorMessages.MISSINGNAME));
 		let sender : number | undefined;
 		if ((sender = this.wsRelationService.isRegistered(client)) === undefined)
-		{
-			client.emit("sendfriendrequest", errorMessages.NOTREGISTERED);
-			return ;
-		}
+			return (client.emit("sendfriendrequest", errorMessages.NOTREGISTERED));
 		let ret = await this.wsRelationService.sendFriendRequest(sender, data.user);
 		if (ret === -1)
 			return (client.emit("sendfriendrequest", errorMessages.INVALIDNAME));
