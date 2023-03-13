@@ -26,6 +26,8 @@ a{
   color: rgb(26, 137, 50);
   
 }
+
+
 li {
   /* height: max-content; */
 
@@ -85,3 +87,6 @@ body
    background: linear-gradient(to bottom, #87CEEB, #FFFFFF); 
     height: auto;
 } 
+.Routes{
+  height: auto;
+}

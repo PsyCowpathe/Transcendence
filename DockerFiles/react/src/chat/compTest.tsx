@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
+import io from "socket.io-client";
 import "./chat.css";
 import {socketManager} from "../Pages/HomePage";
 import { VraimentIlSaoule } from "../aurelcassecouilles/VraimentIlEstCasseCouille";
+// let socket : any
+// let config : any
 let test : boolean = false
 let socket: any
 
@@ -31,7 +34,7 @@ interface ChatMessage {
       test = true
     }
   }
-    
+        
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   
@@ -61,12 +64,10 @@ interface ChatMessage {
       console.log(`le user ${message.username}`)
       console.log("biiiite")
       
-      // console.log(`config ${config}`)
-      // Envoie le message au serveur
-     // let reponse : any ;
+
       console.log(`je send ${message.message}`)
       await socket.emit("events", message);
-      //console.log(`reponse : ${reponse.data}`)
+
       setInputValue("");
     }
   };

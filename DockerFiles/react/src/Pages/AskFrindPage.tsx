@@ -107,10 +107,20 @@ const MyCustomToast = ({response, Acceptnow, Refusednow} : any) => {
 			// 	Acceptnow: Acceptnow,
 			// 	user: userAsk
 			// });
-				toast.success( <MyCustomToast response={reponse} Acceptnow={Acceptnow} Refusednow={Refusednow} usera={userAc} />, {
+			if (reponse.message === `${reponse.user} send you a friend request !`)
+				{
+					toast.success( <MyCustomToast response={reponse} Acceptnow={Acceptnow} Refusednow={Refusednow} usera={userAc} />, {
 					position: toast.POSITION.TOP_RIGHT, 
 						
 				});
+			}
+			else
+			{
+				toast.success(reponse, {
+					position: toast.POSITION.TOP_RIGHT,
+				});
+			
+			}
 				console.log("la rep :")
 				console.log(reponse)
 			});

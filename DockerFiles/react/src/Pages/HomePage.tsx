@@ -8,19 +8,24 @@ import '../css/App.css'
 import { useNavigate } from 'react-router-dom'
 import socketManager from "../MesSockets";
 import { VraimentIlSaoule } from "../aurelcassecouilles/VraimentIlEstCasseCouille";
-
+// https://mui.com/material-ui/getting-started/installation/ 
 // let Mysocks : any = new SocketManager
 const info = {
 	name : 'name'
 }
 
+interface chiant {
+	tokenForm : any,
+	setToken : any,
+	onLogin : () => void
 
-export function HomePage ({tokenForm, setToken} : any)
+}
+	const HomePage : React.FC<chiant> =  ({tokenForm, setToken, onLogin}) =>
 {
 	const [Mybool, setMybool] = useState<boolean>(false)
 	const [Registered, setReg] = useState<boolean>(false)
-
-	const navigate = useNavigate();
+	const [FirstCo, setFirstCo] = useState<boolean>(false)
+	const navigate = useNavigate();  
 
 	const localStorage = window.localStorage;
 	console.log("debut de fonction")
@@ -120,7 +125,10 @@ export function HomePage ({tokenForm, setToken} : any)
 	{
 		if (Mybool !== false)
 		{
+			onLogin()
 			setMybool(false)
+			console.log("trueeeeeeeeeeeeeeeeeeeee22222222222222222222222")
+			
 			navigate('/change')
 		}
 	}, [Mybool])
@@ -144,6 +152,8 @@ export function HomePage ({tokenForm, setToken} : any)
 			// socketManager.initializePogSocket(VraimentIlSaoule().headers.Authorization)
 			console.log(socketManager.getChatSocket())
 			console.log("c bon frere j ai cree ta merde")
+			console.log("trueeeeeeeeeeeeeeeeeeeee")
+			onLogin()
 			navigate('/affUser')
 		}		
 	}, [Registered])
@@ -166,7 +176,7 @@ export function HomePage ({tokenForm, setToken} : any)
 	}
 	export {socketManager};
 
-
+export default HomePage;
 
 // 	const sendptn = (() =>{
 // 	const urlSearchParams = new URLSearchParams(window.location.search);
