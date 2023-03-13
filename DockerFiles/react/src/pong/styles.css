@@ -51,7 +51,7 @@ h1 {
 	top: 20vh;
 	left: 49.5vw;
 	height: 60vh;
-	border-left: 1vw dashed white;
+	border-left: 1vh dashed white;
 	opacity: 25%;
 	z-index: 0;
 }
@@ -63,7 +63,7 @@ h1 {
 	left: 0;
 	height: 0;
 	width: 100vw;
-	border-top: 1vw solid white;
+	border-top: 1vh solid white;
 	opacity: 25%;
 	z-index: 0;
 }
@@ -74,7 +74,7 @@ h1 {
 	bottom: 19vh;
 	left: 0;
 	width: 100vw;
-	border-bottom: 1vw solid white;
+	border-bottom: 1vh solid white;
 	opacity: 25%;
 	z-index: 0;
 }
@@ -86,32 +86,35 @@ h1 {
 	transform: translateXY(-50%, -50%);
 	left: 50vw;
 	width: 0px;
+	height: 0px;
 	border: 100px solid;
+	border-radius: 0%;
 	border-right-color: transparent;
 	border-top-color: transparent;
 	border-bottom-color: orange;
 	border-left-color: blue;
-	text-align: left;
 }
 
 .paddle {
-	--pos: 50;
+	--y: 50;
 
 	position: absolute;
-	top: calc(var(--pos) * 1vh);
+	top: calc(var(--y) * 1vh);
 	transform: translateY(-50%);
 
-	width: 1vh;
+	width: 1vw;
 	height: 10vh;
 	background-color: var(--foreground-color);
 }
 
 .paddle.left {
-	left: 3vw;
+	--x: 3;
+	left: calc(var(--x) * 1vw);
 }
 
 .paddle.right {
-	right: 3vw;
+	--x: 97;
+	left: calc(var(--x) * 1vw);
 }
 
 .ball {

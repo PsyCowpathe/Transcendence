@@ -15,7 +15,7 @@ import "./css/List.css";
 import "./css/NavLink.css"; 
 import "./css/TopBar.css"
 import MyNavLink from "./style/MynavLink";
-import AffMyUserPage from "./Pages/UserPage";
+import { AffMyUserPage } from "./Pages/UserPage";
 // import ProfilePictureForm from "./Pages/NewProfilPic";
 
 

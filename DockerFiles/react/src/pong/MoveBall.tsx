@@ -5,30 +5,44 @@ import Ball from "./Ball"
 import Paddle from "./Paddle"
 import Pong from "./Pong"
 
-export default function moveBall(deltaTime: number, ball: Ball, bounds: any, p_paddle: Paddle, o_paddle: Paddle)
+export default function moveBall(deltaTime: number, ball: Ball, p_paddle: Paddle, o_paddle: Paddle)
 {
-	let ballrect = ball.rect();
-	const p_paddlerect = p_paddle.rect();
-	const o_paddlerect = o_paddle.rect();
+	let ballrect = ball.getRect();
+	const p_paddlerect = p_paddle.getRect();
+	const o_paddlerect = o_paddle.getRect();
 
-	if (ballrect.bottom >= bounds.down.top || ballrect.top <= bounds.up.bottom)
+	if (ballrect.up <= 20 || ballrect.down >= 80)
 		ball.dir.y *= -1;
-/*	else if (ballrect.right >= o_paddlerect.left && ballrect.top >= o_paddlerect.top && ballrect.bottom <= o_paddlerect.bottom)
+	
+	if (	ballrect.left <= p_paddlerect.right &&
+		ballrect.up <= p_paddlerect.down &&
+		ballrect.down >= p_paddlerect.up)
 	{
 		ball.dir.x *= -1;
-		//if (ball.pos.y > o_paddlerect.pos_y)
-		//{
-		//}
-	}*/
-//	else if (ballrect.right >= o_paddlerect.left && ballrect.top <= o_paddlerect.bottom)
+	}
+	else if (true)
+	{
+
+	}
+	if (ballrect.right >= o_paddlerect.left &&
+		ballrect.up <= o_paddlerect.down &&
+		ballrect.down >= o_paddlerect.up)
+	{
+		ball.dir.x *= -1;
+	}
+	else if (true)
+	{
+
+	}
 	
-	const pos = { x: ball.pos.x + (ball.dir.x * ball.speed * deltaTime),
-			   y: ball.pos.y + (ball.dir.y * ball.speed * deltaTime) };
-	ball.setPosition(pos.x, pos.y);
 	if (ball.pos.x >= 100 || ball.pos.x <= 0)
 		return ("GOAL");
-	else
-		return (null);
-};
+
+	const pos = {	x: ball.pos.x + (ball.dir.x * ball.speed * deltaTime),
+			y: ball.pos.y + (ball.dir.y * ball.speed * deltaTime)	};
+	ball.setPosition(pos.x, pos.y);
+	
+	return (null);	
+}
 
 
