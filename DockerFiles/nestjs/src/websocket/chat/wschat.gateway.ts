@@ -108,6 +108,6 @@ export class WsChatGateway
 			return (client.emit("joinchannel", errorMessages.ALREADYINCHANNEL));
 		if (ret === -4)
 			return (client.emit("joinchannel", errorMessages.INCORRECTPASSWORD));
-		client.emit("removeadmin", `You successfully joined channel : ${joinForm.channelname} !`);
+		client.emit("joinchannel", `You successfully joined channel : ${joinForm.channelname} !`);
 	}
 }
