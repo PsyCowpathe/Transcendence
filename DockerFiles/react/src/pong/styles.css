@@ -79,6 +79,28 @@ h1 {
 	z-index: 0;
 }
 
+.goal.player
+{
+	position: absolute;
+	top: 20vh;
+	left: 49.5vw;
+	height: 60vh;
+	border-right: 1vh dashed white;
+	opacity: 25%;
+	z-index: 0;
+}
+
+.goal.opponent
+{
+	position: absolute;
+	bottom: 19vh;
+	left: 0;
+	width: 100vw;
+	border-left: 1vh solid white;
+	opacity: 25%;
+	z-index: 0;
+}
+
 .player_ready
 {
 	position: absolute;
@@ -127,8 +149,8 @@ h1 {
 	transform: translate(-50%, -50%);
 
 	border-radius: 50%;
-	width: 2vh;
-	height: 2vh;
+	width: 2vw;
+	height: 2vw;
 	background-color: var(--foreground-color);
 	z-index: 1;
 }

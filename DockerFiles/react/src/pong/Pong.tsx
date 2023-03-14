@@ -20,12 +20,12 @@ export default function Pong ()
 	let player1!: Player;
 	let player2!: Player;
 	let input: number; 
-	let GOAL: string | null = null;
+	let GOAL:boolean = false;
 
 	const createBall = () =>
 	{
 		ball = new Ball(document.getElementById("ball"));
-		ball.dir = ball.getRandomDirection();
+		ball.reset();
 	}
 	const createPaddles = () =>
 	{
@@ -54,14 +54,18 @@ export default function Pong ()
 
 	function playerReady()
 	{
+		ball.reset();
 		window.requestAnimationFrame(update);
 		if (buttonReady)
 			buttonReady.style.display = "none";
 	}
 
-	function updatePositions(ballPos: any, )
+	function updatePositions()
 	{
-		
+		ball.setPosition(moveBall(deltaTime, ball, p_paddle, o_paddle));
+		GOAL = (ball.pos.x >= 100 || ball.pos.x <= 0)
+		if (GOAL)
+			GOOOAAAAAAL(ball);
 	}
 
 	function GOOOAAAAAAL(ball: Ball)
@@ -82,13 +86,7 @@ export default function Pong ()
 		if (prevTime != 0 && ball)
 		{
 			deltaTime = time - prevTime;
-		
-			GOAL = moveBall(deltaTime, ball, p_paddle, o_paddle);
-			
-		//	updatePositions();
-
-			if (GOAL)
-				GOOOAAAAAAL(ball);
+			updatePositions();
 		}
 		prevTime = time;
 		window.requestAnimationFrame(update);
@@ -103,9 +101,11 @@ export default function Pong ()
 			<div className="ball" id="ball"></div>
 			<div className="paddle left" id="p_paddle"></div>
 			<div className="paddle right" id="o_paddle"></div>
-			<div className="upperbound" id="upperbound"></div>
+			<div className="goal player"></div>
+			<div className="goal opponent"></div>
+			<div className="upperbound"></div>
 			<div className="central_line"></div>
-			<div className="lowerbound" id="lowerbound"></div>
+			<div className="lowerbound"></div>
 			</div>
 		);
 }

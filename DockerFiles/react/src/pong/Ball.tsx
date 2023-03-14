@@ -11,16 +11,12 @@ export default class Ball
 	dir = { x: 0, y: 0 };
 	rect = { right: 0, left: 0, up: 0, down: 0 };
 	speed: number = 0;
+	headingThere:boolean = true;
 
 	constructor (ball: HTMLElement | null)
 	{
 		if (ball)
 			this.ball = ball;
-		this.pos = { x: 50, y: 50 };
-		this.dir = { x: 0, y: 0 };
-		this.rect = { right: 51, left: 49,
-				up: 49, down: 51 };
-		this.speed = this.BASE_SPEED;
 	}
 
 	getRandomDirection ()
@@ -49,33 +45,39 @@ export default class Ball
 		return (this.rect);
 	}
 
-	setPosition (x: any, y: any)
+	setPosition (pos:{x:any, y:any})
 	{
-		if (x > -1 && x < 101)
+		if (pos.x > -1 && pos.x < 101)
 		{
-			this.pos.x = x;
-			this.ball.style.setProperty("--x", x);
+			this.pos.x = pos.x;
+			this.ball.style.setProperty("--x", pos.x);
 		}
-		if (y > -1 && y < 101)
+		if (pos.y > -1 && pos.y < 101)
 		{
-			this.pos.y = y;
-			this.ball.style.setProperty("--y", y);
+			this.pos.y = pos.y;
+			this.ball.style.setProperty("--y", pos.y);
 		}
 	}
-
-	setDirection (x: number, y: number)
+	
+	setDirection (dir:{x:any, y:any})
 	{
-		this.dir.x = x;
-		this.dir.y = y;
+		this.dir.x = dir.x;
+		this.dir.y = dir.y;
 	}
 
 	reset()
 	{
-		this.setPosition(50, 50);
+		const pos = { x: 50, y:50 };
+		this.setPosition(pos);
 		this.dir = this.getRandomDirection();
+		this.headingThere = (this.dir.x < 0);
 		this.rect = { right: 51, left: 49,
 				up: 49, down: 51 };
 		this.speed = this.BASE_SPEED;
+
+		this.dir.x = 1;
+		this.dir.y = 0;
+		this.headingThere = false;
 	}
 }
 

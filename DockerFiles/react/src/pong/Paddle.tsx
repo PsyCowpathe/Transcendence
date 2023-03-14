@@ -26,11 +26,12 @@ export default class Paddle
 
 	setPosition(y: any)
 	{
-		if (y >= 25 && y <= 75)
-		{
-			this.pos.y = y;
-			this.paddle.style.setProperty("--y", y);
-		}
+		if (y < 25)
+			y = 25;
+		else if (y > 75)
+			y = 75;
+		this.pos.y = y;
+		this.paddle.style.setProperty("--y", y);
 	}
 
 	reset()
