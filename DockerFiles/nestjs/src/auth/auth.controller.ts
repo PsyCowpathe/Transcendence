@@ -23,6 +23,7 @@ export class AuthController
 	@Get('redirect')
 	async Redirect(@Req() req: Request)
 	{
+		console.log("Redirection");
 		//console.log("redir req = " + req.headers.authorization);
 		let ret = await this.authService.isTokenValid(req.headers.authorization);
 		if (ret === true)

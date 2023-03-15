@@ -24,8 +24,13 @@ export enum errorMessages
 	ALREADYADMIN = "This user is already an adminstrator of this channel !",
 	NOTANADMINISTRATOR = "This user is not an administrator of this channel !",
 	NOTINTHISCHANNEL = "This user is not in this channel !",
-	ALREADYINCHANNEL = "You are already in this ",
+	ALREADYINCHANNEL = "You are already in this channel !",
+	NOTJOINED = "You are not in this channel !",
 	INCORRECTPASSWORD = "The password provided dont match !",
+	NOTONTHELIST = "You have not been invited to join this channel !",
+	NOTTHEOWNER = "Only the owner of this channel can do this operation !",
+	NOTOP = "Only an administrator or the owner of this channel can do this operation !",
+	NOTINVITED = "This wasnt invited to this channel !",
 }
 
 export enum urls

@@ -14,6 +14,13 @@ export class adminOperationDto
 	channelname: string;
 }
 
+export class inviteOperationDto
+{
+	name: string;
+
+	channelname: string;
+}
+
 export class channelOperationDto
 {
 	name: string;

@@ -12,7 +12,8 @@ export class Channel
 	@Column()
 	name: string;
 
-	@OneToOne(() => User)
+	@OneToOne(() => User, {eager: true})
+	@JoinColumn()
 	owner: User;
 
 	@Column()
