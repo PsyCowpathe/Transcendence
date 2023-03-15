@@ -38,7 +38,7 @@ interface chiant {
 			window.location.assign(data)
 		}
 		catch (e)
-		{
+		{  
 			console.error(e)
 		}
 	}
@@ -53,7 +53,7 @@ interface chiant {
 		{
 			console.log("je send un truc")
 			console.log(tokenForm.code)
-			await SendTokenRequest(tokenForm)
+			 SendTokenRequest(tokenForm)
 			.then(response => 
 			{
 				console.log("CA SEND")
@@ -65,19 +65,25 @@ interface chiant {
 					localStorage.setItem('Token', response.data.newtoken);
 					const date : any = localStorage.getItem('Token')
 
-					console.log("tema le Token")
+					console.log("----------------------------------------------------------------------------------------------")
 					console.log(date)
 					console.log(response.data)
-
+					console.log("BITE ?")
 					let reg : boolean = response.data.registered
+					onLogin()
+
 					if (reg === true)
 					{
-						setReg(true)	
+						console.log("je suis deja inscrit")
+						setReg(true)
 						//register --> profil user
 					}
 					else
+					{
+						console.log("je suis pas inscrit")
 						setMybool(true)
 						//nope so first connect
+					}
 				}
 			})
 			.catch(error => 
@@ -91,8 +97,8 @@ interface chiant {
 	}
 
 	async function sendToken()
-	{
-		 handleToken()
+	{ 
+		handleToken()
 	    const date : string | null = localStorage.getItem('Token')
 		console.log("tema le Token1")
 		console.log(date)
@@ -105,12 +111,21 @@ interface chiant {
         const urlSearchParams = new URLSearchParams(window.location.search);
         let codes : string | null = urlSearchParams.get('code')
         let second_states : string | null = urlSearchParams.get('state')
+		const testtoken : any = localStorage.getItem('Token') 
+		console.log("bdjslvablkdgvb")
+		console.log(testtoken)
         if (codes != null)
 		{
-			setToken({state: second_states, code: codes})
         	console.log("wesh le token")
+			setToken({state: second_states, code: codes})
     		console.log(tokenForm)
     		sendToken();
+		}
+		else if (testtoken !== null)
+		{
+			console.log("pk je passe pas ici")
+			onLogin()
+			navigate('/affUser')
 		}
     }
 
@@ -123,13 +138,14 @@ interface chiant {
 	
 	useEffect(() =>
 	{
+		console.log(`----------------------777--------------${Mybool}`)
 		if (Mybool !== false)
 		{
-			onLogin()
-			setMybool(false)
 			console.log("trueeeeeeeeeeeeeeeeeeeee22222222222222222222222")
-			
+			onLogin()
 			navigate('/change')
+			
+			setMybool(false)
 		}
 	}, [Mybool])
 	

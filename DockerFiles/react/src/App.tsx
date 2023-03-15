@@ -52,44 +52,47 @@ function App()
 	//ade3b5ea214ca737f53ce0bce98938c2.jpg
 	return (
 		<BrowserRouter> 
-		<AuthContext.Provider value={isLoggedIn}>
-		<div className="App">
-		 
-		  {isLoggedIn ? <ChangeLogin /> : <HomePage tokenForm={tokenForm} setToken={setToken} onLogin={() => setIsLoggedIn(true)} />}
-
-		  <LoadingPage />
-		</div>
-	  </AuthContext.Provider>
+	 	{/* <AuthContext.Provider value={isLoggedIn}>
+	 	<div className="App">
+	
+	 	  {isLoggedIn ? <LoadingPage /> : <HomePage tokenForm={tokenForm} setToken={setToken} onLogin={() => setIsLoggedIn(true)} />}
+ 	  <LoadingPage />
+	 	</div>
+	   </AuthContext.Provider> */}
 		
 			<Routes>
 		 {/* <Route path='/' element={<HomePage  tokenForm={tokenForm} setToken={setToken} onLogin={() => setIsLoggedIn(true)}/>}/>   */}
 
 			<Route path='/change' element={<ChangeLogin/>}/> 
+			<Route path='/' element={<HomePage tokenForm={tokenForm} setToken={setToken} onLogin={() => setIsLoggedIn(true)}/>}/> 
 			{/* <Route path='/chat' element={<Chat/>}/> */}
 			{/* <Route path="/chatoune" element ={<Chat username={"Alice"} />} /> */}
-			{/* <Route path='/affUser' element={<AffMyUserPage/>}/>*/}
+			<Route path='/affUser' element={<AffMyUserPage/>}/>
 			<Route path='/LoadingPage' element={<LoadingPage/>}/>
 			{/* <Route path='/changepic' element={<ProfilePicturePage />}/> */}
 			<Route  path='/askFriend' element={<AskFriend />}/>
 			<Route path='/test' element={<IconLabelButtons />}/> 
-				</Routes> 
-		</BrowserRouter> 
-	
+			</Routes> 
 		
-		//  <nav className="topbar">
-		// <li><MyNavLink to="/" label="Login"/></li>
-		// <li><MyNavLink to="/change" label="change your login"/></li>
-		//  <li><MyNavLink to="/chat" label="chat"/></li> 
-		//  <li><MyNavLink to="/chatoune" label="chatTest"/></li> 
-		//  <li><MyNavLink to="/affUser" label="My User page"/></li>
-		// <li><MyNavLink to="/changepic" label="change my pic"/></li>
-		// <li><MyNavLink to="/askFriend" label="demande d ami"/></li>
-		// <li><MyNavLink to="/test" label="test"/></li>
-		// </nav>  
-		// <BrowserRouter>
+		if (onLogin === true ) {
+			
+		 <nav className="topbar">
+		<li><MyNavLink to="/" label="Login"/></li>
+		<li><MyNavLink to="/change" label="change your login"/></li>
+		 <li><MyNavLink to="/chat" label="chat"/></li> 
+		 <li><MyNavLink to="/chatoune" label="chatTest"/></li> 
+		 <li><MyNavLink to="/affUser" label="My User page"/></li>
+		<li><MyNavLink to="/changepic" label="change my pic"/></li>
+		<li><MyNavLink to="/askFriend" label="demande d ami"/></li>
+		<li><MyNavLink to="/test" label="test"/></li>
+		</nav>
+}  
+	</BrowserRouter>
+		
+	//	 {/* <BrowserRouter> */}
 	
-		//	{/* <Routes > */}
-	//			{/* <Switch>
+	//		{/* <Routes > */}
+		//		{/* <Switch>
      //   <Route exact path="/">
       //    {<HomePage  tokenForm={tokenForm} setToken={setToken}/>}
     //    </Route>
