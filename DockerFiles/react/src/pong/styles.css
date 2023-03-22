@@ -40,9 +40,13 @@ h1 {
 }
 
 .score.player {
+	--p_score: 0;
+	content: var(--p_score);
 }
 
 .score.opponent {
+	--o_score: 0;
+	content: var(--p_score);
 }
 
 .central_line

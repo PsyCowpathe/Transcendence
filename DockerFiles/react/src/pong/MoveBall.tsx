@@ -25,11 +25,7 @@ export default function moveBall(deltaTime: number, ball: Ball, p_paddle: Paddle
 			ballrect.down >= p_paddlerect.up &&
 			ball.pos.x >= p_paddlerect.left	)
 		{
-			let rad:number = ((ball.pos.y - p_paddle.pos.y) / 10);
-			if (rad > 0.1)
-				rad -= 0.1;
-			else if (rad < 0.1)
-				rad += 0.1;
+			let rad:number = ((ball.pos.y - p_paddle.pos.y) / 20);	
 			newdir = {	x: Math.cos(rad * Math.PI),
 					y: Math.sin(rad * Math.PI)	};
 			ball.setDirection(newdir);
@@ -45,11 +41,7 @@ export default function moveBall(deltaTime: number, ball: Ball, p_paddle: Paddle
 			ballrect.down >= o_paddlerect.up &&
 			ball.pos.x <= o_paddlerect.right	)
 		{
-			let rad:number = ((ball.pos.y - o_paddle.pos.y) / 10);
-			if (rad > 0.1)
-				rad -= 0.1;
-			else if (rad < 0.1)
-				rad += 0.1;
+			let rad:number = ((ball.pos.y - o_paddle.pos.y) / 20);
 			newdir = {	x: -Math.cos(rad * Math.PI),
 					y: Math.sin(rad * Math.PI)	};
 			ball.setDirection(newdir);

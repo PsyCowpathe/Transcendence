@@ -8,8 +8,8 @@ import moveBall from "./MoveBall";
 export default class Player
 {
 	paddle!: Paddle;
-	score: number = 0;
-	name: string = "";
+	score:any = 0;
+	name:string = "";
 
 	constructor(name: string, paddle: Paddle)
 	{

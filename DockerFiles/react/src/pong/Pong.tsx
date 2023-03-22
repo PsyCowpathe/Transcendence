@@ -11,7 +11,9 @@ export default function Pong ()
 {
 
 	let buttonReady: HTMLElement | null;
-	let bounds = {};
+	let p_score: HTMLElement | null;
+	let o_score: HTMLElement | null;
+	
 	let deltaTime: number = 0;
 	let prevTime: number = 0;
 	let ball: Ball;
@@ -43,6 +45,8 @@ export default function Pong ()
 		createPaddles();
 		createPlayers();
 		buttonReady = document.getElementById("player_ready");
+		p_score = document.getElementById("p_score");
+		o_score = document.getElementById("o_score");
 		document.addEventListener("mousemove", eMouseMoved);
 	}, []);
 	
@@ -70,10 +74,16 @@ export default function Pong ()
 
 	function GOOOAAAAAAL(ball: Ball)
 	{
-		if (ball.pos.x > 50)
+		if (p_score && ball.pos.x > 50)
+		{
 			player1.score++;
-		else
+			p_score.style.setProperty("--p_score", player1.score);
+		}
+		else if (o_score)
+		{
 			player2.score++;
+			o_score.style.setProperty("--o_score", player2.score);
+		}
 		ball.reset();
 		p_paddle.reset();
 		o_paddle.reset();
@@ -95,8 +105,8 @@ export default function Pong ()
 	return (
 			<div style={{height:"100vh"}} className="pong_body">
 			<h1>PONG</h1>
-			<button className="player_ready" onClick={playerReady} id="player_ready"></button>
-			<div className="score player" id="o_score">0</div>
+			<button className="player_ready" onClick={playerReady}id="player_ready"></button>
+			<div className="score player" id="p_score">0</div>
 			<div className="score opponent" id="o_score">0</div>
 			<div className="ball" id="ball"></div>
 			<div className="paddle left" id="p_paddle"></div>

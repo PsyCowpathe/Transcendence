@@ -74,10 +74,6 @@ export default class Ball
 		this.rect = { right: 51, left: 49,
 				up: 49, down: 51 };
 		this.speed = this.BASE_SPEED;
-
-		this.dir.x = 1;
-		this.dir.y = 0;
-		this.headingThere = false;
 	}
 }
 
