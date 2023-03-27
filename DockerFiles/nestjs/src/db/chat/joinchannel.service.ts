@@ -29,9 +29,24 @@ export class JoinChannelService
 					{channel: channel, user: user}
 				]
 			});
-			if (ret[0] === undefined)
-				return (null);
-			return (ret[0]);
+		if (ret[0] === undefined)
+			return (null);
+		return (ret[0]);
+	}
+
+	async getJoinedChannel(user: User): Promise<JoinChannel[] | null>
+	{
+		let ret = await this.joinChannelRepository
+				.find
+				({
+					where:
+					[
+						{user: user}
+					]
+				});
+		if (ret[0] === undefined)
+			return (null);
+		return (ret);
 	}
 
 	create(newJoin: JoinChannel)

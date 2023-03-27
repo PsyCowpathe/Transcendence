@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, ManyToOne, JoinColumn } from 'typeorm';
 import { Socket } from 'socket.io';
 
 import { User } from '../user/user.entity';
@@ -12,14 +12,14 @@ export class Channel
 	@Column()
 	name: string;
 
-	@OneToOne(() => User, {eager: true})
-	@JoinColumn()
+	@ManyToOne(() => User, (user) => user.id)
+	//@JoinColumn()
 	owner: User;
 
 	@Column()
 	visibility: string;
 
-	@Column()
+	@Column({nullable: true})
 	password: string;
 }
 
@@ -44,7 +44,7 @@ export class Bans
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@OneToOne(() => Channel)
+	@ManyToOne(() => Channel)
 	@JoinColumn()
 	channel: Channel
 
@@ -53,7 +53,10 @@ export class Bans
 	user: User;
 
 	@Column()
-	time: number;
+	end: number;
+
+	@Column()
+	reason: string;
 }
 
 @Entity()
@@ -71,7 +74,10 @@ export class Mutes
 	user: User;
 
 	@Column()
-	time: number;
+	end: number;
+
+	@Column()
+	reason: string;
 }
 
 @Entity()
@@ -80,12 +86,11 @@ export class JoinChannel
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@OneToOne(() => Channel)
+	@ManyToOne(() => Channel, (channel) => channel.id)
 	@JoinColumn()
 	channel: Channel
 
-	@OneToOne(() => User)
-	@JoinColumn()
+	@ManyToOne(() => User, (user) => user.id)
 	user: User;
 }
 

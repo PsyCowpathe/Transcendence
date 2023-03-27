@@ -15,7 +15,7 @@ import { Channel, Bans, Mutes, Admins, JoinChannel, InviteList } from './chat.en
 	imports: [TypeOrmModule.forFeature([Channel, Bans, Mutes, Admins, JoinChannel, InviteList])],
 	controllers: [],
 	providers: [ChannelService, AdminsService, BansService, MutesService, JoinChannelService, InviteListService],
-	exports: [ChannelService, AdminsService, JoinChannelService, InviteListService],
+	exports: [ChannelService, AdminsService, JoinChannelService, InviteListService, BansService, MutesService],
 })
 export class ChatModule {}
 

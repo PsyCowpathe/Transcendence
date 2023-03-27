@@ -8,7 +8,7 @@ import { sendError, sendSuccess } from '../../common/response';
 import { errorMessages } from '../../common/global';
 
 import { WsChatService }  from './wschat.service';
-import { createChannelDto, adminOperationDto, channelOperationDto, inviteOperationDto } from './wschat.entity';
+import { createChannelDto, channelOperationDto, userOperationDto, sanctionOperationDto } from './wschat.entity';
 
 @WebSocketGateway(3632, {cors: true})
 
@@ -36,11 +36,12 @@ export class WsChatGateway
 	async createChannel(client: Socket, channelForm: createChannelDto)
 	{
 		console.log("New channel created !");
-		console.log(channelForm.name);
+		console.log(channelForm);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("createchannel", errorMessages.NOTREGISTERED));
 		let ret = await this.wsChatService.createChannel(sender, channelForm);
+		console.log("ret = " + ret);
 		if (ret === -1)
 			return (client.emit("createchannel", errorMessages.CHANNELALREADYEXIST));
 		if (ret === -2)
@@ -50,7 +51,7 @@ export class WsChatGateway
 
 	@UseGuards(SocketGuard)
 	@SubscribeMessage('addadmin')
-	async addAdmin(client: Socket, adminForm: adminOperationDto)
+	async addAdmin(client: Socket, adminForm: userOperationDto)
 	{
 		console.log("New admin !");
 		console.log(adminForm.name + " for " + adminForm.channelname);
@@ -73,7 +74,7 @@ export class WsChatGateway
 
 	@UseGuards(SocketGuard)
 	@SubscribeMessage('removeadmin')
-	async removeAdmin(client: Socket, adminForm: adminOperationDto)
+	async removeAdmin(client: Socket, adminForm: userOperationDto)
 	{
 		console.log("Remove admin !");
 		console.log(adminForm.name + " for " + adminForm.channelname);
@@ -114,31 +115,43 @@ export class WsChatGateway
 			return (client.emit("joinchannel", errorMessages.INCORRECTPASSWORD));
 		if (ret === -5)
 			return (client.emit("joinchannel", errorMessages.NOTONTHELIST));
-		client.emit("joinchannel", `You successfully joined the channel ${joinForm.channelname} !`);
+		let response =
+		{
+			message : `You successfully joined the channel ${joinForm.channelname} !`,
+			channel : joinForm.channelname,
+		}
+		client.emit("joinchannel", response);
 	}
 
 	@UseGuards(SocketGuard)
 	@SubscribeMessage('leavechannel')
-	async leaveChannel(client: Socket, joinForm: channelOperationDto)
+	async leaveChannel(client: Socket, leaveForm: channelOperationDto)
 	{
 		console.log("Leave channel !");
-		console.log(joinForm.name + " for " + joinForm.channelname);
+		console.log(leaveForm.name + " for " + leaveForm.channelname);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("leavechannel", errorMessages.NOTREGISTERED));
-		let ret = await this.wsChatService.leaveChannel(sender, joinForm);
+		let ret = await this.wsChatService.leaveChannel(sender, leaveForm);
 		if (ret === -1)
 			return (client.emit("leavechannel", errorMessages.CHANNELDONTEXIST));
 		if (ret === -2)//may be useless
 			return (client.emit("leavechannel", errorMessages.INVALIDNAME));//may be useless
 		if (ret === -3)
 			return (client.emit("leavechannel", errorMessages.NOTJOINED));
-		client.emit("leavechannel", `You successfully leaved the channel ${joinForm.channelname} !`);
+		if (ret === -4)
+			return (client.emit("leavechannel", errorMessages.ACAPTAINDONTLEAVEHISSHIP));
+		let response =
+		{
+			message : `You successfully leaved the channel ${leaveForm.channelname} !`,
+			channel : leaveForm.channelname,
+		}
+		client.emit("leavechannel", response);
 	}
 
 	@UseGuards(SocketGuard)
 	@SubscribeMessage('createinvitation')
-	async createInvitation(client: Socket, invitationForm: inviteOperationDto)
+	async createInvitation(client: Socket, invitationForm: userOperationDto)
 	{
 		console.log("Create invitation !");
 		console.log(invitationForm.name + " for " + invitationForm.channelname);
@@ -162,7 +175,7 @@ export class WsChatGateway
 
 	@UseGuards(SocketGuard)
 	@SubscribeMessage('deleteinvitation')
-	async deleteInvitation(client: Socket, invitationForm: inviteOperationDto)
+	async deleteInvitation(client: Socket, invitationForm: userOperationDto)
 	{
 		console.log("Delete invitation !");
 		console.log(invitationForm.name + " for " + invitationForm.channelname);
@@ -178,7 +191,7 @@ export class WsChatGateway
 			return (client.emit("deleteinvitation", errorMessages.INVALIDNAME));
 		if (ret === -4)
 			return (client.emit("deleteinvitation", errorMessages.NOTINVITED));
-		client.emit("deleteinvitation", `You successfully deleted the invitation of ${invitationForm.name} channel ${invitationForm.channelname} !`);
+		client.emit("deleteinvitation", `You successfully deleted the invitation of ${invitationForm.name} for channel ${invitationForm.channelname} !`);
 	}
 
 	@UseGuards(SocketGuard)
@@ -197,6 +210,107 @@ export class WsChatGateway
 			return (client.emit("deletechannel", errorMessages.INVALIDNAME));//may be useless
 		if (ret === -3)
 			return (client.emit("deletechannel", errorMessages.NOTTHEOWNER));
-		client.emit("deletechannel", `You successfully deleted the channel ${deleteForm.channelname} !`);
+		let response =
+		{
+			message : `You successfully deleted the channel ${deleteForm.channelname} !`,
+			channel : deleteForm.channelname,
+		}
+		client.emit("deletechannel", response);
+	}
+
+	@UseGuards(SocketGuard)
+	@SubscribeMessage('kickuser')
+	async kickUser(client: Socket, kickForm: sanctionOperationDto)
+	{
+		console.log("Kick user ");
+		console.log(kickForm.name);
+		let sender : number | undefined;
+		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
+			return (client.emit("kickuser", errorMessages.NOTREGISTERED));
+		let ret = await this.wsChatService.kickUser(sender, kickForm);
+		if (ret === -1)
+			return (client.emit("kickuser", errorMessages.CHANNELDONTEXIST));
+		if (ret === -2)
+			return (client.emit("kickuser", errorMessages.INVALIDNAME));
+		if (ret === -3)
+			return (client.emit("kickuser", errorMessages.INVALIDNAME));
+		if (ret === -4)
+			return (client.emit("kickuser", errorMessages.NOTOP));
+		if (ret === -5)
+			return (client.emit("kickuser", errorMessages.CANTSANCTIONOWNER));
+		if (ret === -6)
+			return (client.emit("kickuser", errorMessages.CANTSANCTIONEQUAL));
+		if (ret === -7)
+			return (client.emit("kickuser", errorMessages.NOTINTHISCHANNEL));
+		let response =
+		{
+			message : `You successfully kicked user ${kickForm.name} !`,
+			user : kickForm.name,
+		}
+		client.emit("kickuser", response);
+	}
+
+	@UseGuards(SocketGuard)
+	@SubscribeMessage('banuser')
+	async banUser(client: Socket, banForm: sanctionOperationDto)
+	{
+		console.log("Ban user ");
+		console.log(banForm.name);
+		let sender : number | undefined;
+		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
+			return (client.emit("banuser", errorMessages.NOTREGISTERED));
+		let ret = await this.wsChatService.kickUser(sender, banForm);
+		if (ret === -1)
+			return (client.emit("banuser", errorMessages.CHANNELDONTEXIST));
+		if (ret === -2)
+			return (client.emit("banuser", errorMessages.INVALIDNAME));
+		if (ret === -3)
+			return (client.emit("banuser", errorMessages.INVALIDNAME));
+		if (ret === -4)
+			return (client.emit("banuser", errorMessages.NOTOP));
+		if (ret === -5)
+			return (client.emit("banuser", errorMessages.CANTSANCTIONOWNER));
+		if (ret === -6)
+			return (client.emit("banuser", errorMessages.CANTSANCTIONEQUAL));
+		if (ret === -7)
+			return (client.emit("banuser", errorMessages.NOTINTHISCHANNEL));
+		let response =
+		{
+			message : `You successfully banned user ${banForm.name} !`,
+			user : banForm.name,
+		}
+		client.emit("banuser", response);
+	}
+
+	@UseGuards(SocketGuard)
+	@SubscribeMessage('muteuser')
+	async muteUser(client: Socket, muteForm: sanctionOperationDto)
+	{
+		console.log("Mute user ");
+		console.log(muteForm.name);
+		let sender : number | undefined;
+		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
+			return (client.emit("muteuser", errorMessages.NOTREGISTERED));
+		let ret = await this.wsChatService.kickUser(sender, muteForm);
+		if (ret === -1)
+			return (client.emit("muteuser", errorMessages.CHANNELDONTEXIST));
+		if (ret === -2)
+			return (client.emit("muteuser", errorMessages.INVALIDNAME));
+		if (ret === -3)
+			return (client.emit("muteuser", errorMessages.INVALIDNAME));
+		if (ret === -4)
+			return (client.emit("muteuser", errorMessages.NOTOP));
+		if (ret === -5)
+			return (client.emit("muteuser", errorMessages.CANTSANCTIONOWNER));
+		if (ret === -6)
+			return (client.emit("muteuser", errorMessages.CANTSANCTIONEQUAL));
+		if (ret === -7)
+			return (client.emit("muteuser", errorMessages.NOTINTHISCHANNEL));
+		let response =
+		{
+			message : `You successfully muted user ${muteForm.name} !`,
+			user : muteForm.name,
+		}
+		client.emit("muteuser", response);
 	}
 }

@@ -30,7 +30,10 @@ export enum errorMessages
 	NOTONTHELIST = "You have not been invited to join this channel !",
 	NOTTHEOWNER = "Only the owner of this channel can do this operation !",
 	NOTOP = "Only an administrator or the owner of this channel can do this operation !",
-	NOTINVITED = "This wasnt invited to this channel !",
+	NOTINVITED = "This user wasnt invited to this channel !",
+	ACAPTAINDONTLEAVEHISSHIP = "You are the owner of this channel you can't leave it !",
+	CANTSANCTIONOWNER = "You cant sanction the mighty owner of this channel !",
+	CANTSANCTIONEQUAL = "This user's power is equal to yours, you cannot defeat him !"
 }
 
 export enum urls

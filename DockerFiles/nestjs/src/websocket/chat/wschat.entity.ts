@@ -1,20 +1,15 @@
+import { IsPositive } from 'class-validator';
+
 export class createChannelDto
 {
 	name: string;
 
 	visibility: string;
 
-	password: string;
+	password: string | undefined;
 }
 
-export class adminOperationDto
-{
-	name: string;
-
-	channelname: string;
-}
-
-export class inviteOperationDto
+export class userOperationDto
 {
 	name: string;
 
@@ -28,4 +23,16 @@ export class channelOperationDto
 	channelname: string;
 
 	password: string;
+}
+
+export class sanctionOperationDto
+{
+	name: string;
+
+	channelname: string;
+
+	@IsPositive({message: 'The number entered must be greater than 0'})
+	time: number;
+
+	reason: string;
 }
