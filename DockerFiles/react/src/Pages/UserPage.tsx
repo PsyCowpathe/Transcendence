@@ -2,12 +2,13 @@
 import Profil from '../imgs/360_F_122719584_A863mvJEcEAnqmGQ4ky6RbXEhsHKw95x.jpg';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import MyNavLink from '../style/MynavLink';
 
 import React from 'react';
 import { FaCog } from 'react-icons/fa';
 import '../css/Buttons.css';
 import { useNavigate } from 'react-router-dom'
+import { TopBar } from './TopBar';
 
 
 
@@ -42,7 +43,11 @@ export function AffMyUserPage ()
     };
 
     return (
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "2em", height: "100vh" }}>
+    		<div>
+          <TopBar/>
+
+
+    {/* <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "2em", height: "100vh" }}> */}
         <img src={Profil} alt="Profile" style={{ borderRadius: "50%", width: "200px", height: "200px", objectFit: "cover", boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)" }} />
         <h1 style={{ fontSize: "2.5em", margin: "1em 0 0.5em" }}>Nom Prenom</h1><button className="SettingsButton" onClick={onClick}>
       <FaCog className="SettingsButtonIcon" />

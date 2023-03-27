@@ -1,5 +1,6 @@
 import React from "react";
 import { useState } from "react";
+import { TopBar } from "./TopBar";
 
 
 
@@ -27,6 +28,7 @@ const ProfilePictureForm: React.FC<Props> = ({ onSubmit }) => {
   return (
     <form onSubmit={handleSubmit}>
       <div >
+        <TopBar/>
         <input type="file" accept="image/*" onChange={handleFileChange}  />
       </div>
       <button type="submit">Upload</button>

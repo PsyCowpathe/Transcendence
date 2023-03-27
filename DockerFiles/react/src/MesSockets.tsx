@@ -16,7 +16,10 @@ class SocketManager {
           token: token
         }
       });
+
     }
+    this.chatSocket.emit("newlink")
+
   }
   initializeFriendRequestSocket(token: string) {
     if (this.FriendRequestSocket === null) {

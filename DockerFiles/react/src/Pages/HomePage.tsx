@@ -8,6 +8,7 @@ import '../css/App.css'
 import { useNavigate } from 'react-router-dom'
 import socketManager from "../MesSockets";
 import { VraimentIlSaoule } from "../aurelcassecouilles/VraimentIlEstCasseCouille";
+import { TopBar } from "./TopBar";
 // https://mui.com/material-ui/getting-started/installation/ 
 // let Mysocks : any = new SocketManager
 const info = {
@@ -154,7 +155,7 @@ interface chiant {
 		if (Registered !== false)
 		{
 			setReg(false)
-			// socketManager.initializeChatSocket(VraimentIlSaoule().headers.Authorization)
+			socketManager.initializeChatSocket(VraimentIlSaoule().headers.Authorization)
 			socketManager.initializeFriendRequestSocket(VraimentIlSaoule().headers.Authorization)
 			// socket.on("sendfriendrequest", (reponse: any) => 
 			// {

@@ -1,7 +1,7 @@
 import React from "react";
 import {useState, useEffect} from 'react'
 import { RequestChangeLogin } from "../Api/ChangeLogRequest";
-
+import { TopBar } from "./TopBar";
 
 
 export function ChangeLogin()
@@ -42,12 +42,12 @@ export function ChangeLogin()
     useEffect(() =>
     {
         if (Ok === true )
-            window.location.assign('/affUser') ///change to profile page
+            window.location.assign('/TopBar') ///change to profile page
     }, [Ok])
  
     return(
         <div style={{ height: "100vh"}}>
-
+        <TopBar/>
         <form action="submit" onSubmit={replaceLog}>
         <input 
         

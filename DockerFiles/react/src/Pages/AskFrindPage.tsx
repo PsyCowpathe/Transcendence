@@ -3,6 +3,7 @@ import { VraimentIlSaoule } from '../aurelcassecouilles/VraimentIlEstCasseCouill
 import '../css/Buttons.css'
 import { socketManager } from '../Pages/HomePage'
 import { ToastContainer, toast, ToastOptions } from 'react-toastify';
+import { TopBar } from "./TopBar";
 
 let test : boolean = false
 let socket: any
@@ -326,10 +327,9 @@ const MyCustomToast = ({response, Acceptnow, Refusednow} : any) => {
 
 
 	return(
-		
 		<div style={{ height: "100vh"}}>
 			{/* /////////////////////////////////////////////////////////////////////// request send      /////////////////////////////////////////////////////// */}
-		
+		<TopBar/>
 		<form action="submit" onSubmit={AskRequest}>
 		<input 
 		
@@ -418,11 +418,8 @@ const MyCustomToast = ({response, Acceptnow, Refusednow} : any) => {
  		</form><ToastContainer/>
 
 		</div>
+	
 		);
 		
 	}
 	
-	// return(
-	//     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh" }}>
-	//     <Button onClick={Ask} >demande</Button>
-	//   </div>
