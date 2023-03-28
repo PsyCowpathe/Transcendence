@@ -17,9 +17,14 @@ export class WsExceptionFilter
 		{
 			let error : any = exception.getResponse();
 			if (typeof error === 'string')
+			{
 				client.emit("ChatError", error);
+			}
 			else
+			{
 				client.emit("ChatError", error.message[0]);
+				return (error.message[0]);
+			}
 		}
 	}
 }

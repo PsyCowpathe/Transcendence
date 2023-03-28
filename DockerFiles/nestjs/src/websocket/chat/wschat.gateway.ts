@@ -53,6 +53,7 @@ export class WsChatGateway
 	}
 
 	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('addadmin')
 	async addAdmin(client: Socket, adminForm: userOperationDto)
 	{
@@ -76,6 +77,7 @@ export class WsChatGateway
 	}
 
 	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('removeadmin')
 	async removeAdmin(client: Socket, adminForm: userOperationDto)
 	{
@@ -99,6 +101,7 @@ export class WsChatGateway
 	}
 
 	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('joinchannel')
 	async joinChannel(client: Socket, joinForm: channelOperationDto)
 	{
@@ -127,6 +130,7 @@ export class WsChatGateway
 	}
 
 	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('leavechannel')
 	async leaveChannel(client: Socket, leaveForm: channelOperationDto)
 	{
@@ -153,6 +157,7 @@ export class WsChatGateway
 	}
 
 	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('createinvitation')
 	async createInvitation(client: Socket, invitationForm: userOperationDto)
 	{
@@ -177,6 +182,7 @@ export class WsChatGateway
 	}
 
 	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('deleteinvitation')
 	async deleteInvitation(client: Socket, invitationForm: userOperationDto)
 	{
@@ -198,6 +204,7 @@ export class WsChatGateway
 	}
 
 	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('deletechannel')
 	async deleteChannel(client: Socket, deleteForm: channelOperationDto)
 	{
@@ -222,6 +229,7 @@ export class WsChatGateway
 	}
 
 	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('kickuser')
 	async kickUser(client: Socket, kickForm: sanctionOperationDto)
 	{
@@ -254,6 +262,7 @@ export class WsChatGateway
 	}
 
 	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('banuser')
 	async banUser(client: Socket, banForm: sanctionOperationDto)
 	{
@@ -286,6 +295,7 @@ export class WsChatGateway
 	}
 
 	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('muteuser')
 	async muteUser(client: Socket, muteForm: sanctionOperationDto)
 	{
