@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 
-import { Req, Res } from '@nestjs/common';
+import { Req, Res, ValidationPipe } from '@nestjs/common';
 
 import { Request, Response, NextFunction } from 'express';
 import { AppModule } from './app.module';
@@ -32,6 +32,7 @@ async function bootstrap()
 		//preflightContinue: false,
 		//optionsSuccessStatus: 204,
 	});
+	app.useGlobalPipes(new ValidationPipe());
   	await app.listen(3630);
 }
 bootstrap();

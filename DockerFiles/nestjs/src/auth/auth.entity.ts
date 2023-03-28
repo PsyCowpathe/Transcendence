@@ -16,13 +16,6 @@ export class RegisterDto
 	name: string;
 }
 
-export class TokenDto
-{
-	@IsString({message: `The token must be a string !`})
-	@IsNotEmpty({message: 'The token can\'t be empty !'})
-	token: string;
-}
-
 export class Profile
 {
 	name: string;
