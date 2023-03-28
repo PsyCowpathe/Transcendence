@@ -1,5 +1,5 @@
 import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { UseGuards } from '@nestjs/common';
+import {UsePipes, ValidationPipe, UseGuards, UseFilters } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 
 import { SocketGuard } from '../guard/socket.guard';
@@ -10,8 +10,10 @@ import { errorMessages } from '../../common/global';
 import { WsChatService }  from './wschat.service';
 import { createChannelDto, channelOperationDto, userOperationDto, sanctionOperationDto } from './wschat.entity';
 
-@WebSocketGateway(3632, {cors: true})
+import { WsExceptionFilter } from './ws.filter'; 
 
+@UseFilters(WsExceptionFilter)
+@WebSocketGateway(3632, {cors: true})
 export class WsChatGateway
 {
 	constructor(private readonly wsChatService: WsChatService)
@@ -32,6 +34,7 @@ export class WsChatGateway
 	}
 
 	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('createchannel')
 	async createChannel(client: Socket, channelForm: createChannelDto)
 	{
@@ -39,14 +42,14 @@ export class WsChatGateway
 		console.log(channelForm);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
-			return (client.emit("createchannel", errorMessages.NOTREGISTERED));
+			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
 		let ret = await this.wsChatService.createChannel(sender, channelForm);
 		console.log("ret = " + ret);
 		if (ret === -1)
-			return (client.emit("createchannel", errorMessages.CHANNELALREADYEXIST));
+			return (client.emit("ChatError", errorMessages.CHANNELALREADYEXIST));
 		if (ret === -2)
-			return (client.emit("createchannel", errorMessages.PRIVATEORPASSWORD));
-		client.emit("createchannel", `Channel ${channelForm.name} successfully created !`);
+			return (client.emit("ChatError", errorMessages.PRIVATEORPASSWORD));
+		client.emit("createchannel", `Channel ${channelForm.channelname} successfully created !`);
 	}
 
 	@UseGuards(SocketGuard)
@@ -57,18 +60,18 @@ export class WsChatGateway
 		console.log(adminForm.name + " for " + adminForm.channelname);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
-			return (client.emit("addadmin", errorMessages.NOTREGISTERED));
+			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
 		let ret = await this.wsChatService.addAdmin(sender, adminForm);
 		if (ret === -1)
-			return (client.emit("addadmin", errorMessages.CHANNELDONTEXIST));
+			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
 		if (ret === -2)
-			return (client.emit("addadmin", errorMessages.NOTTHEOWNER));
+			return (client.emit("ChatError", errorMessages.NOTTHEOWNER));
 		if (ret === -3)
-			return (client.emit("addadmin", errorMessages.INVALIDNAME));
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
 		if (ret === -4)
-			return (client.emit("addadmin", errorMessages.NOTINTHISCHANNEL));
+			return (client.emit("ChatError", errorMessages.NOTINTHISCHANNEL));
 		if (ret === -5)
-			return (client.emit("addadmin", errorMessages.ALREADYADMIN));
+			return (client.emit("ChatError", errorMessages.ALREADYADMIN));
 		client.emit("addadmin", `User ${adminForm.name} successfully promoted to administrator !`);
 	}
 
@@ -80,18 +83,18 @@ export class WsChatGateway
 		console.log(adminForm.name + " for " + adminForm.channelname);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
-			return (client.emit("removeadmin", errorMessages.NOTREGISTERED));
+			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
 		let ret = await this.wsChatService.removeAdmin(sender, adminForm);
 		if (ret === -1)
-			return (client.emit("removeadmin", errorMessages.CHANNELDONTEXIST));
+			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
 		if (ret === -2)
-			return (client.emit("addadmin", errorMessages.NOTTHEOWNER));
+			return (client.emit("ChatError", errorMessages.NOTTHEOWNER));
 		if (ret === -3)
-			return (client.emit("removeadmin", errorMessages.INVALIDNAME));
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
 		if (ret === -4)
-			return (client.emit("addadmin", errorMessages.NOTINTHISCHANNEL));
+			return (client.emit("ChatError", errorMessages.NOTINTHISCHANNEL));
 		if (ret === -5)
-			return (client.emit("removeadmin", errorMessages.NOTANADMINISTRATOR));
+			return (client.emit("ChatError", errorMessages.NOTANADMINISTRATOR));
 		client.emit("removeadmin", `User ${adminForm.name} successfully demoted from administrator !`);
 	}
 
@@ -100,21 +103,21 @@ export class WsChatGateway
 	async joinChannel(client: Socket, joinForm: channelOperationDto)
 	{
 		console.log("Join channel !");
-		console.log(joinForm.name + " for " + joinForm.channelname);
+		console.log("for " + joinForm.channelname);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
-			return (client.emit("joinchannel", errorMessages.NOTREGISTERED));
+			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
 		let ret = await this.wsChatService.joinChannel(sender, joinForm);
 		if (ret === -1)
-			return (client.emit("joinchannel", errorMessages.CHANNELDONTEXIST));
+			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
 		if (ret === -2)//may be useless
-			return (client.emit("joinchannel", errorMessages.INVALIDNAME));//may be useless
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));//may be useless
 		if (ret === -3)
-			return (client.emit("joinchannel", errorMessages.ALREADYINCHANNEL));
+			return (client.emit("ChatError", errorMessages.ALREADYINCHANNEL));
 		if (ret === -4)
-			return (client.emit("joinchannel", errorMessages.INCORRECTPASSWORD));
+			return (client.emit("ChatError", errorMessages.INCORRECTPASSWORD));
 		if (ret === -5)
-			return (client.emit("joinchannel", errorMessages.NOTONTHELIST));
+			return (client.emit("ChatError", errorMessages.NOTONTHELIST));
 		let response =
 		{
 			message : `You successfully joined the channel ${joinForm.channelname} !`,
@@ -128,19 +131,19 @@ export class WsChatGateway
 	async leaveChannel(client: Socket, leaveForm: channelOperationDto)
 	{
 		console.log("Leave channel !");
-		console.log(leaveForm.name + " for " + leaveForm.channelname);
+		console.log(" for " + leaveForm.channelname);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
-			return (client.emit("leavechannel", errorMessages.NOTREGISTERED));
+			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
 		let ret = await this.wsChatService.leaveChannel(sender, leaveForm);
 		if (ret === -1)
-			return (client.emit("leavechannel", errorMessages.CHANNELDONTEXIST));
+			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
 		if (ret === -2)//may be useless
-			return (client.emit("leavechannel", errorMessages.INVALIDNAME));//may be useless
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));//may be useless
 		if (ret === -3)
-			return (client.emit("leavechannel", errorMessages.NOTJOINED));
+			return (client.emit("ChatError", errorMessages.NOTJOINED));
 		if (ret === -4)
-			return (client.emit("leavechannel", errorMessages.ACAPTAINDONTLEAVEHISSHIP));
+			return (client.emit("ChatError", errorMessages.ACAPTAINDONTLEAVEHISSHIP));
 		let response =
 		{
 			message : `You successfully leaved the channel ${leaveForm.channelname} !`,
@@ -157,18 +160,18 @@ export class WsChatGateway
 		console.log(invitationForm.name + " for " + invitationForm.channelname);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
-			return (client.emit("createinvitation", errorMessages.NOTREGISTERED));
+			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
 		let ret = await this.wsChatService.createInvitation(sender, invitationForm);
 		if (ret === -1)
-			return (client.emit("createinvitation", errorMessages.CHANNELDONTEXIST));
+			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
 		if (ret === -2)//may be useless
-			return (client.emit("createinvitation", errorMessages.INVALIDNAME));//may be useless
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));//may be useless
 		if (ret === -3)
-			return (client.emit("createinvitation", errorMessages.INVALIDNAME));
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
 		if (ret === -4)
-			return (client.emit("createinvitation", errorMessages.ALREADYINCHANNEL));
+			return (client.emit("ChatError", errorMessages.ALREADYINCHANNEL));
 		if (ret === -5)
-			return (client.emit("createinvitation", errorMessages.NOTOP));
+			return (client.emit("ChatError", errorMessages.NOTOP));
 		client.emit("createinvitation",
 			`User ${invitationForm.name} has been successfully invited to channel ${invitationForm.channelname}!`);
 	}
@@ -181,16 +184,16 @@ export class WsChatGateway
 		console.log(invitationForm.name + " for " + invitationForm.channelname);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
-			return (client.emit("deleteinvitation", errorMessages.NOTREGISTERED));
+			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
 		let ret = await this.wsChatService.createInvitation(sender, invitationForm);
 		if (ret === -1)
-			return (client.emit("deleteinvitation", errorMessages.CHANNELDONTEXIST));
+			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
 		if (ret === -2)//may be useless
-			return (client.emit("deleteinvitation", errorMessages.INVALIDNAME));//may be useless
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));//may be useless
 		if (ret === -3)
-			return (client.emit("deleteinvitation", errorMessages.INVALIDNAME));
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
 		if (ret === -4)
-			return (client.emit("deleteinvitation", errorMessages.NOTINVITED));
+			return (client.emit("ChatError", errorMessages.NOTINVITED));
 		client.emit("deleteinvitation", `You successfully deleted the invitation of ${invitationForm.name} for channel ${invitationForm.channelname} !`);
 	}
 
@@ -202,14 +205,14 @@ export class WsChatGateway
 		console.log(deleteForm.channelname);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
-			return (client.emit("deletechannel", errorMessages.NOTREGISTERED));
+			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
 		let ret = await this.wsChatService.deleteChannel(sender, deleteForm);
 		if (ret === -1)
-			return (client.emit("deletechannel", errorMessages.CHANNELDONTEXIST));
+			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
 		if (ret === -2) // may be useless
-			return (client.emit("deletechannel", errorMessages.INVALIDNAME));//may be useless
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));//may be useless
 		if (ret === -3)
-			return (client.emit("deletechannel", errorMessages.NOTTHEOWNER));
+			return (client.emit("ChatError", errorMessages.NOTTHEOWNER));
 		let response =
 		{
 			message : `You successfully deleted the channel ${deleteForm.channelname} !`,
@@ -226,22 +229,22 @@ export class WsChatGateway
 		console.log(kickForm.name);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
-			return (client.emit("kickuser", errorMessages.NOTREGISTERED));
+			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
 		let ret = await this.wsChatService.kickUser(sender, kickForm);
 		if (ret === -1)
-			return (client.emit("kickuser", errorMessages.CHANNELDONTEXIST));
+			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
 		if (ret === -2)
-			return (client.emit("kickuser", errorMessages.INVALIDNAME));
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
 		if (ret === -3)
-			return (client.emit("kickuser", errorMessages.INVALIDNAME));
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
 		if (ret === -4)
-			return (client.emit("kickuser", errorMessages.NOTOP));
+			return (client.emit("ChatError", errorMessages.NOTOP));
 		if (ret === -5)
-			return (client.emit("kickuser", errorMessages.CANTSANCTIONOWNER));
+			return (client.emit("ChatError", errorMessages.CANTSANCTIONOWNER));
 		if (ret === -6)
-			return (client.emit("kickuser", errorMessages.CANTSANCTIONEQUAL));
+			return (client.emit("ChatError", errorMessages.CANTSANCTIONEQUAL));
 		if (ret === -7)
-			return (client.emit("kickuser", errorMessages.NOTINTHISCHANNEL));
+			return (client.emit("ChatError", errorMessages.NOTINTHISCHANNEL));
 		let response =
 		{
 			message : `You successfully kicked user ${kickForm.name} !`,
@@ -258,22 +261,22 @@ export class WsChatGateway
 		console.log(banForm.name);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
-			return (client.emit("banuser", errorMessages.NOTREGISTERED));
+			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
 		let ret = await this.wsChatService.kickUser(sender, banForm);
 		if (ret === -1)
-			return (client.emit("banuser", errorMessages.CHANNELDONTEXIST));
+			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
 		if (ret === -2)
-			return (client.emit("banuser", errorMessages.INVALIDNAME));
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
 		if (ret === -3)
-			return (client.emit("banuser", errorMessages.INVALIDNAME));
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
 		if (ret === -4)
-			return (client.emit("banuser", errorMessages.NOTOP));
+			return (client.emit("ChatError", errorMessages.NOTOP));
 		if (ret === -5)
-			return (client.emit("banuser", errorMessages.CANTSANCTIONOWNER));
+			return (client.emit("ChatError", errorMessages.CANTSANCTIONOWNER));
 		if (ret === -6)
-			return (client.emit("banuser", errorMessages.CANTSANCTIONEQUAL));
+			return (client.emit("ChatError", errorMessages.CANTSANCTIONEQUAL));
 		if (ret === -7)
-			return (client.emit("banuser", errorMessages.NOTINTHISCHANNEL));
+			return (client.emit("ChatError", errorMessages.NOTINTHISCHANNEL));
 		let response =
 		{
 			message : `You successfully banned user ${banForm.name} !`,
@@ -290,22 +293,22 @@ export class WsChatGateway
 		console.log(muteForm.name);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
-			return (client.emit("muteuser", errorMessages.NOTREGISTERED));
+			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
 		let ret = await this.wsChatService.kickUser(sender, muteForm);
 		if (ret === -1)
-			return (client.emit("muteuser", errorMessages.CHANNELDONTEXIST));
+			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
 		if (ret === -2)
-			return (client.emit("muteuser", errorMessages.INVALIDNAME));
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
 		if (ret === -3)
-			return (client.emit("muteuser", errorMessages.INVALIDNAME));
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
 		if (ret === -4)
-			return (client.emit("muteuser", errorMessages.NOTOP));
+			return (client.emit("ChatError", errorMessages.NOTOP));
 		if (ret === -5)
-			return (client.emit("muteuser", errorMessages.CANTSANCTIONOWNER));
+			return (client.emit("ChatError", errorMessages.CANTSANCTIONOWNER));
 		if (ret === -6)
-			return (client.emit("muteuser", errorMessages.CANTSANCTIONEQUAL));
+			return (client.emit("ChatError", errorMessages.CANTSANCTIONEQUAL));
 		if (ret === -7)
-			return (client.emit("muteuser", errorMessages.NOTINTHISCHANNEL));
+			return (client.emit("ChatError", errorMessages.NOTINTHISCHANNEL));
 		let response =
 		{
 			message : `You successfully muted user ${muteForm.name} !`,

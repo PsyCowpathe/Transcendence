@@ -1,20 +1,25 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsPositive, IsNotEmpty, Length, IsString, IsNumberString, IsDivisibleBy } from 'class-validator';
 
 export class AuthDto
 {
-  state: string;
-  code: string;
+	@IsNotEmpty({message: 'The state can\'t be empty !'})
+	state: string;
+	
+	@IsNotEmpty({message: 'The code can\'t be empty !'})
+	code: string;
 }
 
 export class RegisterDto
 {
-	@IsNotEmpty()
-	@IsString()
+	@IsString({message: `Your username must be a string !`})
+	@Length(3, 20, {message: 'Your username must contain between 3 and 20 caracters !'})
 	name: string;
 }
 
 export class TokenDto
 {
+	@IsString({message: `The token must be a string !`})
+	@IsNotEmpty({message: 'The token can\'t be empty !'})
 	token: string;
 }
 

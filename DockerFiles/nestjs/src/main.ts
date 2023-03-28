@@ -1,6 +1,6 @@
-import { NestFactory} from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 
-import { Req, Res} from '@nestjs/common';
+import { Req, Res } from '@nestjs/common';
 
 import { Request, Response, NextFunction } from 'express';
 import { AppModule } from './app.module';
@@ -19,9 +19,9 @@ async function bootstrap()
   		key: fs.readFileSync('./secret/cert.key'),
   		cert: fs.readFileSync('./secret/cert.crt'),
 	};*/
+
   	const app = await NestFactory.create(AppModule);
 	app.use(cookieParser());
-
 	app.enableCors
 	({
 		allowedHeaders: ['content-type', 'authorization'],
