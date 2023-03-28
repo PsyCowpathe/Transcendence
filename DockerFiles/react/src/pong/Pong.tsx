@@ -13,14 +13,17 @@ export default function Pong ()
 	let buttonReady: HTMLElement | null;
 	let p_score: HTMLElement | null;
 	let o_score: HTMLElement | null;
+	let p_name: HTMLElement | null;
+	let o_name: HTMLElement | null;
 	
 	let deltaTime: number = 0;
 	let prevTime: number = 0;
 	let ball: Ball;
 	let p_paddle!: Paddle;
 	let o_paddle!: Paddle;
-	let player1!: Player;
-	let player2!: Player;
+	let player!: Player;
+	let opponent!: Player;
+	
 	let input: number; 
 	let GOAL:boolean = false;
 
@@ -36,8 +39,8 @@ export default function Pong ()
 	}
 	const createPlayers = () =>
 	{
-		player1 = new Player("name", p_paddle);
-		player2 = new Player("name", o_paddle);	
+		player = new Player("name", p_paddle);
+		opponent = new Player("name", o_paddle);
 	}
 
 	useEffect(() => {
@@ -45,8 +48,20 @@ export default function Pong ()
 		createPaddles();
 		createPlayers();
 		buttonReady = document.getElementById("player_ready");
+		p_name = document.getElementById("p_name");
+		o_name = document.getElementById("o_name");
+		if (p_name && o_name)
+		{
+			p_name.textContent = player.name;
+			o_name.textContent = opponent.name;
+		}
 		p_score = document.getElementById("p_score");
 		o_score = document.getElementById("o_score");
+		if (p_score && o_score)
+		{
+			p_score.textContent = player.score;
+			o_score.textContent = opponent.score;
+		}
 		document.addEventListener("mousemove", eMouseMoved);
 	}, []);
 	
@@ -67,7 +82,8 @@ export default function Pong ()
 	function updatePositions()
 	{
 		ball.setPosition(moveBall(deltaTime, ball, p_paddle, o_paddle));
-		GOAL = (ball.pos.x >= 100 || ball.pos.x <= 0)
+		GOAL = (ball.pos.x >= 99 || ball.pos.x <= 0)
+		console.log(ball.pos.x);
 		if (GOAL)
 			GOOOAAAAAAL(ball);
 	}
@@ -76,19 +92,15 @@ export default function Pong ()
 	{
 		if (p_score && ball.pos.x > 50)
 		{
-			player1.score++;
-			p_score.style.setProperty("--p_score", player1.score);
+			player.score++;
+			p_score.textContent = player.score;
 		}
 		else if (o_score)
 		{
-			player2.score++;
-			o_score.style.setProperty("--o_score", player2.score);
+			opponent.score++;
+			o_score.textContent = opponent.score;
 		}
 		ball.reset();
-		p_paddle.reset();
-		o_paddle.reset();
-		if (buttonReady)
-			buttonReady.style.display = "block";
 	}
 
 	function update(time : number)
@@ -103,19 +115,26 @@ export default function Pong ()
 	}
 
 	return (
-			<div style={{height:"100vh"}} className="pong_body">
-			<h1>PONG</h1>
-			<button className="player_ready" onClick={playerReady}id="player_ready"></button>
-			<div className="score player" id="p_score">0</div>
-			<div className="score opponent" id="o_score">0</div>
-			<div className="ball" id="ball"></div>
-			<div className="paddle left" id="p_paddle"></div>
-			<div className="paddle right" id="o_paddle"></div>
-			<div className="goal player"></div>
-			<div className="goal opponent"></div>
-			<div className="upperbound"></div>
-			<div className="central_line"></div>
-			<div className="lowerbound"></div>
+			<div className="pong">
+				<div className="text">
+					<h1>PONG</h1>
+					<div className="scores">
+						<div className="name p1" id="p_name"></div>
+						<div className= "score p1" id="p_score"></div>
+						<div className= "bar">|</div>
+						<div className="score o" id="o_score"></div>
+						<div className="name o" id="o_name"></div>
+					</div>
+				</div>
+				<button className="player_ready" onClick={playerReady} id="player_ready"></button>
+				<div className="game">
+					<div className="ball" id="ball"></div>
+					<div className="paddle left" id="p_paddle"></div>
+					<div className="paddle right" id="o_paddle"></div>
+					<div className="upperbound"></div>
+					<div className="central_line"></div>
+					<div className="lowerbound"></div>
+				</div>
 			</div>
 		);
 }

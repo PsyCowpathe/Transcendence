@@ -3,15 +3,15 @@ import { useState, useRef, forwardRef, Ref } from "react";
 
 export default class Ball
 {
-	BASE_SPEED:number = 0.05;
-	GAME_SPEED:number = 1.001;
+	BASE_SPEED:number = 0.033;
+	GAME_SPEED:number = 0.1;
 	
 	ball!: HTMLElement;
 	pos = { x: 0, y: 0 };
 	dir = { x: 0, y: 0 };
 	rect = { right: 0, left: 0, up: 0, down: 0 };
 	speed: number = 0;
-	headingThere:boolean = true;
+	wasHit = true;
 
 	constructor (ball: HTMLElement | null)
 	{
@@ -47,12 +47,12 @@ export default class Ball
 
 	setPosition (pos:{x:any, y:any})
 	{
-		if (pos.x > -1 && pos.x < 101)
+		if (pos.x >= -1 && pos.x <= 101)
 		{
 			this.pos.x = pos.x;
 			this.ball.style.setProperty("--x", pos.x);
 		}
-		if (pos.y > -1 && pos.y < 101)
+		if (pos.y >= -1 && pos.y <= 101)
 		{
 			this.pos.y = pos.y;
 			this.ball.style.setProperty("--y", pos.y);
@@ -70,10 +70,12 @@ export default class Ball
 		const pos = { x: 50, y:50 };
 		this.setPosition(pos);
 		this.dir = this.getRandomDirection();
-		this.headingThere = (this.dir.x < 0);
 		this.rect = { right: 51, left: 49,
 				up: 49, down: 51 };
 		this.speed = this.BASE_SPEED;
+		this.wasHit = false;
+		this.dir.x = 1;
+		this.dir.y = 0;
 	}
 }
 

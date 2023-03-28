@@ -16,7 +16,7 @@ export default function moveBall(deltaTime: number, ball: Ball, p_paddle: Paddle
 	else if (ballrect.down >= 80)
 		ball.dir.y = -Math.abs(ball.dir.y);
 	
-	if (ball.pos.x < 10 && ball.headingThere)
+	if (ball.pos.x < 15)
 	{
 		const p_paddlerect = p_paddle.getRect();
 		
@@ -29,10 +29,10 @@ export default function moveBall(deltaTime: number, ball: Ball, p_paddle: Paddle
 			newdir = {	x: Math.cos(rad * Math.PI),
 					y: Math.sin(rad * Math.PI)	};
 			ball.setDirection(newdir);
-			ball.headingThere = false;
+			ball.speed = ball.GAME_SPEED;
 		}
 	}
-	else if (ball.pos.x > 90 && !ball.headingThere)
+	else if (ball.pos.x > 75)
 	{
 		const o_paddlerect = o_paddle.getRect();
 		
@@ -45,7 +45,8 @@ export default function moveBall(deltaTime: number, ball: Ball, p_paddle: Paddle
 			newdir = {	x: -Math.cos(rad * Math.PI),
 					y: Math.sin(rad * Math.PI)	};
 			ball.setDirection(newdir);
-			ball.headingThere = true;
+			ball.speed = ball.GAME_SPEED;
+			ball.wasHit = true;
 		}
 	}
 

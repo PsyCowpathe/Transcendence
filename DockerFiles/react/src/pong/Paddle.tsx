@@ -33,9 +33,4 @@ export default class Paddle
 		this.pos.y = y;
 		this.paddle.style.setProperty("--y", y);
 	}
-
-	reset()
-	{
-		this.pos.y = 50;
-	}
 }
