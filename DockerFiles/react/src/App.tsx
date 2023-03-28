@@ -15,9 +15,8 @@ import { AskFriend } from "./Pages/AskFrindPage";
 import IconLabelButtons from './PageTest';
 import { TopBar } from './Pages/TopBar';
 // import { Chat } from './chat/ChatComp';
-import { Chat } from './chat/compTest';
-import { CreateChan } from './NewChat/CreateChan';
-
+import { Chat } from './NewChat/CreateChan';
+import  ProfilePictureUploader  from './Pages/NewProfilPic';
 
 
 function App() 
@@ -55,32 +54,20 @@ function App()
 	//ade3b5ea214ca737f53ce0bce98938c2.jpg
 	return (
 		<BrowserRouter> 
-	 	{/* <AuthContext.Provider value={isLoggedIn}>
-	 	<div className="App">
-	
-	 	  {isLoggedIn ? <LoadingPage /> : <HomePage tokenForm={tokenForm} setToken={setToken} onLogin={() => setIsLoggedIn(true)} />}
- 	  <LoadingPage />
-	 	</div>
-	   </AuthContext.Provider> */}
-		
 			<Routes>
 		 {/* <Route path='/' element={<HomePage  tokenForm={tokenForm} setToken={setToken} onLogin={() => setIsLoggedIn(true)}/>}/>   */}
 
 			<Route path='/change' element={<ChangeLogin/>}/> 
 			<Route path='/' element={<HomePage tokenForm={tokenForm} setToken={setToken} onLogin={() => setIsLoggedIn(true)}/>}/> 
-			<Route path='/chat' element={<CreateChan/>}/>
+			<Route path='/chat' element={<Chat/>}/>
 			{/* <Route path="/chatoune" element ={<Chat username={"Alice"} />} /> */}
 			<Route path='/affUser' element={<AffMyUserPage/>}/>
 			<Route path='/LoadingPage' element={<LoadingPage/>}/>
-			{/* <Route path='/changepic' element={<ProfilePicturePage />}/> */}
+			<Route path='/changepic' element={<ProfilePictureUploader />}/>
 			<Route  path='/askFriend' element={<AskFriend />}/>
 			<Route path='/test' element={<IconLabelButtons />}/> 
 			<Route path='/TopBar' element={<TopBar />}/> 
 			</Routes> 
-		
-
-
-
 	</BrowserRouter>
 		
 	//	 {/* <BrowserRouter> */}

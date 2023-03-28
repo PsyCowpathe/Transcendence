@@ -1,4 +1,6 @@
 .chat-app {
+   height: 70vh; /* Hauteur fixe de votre conteneur */
+    overflow-x: auto; /* Ajoute une barre de défilement verticale*/
     display: flex;
     height: 100%;
   }
@@ -8,6 +10,8 @@
     background-color: #fff;
     border-right: 1px solid #ddd;
     padding: 20px;
+    
+    
   }
   
   .chat-app__sidebar h2 {
@@ -17,6 +21,7 @@
   }
   
   .channel-list {
+    
     margin-bottom: 20px;
   }
   
@@ -25,7 +30,13 @@
     margin: 0;
     padding: 0;
   }
-  
+  .chat-list
+  {
+    height: 70vh; /* Hauteur fixe de votre conteneur */
+    overflow-x:scroll; /* Ajoute une barre de défilement verticale*/
+    scroll-behavior: smooth;
+
+  }
   .channel-list li {
     margin-bottom: 10px;
     font-size: 16px;
@@ -34,6 +45,9 @@
   
   .channel-list li.active {
     color: #007bff;
+    /* overflow-x: auto; */
+    /* height: 300px; */
+    
   }
   
   .add-channel-button {
@@ -82,7 +96,10 @@
     border: none;
     cursor: pointer;
   }
-  
+  .containers {
+    height: 70vh; /* Hauteur fixe de votre conteneur */
+    overflow-x: auto; /* Ajoute une barre de défilement verticale*/
+   }
   .message-list {
     flex: 1;
     background-color: #f8f8f8;
@@ -143,3 +160,72 @@
     cursor: pointer;
   }
   
+
+
+
+
+
+
+
+
+.textcol
+{
+  text-decoration: solid;
+  color: #cf22b2;
+  font-size: 10px;
+
+}
+
+.textcol2
+{
+  text-decoration: solid;
+  color: #cf22b2;
+  font-size: 40px;
+
+}
+
+
+
+
+  .dropzone {
+    border: 50px dashed #0087F7;
+      border-radius:100%;
+       width: 100px;
+      height: 100px;
+      min-height: 0px !important;
+      min-width: 0px !important;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 10px;
+      color: #0087F7;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      
+     }   
+
+
+     .message {
+      padding: 10px;
+      margin: 10px;
+      border-radius: 10px;
+      background-color: #F2F2F2;
+    }
+.sent-message {
+  background-color: #007bff;
+  color: white;
+  border-radius: 10px 10px 0 10px;
+  padding: 10px;
+  margin-left: auto;
+  max-width: 50%;
+}
+
+.received-message {
+  background-color: #f1f0f0;
+  color: black;
+  border-radius: 10px 10px 10px 0;
+  padding: 10px;
+  margin-right: auto;
+  max-width: 50%;
+}

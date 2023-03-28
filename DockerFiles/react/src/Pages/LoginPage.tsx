@@ -2,7 +2,7 @@ import React from "react";
 import {useState, useEffect} from 'react'
 import { RequestChangeLogin } from "../Api/ChangeLogRequest";
 import { TopBar } from "./TopBar";
-
+import { ToastContainer, toast } from 'react-toastify';
 
 export function ChangeLogin()
 {
@@ -29,8 +29,13 @@ export function ChangeLogin()
         })
         .catch(error =>
         {
+            toast.error(error.response.data.message[0], {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 2000,
+                progressClassName: "my-progress-bar"
+            })
             console.log("ERROR AVEC  UN LOGIN")
-            console.log(error.message)
+            console.log(error.response.data.message[0])
         })
         setwait({name:''})
     }
@@ -57,7 +62,7 @@ export function ChangeLogin()
         onChange={Change}
         />
         <button>met moi un login frr</button>
-        </form>
+        </form><ToastContainer />
         </div>
        
 

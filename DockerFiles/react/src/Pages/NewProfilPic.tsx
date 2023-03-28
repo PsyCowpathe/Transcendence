@@ -4,36 +4,45 @@ import { TopBar } from "./TopBar";
 
 
 
-interface Props {
-  onSubmit: (formData: FormData) => Promise<void>;
-}
+function ProfilePictureUploader() {
+  const [image, setImage] = useState<string | null>(null);
 
-const ProfilePictureForm: React.FC<Props> = ({ onSubmit }) => {
-  const [file, setFile] = useState<File | null>(null);
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files && event.target.files[0];
-    setFile(selectedFile || null);
-  };
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  // Fonction pour gérer le glisser-déposer
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-    if (file) {
-      const formData = new FormData();
-      formData.append('file', file);
-      onSubmit(formData);
+    const files = event.dataTransfer.files;
+    if (files.length) {
+      const file = files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = reader.result as string;
+        setImage(dataUrl);
+      };
+      reader.readAsDataURL(file);
     }
-  };
+  }
+
+  // Fonction pour empêcher le comportement par défaut du navigateur pour le glisser-déposer
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+  }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div >
-        <TopBar/>
-        <input type="file" accept="image/*" onChange={handleFileChange}  />
+    <div className="App">
+      <TopBar/>
+      <h1 className="textcol2">Drag and Drop Image</h1>
+      <div
+        className="dropzone"
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+      >
+        {image ? (
+          <img src={image} alt="profile" />
+        ) : (
+          <p className="textcol">Drag and drop your image here</p>
+        )}
       </div>
-      <button type="submit">Upload</button>
-    </form>
+    </div>
   );
-};
-
-export default ProfilePictureForm;
+}
+export default ProfilePictureUploader;
