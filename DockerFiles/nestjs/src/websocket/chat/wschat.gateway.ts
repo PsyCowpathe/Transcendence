@@ -118,8 +118,10 @@ export class WsChatGateway
 		if (ret === -3)
 			return (client.emit("ChatError", errorMessages.ALREADYINCHANNEL));
 		if (ret === -4)
-			return (client.emit("ChatError", errorMessages.INCORRECTPASSWORD));
+			return (client.emit("ChatError", errorMessages.YOUAREBAN));
 		if (ret === -5)
+			return (client.emit("ChatError", errorMessages.INCORRECTPASSWORD));
+		if (ret === -6)
 			return (client.emit("ChatError", errorMessages.NOTONTHELIST));
 		let response =
 		{
@@ -176,6 +178,8 @@ export class WsChatGateway
 		if (ret === -4)
 			return (client.emit("ChatError", errorMessages.ALREADYINCHANNEL));
 		if (ret === -5)
+			return (client.emit("ChatError", errorMessages.ALREADYINVITED));
+		if (ret === -6)
 			return (client.emit("ChatError", errorMessages.NOTOP));
 		client.emit("createinvitation",
 			`User ${invitationForm.name} has been successfully invited to channel ${invitationForm.channelname}!`);
@@ -286,6 +290,8 @@ export class WsChatGateway
 			return (client.emit("ChatError", errorMessages.CANTSANCTIONEQUAL));
 		if (ret === -7)
 			return (client.emit("ChatError", errorMessages.NOTINTHISCHANNEL));
+		if (ret === -8)
+			return (client.emit("ChatError", errorMessages.ALREADYBAN));
 		let response =
 		{
 			message : `You successfully banned user ${banForm.name} !`,
@@ -319,6 +325,9 @@ export class WsChatGateway
 			return (client.emit("ChatError", errorMessages.CANTSANCTIONEQUAL));
 		if (ret === -7)
 			return (client.emit("ChatError", errorMessages.NOTINTHISCHANNEL));
+		if (ret === -8)
+			return (client.emit("ChatError", errorMessages.ALREADYMUTE));
+
 		let response =
 		{
 			message : `You successfully muted user ${muteForm.name} !`,

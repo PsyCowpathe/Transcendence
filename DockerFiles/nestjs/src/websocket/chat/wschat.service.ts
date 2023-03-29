@@ -53,13 +53,13 @@ export class WsChatService
 		client.join(list.toString());
 	}
 
-	async userPower(askMan: User | null, channel: Channel) : Promise<number>
+	async userPower(user: User | null, channel: Channel) : Promise<number>
 	{
-		if (askMan === null)
+		if (user === null)
 			return (-1);
-		if (askMan.id === channel.owner.id)
+		if (user.id === channel.owner.id)
 			return (2);
-		if (await this.adminsService.findOneByAdmin(channel, askMan) !== null)
+		if (await this.adminsService.findOneByAdmin(channel, user) !== null)
 			return (1);
 		return (0);
 	}
@@ -73,7 +73,43 @@ export class WsChatService
   		}
 	}
 
-	Notify(userId: number, channelMessage: string | undefined, data: string, destination: any, userMessage: string | undefined) : number
+	async isBan(user: User, channel: Channel) : Promise<boolean>
+	{
+		let banList: any = await this.bansService.findOneByBan(user, channel);
+		let i = 0;
+		let time = Date.now();
+
+		while (banList[i])
+		{
+			console.log(banList[i++]);
+			if (time < banList[i].end)
+				return (true);
+		}
+		return (false);
+	}
+
+	async isMute(user: User, channel: Channel) : Promise<boolean>
+	{
+		let muteList: any = await this.mutesService.findOneByMute(user, channel);
+		let i = 0;
+		let time = Date.now();
+
+		while (muteList[i])
+		{
+			console.log(muteList[i++]);
+			if (time < muteList[i].end)
+				return (true);
+		}
+		return (false);
+	}
+
+
+	async getUserInChannel(channel: Channel) : Promise<JoinChannel[] | null>
+	{
+		return (this.joinChannelService.getUser(channel));
+	}
+
+	Notify(userId: number, channelMessage: string | undefined, data: any, destination: any, userMessage: string | undefined) : number
 	{
 		let userSocket = this.sockets.get(userId);
 		if (userSocket !== undefined)
@@ -81,7 +117,8 @@ export class WsChatService
 			let response =
 			{
 				message : userMessage,
-				data : data,
+				first_data : data.first,
+				second_data : data.second,
 			}
 			if (channelMessage !== undefined)
 				userSocket.to(destination.channel).emit(channelMessage, data);
@@ -136,7 +173,7 @@ export class WsChatService
 			return (-3);
 		if (await this.joinChannelService.findOneByJoined(channel, toPromote) === null)
 			return (-4)
-		if (await this.adminsService.findOneByAdmin(channel, toPromote) !== null)
+		if (await this.userPower(toPromote, channel) > 0)
 			return (-5);
 		let newAdmin = new Admins();
 		newAdmin.channel = channel;
@@ -160,7 +197,7 @@ export class WsChatService
 			return (-3);
 		if (await this.joinChannelService.findOneByJoined(channel, toDemote) === null)
 			return (-4)
-		if (await this.adminsService.findOneByAdmin(channel, toDemote) === null)
+		if (await this.userPower(toDemote, channel) === 0)
 			return (-5);
 		this.adminsService.remove(toDemote, channel);
 		let channelMessage = `User ${toDemote.name} is now an administrator !`;
@@ -178,11 +215,13 @@ export class WsChatService
 			return (-2);
 		if (await this.joinChannelService.findOneByJoined(channel, askMan) === null)
 			return (-3)
+		if (await this.isBan(askMan, channel) === true)
+			return (-4)
 		if (channel.visibility === "public")
 		{
 			const isMatch = await bcrypt.compare(joinForm.password, channel.password);
 			if (isMatch === false)
-				return (-4);
+				return (-5);
 			let newJoin = new JoinChannel();
 			newJoin.channel = channel;
 			if (askMan)
@@ -192,7 +231,7 @@ export class WsChatService
 		else
 		{
 			if (await this.inviteListService.findOneByInvite(channel, askMan) === null)
-				return (-5);
+				return (-6);
 			let newJoin = new JoinChannel();
 			newJoin.channel = channel;
 			if (askMan)
@@ -201,7 +240,9 @@ export class WsChatService
 		}
 		let channelMessage = `User ${askMan.name} joined the channel !`;
 		let userMessage = undefined;
-		return (this.Notify(askMan.id, channelMessage, askMan.name, {channel: channel.name, user: "none"}, userMessage));
+		return (this.Notify(askMan.id, channelMessage,
+				{first: channel.name, second: this.getUserInChannel(channel)},
+				{channel: channel.name, user: "joinchannel"}, userMessage));
 	}
 
 	async leaveChannel(sender: number, leaveForm: channelOperationDto) : Promise<number>
@@ -235,8 +276,10 @@ export class WsChatService
 			return (-3);
 		if (await this.joinChannelService.findOneByJoined(channel, toInvite) !== null)
 			return (-4);
-		if (await this.userPower(askMan, channel) === 0)
+		if (await this.inviteListService.findOneByInvite(channel, toInvite) !== null)
 			return (-5);
+		if (await this.userPower(askMan, channel) === 0)
+			return (-6);
 		let newInvite = new InviteList();
 		newInvite.channel = channel;
 		newInvite.user = toInvite;
@@ -330,6 +373,8 @@ export class WsChatService
 			return (-6);
 		if (await this.joinChannelService.findOneByJoined(channel, toBan) === null)
 			return (-7);
+		if (await this.isBan(toBan, channel) === true)
+			return (-8);
 		let newBan = new Bans();
 		newBan.channel = channel;
 		newBan.user = toBan;
@@ -363,6 +408,8 @@ export class WsChatService
 			return (-6);
 		if (await this.joinChannelService.findOneByJoined(channel, toMute) === null)
 			return (-7);
+		if (await this.isMute(toMute, channel) === true)
+			return (-8);
 		let newMute = new Mutes();
 		newMute.channel = channel;
 		newMute.user = toMute;

@@ -86,7 +86,7 @@ export class JoinChannel
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@ManyToOne(() => Channel, (channel) => channel.id)
+	@ManyToOne(() => Channel, (channel) => channel.id, { onDelete: 'CASCADE' })
 	@JoinColumn()
 	channel: Channel
 

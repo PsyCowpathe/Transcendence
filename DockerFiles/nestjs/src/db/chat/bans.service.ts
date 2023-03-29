@@ -18,6 +18,22 @@ export class BansService
 		return (this.bansRepository.findOneBy({ id }));
 	}
 
+	async findOneByBan(user: User, channel: Channel): Promise<Bans[] | null>
+	{
+		let ret = await this.bansRepository
+			.find
+			({
+				where:
+				[
+					{channel: channel, user: user}
+				]
+			});
+			if (ret[0] === undefined)
+				return (null);
+			return (ret);
+	}
+
+
 	create(newBan: Bans)
 	{
 		return (this.bansRepository.save(newBan));

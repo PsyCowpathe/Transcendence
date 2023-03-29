@@ -25,6 +25,7 @@ export enum errorMessages
 	NOTANADMINISTRATOR = "This user is not an administrator of this channel !",
 	NOTINTHISCHANNEL = "This user is not in this channel !",
 	ALREADYINCHANNEL = "You are already in this channel !",
+	ALREADYINVITED = "This user is already invited in this channel !",
 	NOTJOINED = "You are not in this channel !",
 	INCORRECTPASSWORD = "The password provided dont match !",
 	NOTONTHELIST = "You have not been invited to join this channel !",
@@ -33,7 +34,10 @@ export enum errorMessages
 	NOTINVITED = "This user wasnt invited to this channel !",
 	ACAPTAINDONTLEAVEHISSHIP = "You are the owner of this channel you can't leave it !",
 	CANTSANCTIONOWNER = "You cant sanction the mighty owner of this channel !",
-	CANTSANCTIONEQUAL = "This user's power is equal to yours, you cannot defeat him !"
+	CANTSANCTIONEQUAL = "This user's power is equal to yours, you cannot defeat him !",
+	YOUAREBAN = "You are ban from this channel !",
+	ALREADYBAN = "This user is already ban from this channel !",
+	ALREADYMUTE = "This user is already mute from this channel !"
 }
 
 export enum urls

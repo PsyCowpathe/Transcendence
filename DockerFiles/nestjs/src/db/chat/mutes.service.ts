@@ -18,6 +18,21 @@ export class MutesService
 		return (this.mutesRepository.findOneBy({ id }));
 	}
 
+	async findOneByMute(user: User, channel: Channel): Promise<Mutes[] | null>
+	{
+		let ret = await this.mutesRepository
+			.find
+			({
+				where:
+				[
+					{channel: channel, user: user}
+				]
+			});
+			if (ret[0] === undefined)
+				return (null);
+			return (ret);
+	}
+
 	create(newMute: Mutes)
 	{
 		return (this.mutesRepository.save(newMute));
