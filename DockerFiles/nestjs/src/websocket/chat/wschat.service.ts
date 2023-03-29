@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 
 import { UserService } from '../../db/user/user.service';
+import { RelationService } from '../../db/relation/relation.service';
 import { ChannelService } from '../../db/chat/channel.service';
 import { AdminsService } from '../../db/chat/admins.service';
 import { JoinChannelService } from '../../db/chat/joinchannel.service';
@@ -10,7 +11,7 @@ import { InviteListService } from '../../db/chat/invitelist.service';
 import { BansService } from '../../db/chat/bans.service';
 import { MutesService } from '../../db/chat/mutes.service';
 
-import { createChannelDto, channelOperationDto, userOperationDto, sanctionOperationDto } from './wschat.entity';
+import { createChannelDto, channelOperationDto, userOperationDto, sanctionOperationDto, messageDto } from './wschat.entity';
 
 import { Channel, Admins, JoinChannel, InviteList, Bans, Mutes } from '../../db/chat/chat.entity';
 import { User } from '../../db/user/user.entity';
@@ -26,7 +27,8 @@ export class WsChatService
 			   	private readonly joinChannelService : JoinChannelService,
 				private readonly inviteListService : InviteListService,
 				private readonly bansService : BansService,
-				private readonly mutesService : MutesService)
+				private readonly mutesService : MutesService,
+				private readonly relationService : RelationService)
 	{
 
 	}
@@ -102,7 +104,6 @@ export class WsChatService
 		}
 		return (false);
 	}
-
 
 	async getUserInChannel(channel: Channel) : Promise<JoinChannel[] | null>
 	{
@@ -240,6 +241,9 @@ export class WsChatService
 		}
 		let channelMessage = `User ${askMan.name} joined the channel !`;
 		let userMessage = undefined;
+		let userSocket = this.sockets.get(askMan.id);
+		if (userSocket)
+			userSocket.join(channel.name);
 		return (this.Notify(askMan.id, channelMessage,
 				{first: channel.name, second: this.getUserInChannel(channel)},
 				{channel: channel.name, user: "joinchannel"}, userMessage));
@@ -419,5 +423,35 @@ export class WsChatService
 		let channelMessage = `User ${toMute.name} has been muted !`;
 		let userMessage = `${Date.now()}: You have been muted for ${muteForm.time} minutes for reason ${muteForm.reason} !`;
 		return (this.Notify(toMute.id, channelMessage, toMute.name, {channel: channel.name, user: "muteuser"}, userMessage));
+	}
+
+	async ChannelMessage(sender: number, messageForm: messageDto) : Promise<number>
+	{
+		let askMan = await this.userService.findOneById(sender);
+		let channel = await this.channelService.findOneByName(messageForm.destination);
+		if (channel === null)
+			return (-1);
+		if (askMan === null)
+			return (-2);
+		if (await this.joinChannelService.findOneByJoined(channel, askMan) === null)
+			return (-3);
+		if (await this.isMute(askMan, channel) === true)
+			return (-4);
+		let annoyedUserList : any = await this.relationService.getAnnoyedUser(askMan);
+		let userSocket = await this.sockets.get(askMan.id);
+		if (userSocket === undefined)
+			return (1);
+		let excludedUser;
+		let i = 0;
+		while (annoyedUserList[i])
+		{
+			excludedUser = await this.sockets.get(annoyedUserList[i].user1.id);
+			if (excludedUser)
+				excludedUser.join("exclusionList");
+			i++;
+		}
+		userSocket.to(messageForm.destination).except("exclusionList").emit(messageForm.message);
+		userSocket.in("exclusionList").socketsLeave("exclusionList");
+		return (1);
 	}
 }

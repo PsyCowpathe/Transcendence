@@ -36,6 +36,7 @@ export enum errorMessages
 	CANTSANCTIONOWNER = "You cant sanction the mighty owner of this channel !",
 	CANTSANCTIONEQUAL = "This user's power is equal to yours, you cannot defeat him !",
 	YOUAREBAN = "You are ban from this channel !",
+	YOUAREMUTE = "You are mute in this channel !",
 	ALREADYBAN = "This user is already ban from this channel !",
 	ALREADYMUTE = "This user is already mute from this channel !"
 }

@@ -53,3 +53,15 @@ export class sanctionOperationDto
 	@Length(3, 60, {message: 'The reason must contain between 3 and 60 caracters !'})
 	reason: string;
 }
+
+export class messageDto
+{
+	@IsString({message: `The channel name must be a string !`})
+	@Length(3, 20, {message: 'The destination  must contain between 3 and 20 caracters !'})
+	destination: string;
+
+	@IsString({message: `The message must be a string !`})
+	@Length(1, 135, {message: 'The message must contain between 1 and 135 caracters !'})
+	message: string
+
+}

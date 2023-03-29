@@ -8,7 +8,7 @@ import { sendError, sendSuccess } from '../../common/response';
 import { errorMessages } from '../../common/global';
 
 import { WsChatService }  from './wschat.service';
-import { createChannelDto, channelOperationDto, userOperationDto, sanctionOperationDto } from './wschat.entity';
+import { createChannelDto, channelOperationDto, userOperationDto, sanctionOperationDto, messageDto } from './wschat.entity';
 
 import { WsExceptionFilter } from './ws.filter'; 
 
@@ -335,4 +335,30 @@ export class WsChatGateway
 		}
 		client.emit("muteuser", response);
 	}
+
+	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
+	@SubscribeMessage('channelmsg')
+	async sendChannelMessage(client: Socket, messageForm: messageDto)
+	{
+		console.log("New message :");
+		console.log(messageForm.message);
+		console.log(" to ");
+		console.log(messageForm.destination);
+		client.emit('channelmsg', {user: "PsyCowpathe", texte: "coucou"});
+
+		let sender : number | undefined;
+		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
+			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
+		let ret = await this.wsChatService.ChannelMessage(sender, messageForm);
+		if (ret === -1)
+			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
+		if (ret === -2)
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
+		if (ret === -3)
+			return (client.emit("ChatError", errorMessages.NOTJOINED));
+		if (ret === -4)
+			return (client.emit("ChatError", errorMessages.YOUAREMUTE));
+	}
+
 }
