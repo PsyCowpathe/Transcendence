@@ -14,6 +14,9 @@ import { TopBar } from './TopBar';
 
 export function AffMyUserPage ()
 {
+  const UserName : any= localStorage.getItem('name')
+  console.log("ssf")
+  console.log(UserName)
 
   const navigate = useNavigate();
 
@@ -36,7 +39,7 @@ export function AffMyUserPage ()
         onClick: handleNotificationClick
     });
     };
-
+    
     return (
     		<div className="App">
           <TopBar/>
@@ -44,7 +47,7 @@ export function AffMyUserPage ()
 
     {/* <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "2em", height: "100vh" }}> */}
         <img src={Profil} alt="Profile" style={{ borderRadius: "50%", width: "200px", height: "200px", objectFit: "cover", boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)" }} />
-        <h1 style={{ fontSize: "2.5em", margin: "1em 0 0.5em" }}>Nom Prenom</h1><button className="SettingsButton" onClick={onClick}>
+        <h1 style={{ fontSize: "2.5em", margin: "1em 0 0.5em" }}>{UserName}</h1><button className="SettingsButton" onClick={onClick}>
       <FaCog  className="SettingsButtonIcon" />
     </button>
         <p style={{ fontSize: "1.2em", marginBottom: "1em",  }}>Age | Ville</p>

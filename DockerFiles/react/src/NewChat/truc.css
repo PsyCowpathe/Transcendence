@@ -49,7 +49,45 @@
     /* height: 300px; */
     
   }
-  
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .mamod
+  {
+    position: "absolute";
+    top: "50%";
+    left: "50%";
+    transform: "translate(-50%, -50%)";
+    width: "200px";
+    height: "200px";
+    backgroundColor: "white";
+    zIndex: 1;
+    borderRadius: "5px";
+    boxShadow: "0px 0px 5px 0px rgba(0,0,0,0.75)";
+    display: "flex";
+    flexDirection: "column";
+    alignItems: "center";
+    justifyContent: "center";
+
+
+  }
+  .mytest
+  {
+    display: block;
+    width: 1500px;
+    height: 1500px;
+    background-color: #cf22b2;
+    border : 1px solid #48c10f;
+  }
+
   .add-channel-button {
     display: block;
     width: 100%;
@@ -210,8 +248,9 @@
       padding: 10px;
       margin: 10px;
       border-radius: 10px;
-      background-color: #F2F2F2;
+      /* background-color: #F2F2F2; */
     }
+
 .sent-message {
   background-color: #007bff;
   color: white;
@@ -228,4 +267,15 @@
   padding: 10px;
   margin-right: auto;
   max-width: 50%;
+}
+
+.sent-user {
+  display: flex;
+  flex-direction: row-reverse;
+
+}
+
+.received-user {
+display: flex;
+ 
 }

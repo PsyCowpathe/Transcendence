@@ -24,25 +24,9 @@ function App()
  const AuthContext = createContext(false);
 
 
-	// const ProfilePicturePage = () => {
-	// 	const handleSubmit = (formData: FormData) => {
-	// 	  // Submit form data to backend API
-	// 	};
-	  
-	// 	return (
-	// 	  <div>
-	// 		<h1>Profile Picture</h1>
-	// 		{/* <ProfilePictureForm onSubmit={handleSubmit} /> */}
-	// 	  </div>
-	// 	);
-	//   };
 	  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
 	  
-
-
-	//const [cookies, setCookie] = useCookies(['token']);
-
 	interface mabite
 	{
 		code : string | null;
@@ -51,7 +35,7 @@ function App()
 	
 	const [tokenForm, setToken] = useState<mabite>({state: null, code: null})
 
-	//ade3b5ea214ca737f53ce0bce98938c2.jpg
+
 	return (
 		<BrowserRouter> 
 			<Routes>

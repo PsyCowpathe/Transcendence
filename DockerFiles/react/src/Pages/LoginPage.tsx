@@ -25,6 +25,8 @@ export function ChangeLogin()
         {
             setOk(true)
             console.log("JE SEND UN LOGIN")   
+			localStorage.setItem('name', response.data.name);
+
             console.log(response.data)
         })
         .catch(error =>

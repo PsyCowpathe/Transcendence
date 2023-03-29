@@ -30,6 +30,7 @@ interface Message {
 
 export function Chat() {
   ////////////////////////////////////////////////////////////////////// chan manager //////////////////////////////////////////////////////////////////
+  const UserName : any= localStorage.getItem('name')
   const [responses, setResponse] = useState<string>("vide");
   const [Chanlist, setChanlist] = useState<Chati[]>([]);
   const [Channame, setChanname] = useState<string>('');
@@ -129,26 +130,27 @@ export function Chat() {
 
   useEffect(() => {
     const handlelistenMsg = (response: any) => {
+      console.log("djj sjjdj")
       toast.success(response, {
         position: toast.POSITION.TOP_RIGHT,
         autoClose: 2000,
         progressClassName: "my-progress-bar"
       })
-      setMessages([...messages, {id:1, user: response.user, text: response.text, isSent: false }]);
+      console.log("ejbey")
+      const newMessageObj = { id: (messages.length + Date.now()), user: response.user, text: response.texte, isSent: false };
+    
+      setMessages(prevMessages => [...prevMessages, newMessageObj]);
     }
 
-    socket.on("chatmsg", handlelistenMsg);
+    socket.on("channelmsg", handlelistenMsg);
 
     return () => {
-      socket.off("chatmsg", handlelistenMsg);
+      socket.off("channelmsg", handlelistenMsg);
     }
   }, [])
  
   
-  const testiii = () => {
-    setMessages([...messages, { id: messages.length + 1, user: "l autre", text: "baleck  frere", isSent: false }]);
-  }
-
+  
   // const HandleNewMessage = (e: any) => {
   //   e.preventDefault();
   //   setMessages([...messages, {id:1, user: "Me", text: newMessage, isSent: true }]);
@@ -166,10 +168,10 @@ export function Chat() {
 
   const HandleNewMessage = (e: any) => {
     e.preventDefault();
+    socket.emit("channelmsg", { message: newMessage, destination: "meillu" }) 
+    const newMessageObj = { id: (messages.length + Date.now()), user: UserName, text: newMessage, isSent: true };
     
-    const newMessageObj = { id: messages.length + 1, user: "Me", text: newMessage, isSent: true };
-    
-    setMessages(prevMessages => [...prevMessages, newMessageObj, { id: newMessageObj.id + 1, user: "l autre", text: "baleck  frere", isSent: false }]);
+    setMessages(prevMessages => [...prevMessages, newMessageObj]);
     setNewMessage("");
     scrollToBottom()
   };
@@ -177,11 +179,20 @@ export function Chat() {
   const renderMessages = () => {
     return messages.map((message) => {
       const messageClass = message.isSent ? "sent-message" : "received-message";
+      const userClass = message.isSent ? "sent-user" : "received-user";
 
       return (
-        <div key={message.id} className={`message ${messageClass}`}>
+          <div>
+
+      <div className={`message ${userClass}`}>
+          {message.user}
+        </div>
+        <div className="message-container">
+                  <div key={message.id} className={`message ${messageClass}`}>
           <span>{message.text}</span>
         </div>
+          </div>
+          </div>
       );
     });
   };
@@ -192,7 +203,77 @@ export function Chat() {
     messageContainer.scrollTop = messageContainer.scrollHeight;
   }
 
+  /////////////////////////////////////TEST //////////////////////////////////////////
+  
 
+
+  // interface User {
+  //   id: number;
+  //   firstName: string;
+  //   lastName: string;
+  //   profilePictureUrl: string;
+  // }
+  
+  // const user: User = {
+  //   id: 1,
+  //   firstName: "John",
+  //   lastName: "Doe",
+  //   profilePictureUrl:
+  //     "https://www.w3schools.com/w3images/avatar2.png",
+  // };
+  
+  // const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
+
+
+
+  // const Modal = ({  x, y, user }: { x : number, y: number, user: User }) => {
+  //   const [showModal, setShowModal] = useState(false);
+  
+  //   const openModal = (e: React.MouseEvent<HTMLButtonElement>) => {
+  //   setModalPosition({ x: e.clientX, y: e.clientY });
+
+  //     setShowModal(true);
+  //   };
+  
+  //   const closeModal = () => {
+  //     setShowModal(false);
+  //   };
+  
+  //   return (
+  //     <div style={{top: y, left: x}}>
+  //       <button onClick={openModal}>Afficher l'utilisateur</button>
+  //       {showModal && (
+  //           <div className="modal">
+  //             <div className="user-info">
+  //               <img
+  //                 src={user.profilePictureUrl}
+  //                 alt={`${user.firstName} ${user.lastName}`}
+  //               />
+  //               <h2>{`${user.firstName} ${user.lastName}`}</h2>
+  //             </div>
+  //             <button onClick={closeModal}>Fermer</button>
+  //           </div>
+  //       )}
+  //       </div>
+  //   );
+  // };
+
+          //     <div className="app">
+          //     <Modal x={modalPosition.x}
+          // y={modalPosition.y} user={user} />
+          //   </div>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  /////////////////////////////////////TEST //////////////////////////////////////////
 
   return (
     <div>
@@ -219,6 +300,7 @@ export function Chat() {
                   {!isChecked && <button className="add-channel-button" >Add Channel</button>}
                 </form>
               )}
+      
               <label>
                 <input
                   type="checkbox"
@@ -227,7 +309,7 @@ export function Chat() {
                 />
                 channel public
               </label>
-            </div><ToastContainer />
+            </div>
           </div>
         </div>
 
@@ -264,7 +346,7 @@ export function Chat() {
 
           </div>
         </div>
-      </div>
+      </div><ToastContainer />
     </div>
   );
 }

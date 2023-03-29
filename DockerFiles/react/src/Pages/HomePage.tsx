@@ -62,8 +62,9 @@ interface chiant {
 				console.log(response.data)
 				if (response.data != null)
 				{
-					console.log(`voila la data de la reponse ${response.data.newtoken}`)
+					console.log(`voila la data de la reponse ${response.data}`)
 					localStorage.setItem('Token', response.data.newtoken);
+					 localStorage.setItem('name', response.data.name);
 					const date : any = localStorage.getItem('Token')
 
 					console.log("----------------------------------------------------------------------------------------------")
