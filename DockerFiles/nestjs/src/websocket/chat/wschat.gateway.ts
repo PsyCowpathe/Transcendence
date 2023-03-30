@@ -33,6 +33,10 @@ export class WsChatGateway
 		this.wsChatService.saveChatSocket(client, clientToken);
 	}
 
+
+	//=======					Channel					=======
+
+
 	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('createchannel')
@@ -54,51 +58,29 @@ export class WsChatGateway
 
 	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
-	@SubscribeMessage('addadmin')
-	async addAdmin(client: Socket, adminForm: userOperationDto)
+	@SubscribeMessage('deletechannel')
+	async deleteChannel(client: Socket, deleteForm: channelOperationDto)
 	{
-		console.log("New admin !");
-		console.log(adminForm.name + " for " + adminForm.channelname);
+		console.log("Delete channel ");
+		console.log(deleteForm.channelname);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
-		let ret = await this.wsChatService.addAdmin(sender, adminForm);
+		let ret = await this.wsChatService.deleteChannel(sender, deleteForm);
 		if (ret === -1)
 			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
-		if (ret === -2)
-			return (client.emit("ChatError", errorMessages.NOTTHEOWNER));
+		if (ret === -2) // may be useless
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));//may be useless
 		if (ret === -3)
-			return (client.emit("ChatError", errorMessages.INVALIDNAME));
-		if (ret === -4)
-			return (client.emit("ChatError", errorMessages.NOTINTHISCHANNEL));
-		if (ret === -5)
-			return (client.emit("ChatError", errorMessages.ALREADYADMIN));
-		client.emit("addadmin", `User ${adminForm.name} successfully promoted to administrator !`);
+			return (client.emit("ChatError", errorMessages.NOTTHEOWNER));
+		let response =
+		{
+			message : `You successfully deleted the channel ${deleteForm.channelname} !`,
+			channel : deleteForm.channelname,
+		}
+		client.emit("deletechannel", response);
 	}
 
-	@UseGuards(SocketGuard)
-	@UsePipes(new ValidationPipe())
-	@SubscribeMessage('removeadmin')
-	async removeAdmin(client: Socket, adminForm: userOperationDto)
-	{
-		console.log("Remove admin !");
-		console.log(adminForm.name + " for " + adminForm.channelname);
-		let sender : number | undefined;
-		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
-			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
-		let ret = await this.wsChatService.removeAdmin(sender, adminForm);
-		if (ret === -1)
-			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
-		if (ret === -2)
-			return (client.emit("ChatError", errorMessages.NOTTHEOWNER));
-		if (ret === -3)
-			return (client.emit("ChatError", errorMessages.INVALIDNAME));
-		if (ret === -4)
-			return (client.emit("ChatError", errorMessages.NOTINTHISCHANNEL));
-		if (ret === -5)
-			return (client.emit("ChatError", errorMessages.NOTANADMINISTRATOR));
-		client.emit("removeadmin", `User ${adminForm.name} successfully demoted from administrator !`);
-	}
 
 	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
@@ -160,6 +142,83 @@ export class WsChatGateway
 
 	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
+	@SubscribeMessage('channelmsg')
+	async sendChannelMessage(client: Socket, messageForm: messageDto)
+	{
+		console.log("New message :");//
+		console.log(messageForm.message);//
+		console.log(" to ");//
+		console.log(messageForm.destination);//
+		client.emit('channelmsg', {user: "PsyCowpathe", texte: "coucou"});//
+
+		let sender : number | undefined;
+		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
+			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
+		let ret = await this.wsChatService.channelMessage(sender, messageForm);
+		if (ret === -1)
+			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
+		if (ret === -2)
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
+		if (ret === -3)
+			return (client.emit("ChatError", errorMessages.NOTJOINED));
+		if (ret === -4)
+			return (client.emit("ChatError", errorMessages.YOUAREMUTE));
+	}
+
+
+	//=======					User					=======
+
+
+	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
+	@SubscribeMessage('addadmin')
+	async addAdmin(client: Socket, adminForm: userOperationDto)
+	{
+		console.log("New admin !");
+		console.log(adminForm.name + " for " + adminForm.channelname);
+		let sender : number | undefined;
+		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
+			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
+		let ret = await this.wsChatService.addAdmin(sender, adminForm);
+		if (ret === -1)
+			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
+		if (ret === -2)
+			return (client.emit("ChatError", errorMessages.NOTTHEOWNER));
+		if (ret === -3)
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
+		if (ret === -4)
+			return (client.emit("ChatError", errorMessages.NOTINTHISCHANNEL));
+		if (ret === -5)
+			return (client.emit("ChatError", errorMessages.ALREADYADMIN));
+		client.emit("addadmin", `User ${adminForm.name} successfully promoted to administrator !`);
+	}
+
+	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
+	@SubscribeMessage('removeadmin')
+	async removeAdmin(client: Socket, adminForm: userOperationDto)
+	{
+		console.log("Remove admin !");
+		console.log(adminForm.name + " for " + adminForm.channelname);
+		let sender : number | undefined;
+		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
+			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
+		let ret = await this.wsChatService.removeAdmin(sender, adminForm);
+		if (ret === -1)
+			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
+		if (ret === -2)
+			return (client.emit("ChatError", errorMessages.NOTTHEOWNER));
+		if (ret === -3)
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
+		if (ret === -4)
+			return (client.emit("ChatError", errorMessages.NOTINTHISCHANNEL));
+		if (ret === -5)
+			return (client.emit("ChatError", errorMessages.NOTANADMINISTRATOR));
+		client.emit("removeadmin", `User ${adminForm.name} successfully demoted from administrator !`);
+	}
+
+	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('createinvitation')
 	async createInvitation(client: Socket, invitationForm: userOperationDto)
 	{
@@ -187,6 +246,28 @@ export class WsChatGateway
 
 	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
+	@SubscribeMessage('usermessage')
+	async sendUserMessage(client: Socket, messageForm: messageDto)
+	{
+		console.log("User message :");
+		console.log(messageForm.message + " to " + messageForm.destination);
+		let sender : number | undefined;
+		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
+			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
+		let ret = await this.wsChatService.userMessage(sender, messageForm);
+		if (ret === -1)
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
+		if (ret === -2)
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
+		if (ret === -3)
+			return (client.emit("ChatError", errorMessages.YOUAREIGNORED));
+		if (ret === -4)
+			return (client.emit("ChatError", errorMessages.MESSAGETOIGNORE));
+		client.emit("usermessage", `You successfully send a message to ${messageForm.destination} !`);
+	}
+
+	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('deleteinvitation')
 	async deleteInvitation(client: Socket, invitationForm: userOperationDto)
 	{
@@ -195,7 +276,7 @@ export class WsChatGateway
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
-		let ret = await this.wsChatService.createInvitation(sender, invitationForm);
+		let ret = await this.wsChatService.deleteInvitation(sender, invitationForm);
 		if (ret === -1)
 			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
 		if (ret === -2)//may be useless
@@ -207,31 +288,10 @@ export class WsChatGateway
 		client.emit("deleteinvitation", `You successfully deleted the invitation of ${invitationForm.name} for channel ${invitationForm.channelname} !`);
 	}
 
-	@UseGuards(SocketGuard)
-	@UsePipes(new ValidationPipe())
-	@SubscribeMessage('deletechannel')
-	async deleteChannel(client: Socket, deleteForm: channelOperationDto)
-	{
-		console.log("Delete channel ");
-		console.log(deleteForm.channelname);
-		let sender : number | undefined;
-		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
-			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
-		let ret = await this.wsChatService.deleteChannel(sender, deleteForm);
-		if (ret === -1)
-			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
-		if (ret === -2) // may be useless
-			return (client.emit("ChatError", errorMessages.INVALIDNAME));//may be useless
-		if (ret === -3)
-			return (client.emit("ChatError", errorMessages.NOTTHEOWNER));
-		let response =
-		{
-			message : `You successfully deleted the channel ${deleteForm.channelname} !`,
-			channel : deleteForm.channelname,
-		}
-		client.emit("deletechannel", response);
-	}
 
+	//=======				 Sanction					=======
+
+	
 	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('kickuser')
@@ -275,7 +335,7 @@ export class WsChatGateway
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
-		let ret = await this.wsChatService.kickUser(sender, banForm);
+		let ret = await this.wsChatService.banUser(sender, banForm);
 		if (ret === -1)
 			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
 		if (ret === -2)
@@ -302,6 +362,35 @@ export class WsChatGateway
 
 	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
+	@SubscribeMessage('unbanuser')
+	async unbanUser(client: Socket, unbanForm: sanctionOperationDto)
+	{
+		console.log("Unban user ");
+		console.log(unbanForm.name);
+		let sender : number | undefined;
+		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
+			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
+		let ret = await this.wsChatService.unbanUser(sender, unbanForm);
+		if (ret === -1)
+			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
+		if (ret === -2)
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
+		if (ret === -3)
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
+		if (ret === -4)
+			return (client.emit("ChatError", errorMessages.NOTOP));
+		if (ret === -5)
+			return (client.emit("ChatError", errorMessages.NOTBAN));
+		let response =
+		{
+			message : `You successfully unbanned user ${unbanForm.name} !`,
+			user : unbanForm.name,
+		}
+		client.emit("unbanuser", response);
+	}
+
+	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('muteuser')
 	async muteUser(client: Socket, muteForm: sanctionOperationDto)
 	{
@@ -310,7 +399,7 @@ export class WsChatGateway
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
-		let ret = await this.wsChatService.kickUser(sender, muteForm);
+		let ret = await this.wsChatService.muteUser(sender, muteForm);
 		if (ret === -1)
 			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
 		if (ret === -2)
@@ -338,27 +427,30 @@ export class WsChatGateway
 
 	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
-	@SubscribeMessage('channelmsg')
-	async sendChannelMessage(client: Socket, messageForm: messageDto)
+	@SubscribeMessage('unmuteuser')
+	async unmuteUser(client: Socket, unmuteForm: sanctionOperationDto)
 	{
-		console.log("New message :");
-		console.log(messageForm.message);
-		console.log(" to ");
-		console.log(messageForm.destination);
-		client.emit('channelmsg', {user: "PsyCowpathe", texte: "coucou"});
-
+		console.log("Unmute user ");
+		console.log(unmuteForm.name);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
-		let ret = await this.wsChatService.ChannelMessage(sender, messageForm);
+		let ret = await this.wsChatService.unmuteUser(sender, unmuteForm);
 		if (ret === -1)
 			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
 		if (ret === -2)
 			return (client.emit("ChatError", errorMessages.INVALIDNAME));
 		if (ret === -3)
-			return (client.emit("ChatError", errorMessages.NOTJOINED));
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
 		if (ret === -4)
-			return (client.emit("ChatError", errorMessages.YOUAREMUTE));
+			return (client.emit("ChatError", errorMessages.NOTOP));
+		if (ret === -5)
+			return (client.emit("ChatError", errorMessages.NOTMUTE));
+		let response =
+		{
+			message : `You successfully unmuted user ${unmuteForm.name} !`,
+			user : unmuteForm.name,
+		}
+		client.emit("unmuteuser", response);
 	}
-
 }

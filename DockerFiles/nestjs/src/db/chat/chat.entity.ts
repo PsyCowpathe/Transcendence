@@ -12,8 +12,7 @@ export class Channel
 	@Column()
 	name: string;
 
-	@ManyToOne(() => User, (user) => user.id)
-	//@JoinColumn()
+	@ManyToOne(() => User, (user) => user.id, {eager: true})
 	owner: User;
 
 	@Column()

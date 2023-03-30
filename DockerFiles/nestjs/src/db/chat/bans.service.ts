@@ -33,6 +33,14 @@ export class BansService
 			return (ret);
 	}
 
+	updateBanEnd(user: User, channel: Channel, end: number)
+	{
+		return this.bansRepository.createQueryBuilder()
+		.update(Bans)
+		.set({end: end})
+		.where("channel = :channel AND user = user", {channel: channel, user: user})
+		.execute();
+	}
 
 	create(newBan: Bans)
 	{
