@@ -55,7 +55,8 @@ RUN cd \
 && yarn add @types/bcrypt \
 && yarn add @nestjs/websockets @nestjs/platform-socket.io \
 && yarn add class-validator \
-&& yarn add class-transformer
+&& yarn add class-transformer \
+&& yarn add @types/multer
 
 EXPOSE 3630 3631 3632
 

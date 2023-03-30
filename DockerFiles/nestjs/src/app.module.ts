@@ -17,7 +17,6 @@ import { ChatModule } from './db/chat/chat.module';
 
 import { WsChatModule } from './websocket/chat/wschat.module';
 
-
 @Module
 ({
 	imports:

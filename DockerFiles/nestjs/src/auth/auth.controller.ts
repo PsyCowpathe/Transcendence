@@ -1,4 +1,5 @@
-import { Controller, Get, Redirect, Header, Req, Post, Body, Res, UseGuards, UsePipes } from '@nestjs/common';
+import { Controller, Get, Redirect, Header, Req, Post, Body, Res, UseGuards, UsePipes, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express'; 
 import { Response, Request } from 'express'; 
 
 import { AuthDto, RegisterDto } from './auth.entity';
@@ -99,5 +100,14 @@ export class AuthController
 		let user = await this.authService.getUserInfos(registerForm.name);
 		let data = this.authService.createProfile(true, user);
 		return (sendSuccess(res, 11, data));
+	}
+
+	@Post('avatar')
+	@UseGuards(AuthGuard)
+	@UseInterceptors(FileInterceptor('file', { dest: 'tmp/' }))
+	async setAvatar(@UploadedFile() file: Express.Multer.File, @Res() res: Response)
+	{
+		console.log("changement d'avatar");
+		return (sendError(res, -46, "gg ća marche"));
 	}
 }

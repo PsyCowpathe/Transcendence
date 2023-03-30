@@ -20,11 +20,20 @@ export class AuthStrategy
 		.then((user) =>
 		{
 			if (user === null)
+				{
+					console.log("blbl");
 				return (false);
+				}
 			if (request.route.path !== "/auth/loginchange" && user.registered === false)
+				{
+					console.log("bloblo");
 				return (false);
+				}
 			if (user.token === request.headers.authorization)
+				{
+					console.log("blabla");
 				return (true);
+				}
 			return (false);
 		})
 		.catch((error) =>
