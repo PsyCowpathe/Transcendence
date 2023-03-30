@@ -1,7 +1,9 @@
 import React from "react";
 import { useState } from "react";
 import { TopBar } from "./TopBar";
-
+import axios from "axios";
+import {urls} from "../global";
+import { VraimentIlSaoule } from '../aurelcassecouilles/VraimentIlEstCasseCouille';
 
 
 function ProfilePictureUploader() {
@@ -10,7 +12,14 @@ function ProfilePictureUploader() {
   // Fonction pour gérer le glisser-déposer
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
+    let config = VraimentIlSaoule()
     const files = event.dataTransfer.files;
+    const data = new FormData();
+    data.append("file", files[0]);
+
+    axios.post(`${urls.SERVER}/auth/avatar`, data, config)
+    // axios.post(`${urls.SERVER}/auth/avatar`, files, config)
+
     if (files.length) {
       const file = files[0];
       const reader = new FileReader();
@@ -36,11 +45,11 @@ function ProfilePictureUploader() {
         onDrop={handleDrop}
         onDragOver={handleDragOver}
       >
-        {image ? (
+        {/* {image ? (
           <img src={image} alt="profile" />
         ) : (
           <p className="textcol">Drag and drop your image here</p>
-        )}
+        )} */}
       </div>
     </div>
   );
