@@ -47,87 +47,93 @@ export  function AskFriend()
 	{
 		user : string;
 	}
-// 	type ConfirmationToastProps = {
-// 		response: string;
-// 		Refusednow: (user: user) => void;
-// 		Acceptnow: (user: user) => void;
-// 		user: user;
-// 	  };
-// function ConfirmationToast({ response, Refusednow, Acceptnow, user } : ConfirmationToastProps) {
-//   const handleYesClick = () => {
-// 	  toast.dismiss();
-// 	  Acceptnow(user);
-// };
-
-// const handleNoClick = () => {
-// 	toast.dismiss();
-// 	Refusednow(user);
-//   };
-
-//   const actionButtons = (
-//     <div>
-//       <button onClick={handleYesClick}>Oui</button>
-//       <button onClick={handleNoClick}>Non</button>
-//     </div>
-//   );
-
-//   toast.success(response, {
-//     closeButton: false,
-//     autoClose: false,
-//     // actionButtons: actionButtons,
-//   });
-
-//   return null;
-// }
 
 	
-const MyCustomToast = ({response, Acceptnow, Refusednow} : any) => {
+const MyCustomToast = ({response, Acceptnow, Refusednow, closeToast} : any) => {
 	return (
 	  <div>
-		<p> |{response.message}|</p>
-		<button onClick={ () => {Acceptnow(response)}}>Oui</button>
-		<button onClick={ () => {Refusednow(response)}}>Non</button>
+		<p> {response.message}</p>
+		<button onClick={ () => {Acceptnow(response); closeToast()}}>Accept</button>
+		<button onClick={ () => {Refusednow(response); closeToast()}}>Refuse</button>
 	  </div>
 	);
   };
-	
+
+
+
+
+	useEffect(() => {
+		const handleFriendRequest = (response: any) => {
+			console.log("response")
+			toast.success(response, {
+				position: toast.POSITION.TOP_RIGHT,
+				autoClose: 2000,
+				progressClassName: "my-progress-bar"
+			})
+		}
+		const handleErrorRequest = (response: any) => {
+			console.log(response)
+			toast.error(response, {
+				position: toast.POSITION.TOP_RIGHT,
+				autoClose: 2000,
+				progressClassName: "my-progress-bar"
+			})
+		}
+
+		const handleFriendRequestSpe = (response: any) => {
+			console.log(response)
+			if (response.message === `${response.user} send you a friend request !`) {
+				console.log("dddd")
+				toast.success(<MyCustomToast response={response} Acceptnow={Acceptnow} Refusednow={Refusednow} usera={userAc} closeToast={toast.dismiss} />,
+					{
+						position: toast.POSITION.TOP_RIGHT,
+						autoClose: 2000,
+						progressClassName: "my-progress-bar"
+					})
+			}
+			else {
+				toast.success(response, {
+					position: toast.POSITION.TOP_RIGHT,
+					autoClose: 2000,
+					progressClassName: "my-progress-bar"
+				})
+
+			}
+		}
+		socket.removeListener('sendfriendrequest');
+		socket.removeListener('acceptfriendrequest');
+		socket.removeListener('refusefriendrequest');
+		socket.removeListener('blockuser');
+		socket.removeListener('deletefriend');
+		socket.removeListener('unblockuser');
+		socket.removeListener('RelationError');
+
+		socket.on("sendfriendrequest", handleFriendRequestSpe);
+		socket.on("refusefriendrequest", handleFriendRequest);
+		socket.on("blockuser", handleFriendRequest);
+		socket.on("deletefriend", handleFriendRequest);
+		socket.on("unblockuser", handleFriendRequest);
+		socket.on("acceptfriendrequest", handleFriendRequest);
+		socket.on("RelationError", handleErrorRequest);
+
+		return () => {
+			socket.off("sendfriendrequest", handleFriendRequestSpe);
+			socket.off("refusefriendrequest", handleFriendRequest);
+			socket.off("blockuser", handleFriendRequest);
+			socket.off("deletefriend", handleFriendRequest);
+			socket.off("unblockuser", handleFriendRequest);
+			socket.off("acceptfriendrequest", handleFriendRequest);
+			socket.off("RelationError", handleErrorRequest);
+		}
+	}, [])
+
+
+
+
 	
 	///////////////////////////////////////////////////////////////////////// request send      ///////////////////////////////////////////////////////
 	const [userAsk, setUserAsk] = useState<user>({user:''})
-	useEffect(() =>
-	{
-		socket.removeListener('sendfriendrequest');
-		console.log("demande d amis listen")
-		// écoute l'événement de réception de message depuis le serveur
-		socket.on("sendfriendrequest", (reponse: any) => 
-		{
-			// ConfirmationToast
-			// ({
-			// 	response: reponse,
-			// 	Refusednow: Refusednow,
-			// 	Acceptnow: Acceptnow,
-			// 	user: userAsk
-			// });
-			if (reponse.message === `${reponse.user} send you a friend request !`)
-				{
-					toast.success( <MyCustomToast response={reponse} Acceptnow={Acceptnow} Refusednow={Refusednow} usera={userAc} />, {
-					position: toast.POSITION.TOP_RIGHT, 
-						
-				});
-			}
-			else
-			{
-				toast.success(reponse, {
-					position: toast.POSITION.TOP_RIGHT,
-				});
-			
-			}
-				console.log("la rep :")
-				console.log(reponse)
-			});
-		
-		return () => socket.off("aurel sais pas coder et il pense que ca viens de moi")
-	}, [])
+	
 	const AskRequest = async(event : any) =>
 	{         
 		event.preventDefault()
@@ -145,28 +151,7 @@ const MyCustomToast = ({response, Acceptnow, Refusednow} : any) => {
 
 	///////////////////////////////////////////////////////////////////////// request accept      ///////////////////////////////////////////////////////
 
-	const [userAc, setUserAccept] = useState<user>({user:''})
-	useEffect(() =>
-	{
-		socket.removeListener('acceptfriendrequest');
-		console.log("demande d amis listen")
-		// écoute l'événement de réception de message depuis le serveur
-		socket.on("acceptfriendrequest", (reponse : any) => 
-		{
-			toast.success(reponse, {
-        position: toast.POSITION.TOP_RIGHT,
-		// closeButton: (
-		// 	<div>
-		// 	  <button onClick={Acceptnow(userAc)}>Bouton 1</button>
-		// 	  <button onClick={Refusednow(userAc)}>Bouton 2</button>
-		// 	</div>
-		//   ),
-    });
-			console.log("la rep :")
-			console.log(reponse)
-		});
-		return () => socket.off("aurel sais pas coder et il pense que ca viens de moi")
-	}, [])
+	const [userAc, setUserAccept] = useState<user>({user:''})//1
 	
 	const Accept = async(event : any) =>
 	{         
@@ -186,29 +171,14 @@ const MyCustomToast = ({response, Acceptnow, Refusednow} : any) => {
 	{
 		console.log(userAs)
 		await socket.emit("acceptfriendrequest", userAs);
-
 	}
 	
 	///////////////////////////////////////////////////////////////////////// request refused      ///////////////////////////////////////////////////////
 
 
 
-	const [userRefuse, setUserRefused] = useState<user>({user:''})
-	useEffect(() =>
-	{
-		socket.removeListener('refusefriendrequest');
-		console.log("demande d amis listen")
-		// écoute l'événement de réception de message depuis le serveur
-		socket.on("refusefriendrequest", (reponse: any) => 
-		{
-			toast.success(reponse, {
-        position: toast.POSITION.TOP_RIGHT
-    });
-			console.log("la rep :")
-			console.log(reponse)
-		});
-		return () => socket.off("aurel sais pas coder et il pense que ca viens de moi")
-	}, [])
+	const [userRefuse, setUserRefused] = useState<user>({user:''})//2
+	
 	
 	const Refused = async(event : any) =>
 	{         
@@ -231,22 +201,8 @@ const MyCustomToast = ({response, Acceptnow, Refusednow} : any) => {
 
 	///////////////////////////////////////////////////////////////////////// request block      ///////////////////////////////////////////////////////
 
-	const [userblock, setUserblock] = useState<user>({user:''})
-	useEffect(() =>
-	{
-		socket.removeListener('blockuser');
-		console.log("demande d amis listen")
-		// écoute l'événement de réception de message depuis le serveur
-		socket.on("blockuser", (reponse: any) => 
-		{
-			toast.success(reponse, {
-        position: toast.POSITION.TOP_RIGHT
-    });
-			console.log("la rep :")
-			console.log(reponse)
-		});
-		return () => socket.off("aurel sais pas coder et il pense que ca viens de moi")
-	}, [])
+	const [userblock, setUserblock] = useState<user>({user:''})//3
+	
 	
 	const block = async(event : any) =>
 	{         
@@ -263,22 +219,8 @@ const MyCustomToast = ({response, Acceptnow, Refusednow} : any) => {
 
 	///////////////////////////////////////////////////////////////////////// request delete      ///////////////////////////////////////////////////////
 	
-	const [userdelete, setUserdelete] = useState<user>({user:''})
-	useEffect(() =>
-	{
-		socket.removeListener('deletefriend');
-		console.log("demande d amis listen")
-		// écoute l'événement de réception de message depuis le serveur
-		socket.on("deletefriend", (reponse: any) => 
-		{
-			toast.success(reponse, {
-        position: toast.POSITION.TOP_RIGHT
-    });
-			console.log("la rep :")
-			console.log(reponse)
-		});
-		return () => socket.off("aurel sais pas coder et il pense que ca viens de moi")
-	}, [])
+	const [userdelete, setUserdelete] = useState<user>({user:''})//4
+	
 	
 	const deleteU = async(event : any) =>
 	{         
@@ -295,22 +237,8 @@ const MyCustomToast = ({response, Acceptnow, Refusednow} : any) => {
 
 	///////////////////////////////////////////////////////////////////////// request unblock      ///////////////////////////////////////////////////////
 	
-	const [userunblock, setUserunblock] = useState<user>({user:''})
-	useEffect(() =>
-	{
-		socket.removeListener('unblockuser');
-		console.log("demande d amis listen")
-		// écoute l'événement de réception de message depuis le serveur
-		socket.on("unblockuser", (reponse: any) => 
-		{
-			toast.success(reponse, {
-        position: toast.POSITION.TOP_RIGHT
-    });
-			console.log("la rep :")
-			console.log(reponse)
-		});
-		return () => socket.off("aurel sais pas coder et il pense que ca viens de moi")
-	}, [])
+	const [userunblock, setUserunblock] = useState<user>({user:''})//5
+	
 	
 	const unblock = async(event : any) =>
 	{         
@@ -353,7 +281,7 @@ const MyCustomToast = ({response, Acceptnow, Refusednow} : any) => {
 		onChange={ChangeAccept}
 		/>
 		<button>accept</button>
-		</form><ToastContainer/>
+		</form>
 
 		<br /><br /><br /><br /><br /><br />
 	
@@ -369,7 +297,7 @@ const MyCustomToast = ({response, Acceptnow, Refusednow} : any) => {
 		onChange={ChangeRefused}
 		/>
 		<button>Refused</button>
-		</form><ToastContainer/>
+		</form>
 
 		<br /><br /><br /><br /><br /><br />
 		{/* ///////////////////////////////////////////////////////////////////////// request block      /////////////////////////////////////////////////////// */}
@@ -383,7 +311,7 @@ const MyCustomToast = ({response, Acceptnow, Refusednow} : any) => {
 		onChange={Changeblock}
 		/>
 		<button>block</button>
-		</form><ToastContainer/>
+		</form>
 		
  		<br /><br /><br /><br /><br /><br />
 		
@@ -399,7 +327,7 @@ const MyCustomToast = ({response, Acceptnow, Refusednow} : any) => {
 		onChange={Changedelete}
 		/>
 		<button>delete</button>
-		</form><ToastContainer/>
+		</form>
 
 		<br /><br /><br /><br /><br /><br />
 		
@@ -415,8 +343,8 @@ const MyCustomToast = ({response, Acceptnow, Refusednow} : any) => {
  		onChange={Changeunblock}
  		/>
  		<button>unblock</button>
- 		</form><ToastContainer/>
-
+ 		</form>
+<ToastContainer/>
 		</div>
 	
 		);

@@ -367,7 +367,7 @@ export function Chat() {
                   checked={isChecked}
                   onChange={handleCheckboxChange}
                 />
-                channel public
+                private channel
               </label>
             </div>
           </div>

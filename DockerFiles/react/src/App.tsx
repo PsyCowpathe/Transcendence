@@ -45,7 +45,7 @@ function App()
 			<Route path='/' element={<HomePage tokenForm={tokenForm} setToken={setToken} onLogin={() => setIsLoggedIn(true)}/>}/> 
 			<Route path='/chat' element={<Chat/>}/>
 			{/* <Route path="/chatoune" element ={<Chat username={"Alice"} />} /> */}
-			<Route path='/affUser' element={<AffMyUserPage/>}/>
+			<Route path='/affUser' element={<AffMyUserPage ShowBar={true}/>}/>
 			<Route path='/LoadingPage' element={<LoadingPage/>}/>
 			<Route path='/changepic' element={<ProfilePictureUploader />}/>
 			<Route  path='/askFriend' element={<AskFriend />}/>

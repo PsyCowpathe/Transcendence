@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import {useEffect } from 'react';
+import { AffMyUserPage } from "../Pages/UserPage";
+import '../NewChat/truc.css'
 interface User {
   name: string;
   token: string;
@@ -22,7 +24,7 @@ useEffect(() => {
     onClose();
   };
   console.log("nfdcjhvbdlkhfcnzfdc-")
-
+  const pute : boolean = true
   return (
     <>
 
@@ -34,8 +36,10 @@ useEffect(() => {
               <button onClick={handleCloseModal}>Close</button>
             </div>
             <div className="modal-body">
-              <p>Name: {user.name}</p>
-              <p>Token: {user.token}</p>
+             <div className="test">
+              <AffMyUserPage ShowBar={false}/>
+              </div>
+              <div/>
             </div>
           </div>
         </div>
