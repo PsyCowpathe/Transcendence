@@ -1,7 +1,7 @@
-import { Controller, Get, Redirect, Header, Req, Post, Body, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Redirect, Header, Req, Post, Body, Res, UseGuards, UsePipes } from '@nestjs/common';
 import { Response, Request } from 'express'; 
 
-import { AuthDto, RegisterDto, TokenDto } from './auth.entity';
+import { AuthDto, RegisterDto } from './auth.entity';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 
@@ -23,6 +23,7 @@ export class AuthController
 	@Get('redirect')
 	async Redirect(@Req() req: Request)
 	{
+		console.log("Redirection");
 		//console.log("redir req = " + req.headers.authorization);
 		let ret = await this.authService.isTokenValid(req.headers.authorization);
 		if (ret === true)

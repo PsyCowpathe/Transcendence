@@ -1,6 +1,6 @@
-import { NestFactory} from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 
-import { Req, Res} from '@nestjs/common';
+import { Req, Res, ValidationPipe } from '@nestjs/common';
 
 import { Request, Response, NextFunction } from 'express';
 import { AppModule } from './app.module';
@@ -19,19 +19,20 @@ async function bootstrap()
   		key: fs.readFileSync('./secret/cert.key'),
   		cert: fs.readFileSync('./secret/cert.crt'),
 	};*/
+
   	const app = await NestFactory.create(AppModule);
 	app.use(cookieParser());
-
 	app.enableCors
 	({
 		allowedHeaders: ['content-type', 'authorization'],
 		credentials : true,
-		origin: [urls.ORIGIN, "http://10.14.2.7:3000"],
+		origin: [urls.ORIGIN, "http://10.13.4.3:3000"],
 		methods: 'GET, POST',
 
 		//preflightContinue: false,
 		//optionsSuccessStatus: 204,
 	});
+	app.useGlobalPipes(new ValidationPipe());
   	await app.listen(3630);
 }
 bootstrap();

@@ -15,13 +15,15 @@ export class AuthStrategy
 
 	checkRequest(request : any) : Promise<boolean>
 	{
-		//console.log("strat = " + request.headers.authorization);
+		//console.log(request, { depth: null });
 		const promise = this.userService.findOneByToken(request.headers.authorization)
 		.then((user) =>
 		{
 			if (user === null)
 				return (false);
-			else if (user.token === request.headers.authorization)
+			if (request.route.path !== "/auth/loginchange" && user.registered === false)
+				return (false);
+			if (user.token === request.headers.authorization)
 				return (true);
 			return (false);
 		})

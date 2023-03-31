@@ -23,6 +23,10 @@ export class AuthService
 
 	async getUserToken(token : AuthDto)
 	{
+		console.log("state = ");
+		console.log(token.state);
+		console.log("code = ");
+		console.log(token.code);
 		let user =
 		{
 			grant_type: 'authorization_code',
@@ -36,7 +40,7 @@ export class AuthService
 		.catch ((error: any) =>
 		{
 			console.log("Erreur 5");
-			//console.log(error);
+			console.log(error);
 			return (error);
 		});
 		if (response.data === undefined)

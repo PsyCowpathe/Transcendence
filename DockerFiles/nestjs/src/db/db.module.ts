@@ -7,6 +7,8 @@ import { User } from './user/user.entity';
 
 import { Relation } from './relation/relation.entity';
 
+import { Channel, Bans, Mutes, Admins, JoinChannel, InviteList} from './chat/chat.entity';
+
 @Module
 ({
 	imports:
@@ -17,9 +19,9 @@ import { Relation } from './relation/relation.entity';
       		host: 'postgres',
       		port: 5432,
       		username: 'postgres',
-			password: process.env.DB_PSWD, //remove !!
+			password: process.env.DB_PSWD,
       		database: 'postgres',
-      		entities: [User, Relation],
+      		entities: [User, Relation, Channel, Bans, Mutes, Admins, JoinChannel, InviteList],
 			synchronize: true,
 		}),
 	],

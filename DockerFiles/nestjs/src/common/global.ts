@@ -18,6 +18,27 @@ export enum errorMessages
 	NOTIGNORED = "You dont ignore this user !",
 	REQUESTTOIGNORE = "You cant send a friend request to an user you blocked !",
 	ALREADYREQUESTED = "You already sent a friend request to this user !",
+	CHANNELALREADYEXIST = "This channel name is already used !",
+	PRIVATEORPASSWORD = "You cant specify a password when creating a private channel !",
+	CHANNELDONTEXIST = "The channel specified dont exist !",
+	ALREADYADMIN = "This user is already an adminstrator of this channel !",
+	NOTANADMINISTRATOR = "This user is not an administrator of this channel !",
+	NOTINTHISCHANNEL = "This user is not in this channel !",
+	ALREADYINCHANNEL = "You are already in this channel !",
+	ALREADYINVITED = "This user is already invited in this channel !",
+	NOTJOINED = "You are not in this channel !",
+	INCORRECTPASSWORD = "The password provided dont match !",
+	NOTONTHELIST = "You have not been invited to join this channel !",
+	NOTTHEOWNER = "Only the owner of this channel can do this operation !",
+	NOTOP = "Only an administrator or the owner of this channel can do this operation !",
+	NOTINVITED = "This user wasnt invited to this channel !",
+	ACAPTAINDONTLEAVEHISSHIP = "You are the owner of this channel you can't leave it !",
+	CANTSANCTIONOWNER = "You cant sanction the mighty owner of this channel !",
+	CANTSANCTIONEQUAL = "This user's power is equal to yours, you cannot defeat him !",
+	YOUAREBAN = "You are ban from this channel !",
+	YOUAREMUTE = "You are mute in this channel !",
+	ALREADYBAN = "This user is already ban from this channel !",
+	ALREADYMUTE = "This user is already mute from this channel !"
 }
 
 export enum urls

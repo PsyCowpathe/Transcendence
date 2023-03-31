@@ -1,7 +1,6 @@
-import { Injectable} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { UserService} from '../../db/user/user.service';
-
 
 @Injectable()
 export class SocketStrategy
@@ -18,7 +17,9 @@ export class SocketStrategy
 		{
 			if (user === null)
 				return (false);
-			else if (user.token === request)
+			if (user.registered === false)
+				return (false);
+			if (user.token === request)
 				return (true);
 			return (false);
 		})
