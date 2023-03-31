@@ -1,11 +1,12 @@
-import "./styles.css";
-import React from "react";
-import { useState, useEffect, useRef, Ref } from "react";
+import "./styles.css"
+import React from "react"
+import { useState, useEffect, useRef, Ref } from "react"
+import { io } from 'socker.io-client'
 
 import Player from "./Player"
-import Ball from "./Ball";
-import Paddle from "./Paddle";
-import moveBall from "./MoveBall";
+import Ball from "./Ball"
+import Paddle from "./Paddle"
+import moveBall from "./MoveBall"
 
 export default function Pong ()
 {
@@ -23,25 +24,43 @@ export default function Pong ()
 	let o_paddle!: Paddle;
 	let player!: Player;
 	let opponent!: Player;
+	let playerID:number = 0;
 	
 	let input: number; 
 	let GOAL:boolean = false;
 
+	const socket = io('https://localhost:3000');
+
 	const createBall = () =>
 	{
 		ball = new Ball(document.getElementById("ball"));
-		ball.reset();
 	}
+
 	const createPaddles = () =>
 	{
 		p_paddle = new Paddle(document.getElementById("p_paddle"));
 		o_paddle = new Paddle(document.getElementById("o_paddle"));
 	}
-	const createPlayers = () =>
+
+	socket.on('createPlayers', (p1_name, p2_name, id) => {
+	{
+		playerID = id;
+		if (id == 1)
+		{
+			player = new Player(p1_name, p_paddle);
+			opponent = new Player(p2_name, o_paddle);
+		}
+		else
+		{
+			player = new Player(p2_name, p_paddle);
+			opponent = new Player(p1_name, o_paddle);
+		}
+	});
+	/*const createPlayers = () =>
 	{
 		player = new Player("name", p_paddle);
 		opponent = new Player("name", o_paddle);
-	}
+	}*/
 
 	useEffect(() => {
 		createBall();
@@ -65,35 +84,25 @@ export default function Pong ()
 		document.addEventListener("mousemove", eMouseMoved);
 	}, []);
 	
-	/*client*/ function eMouseMoved(e: any)
+	function eMouseMoved(e: any)
 	{
 		input = e.y - input;
 		p_paddle.setPosition(100 * e.y / window.innerHeight);
-		/*send pos to server*/
+		socket.emit('movePaddle', playerID, p_paddle.pos);
 	}
 
 	function playerReady()
 	{
-		ball.reset();
-		window.requestAnimationFrame(update);
 		if (buttonReady)
+		{
+			socket.emit
 			buttonReady.style.display = "none";
+		}
 	}
 
-	function updatePositions()
+	socket.on('GOOOAAAAAAL', strikerID)
 	{
-		/*server*/ ball.setPosition(moveBall(deltaTime, ball, p_paddle, o_paddle));
-
-		/*client: get positions from server and apply them (ball and opponent's paddle)*/
-		GOAL = (ball.pos.x >= 99.9 || ball.pos.x <= 0.1)
-		console.log(ball.pos.x);
-		if (GOAL)
-			GOOOAAAAAAL(ball);
-	}
-
-	function GOOOAAAAAAL(ball: Ball)
-	{
-		if (p_score && ball.pos.x > 50)
+		if (strikerID == playerID && p_score)
 		{
 			player.score++;
 			p_score.textContent = player.score;
@@ -103,10 +112,9 @@ export default function Pong ()
 			opponent.score++;
 			o_score.textContent = opponent.score;
 		}
-		ball.reset();
 	}
 
-	function update(time : number)
+	/*function update(time : number)
 	{
 		if (prevTime != 0 && ball)
 		{
@@ -116,7 +124,22 @@ export default function Pong ()
 		prevTime = time;
 		window.requestAnimationFrame(update);
 		console.log(ball.pos.x);
-	}
+	}*/
+
+	socket.on('update', (gameState) =>
+	{
+		ball.setPosition(gameState.ballpos);
+		if (playerID == 1)
+		{
+			o_paddle.setPosition(gameState.p2_paddlepos);
+			p_paddle.setPosition(gameState.p1_paddlepos);
+		}
+		else
+		{
+			o_paddle.setPosition(gameState.p1_paddlepos);
+			p_paddle.setPosition(gameState.p2_paddlepos);
+		}
+	});
 
 	return (
 			<div className="pong">

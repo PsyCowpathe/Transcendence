@@ -1,5 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 
+import { IoAdapter } from '@nestjs/platform-socket.io'
+
 import { Req, Res, ValidationPipe } from '@nestjs/common';
 
 import { Request, Response, NextFunction } from 'express';
@@ -33,6 +35,7 @@ async function bootstrap()
 		//optionsSuccessStatus: 204,
 	});
 	app.useGlobalPipes(new ValidationPipe());
+	app.useWebsocketAdapter(new IoAdapter());
   	await app.listen(3630);
 }
 bootstrap();

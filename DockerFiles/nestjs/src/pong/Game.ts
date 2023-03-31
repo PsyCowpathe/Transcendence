@@ -69,41 +69,37 @@ export default function PongGame (p1_name: string, p2_name: string)
 		newpos = {	x: ball.pos.x + (ball.dir.x * ball.speed * deltaTime),
 				y: ball.pos.y + (ball.dir.y * ball.speed * deltaTime)	};
 		
-		return (newpos);
+		ball.setPosition(newpos);
 	}
 
 	function GOOOAAAAAAL()
 	{
-		if (p1_score && ball.pos.x > 50)
-		{
+		if (ball.pos.x > 50)
 			p1.score++;
-		}
-		else if (p2_score)
-		{
+		else
 			p2.score++;
-		}
+		GOAL = true;
 		ball.reset();
-		// notify clients
-	}
-
-	function updatePositions()
-	{
-		ball.setPosition(moveBall());
-		// get inputs from clients and set paddles positions
-
-		GOAL = (ball.pos.x >= 99.9 || ball.pos.x <= 0.1)
-		console.log(ball.pos.x);
-		if (GOAL)
-			GOOOAAAAAAL(ball);
 	}
 
 	function update(time : number)
 	{
-		if (prevTime != 0 && ball)
+		if (prevTime)
 		{
 			deltaTime = time - prevTime;
-			updatePositions();
+			moveBall();
+			if (ball.pos.x >= 99.9 || ball.pos.x <= 0.1)
+				GOOOAAAAAAL(ball);
 		}
 		prevTime = time;
+	}
+
+	function getGameState()
+	{
+		return ({
+				ballpos: ball.pos,
+				p1_paddlepos: p1_paddle.pos,
+				p2_paddlepos: p2_paddle.pos
+			});
 	}
 }

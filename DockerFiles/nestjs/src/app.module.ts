@@ -17,13 +17,16 @@ import { ChatModule } from './db/chat/chat.module';
 
 import { WsChatModule } from './websocket/chat/wschat.module';
 
+import { PongModule } from './pong/pong.module;
+
 
 @Module
 ({
 	imports:
 	[
 		DbModule, UserModule, RelationModule, AuthModule,
-		HomeModule, WsRelationModule, ChatModule, WsChatModule
+		HomeModule, WsRelationModule, ChatModule, WsChatModule,
+		PongModule,
 	],
 })
 export class AppModule

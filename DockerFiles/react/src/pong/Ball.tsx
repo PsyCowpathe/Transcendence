@@ -3,23 +3,25 @@ import { useState, useRef, forwardRef, Ref } from "react";
 
 export default class Ball
 {
-	BASE_SPEED:number = 0.0333;
-	GAME_SPEED:number = 0.0666;
+	/*BASE_SPEED:number = 0.0333;
+	GAME_SPEED:number = 0.0666;*/
 	
 	ball!: HTMLElement;
 	pos = { x: 0, y: 0 };
-	dir = { x: 0, y: 0 };
+	/*dir = { x: 0, y: 0 };
 	rect = { right: 0, left: 0, up: 0, down: 0 };
 	speed: number = 0;
-	wasHit = true;
+	wasHit = true;*/
 
 	constructor (ball: HTMLElement | null)
 	{
 		if (ball)
 			this.ball = ball;
+		this.pos = {	x: parseFloat(getComputedStyle(this.paddle).getPropertyValue("--x")),
+				y: parseFloat(getComputedStyle(this.paddle).getPropertyValue("--y")) };
 	}
 
-	getRandomDirection ()
+	/*getRandomDirection ()
 	{
 		let dir = { x: 0, y: 0 };
 		while (!dir.x || dir.y < -0.5 || dir.y > 0.5)
@@ -43,7 +45,7 @@ export default class Ball
 		this.rect = {	right: this.pos.x + 1, left: this.pos.x - 1,
 				up: this.pos.y -1 , down: this.pos.y + 1	};
 		return (this.rect);
-	}
+	}*/
 
 	setPosition (pos:{x:any, y:any})
 	{
@@ -57,7 +59,7 @@ export default class Ball
 			this.pos.y = pos.y;
 			this.ball.style.setProperty("--y", pos.y);
 		}
-	}
+	}/*
 	
 	setDirection (dir:{x:any, y:any})
 	{
@@ -77,6 +79,6 @@ export default class Ball
 
 		this.dir.x = 1;
 		this.dir.y = 0;
-	}
+	}*/
 }
 
