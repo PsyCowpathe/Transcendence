@@ -37,6 +37,7 @@ services:
                 ports:
                         - 3630:3630
                         - 3631:3631
+                        - 3632:3632
                 networks:
                         - transcendence-network
                 volumes:

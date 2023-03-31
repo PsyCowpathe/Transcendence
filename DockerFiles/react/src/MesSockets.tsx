@@ -51,7 +51,7 @@ class SocketManager {
 
   initializeChatSocket(token: string) {
     if (this.chatSocket === null) {
-      this.chatSocket = io('http://10.14.2.7:3631/', {
+      this.chatSocket = io('http://10.14.7.7:3631/', {
         auth: {
           token: token
         }
@@ -60,7 +60,7 @@ class SocketManager {
   }
   initializeFriendRequestSocket(token: string) {
     if (this.FriendRequestSocket === null) {
-      this.FriendRequestSocket = io('http://10.14.2.7:3631/', {
+      this.FriendRequestSocket = io('http://10.14.7.7:3631/', {
         auth: {
           token: token
         }
