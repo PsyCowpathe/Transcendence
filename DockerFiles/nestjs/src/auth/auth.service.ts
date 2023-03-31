@@ -10,7 +10,9 @@ import { User } from '../db/user/user.entity';
 import { Profile } from './auth.entity';
 
 import * as bcrypt from 'bcrypt';
-
+import * as fs from 'fs';
+import { authenticator } from 'otplib';
+import { toDataURL } from 'qrcode';
 const axios = require('axios');
 
 @Injectable()
@@ -73,6 +75,8 @@ export class AuthService
 			newUser.name = response.data.login;
 			newUser.uid = response.data.id;
 			newUser.registered = false;
+			newUser.TwoFASecret = "";
+			newUser.TwoFA = false;
 			this.userService.create(newUser);
 			data = this.createProfile(false, newUser, hashedToken);
 			console.log('User successfully added to the database !');
@@ -108,7 +112,8 @@ export class AuthService
 		if (user !== null)
 		{
 			await this.userService.updateName(name, user);
-			await this.userService.updateRegister(true, user);
+			if (user.registered === false)
+				await this.userService.updateRegister(true, user);
 		}
 		return (1);
 	}
@@ -137,5 +142,49 @@ export class AuthService
 		if (user === null)
 			return (false);
 		return (true);
+	}
+
+	async changeAvatar(token: string | undefined, file: Express.Multer.File) : Promise<number>
+	{
+		if (file.mimetype === 'image/png')
+		{
+			if (file.buffer[0] !== 0x89 || file.buffer[1] !== 0x50 || file.buffer[2] !== 0x4e
+				|| file.buffer[3] !== 0x47 || file.buffer[4] !== 0x0d || file.buffer[5] !== 0x0a
+				|| file.buffer[6] !== 0x1a || file.buffer[7] !== 0x0a)
+			return (-1);
+		}
+		else
+		{
+			if (file.buffer[0] !== 0xff || file.buffer[1] !== 0xd8 || file.buffer[2] !== 0xff)
+			return (-1);
+		}
+		if (file.size > 1000000)
+			return (-1);
+		const user = await this.userService.findOneByToken(token);
+		if (user === null)
+			return (-2);
+		fs.writeFile("avatars/" + user.uid, file.buffer,
+			(err) =>
+			{
+        		if (err)
+					return (-2);
+      		});
+		console.log("avatar changer avec success");
+		return (1);
+	}
+
+	async generate2FA(token: string | undefined) : Promise<number | string>
+	{
+		const user = await this.userService.findOneByToken(token);
+		if (user === null)
+			return (-1);
+		if (user.TwoFA === true)
+			return (-2);
+		await this.userService.updateTwoFA(true, user);
+		const secret = authenticator.generateSecret();
+		const otpauthUrl = authenticator.keyuri(user.name, 'Transcendence', secret);
+		await this.userService.updateTwoFASecret(secret, user);
+		let qrCode = toDataURL(otpauthUrl);
+		return (qrCode);
 	}
 }

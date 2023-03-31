@@ -37,21 +37,23 @@ export class WsRelationGateway
 		console.log("New request to user : ");
 		console.log(data.user);
 		if (data.user === undefined)
-			return (client.emit("sendfriendrequest", errorMessages.MISSINGNAME));
+			return (client.emit("RelationError", errorMessages.MISSINGNAME));
 		let sender : number | undefined;
 		if ((sender = this.wsRelationService.isRegistered(client)) === undefined)
-			return (client.emit("sendfriendrequest", errorMessages.NOTREGISTERED));
+			return (client.emit("RelationError", errorMessages.NOTREGISTERED));
 		let ret = await this.wsRelationService.sendFriendRequest(sender, data.user);
 		if (ret === -1)
-			return (client.emit("sendfriendrequest", errorMessages.INVALIDNAME));
+			return (client.emit("RelationError", errorMessages.INVALIDNAME));
 		if (ret === -2)
-			return (client.emit("sendfriendrequest", errorMessages.YOUAREIGNORED));
+			return (client.emit("RelationError", errorMessages.SOSFRIEND));
 		if (ret === -3)
-			return (client.emit("sendfriendrequest", errorMessages.ALREADYFRIEND));
+			return (client.emit("RelationError", errorMessages.YOUAREIGNORED));
 		if (ret === -4)
-			return (client.emit("sendfriendrequest", errorMessages.REQUESTTOIGNORE));
+			return (client.emit("RelationError", errorMessages.ALREADYFRIEND));
 		if (ret === -5)
-			return (client.emit("sendfriendrequest", errorMessages.ALREADYREQUESTED));
+			return (client.emit("RelationError", errorMessages.REQUESTTOIGNORE));
+		if (ret === -6)
+			return (client.emit("RelationError", errorMessages.ALREADYREQUESTED));
 		client.emit("sendfriendrequest", `Request successfully send to ${data.user} !`);
 		return ;
 	}
@@ -63,17 +65,17 @@ export class WsRelationGateway
 		console.log("Try to accept request from : ");
 		console.log(data.user);
 		if (data.user === undefined)
-			return (client.emit("acceptfriendrequest", errorMessages.MISSINGNAME));
+			return (client.emit("RelationError", errorMessages.MISSINGNAME));
 		let sender : number | undefined;
 		if ((sender = this.wsRelationService.isRegistered(client)) === undefined)
-			return (client.emit("acceptfriendrequest", errorMessages.NOTREGISTERED));
+			return (client.emit("RelationError", errorMessages.NOTREGISTERED));
 		let ret = await this.wsRelationService.acceptFriendRequest(sender, data.user);
 		if (ret === -1)
-			return (client.emit("acceptfriendrequest", errorMessages.INVALIDNAME));
+			return (client.emit("RelationError", errorMessages.INVALIDNAME));
 		if (ret === -2)
-			return (client.emit("acceptfriendrequest", errorMessages.ALREADYFRIEND));
+			return (client.emit("RelationError", errorMessages.ALREADYFRIEND));
 		if (ret === -3)
-			return (client.emit("acceptfriendrequest", errorMessages.NOREQUEST));
+			return (client.emit("RelationError", errorMessages.NOREQUEST));
 		client.emit("acceptfriendrequest", `You and ${data.user} are now friends !`);
 	}
 
@@ -84,15 +86,15 @@ export class WsRelationGateway
 		console.log("Try to refuse friend request from : ");
 		console.log(data.user);
 		if (data.user === undefined)
-			return (client.emit("refusefriendrequest", errorMessages.MISSINGNAME));
+			return (client.emit("RelationError", errorMessages.MISSINGNAME));
 		let sender : number | undefined;
 		if ((sender = this.wsRelationService.isRegistered(client)) === undefined)
-			return (client.emit("refusefriendrequest", errorMessages.NOTREGISTERED));
+			return (client.emit("RelationError", errorMessages.NOTREGISTERED));
 		let ret = await this.wsRelationService.refuseFriendRequest(sender, data.user);
 		if (ret === -1)
-			return (client.emit("refusefriendrequest", errorMessages.INVALIDNAME));
+			return (client.emit("RelationError", errorMessages.INVALIDNAME));
 		if (ret === -2)
-			return (client.emit("refusefriendrequest", errorMessages.NOREQUEST));
+			return (client.emit("RelationError", errorMessages.NOREQUEST));
 		client.emit("refusefriendrequest", `You denied ${data.user} friend's request !`);
 	}
 
@@ -103,15 +105,15 @@ export class WsRelationGateway
 		console.log("Try to delete friend : ");
 		console.log(data.user);
 		if (data.user === undefined)
-			return (client.emit("deletefriend", errorMessages.MISSINGNAME));
+			return (client.emit("RelationError", errorMessages.MISSINGNAME));
 		let sender : number | undefined;
 		if ((sender = this.wsRelationService.isRegistered(client)) === undefined)
-			return (client.emit("deletefriend", errorMessages.NOTREGISTERED));
+			return (client.emit("RelationError", errorMessages.NOTREGISTERED));
 		let ret = await this.wsRelationService.deleteFriend(sender, data.user);
 		if (ret === -1)
-			return (client.emit("deletefriend", errorMessages.INVALIDNAME));
+			return (client.emit("RelationError", errorMessages.INVALIDNAME));
 		if (ret === -2)
-			return (client.emit("deletefriend", errorMessages.NOTFRIEND));
+			return (client.emit("RelationError", errorMessages.NOTFRIEND));
 		client.emit("deletefriend", `You and ${data.user} are no longer friend !`);
 	}
 
@@ -122,16 +124,18 @@ export class WsRelationGateway
 		console.log("Block user : ");
 		console.log(data.user);
 		if (data.user === undefined)
-			return (client.emit("blockuser", errorMessages.MISSINGNAME));
+			return (client.emit("RelationError", errorMessages.MISSINGNAME));
 		let sender : number | undefined;
 		if ((sender = this.wsRelationService.isRegistered(client)) === undefined)
-			return (client.emit("blockuser", errorMessages.NOTREGISTERED));
+			return (client.emit("RelationError", errorMessages.NOTREGISTERED));
 		let ret = await this.wsRelationService.blockUser(sender, data.user);
 		if (ret === -1)
-			return (client.emit("blockuser", errorMessages.INVALIDNAME));
+			return (client.emit("RelationError", errorMessages.INVALIDNAME));
 		if (ret === -2)
-			return (client.emit("blockuser", errorMessages.ALREADYIGNORED));
-		client.emit("blockuser", `You now ignore ${data.user} !`);
+			return (client.emit("RelationError", errorMessages.YOUARECRINGE));
+		if (ret === -3)
+			return (client.emit("RelationError", errorMessages.ALREADYIGNORED));
+				client.emit("blockuser", `You now ignore ${data.user} !`);
 	}
 
 	@UseGuards(SocketGuard)
@@ -141,15 +145,15 @@ export class WsRelationGateway
 		console.log("Try to unblock user : ");
 		console.log(data.user);
 		if (data.user === undefined)
-			return (client.emit("unblockuser", errorMessages.MISSINGNAME));
+			return (client.emit("RelationError", errorMessages.MISSINGNAME));
 		let sender : number | undefined;
 		if ((sender = this.wsRelationService.isRegistered(client)) === undefined)
-			return (client.emit("unblockuser", errorMessages.NOTREGISTERED));
+			return (client.emit("RelationError", errorMessages.NOTREGISTERED));
 		let ret = await this.wsRelationService.unBlockUser(sender, data.user);
 		if (ret === -1)
-			return (client.emit("unblockuser", errorMessages.INVALIDNAME));
+			return (client.emit("RelationError", errorMessages.INVALIDNAME));
 		if (ret === -2)
-			return (client.emit("unblockuser", errorMessages.NOTIGNORED));
+			return (client.emit("RelationError", errorMessages.NOTIGNORED));
 		client.emit("unblockuser", `You no longer ignore ${data.user} !`);
 	}
 }

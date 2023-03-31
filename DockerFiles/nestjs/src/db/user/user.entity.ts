@@ -18,4 +18,10 @@ export class User
 
 	@Column()
 	registered: boolean;
+
+	@Column()
+	TwoFASecret: string;
+
+	@Column()
+	TwoFA: boolean;
 }

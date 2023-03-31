@@ -40,15 +40,17 @@ export class WsRelationService
 		let requestedUser = await this.userService.findOneByName(target);
 		if (requestedUser === null || askMan === null)
 			return (-1);
+		if (askMan.uid === requestedUser.uid)
+			return (-2);
 		let ret = await this.relationService.getRelationStatus(askMan, requestedUser);
 		if (ret === "VX")
-			return (-2);
-		if (ret === "ally")
 			return (-3);
-		if (ret === "XV" || ret === "enemy")
+		if (ret === "ally")
 			return (-4);
-		if (ret === "++" || ret == "+-")
+		if (ret === "XV" || ret === "enemy")
 			return (-5);
+		if (ret === "++" || ret == "+-")
+			return (-6);
 		this.relationService.createRequest(askMan, requestedUser);
 		let clientToNotify = this.sockets.get(requestedUser.id);
 		if (clientToNotify !== undefined)
@@ -101,7 +103,6 @@ export class WsRelationService
 		return (-2);
 	}
 
-
 	async deleteFriend(sender: number, target: string)
 	{
 		let deletor = await this.userService.findOneById(sender);
@@ -126,9 +127,12 @@ export class WsRelationService
 		let annoyingMan = await this.userService.findOneByName(target);
 		if (annoyingMan === null || angryMan === null)
 			return (-1);
+		if (angryMan.uid === annoyingMan.uid)
+			return (-2);
 		let ret = await this.relationService.getRelationStatus(angryMan, annoyingMan);
 		if (ret === "XV" || ret === "enemy")
-			return (-2);
+			return (-3);
+
 		this.relationService.Ignore(angryMan, annoyingMan);
 		let clientToNotify = this.sockets.get(annoyingMan.id);
 		if (clientToNotify !== undefined)
@@ -151,5 +155,4 @@ export class WsRelationService
 			clientToNotify.emit("blockuser", `You can now interact with ${forgivingMan.name} !`);
 		return (1);
 	}
-
 }

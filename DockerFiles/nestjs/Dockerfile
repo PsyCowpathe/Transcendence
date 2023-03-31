@@ -41,6 +41,8 @@ COPY ./config/tsconfig.build.json /root/backend/
 
 COPY ./config/vimrc.local /etc/vim/
 
+COPY ./config/default /root/backend/avatars
+
 RUN chmod +x init.sh
 
 RUN cd \
@@ -56,7 +58,10 @@ RUN cd \
 && yarn add @nestjs/websockets @nestjs/platform-socket.io \
 && yarn add class-validator \
 && yarn add class-transformer \
-&& yarn add @types/multer
+&& yarn add @types/multer \
+&& yarn add otplib \
+&& yarn add qrcode \
+&& yarn add @types/qrcode
 
 EXPOSE 3630 3631 3632
 
