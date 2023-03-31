@@ -1,6 +1,3 @@
-import React from 'react';
-import { useState, useRef, forwardRef, Ref } from "react";
-
 export default class Paddle
 {
 	paddle!: HTMLElement;

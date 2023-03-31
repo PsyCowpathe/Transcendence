@@ -65,10 +65,11 @@ export default function Pong ()
 		document.addEventListener("mousemove", eMouseMoved);
 	}, []);
 	
-	function eMouseMoved(e: any)
+	/*client*/ function eMouseMoved(e: any)
 	{
 		input = e.y - input;
 		p_paddle.setPosition(100 * e.y / window.innerHeight);
+		/*send pos to server*/
 	}
 
 	function playerReady()
@@ -81,8 +82,10 @@ export default function Pong ()
 
 	function updatePositions()
 	{
-		ball.setPosition(moveBall(deltaTime, ball, p_paddle, o_paddle));
-		GOAL = (ball.pos.x >= 99 || ball.pos.x <= 0)
+		/*server*/ ball.setPosition(moveBall(deltaTime, ball, p_paddle, o_paddle));
+
+		/*client: get positions from server and apply them (ball and opponent's paddle)*/
+		GOAL = (ball.pos.x >= 99.9 || ball.pos.x <= 0.1)
 		console.log(ball.pos.x);
 		if (GOAL)
 			GOOOAAAAAAL(ball);
@@ -112,6 +115,7 @@ export default function Pong ()
 		}
 		prevTime = time;
 		window.requestAnimationFrame(update);
+		console.log(ball.pos.x);
 	}
 
 	return (
