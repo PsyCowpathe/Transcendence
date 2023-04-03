@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import {useEffect } from 'react';
 import { AffMyUserPage } from "../Pages/UserPage";
 import '../NewChat/truc.css'
+import { AffTheUser } from "../Pages/UserModalPage";
 interface User {
   name: string;
-  token: string;
 }
 
 interface Props {
@@ -37,7 +37,7 @@ useEffect(() => {
             </div>
             <div className="modal-body">
              <div className="test">
-              <AffMyUserPage ShowBar={false}/>
+              <AffTheUser MyName={user}/>
               </div>
               <div/>
             </div>

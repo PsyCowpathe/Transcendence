@@ -17,6 +17,8 @@ import { TopBar } from './Pages/TopBar';
 // import { Chat } from './chat/ChatComp';
 import { Chat } from './NewChat/CreateChan';
 import  ProfilePictureUploader  from './Pages/NewProfilPic';
+import NotFound from './Pages/404NotFound';
+import { AffTheUser } from './Pages/UserModalPage';
 
 
 function App() 
@@ -51,6 +53,8 @@ function App()
 			<Route  path='/askFriend' element={<AskFriend />}/>
 			<Route path='/test' element={<IconLabelButtons />}/> 
 			<Route path='/TopBar' element={<TopBar />}/> 
+			{/* <Route path='/UserTest' element={<AffTheUser MyName={"test"} />}/>  */}
+			<Route path='/*' element={<NotFound />}/> 
 			</Routes> 
 	</BrowserRouter>
 		

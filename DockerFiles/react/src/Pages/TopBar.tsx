@@ -15,11 +15,13 @@ export function TopBar(){
 		<li><MyNavLink to="/affUser" label="My User page"/></li>
 		{/* <li><MyNavLink to="/changepic" label="change my pic"/></li> */}
 		<li><MyNavLink to="/askFriend" label="demande d ami"/></li>
+		<li><MyNavLink to="/UserTest" label=" testUser"/></li>
 		{/* <li><MyNavLink to="/test" label="test"/></li> */}
         </nav>
 
 
     )
 };
+
 
 

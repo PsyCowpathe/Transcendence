@@ -168,7 +168,6 @@ export function Chat() {
   
  interface User {
    name: string;
-   token: string;
    ///////// interface a modifer pour avoir toute les info des user puis initialiser un User  avec toute ses info quand on recoit le token
  }
  
@@ -181,6 +180,8 @@ export function Chat() {
    
      const handleUserClick = (user: User | null) => {
        setSelectedUser(user);
+       console.log("je suis la")
+       console.log(user)
      };
    
      const handleCloseModal = () => {
@@ -206,7 +207,7 @@ export function Chat() {
       return (
           <div>
 
-      <div className={`message ${userClass}`} onClick={() => handleUserClick({name: message.user, token:"UNTOKEN"})}>
+      <div className={`message ${userClass}`} onClick={() => handleUserClick({name: message.user})}>
           {message.user}
         </div>
         <div className="message-container">
@@ -235,62 +236,6 @@ export function Chat() {
   }
   
 
-
-  // interface User {
-  //   id: number;
-  //   firstName: string;
-  //   lastName: string;
-  //   profilePictureUrl: string;
-  // }
-  
-  // const user: User = {
-  //   id: 1,
-  //   firstName: "John",
-  //   lastName: "Doe",
-  //   profilePictureUrl:
-  //     "https://www.w3schools.com/w3images/avatar2.png",
-  // };
-  
-  // const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
-
-
-
-  // const Modal = ({  x, y, user }: { x : number, y: number, user: User }) => {
-  //   const [showModal, setShowModal] = useState(false);
-  
-  //   const openModal = (e: React.MouseEvent<HTMLButtonElement>) => {
-  //   setModalPosition({ x: e.clientX, y: e.clientY });
-
-  //     setShowModal(true);
-  //   };
-  
-  //   const closeModal = () => {
-  //     setShowModal(false);
-  //   };
-  
-  //   return (
-  //     <div style={{top: y, left: x}}>
-  //       <button onClick={openModal}>Afficher l'utilisateur</button>
-  //       {showModal && (
-  //           <div className="modal">
-  //             <div className="user-info">
-  //               <img
-  //                 src={user.profilePictureUrl}
-  //                 alt={`${user.firstName} ${user.lastName}`}
-  //               />
-  //               <h2>{`${user.firstName} ${user.lastName}`}</h2>
-  //             </div>
-  //             <button onClick={closeModal}>Fermer</button>
-  //           </div>
-  //       )}
-  //       </div>
-  //   );
-  // };
-
-          //     <div className="app">
-          //     <Modal x={modalPosition.x}
-          // y={modalPosition.y} user={user} />
-          //   </div>
   useEffect(() => {
     const handlellistenban = (response: any) => {
       console.log("djj sjjdj")
@@ -315,25 +260,21 @@ export function Chat() {
     e.preventDefault();
     socket.emit("banuser", { name: UserToBan, channelname: "coucou", time: timer, reason: reason })
   
-  
   }
 
-
-    // const [user, setUser] = useState({name: UserName, age: 45, email: "bite@caca.tamere" })
-  
   /////////////////////////////////////TEST //////////////////////////////////////////
 
   return (
     <div>
       <TopBar />
-              <div>
+              {/* <div>
               <form onSubmit={BanUser} >
               <input type="text" placeholder="who i ban ?" value={UserToBan} onChange={(i) => setUserToBan(i.target.value)} />
               <input type="text" placeholder="why?" value={reason} onChange={(i) => setReason(i.target.value)} />
               <input type="number" placeholder="12" value={timer} onChange={(i) => setTimer(parseInt(i.target.value))} />
               <button className="add-message-button" >Ban</button>
             </form>
-              </div>
+              </div> */}
       <div className="chat-app" style={{ height: "100vh" }}>
         <div className="chat-app__sidebar">
           <div className="channel-list">
