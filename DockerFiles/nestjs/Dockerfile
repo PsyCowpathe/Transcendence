@@ -31,7 +31,9 @@ RUN rm -rf ~/backend/src \
 #&& cd ~/backend/secret \
 #&& openssl req -x509 -nodes -days 365 -subj "/C=FR/ST=France/L=Lyon/O=42/OU=42/CN=agirona" -newkey rsa:4096 -keyout ./cert.key -out ./cert.crt
 
-RUN mkdir ~/backend/src/
+RUN mkdir ~/backend/src/ \
+&& mkdir ~/backend/avatars/ \
+&& mkdir ~/backend/QRCODE/
 
 COPY ./src/* /root/backend/src/
 
@@ -41,7 +43,7 @@ COPY ./config/tsconfig.build.json /root/backend/
 
 COPY ./config/vimrc.local /etc/vim/
 
-COPY ./config/default /root/backend/avatars
+COPY ./config/default.png /root/backend/avatars
 
 RUN chmod +x init.sh
 
@@ -61,7 +63,8 @@ RUN cd \
 && yarn add @types/multer \
 && yarn add otplib \
 && yarn add qrcode \
-&& yarn add @types/qrcode
+&& yarn add @types/qrcode \
+&& yarn add randomstring
 
 EXPOSE 3630 3631 3632
 

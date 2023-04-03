@@ -1,9 +1,9 @@
-import { Controller, Get, Redirect, Header, Req, Post, Body, Res, UseGuards, UsePipes, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, StreamableFile } from '@nestjs/common';
+import { Controller, Get, Redirect, Header, Req, Post, Body, Res, UseGuards, UsePipes, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, StreamableFile, Param } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express'; 
 import { createReadStream } from 'fs';
 import { join } from 'path';
 import { Response, Request } from 'express'; 
-import { AuthDto, RegisterDto } from './auth.entity';
+import { AuthDto, ChangeLoginDto, TwoFADto } from './auth.entity';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { UserService } from '../db/user/user.service';
@@ -88,7 +88,7 @@ export class AuthController
 
 	@Post('loginchange')
 	@UseGuards(AuthGuard)
-	async firstConnect(@Body() registerForm: RegisterDto, @Res() res: Response, @Req() req: Request)
+	async firstConnect(@Body() registerForm: ChangeLoginDto, @Res() res: Response, @Req() req: Request)
 	{
 		console.log("changement de login = " + registerForm.name);
 		if (registerForm.name === undefined)
@@ -119,7 +119,19 @@ export class AuthController
 			return (sendError(res, -46, errorMessages.INVALIDIMAGE));
 		if (ret === -2)
 			return (sendError(res, -47, errorMessages.CANTSAVE));
-		return (sendSuccess(res, 12, "You succesfully changed your avatar !"));
+		return (sendSuccess(res, 12, "You successfully changed your avatar !"));
+	}
+
+	@Get('getuserinfos/:name')
+	@UseGuards(AuthGuard)
+	async getUserInfos(@Req() req: Request, @Res() res: Response, @Param('name') name: string)
+	{
+		console.log("demande info for user : " + name);
+		let toFind = await this.userService.findOneByName(name);
+		if (toFind === null)
+			return (sendError(res, -47, errorMessages.CANTSAVE));
+		let data = await this.authService.createProfile(true, toFind);
+		return (sendSuccess(res, 13, data));
 	}
 
 	@Get('avatar')
@@ -129,23 +141,37 @@ export class AuthController
 		console.log("demande d'avatar");
 		const user = await this.userService.findOneByToken(req.headers.authorization);
 		if (user === null || !fs.existsSync("/root/backend/avatars/" + user.uid))
-			return (res.status(200).sendFile("/root/backend/avatars/default.jpg"));
+			return (res.status(200).sendFile("/root/backend/avatars/default.png"));
 		console.log("avatar send");
 		return (res.status(200).sendFile("/root/backend/avatars/" + user.uid));
 	}
 
-	@Post('set2FA')
+	@Get('set2FA')
 	@UseGuards(AuthGuard)
 	async set2FA(@Req() req: Request, @Res() res: Response)
 	{
 		console.log("Try to activate 2FA")
-		this.authService.generate2FA(req.headers.authorization);
+		let ret = await this.authService.generate2FA(req.headers.authorization);
+		console.log("ret =" + ret)
+		if (ret === -1)
+			return (sendError(res, -48, errorMessages.INVALIDUSER));
+		if (ret === -2)
+			return (sendError(res, -47, errorMessages.ALREADYACTIVATE));
+		return (res.status(200).sendFile("/root/backend/QRCODE/" + ret + ".png"));
 	}
 
 	@Post('2FAlogin')
 	@UseGuards(AuthGuard)
-	async TwoFALogin(@Req() req: Request, @Res() res: Response)
+	async TwoFALogin(@Req() req: Request, @Res() res: Response, @Body() TwoFAForm: TwoFADto)
 	{
-
+		console.log("login with 2fa");
+		console.log(TwoFAForm);
+		let ret = await this.authService.twoFALogin(req.headers.authorization, TwoFAForm);
+		console.log("ret =" + ret)
+		if (ret === -1)
+			return (sendError(res, -48, errorMessages.INVALIDUSER));
+		if (ret === -2)
+			return (sendError(res, -48, errorMessages.INVALIDCODE));
+		return (sendSuccess(res, 15, "Successfully logged in !"));
 	}
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { AuthDto} from './auth.entity';
+import { AuthDto, TwoFADto } from './auth.entity';
 
 import { urls } from '../common/global';
 
@@ -14,6 +14,7 @@ import * as fs from 'fs';
 import { authenticator } from 'otplib';
 import { toDataURL } from 'qrcode';
 const axios = require('axios');
+var randomstring = require("randomstring");
 
 @Injectable()
 export class AuthService
@@ -90,15 +91,15 @@ export class AuthService
 		return (data);
 	}
 
-
-	createProfile(registered: boolean, userInfos: any, hashedToken?: string) : Profile
+	createProfile(registered: boolean, user: any, hashedToken?: string) : Profile
 	{
 		let data: Profile;
 		data =
 		{
-			name : userInfos.name,
+			name : user.name,
 			registered : registered,
 			newtoken : hashedToken,
+			TwoFA : user.TwoFA, 
 		};
 		return (data);
 	}
@@ -173,18 +174,38 @@ export class AuthService
 		return (1);
 	}
 
-	async generate2FA(token: string | undefined) : Promise<number | string>
+	async generate2FA(token: string | undefined) : Promise<number>
 	{
 		const user = await this.userService.findOneByToken(token);
 		if (user === null)
 			return (-1);
-		if (user.TwoFA === true)
-			return (-2);
+		//if (user.TwoFA === true)
+		//	return (-2);
 		await this.userService.updateTwoFA(true, user);
 		const secret = authenticator.generateSecret();
 		const otpauthUrl = authenticator.keyuri(user.name, 'Transcendence', secret);
 		await this.userService.updateTwoFASecret(secret, user);
-		let qrCode = toDataURL(otpauthUrl);
-		return (qrCode);
+		let qrCode = await toDataURL(otpauthUrl);
+		const buffer = Buffer.from(qrCode.substring(22), 'base64');
+		fs.writeFile("QRCODE/" + user.uid + ".png", buffer,
+			(err) =>
+			{
+        		if (err)
+					return (-2);
+      		});
+		return (user.uid);
+	}
+
+	async twoFALogin(token: string | undefined, code: TwoFADto)
+	{
+		const user = await this.userService.findOneByToken(token);
+		if (user === null || token === undefined)
+			return (-1);
+		const isCodeValid = authenticator.verify({token: token, secret: user.TwoFASecret});
+		if (isCodeValid === false)
+			return (-2);
+		let TwoFAToken = randomstring.generate({lenght: 20});
+		this.userService.updateTwoFAToken(TwoFAToken, Date.now() + 7200000, user);
+		return (1);
 	}
 }

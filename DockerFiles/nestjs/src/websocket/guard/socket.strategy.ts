@@ -15,12 +15,20 @@ export class SocketStrategy
 		const promise = this.userService.findOneByToken(request)
 		.then((user) =>
 		{
+			console.log("WSGuard1");
 			if (user === null)
+			{
+			console.log("WSGuard2");
 				return (false);
+			}
 			if (user.registered === false)
+			{
+			console.log("WSGuard3");
 				return (false);
+			}
 			if (user.token === request)
 				return (true);
+			console.log("test1");
 			return (false);
 		})
 		.catch((error) =>
