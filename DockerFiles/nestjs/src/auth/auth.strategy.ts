@@ -13,24 +13,33 @@ export class AuthStrategy
 
 	}
 
-	checkRequest(request : any) : Promise<boolean>
+	async checkRequest(request : any) : Promise<number>
 	{
-		console.log('jsuis dans lstartegy');
-		console.log("strat = " + request.headers.authorization);
-		const promise = this.userService.findOneByToken(request.headers.authorization)
-		.then((user) =>
+		//console.log(request, { depth: null });
+		const user = await this.userService.findOneByToken(request.headers.authorization);
+		if (user === null)
 		{
-			if (user === null)
-				return (false);
-			else if (user.token === request.headers.authorization)
-				return (true);
-			return (false);
-		})
-		.catch((error) =>
+			return (-1);
+		}
+		if (request.route.path !== "/auth/loginchange" && user.registered === false)
 		{
-			console.log("Error 10");
-			return (false);
-		});
-		return (promise);
+			return (-2);
+		}
+		if (user.token === request.headers.authorization)
+		{
+			/*if (user.TwoFA === true)
+			{
+				if (Date.now() > user.TwoFAExpire)
+					return (-3);
+				if (request.headers.TwoFAToken === user.TwoFAToken)
+					return (true);
+				return (-3);
+			}
+			else
+			{*/
+				return (1);
+		//	}
+		}
+		return (-4);
 	}
 }

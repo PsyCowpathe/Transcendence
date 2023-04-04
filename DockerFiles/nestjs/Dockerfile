@@ -31,7 +31,9 @@ RUN rm -rf ~/backend/src \
 #&& cd ~/backend/secret \
 #&& openssl req -x509 -nodes -days 365 -subj "/C=FR/ST=France/L=Lyon/O=42/OU=42/CN=agirona" -newkey rsa:4096 -keyout ./cert.key -out ./cert.crt
 
-RUN mkdir ~/backend/src/
+RUN mkdir ~/backend/src/ \
+&& mkdir ~/backend/avatars/ \
+&& mkdir ~/backend/QRCODE/
 
 COPY ./src/* /root/backend/src/
 
@@ -40,6 +42,8 @@ COPY ./tools/init.sh ./
 COPY ./config/tsconfig.build.json /root/backend/
 
 COPY ./config/vimrc.local /etc/vim/
+
+COPY ./config/default.png /root/backend/avatars
 
 RUN chmod +x init.sh
 
@@ -53,9 +57,16 @@ RUN cd \
 && yarn add @types/cookie-parser \
 && yarn add bcrypt \
 && yarn add @types/bcrypt \
-&& yarn add @nestjs/websockets @nestjs/platform-socket.io
+&& yarn add @nestjs/websockets @nestjs/platform-socket.io \
+&& yarn add class-validator \
+&& yarn add class-transformer \
+&& yarn add @types/multer \
+&& yarn add otplib \
+&& yarn add qrcode \
+&& yarn add @types/qrcode \
+&& yarn add randomstring
 
-EXPOSE 3630
+EXPOSE 3630 3631 3632
 
 RUN zsh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" || true
 

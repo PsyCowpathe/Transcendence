@@ -48,6 +48,22 @@ export class UserService
 		return this.usersRepository.update(user.id, {registered: bool});
 	}
 
+	updateTwoFASecret(secret: string, user: User)
+	{
+		return this.usersRepository.update(user.id, {TwoFASecret: secret});
+	}
+
+	updateTwoFA(bool: boolean, user: User)
+	{
+		return this.usersRepository.update(user.id, {TwoFA: bool});
+	}
+
+	updateTwoFAToken(token: string, expire: number, user: User)
+	{
+		this.usersRepository.update(user.id, {TwoFAToken: token});
+		return this.usersRepository.update(user.id, {TwoFAExpire: expire});
+	}
+
 	create(newUser : User)
 	{
 		return (this.usersRepository.save(newUser));

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { AuthDto} from './auth.entity';
+import { AuthDto, TwoFADto } from './auth.entity';
 
 import { urls } from '../common/global';
 
@@ -10,8 +10,11 @@ import { User } from '../db/user/user.entity';
 import { Profile } from './auth.entity';
 
 import * as bcrypt from 'bcrypt';
-
+import * as fs from 'fs';
+import { authenticator } from 'otplib';
+import { toDataURL } from 'qrcode';
 const axios = require('axios');
+var randomstring = require("randomstring");
 
 @Injectable()
 export class AuthService
@@ -23,6 +26,10 @@ export class AuthService
 
 	async getUserToken(token : AuthDto)
 	{
+		console.log("state = ");
+		console.log(token.state);
+		console.log("code = ");
+		console.log(token.code);
 		let user =
 		{
 			grant_type: 'authorization_code',
@@ -36,7 +43,7 @@ export class AuthService
 		.catch ((error: any) =>
 		{
 			console.log("Erreur 5");
-			//console.log(error);
+			console.log(error);
 			return (error);
 		});
 		if (response.data === undefined)
@@ -69,6 +76,8 @@ export class AuthService
 			newUser.name = response.data.login;
 			newUser.uid = response.data.id;
 			newUser.registered = false;
+			newUser.TwoFASecret = "";
+			newUser.TwoFA = false;
 			this.userService.create(newUser);
 			data = this.createProfile(false, newUser, hashedToken);
 			console.log('User successfully added to the database !');
@@ -82,24 +91,21 @@ export class AuthService
 		return (data);
 	}
 
-
-	createProfile(registered: boolean, userInfos: any, hashedToken?: string) : Profile
+	createProfile(registered: boolean, user: any, hashedToken?: string) : Profile
 	{
 		let data: Profile;
-		console.log("info ");
-		console.dir(userInfos, { depth: null })
 		data =
 		{
-			name : userInfos.name,
+			name : user.name,
 			registered : registered,
 			newtoken : hashedToken,
+			TwoFA : user.TwoFA, 
 		};
 		return (data);
 	}
 
 	async defineName(name: string, token: string | undefined) : Promise<number>
 	{
-		console.log(token);
 		let ret = await this.userService.findOneByName(name);
 		if (ret !== null)
 			return (-1);
@@ -107,7 +113,8 @@ export class AuthService
 		if (user !== null)
 		{
 			await this.userService.updateName(name, user);
-			await this.userService.updateRegister(true, user);
+			if (user.registered === false)
+				await this.userService.updateRegister(true, user);
 		}
 		return (1);
 	}
@@ -130,12 +137,75 @@ export class AuthService
 
 	async isTokenValid(token: string | undefined): Promise<boolean>
 	{
-		console.log("token = " + token);
 		if (token === undefined)
 			return (false);
 		const user = await this.userService.findOneByToken(token);
 		if (user === null)
 			return (false);
 		return (true);
+	}
+
+	async changeAvatar(token: string | undefined, file: Express.Multer.File) : Promise<number>
+	{
+		if (file.mimetype === 'image/png')
+		{
+			if (file.buffer[0] !== 0x89 || file.buffer[1] !== 0x50 || file.buffer[2] !== 0x4e
+				|| file.buffer[3] !== 0x47 || file.buffer[4] !== 0x0d || file.buffer[5] !== 0x0a
+				|| file.buffer[6] !== 0x1a || file.buffer[7] !== 0x0a)
+			return (-1);
+		}
+		else
+		{
+			if (file.buffer[0] !== 0xff || file.buffer[1] !== 0xd8 || file.buffer[2] !== 0xff)
+			return (-1);
+		}
+		if (file.size > 1000000)
+			return (-1);
+		const user = await this.userService.findOneByToken(token);
+		if (user === null)
+			return (-2);
+		fs.writeFile("avatars/" + user.uid, file.buffer,
+			(err) =>
+			{
+        		if (err)
+					return (-2);
+      		});
+		console.log("avatar changer avec success");
+		return (1);
+	}
+
+	async generate2FA(token: string | undefined) : Promise<number>
+	{
+		const user = await this.userService.findOneByToken(token);
+		if (user === null)
+			return (-1);
+		//if (user.TwoFA === true)
+		//	return (-2);
+		await this.userService.updateTwoFA(true, user);
+		const secret = authenticator.generateSecret();
+		const otpauthUrl = authenticator.keyuri(user.name, 'Transcendence', secret);
+		await this.userService.updateTwoFASecret(secret, user);
+		let qrCode = await toDataURL(otpauthUrl);
+		const buffer = Buffer.from(qrCode.substring(22), 'base64');
+		fs.writeFile("QRCODE/" + user.uid + ".png", buffer,
+			(err) =>
+			{
+        		if (err)
+					return (-2);
+      		});
+		return (user.uid);
+	}
+
+	async twoFALogin(token: string | undefined, code: TwoFADto)
+	{
+		const user = await this.userService.findOneByToken(token);
+		if (user === null || token === undefined)
+			return (-1);
+		const isCodeValid = authenticator.verify({token: token, secret: user.TwoFASecret});
+		if (isCodeValid === false)
+			return (-2);
+		let TwoFAToken = randomstring.generate({lenght: 20});
+		this.userService.updateTwoFAToken(TwoFAToken, Date.now() + 7200000, user);
+		return (1);
 	}
 }
