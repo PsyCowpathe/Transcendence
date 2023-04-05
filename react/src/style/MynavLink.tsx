@@ -1,0 +1,26 @@
+import React from "react";
+import { NavLink, NavLinkProps } from "react-router-dom";
+import "../css/NavLink.css";
+
+interface MyNavLinkProps extends NavLinkProps {
+  label: string;
+  activeClassName?: string;
+}
+
+const MyNavLink = ({ to, label, ...rest }: MyNavLinkProps) => {
+  return (
+    <NavLink
+      to={to}
+
+      className="nav-link"
+      activeClassName="active"
+      {...rest}
+    >
+      {label}
+    </NavLink>
+  );
+};
+
+
+
+export default MyNavLink;
