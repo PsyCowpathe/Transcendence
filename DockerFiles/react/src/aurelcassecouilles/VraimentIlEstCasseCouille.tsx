@@ -2,15 +2,19 @@
 export function VraimentIlSaoule()
 {
     const token = localStorage.getItem('Token')
+    const FA = localStorage.getItem('2FA')
         
     const config = 
     {
-        headers: { Authorization: `${token}` }
+        headers: { Authorization: `${token}`,
+        TwoFAToken: `${FA}`
+     }
     };
     const config2 = 
     {
         responseType: 'blob', 
-        headers: { Authorization: `${token}` }
+        headers: { Authorization: `${token}`,
+        TwoFAToken: `${FA}` }
     };
     
     
@@ -25,15 +29,18 @@ export function VraimentIlSaoule()
 export function VraimentIlSaoule2()
 {
     const token = localStorage.getItem('Token')
+    const FA = localStorage.getItem('2FA')
         
     const config = 
     {
-        headers: { Authorization: `${token}` }
+        headers: { Authorization: `${token}`,
+        TwoFAToken: `${FA}` }
     };
     const config2 = 
     {
         responseType: 'blob', 
-        headers: { Authorization: `${token}` }
+        headers: { Authorization: `${token}` ,
+        TwoFAToken: `${FA}`}
     };
     
     

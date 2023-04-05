@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { VraimentIlSaoule } from '../aurelcassecouilles/VraimentIlEstCasseCouille';
 import axios from 'axios';
 import { urls } from '../global';
+import { TopBar } from './TopBar';
 
 interface MyComponentState {
   image: string | null;
@@ -32,7 +33,8 @@ export function Set2FA ()
     {
     console.log("--------FF-----------------------QQQQAAA---------------------------------------------------")
 
-      console.log(res)
+    console.log(res.data.newFA)
+    localStorage.setItem('2FA', res.data.newFA)
     })
     .catch((err) =>
     {
@@ -46,6 +48,7 @@ export function Set2FA ()
 
   return(
       <div>
+        <TopBar />
     <MyComponent/>
 
     <form onSubmit={HandleCode}>
@@ -130,7 +133,7 @@ export class MyComponent extends Component <{}, MyComponentState>
     return(
       <div>
   
-  <QRCode value={image} />
+  <QRCode style={{ margin:"40vh",display:"flex", justifyContent:"center", alignItems: "center", width: "30vh", height: "30vh", objectFit: "cover"}} value={image} />
  
       {/* <button onClick={this.handleClick}>coucouFDP</button> */}
   

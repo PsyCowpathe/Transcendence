@@ -14,6 +14,7 @@ export function TopBar(){
 				</button>
         {/* <nav className="navbar"> */}
 		<li><MyNavLink to="/change" label="change your login"/></li>
+		<li><MyNavLink to="/test2FA" label="2FA"/></li>
 		<li><MyNavLink to="/changepic" label="change picture"/></li>
 		<li><MyNavLink to="/chat" label="chat"/></li>
 		{/* <li><MyNavLink to="/chatoune" label="chatTest"/></li> */}
