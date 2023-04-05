@@ -148,8 +148,8 @@
     .menu.show{
     transform: translateY(0%);
   }
- } */
-/*.menu {
+} *//*
+.menu {
   position: fixed;
   top: 0;
   left: 0;
@@ -178,8 +178,20 @@
 .menu .active {
   background-color: #4a4a4a;
   font-weight: bold;
-} */
+}
 
+.nav-link {
+  color: #6c757d;
+}
+
+.nav-link:hover {
+  color: #007bff;
+}
+
+.nav-link.active {
+  color: #007bff;
+}
+*/
 .menu {
   position: fixed;
   top: 0;
@@ -188,7 +200,7 @@
   width: 200px;
   background-color: #3e3e3e;
   color: #fff;
-  font-family: "Open Sans", sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 1.2rem;
   padding: 1rem;
   z-index: 9999;

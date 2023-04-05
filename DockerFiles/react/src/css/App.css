@@ -17,12 +17,12 @@ div{
   /* Ajoutez d'autres propriétés CSS selon vos besoins */
 }
 h1, h2, p, ul{
-  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial ;
+  font-family: Arial ;
   color: rgb(30, 157, 51);
 
 }
 a{
-  font-family: Bradley Hand, cursive;
+  font-family: Arial ;
   color: rgb(26, 137, 50);
   
 }
@@ -31,7 +31,7 @@ a{
 li {
   /* height: max-content; */
 
-  font-family: sans-serif;
+  font-family: Arial ;
   margin-left: 10px;
   color: rgb(192, 21, 21);
 
@@ -83,10 +83,17 @@ body
   /* margin: 0; */
   /* background-size:cover; */
   /* background : #64ce44; */
-  height: fit-content;
-   background: linear-gradient(to bottom, #87CEEB, #FFFFFF); 
-    height: auto;
+  /* overflow-x: hidden; */
+   background-image: url('../imgs/background.jpg'); 
+   /* background: linear-gradient(to bottom, #87CEEB, #FFFFFF);  */
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: fit-content;
+    min-height: 100vh;
 } 
 .Routes{
   height: auto;
+}
+.main-content {
+  margin-left: 200px; /* la largeur de votre nav bar */
 }

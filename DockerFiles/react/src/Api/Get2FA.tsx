@@ -7,4 +7,4 @@ export async function Get2FA()
     const config : any = VraimentIlSaoule2()
     let ret = await axios.get(`${urls.SERVER}/auth/set2FA`, config)
     return(ret);
-}
+}  
