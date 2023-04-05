@@ -4,6 +4,7 @@ import "../css/NavLink.css";
 
 interface MyNavLinkProps extends NavLinkProps {
   label: string;
+  activeClassName?: string;
 }
 
 const MyNavLink = ({ to, label, ...rest }: MyNavLinkProps) => {
@@ -11,7 +12,8 @@ const MyNavLink = ({ to, label, ...rest }: MyNavLinkProps) => {
     <NavLink
       to={to}
 
-      className="navlink"
+      className="nav-link"
+      activeClassName="active"
       {...rest}
     >
       {label}

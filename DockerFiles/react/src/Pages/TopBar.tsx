@@ -3,11 +3,17 @@ import "../css/List.css";
 import "../css/NavLink.css"; 
 import "../css/TopBar.css"
 import MyNavLink from "../style/MynavLink";
-
+import { FaBars} from 'react-icons/fa';
 
 export function TopBar(){
-    return (            
-        <nav className="topbar">
+	const [showMenu, setShowMenu] = React.useState(false);
+    return (     
+		<div className="menu">
+				  <button className="menu-button" onClick={() => setShowMenu(!showMenu)}>
+				  <FaBars />
+				</button>
+			<div className={`menu ${showMenu ? 'show' : ''}`}>
+        {/* <nav className="navbar"> */}
 		<li><MyNavLink to="/change" label="change your login"/></li>
 		<li><MyNavLink to="/changepic" label="change picture"/></li>
 		<li><MyNavLink to="/chat" label="chat"/></li>
@@ -17,7 +23,9 @@ export function TopBar(){
 		<li><MyNavLink to="/askFriend" label="demande d ami"/></li>
 		<li><MyNavLink to="/UserTest" label=" testUser"/></li>
 		{/* <li><MyNavLink to="/test" label="test"/></li> */}
-        </nav>
+        {/* </nav> */}
+		</div>
+		</div>       
 
 
     )
