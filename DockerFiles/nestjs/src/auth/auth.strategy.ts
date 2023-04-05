@@ -1,9 +1,6 @@
 import { Injectable} from '@nestjs/common';
 
-import { Observable } from 'rxjs';
-
 import { UserService} from '../db/user/user.service';
-
 
 @Injectable()
 export class AuthStrategy
@@ -15,16 +12,11 @@ export class AuthStrategy
 
 	async checkRequest(request : any) : Promise<number>
 	{
-		console.log(request.headers.authorization);
 		const user = await this.userService.findOneByToken(request.headers.authorization);
 		if (user === null)
-		{
 			return (-1);
-		}
 		if (request.route.path !== "/auth/loginchange" && user.registered === false)
-		{
 			return (-2);
-		}
 		if (user.token === request.headers.authorization)
 		{
 			/*if (user.TwoFA === true)
@@ -33,13 +25,10 @@ export class AuthStrategy
 					return (-3);
 				if (request.headers.TwoFAToken === user.TwoFAToken)
 					return (1);
-					console.log("tt");
 				return (-3);
 			}
-			else
-			{*/
+			else*/
 				return (1);
-			//}
 		}
 		return (-4);
 	}

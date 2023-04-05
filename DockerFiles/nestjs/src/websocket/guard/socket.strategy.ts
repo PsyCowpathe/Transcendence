@@ -10,33 +10,27 @@ export class SocketStrategy
 
 	}
 
-	checkRequest(request : any) : Promise<boolean>
+	async checkRequest(request : any) : Promise<number>
 	{
-		const promise = this.userService.findOneByToken(request)
-		.then((user) =>
+		const user = await this.userService.findOneByToken(request);
+		if (user === null)
+			return (-1);
+		if (user.registered === false)
+			return (-2);
+		if (user.token === request.headers.authorization)
 		{
-			console.log("WSGuard1");
-			if (user === null)
+			/*if (user.TwoFA === true)
 			{
-			console.log("WSGuard2");
-				return (false);
+				if (Date.now().toString() > user.TwoFAExpire)
+					return (-3);
+				if (request.headers.TwoFAToken === user.TwoFAToken)
+					return (1);
+				return (-3);
 			}
-			if (user.registered === false)
-			{
-			console.log("WSGuard3");
-				return (false);
-			}
-			if (user.token === request)
-				return (true);
-			console.log("test1");
-			return (false);
-		})
-		.catch((error) =>
-		{
-			console.log("Error 10");
-			return (false);
-		});
-		return (promise);
+			else*/
+				return (1);
+		}
+		return (-4);
 	}
 }
 

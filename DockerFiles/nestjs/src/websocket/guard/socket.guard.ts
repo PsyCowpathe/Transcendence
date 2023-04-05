@@ -1,4 +1,4 @@
-import { Injectable, ExecutionContext, CanActivate} from '@nestjs/common';
+import { Injectable, ExecutionContext, CanActivate, UnauthorizedException } from '@nestjs/common';
 
 import { Observable } from 'rxjs';
 
@@ -12,13 +12,24 @@ export class SocketGuard implements CanActivate
 
 	}
 
-	canActivate(context: any) : boolean | Promise<boolean> | Observable<boolean>
+	async canActivate(context: any) : Promise<boolean>
 	{
 		console.log('Socket Guard');
 		//console.log(context.args[0].handshake);
 		//console.log(context.args[0].handshake.auth.token);
 		const request = context.args[0].handshake.auth.token;
-		return (this.socketStrategy.checkRequest(request));
+		let ret = await this.socketStrategy.checkRequest(request);
+		if (ret === 1)
+			return (true);
+		if (ret === -1)
+			throw new UnauthorizedException("Invalid user");
+		if (ret === -2)
+			throw new UnauthorizedException("User not registered");
+		if (ret === -3)
+			throw new UnauthorizedException("Invalid 2FA token");
+		if (ret === -4)
+			throw new UnauthorizedException("Invalid Bearer token");
+		return (false);
 	}
 }
 

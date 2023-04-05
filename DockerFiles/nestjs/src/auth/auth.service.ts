@@ -103,6 +103,7 @@ export class AuthService
 				name : user.name,
 				registered : user.registered,
 				newtoken : user.token,
+				newFA : user.TwoFASecret,
 				TwoFA : user.TwoFA, 
 			};
 		}
@@ -113,6 +114,7 @@ export class AuthService
 				name : user.name,
 				registered : user.registered,
 				newtoken : undefined,
+				newFA : undefined,
 				TwoFA : user.TwoFA, 
 			};
 		}
