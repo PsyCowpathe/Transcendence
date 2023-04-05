@@ -162,8 +162,8 @@ export class AuthController
 			return (sendError(res, -47, errorMessages.ALREADYACTIVATE));
 		
 		//return (res.status(200).sendFile("/root/backend/avatars/default.png"));
-		
-		return (res.status(200).sendFile("/root/backend/QRCODE/78466"));
+		console.log(ret);
+		return (res.status(200).sendFile("/root/backend/QRCODE/" + ret));
 	}
 
 	@Post('2FAlogin')
