@@ -29,9 +29,10 @@ RUN cd && cd frontend && yarn add @types/react-icons@latest && yarn upgrade @typ
 
 RUN cd && cd frontend &&  yarn add @types/socket.io-client && yarn add @types/react-dropzone 
 
-RUN yarn add @mui/material @emotion/react @emotion/styled && yarn add @mui/material @mui/styled-engine-sc styled-components && yarn add @mui/icons-material && yarn install
+RUN cd && cd frontend && yarn add @mui/material @emotion/react @emotion/styled && yarn add @mui/material @mui/styled-engine-sc styled-components && yarn add @mui/icons-material 
 
-
+RUN cd && cd frontend && yarn add qrcode.react
+RUN cd && cd frontend && yarn add otpauth && yarn install
 RUN rm -rf ~/frontend/src
 
 RUN mkdir ~/frontend/src/

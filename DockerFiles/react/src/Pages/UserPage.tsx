@@ -12,125 +12,10 @@ import axios from 'axios';
 import {urls } from "../global"
 import { VraimentIlSaoule2 } from '../aurelcassecouilles/VraimentIlEstCasseCouille';
 import { PicGetRequest } from '../Api/PicGetRequest';
-import { VraimentIlSaoule } from '../aurelcassecouilles/VraimentIlEstCasseCouille';
 import { GetUserInfo } from '../Api/GetUserInfo';
-import React, { Component } from 'react';
-import LoadingPage from './LoadingPage';
-import { Get2FA } from '../Api/Get2FA';
+import React from 'react';
 
 
-interface MyComponentState {
-  image: string | null;
-  error: Error | null;
-}
-
-interface code {
-  code : number
-}
-class MyComponent extends Component <{}, MyComponentState>
-{
-  constructor(props : any) 
-  {
-    super(props);
-    this.state = {
-      image: null,
-      error: null
-    };
-    this.handleClick = this.handleClick.bind(this);
-    this.PutainLeFdp = this.PutainLeFdp.bind(this);
-  }
-
-  // const [verif, setVerif] = useState(false)
-
-  handleClick() {
-    this.PutainLeFdp();
-  }
-  PutainLeFdp = () =>
-  {
-    console.log("----------------------------------------------------------------------------------")
- 
-    Get2FA()
-  .then((res) =>
-  {
-    console.log("SSSSSSSSSSSSSSSSS----------------------------------------------------------------------------------")
-    console.log(res)
-
-    const url = window.URL.createObjectURL(new Blob([res.data]));
-    
-    localStorage.setItem('QR', url)
-    this.setState({image: url})
-    
-    // const pic2 : any = localStorage.getItem('QR')
-    // setVerif(true)
-  })
-  .catch((err) =>
-  {
-    this.setState({error: err})
-    console.log(err)
-  })
-
-
-  }
-
-  // const [timer, setTimer] = useState<code>({code : 0})
-  // const pouraurel = (e : any) =>
-  // {
-  //   e.preventDefault()
-  //   console.log(timer.code)
-  //   let config = VraimentIlSaoule()
-  //   console.log("-------------------------------QQQQAAA---------------------------------------------------")
-  //   axios.post(`${urls.SERVER}/auth/2FAlogin`, timer, config)
-  //   .then((res) =>
-  //   {
-  //   console.log("--------FF-----------------------QQQQAAA---------------------------------------------------")
-
-  //     console.log(res)
-  //   })
-  //   .catch((err) =>
-  //   {
-  //     console.log(err)
-  //   })
-  //   console.log("pour aurel")
-  //   setTimer({code : 0})
-  // }
-  // const pic2 : any = localStorage.getItem('QR')
-  // // const pic2 = localStorage.getItem('QR') + "?t=" + new Date().getTime();
-
-  render(){
-    const { image, error } = this.state;
-    if (error) {
-      return <div>Error: {error.message}</div>;
-    }
-    if (!image) {
-      
-      return(
-        <div>
-
-        <button onClick={this.handleClick}>coucouFDP</button>
-        <LoadingPage/>;
-        </div>
-      )
-    }
-    return(
-      <div>
-  
-  <img src={image} alt="My Image" />
-      {/* <button onClick={this.handleClick}>coucouFDP</button> */}
-  
-{/*   
-      <form onSubmit={pouraurel}>
-      <input type="texte" placeholder="0" value={timer.code} onChange={(e) => setTimer({code : parseInt(e.target.value)})} />
-  <button >coucou</button>
-      </form>
-      {verif && <img src={pic2} alt="TAMERE"  />}
-    */}
-      </div> 
-    )
-
-  }
-
-  
-}
 
 export function AffMyUserPage ({ShowBar} : {ShowBar : boolean})
 {
@@ -221,9 +106,7 @@ const [Click, setClick] = useState(false)
     return (
     		<div className="App">
           {ShowBar && <TopBar/>}
-      
-      <button onClick={SetClick}>salam fdp</button>
-        {Click && <MyComponent/>}
+
     {/* <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "2em", height: "100vh" }}> */}
         <img src={Pic} alt="Profile" style={{ borderRadius: "50%", width: "200px", height: "200px", objectFit: "cover", boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)" }} />
         <h1 style={{ fontSize: "2.5em", margin: "1em 0 0.5em" }}>{UserName}</h1><button className="SettingsButton" onClick={onClick}>

@@ -18,6 +18,7 @@ import { TopBar } from './Pages/TopBar';
 import { Chat } from './NewChat/CreateChan';
 import  ProfilePictureUploader  from './Pages/NewProfilPic';
 import NotFound from './Pages/404NotFound';
+import { Set2FA } from './Pages/Set2FA';
 
   
 function App() 
@@ -42,6 +43,7 @@ function App()
 			<Routes>
 		 {/* <Route path='/' element={<HomePage  tokenForm={tokenForm} setToken={setToken} onLogin={() => setIsLoggedIn(true)}/>}/>   */}
 			<Route path='/change' element={<ChangeLogin/>}/> 
+			<Route path='/test2FA' element={<Set2FA/>}/> 
 			<Route path='/' element={<HomePage tokenForm={tokenForm} setToken={setToken} onLogin={() => setIsLoggedIn(true)}/>}/> 
 			<Route path='/chat' element={<Chat/>}/>
 			{/* <Route path="/chatoune" element ={<Chat username={"Alice"} />} /> */}
