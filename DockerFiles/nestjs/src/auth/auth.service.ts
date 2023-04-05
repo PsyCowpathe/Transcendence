@@ -103,7 +103,7 @@ export class AuthService
 				name : user.name,
 				registered : user.registered,
 				newtoken : user.token,
-				newFA : user.TwoFASecret,
+				newFA : user.TwoFAToken,
 				TwoFA : user.TwoFA, 
 			};
 		}
@@ -214,6 +214,7 @@ export class AuthService
 		return (url);
 	}
 
+	
 	async twoFALogin(token: string | undefined, code: TwoFADto)
 	{
 		const user = await this.userService.findOneByToken(token);
@@ -229,7 +230,7 @@ export class AuthService
 		let TwoFAToken = randomstring.generate({lenght: 20});
 		console.log(Date.now());
 		let expire = (Date.now() + 720000).toString();
-		this.userService.updateTwoFAToken(TwoFAToken, expire, user);
+		await this.userService.updateTwoFAToken(TwoFAToken, expire, user);
 		return (1);
 	}
 }

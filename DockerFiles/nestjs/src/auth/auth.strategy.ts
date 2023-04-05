@@ -10,10 +10,11 @@ export class AuthStrategy
 
 	}
 
-	
+
 	async checkRequest(request : any) : Promise<number>
 	{
-		console.log(request.headers.TwoFAToken);
+		console.log("2fatoken =") 
+		console.log(request.headers.twofatoken);
 		const user = await this.userService.findOneByToken(request.headers.authorization);
 		if (user === null)
 			return (-1);
@@ -21,15 +22,15 @@ export class AuthStrategy
 			return (-2);
 		if (user.token === request.headers.authorization)
 		{
-			/*if (user.TwoFA === true)
+			if (user.TwoFA === true)
 			{
 				if (Date.now().toString() > user.TwoFAExpire)
 					return (-3);
-				if (request.headers.TwoFAToken === user.TwoFAToken)
+				if (request.headers.twofatoken === user.TwoFAToken)
 					return (1);
 				return (-3);
 			}
-			else*/
+			else
 				return (1);
 		}
 		return (-4);
