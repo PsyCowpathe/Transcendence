@@ -6,13 +6,12 @@ import MyNavLink from "../style/MynavLink";
 import { FaBars} from 'react-icons/fa';
 
 export function TopBar(){
-	const [showMenu, setShowMenu] = React.useState(false);
     return (     
 		<div className="menu">
-				  <button className="menu-button" onClick={() => setShowMenu(!showMenu)}>
+				  <button className="menu-toggle" > 
 				  <FaBars />
 				</button>
-			<div className={`menu ${showMenu ? 'show' : ''}`}>
+			
         {/* <nav className="navbar"> */}
 		<li><MyNavLink to="/change" label="change your login"/></li>
 		<li><MyNavLink to="/changepic" label="change picture"/></li>
@@ -25,7 +24,6 @@ export function TopBar(){
 		{/* <li><MyNavLink to="/test" label="test"/></li> */}
         {/* </nav> */}
 		</div>
-		</div>       
 
 
     )
