@@ -56,8 +56,6 @@ export enum errorMessages
 	YOUAREMUTE = "You are mute in this channel !",
 	ALREADYBAN = "This user is already ban from this channel !",
 	ALREADYMUTE = "This user is already mute from this channel !",
-
-
 }
 
 export enum urls

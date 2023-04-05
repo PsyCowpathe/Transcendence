@@ -8,6 +8,7 @@ import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { UserService } from '../db/user/user.service';
 
+
 import { sendError, sendSuccess } from '../common/response';
 
 import { errorMessages, urls } from '../common/global'; 
@@ -75,6 +76,7 @@ export class AuthController
 				const data = await this.authService.createUser(apiToken, hashedToken);
 				console.log('Sending token to client !');
 				//console.log(hashedToken);
+				console.log(data);
 				return (sendSuccess(res, 10, data));
 			}
 			catch (error)
@@ -143,6 +145,7 @@ export class AuthController
 		if (user === null || !fs.existsSync("/root/backend/avatars/" + user.uid))
 			return (res.status(200).sendFile("/root/backend/avatars/default.png"));
 		console.log("avatar send");
+		//return (res.status(200).sendFile("/root/backend/QRCODE/78466"));
 		return (res.status(200).sendFile("/root/backend/avatars/" + user.uid));
 	}
 
@@ -157,7 +160,10 @@ export class AuthController
 			return (sendError(res, -48, errorMessages.INVALIDUSER));
 		if (ret === -2)
 			return (sendError(res, -47, errorMessages.ALREADYACTIVATE));
-		return (res.status(200).sendFile("/root/backend/QRCODE/" + ret + ".png"));
+		
+		//return (res.status(200).sendFile("/root/backend/avatars/default.png"));
+		
+		return (res.status(200).sendFile("/root/backend/QRCODE/78466"));
 	}
 
 	@Post('2FAlogin')
@@ -172,6 +178,8 @@ export class AuthController
 			return (sendError(res, -48, errorMessages.INVALIDUSER));
 		if (ret === -2)
 			return (sendError(res, -48, errorMessages.INVALIDCODE));
-		return (sendSuccess(res, 15, "Successfully logged in !"));
+		let user = await this.userService.findOneByToken(req.headers.authorization);
+		let data = await this.authService.createProfile(true, user);
+		return (sendSuccess(res, 15, data));
 	}
 }

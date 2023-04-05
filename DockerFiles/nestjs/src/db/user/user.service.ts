@@ -58,7 +58,7 @@ export class UserService
 		return this.usersRepository.update(user.id, {TwoFA: bool});
 	}
 
-	updateTwoFAToken(token: string, expire: number, user: User)
+	updateTwoFAToken(token: string, expire: string, user: User)
 	{
 		this.usersRepository.update(user.id, {TwoFAToken: token});
 		return this.usersRepository.update(user.id, {TwoFAExpire: expire});

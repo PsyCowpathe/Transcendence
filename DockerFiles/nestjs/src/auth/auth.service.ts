@@ -24,6 +24,7 @@ export class AuthService
 
 	}
 
+
 	async getUserToken(token : AuthDto)
 	{
 		console.log("state = ");
@@ -79,31 +80,46 @@ export class AuthService
 			newUser.TwoFASecret = "";
 			newUser.TwoFA = false;
 			this.userService.create(newUser);
-			data = this.createProfile(false, newUser, hashedToken);
+			data = this.createProfile(true, newUser);
 			console.log('User successfully added to the database !');
 		}
 		else 
 		{
 			await this.userService.updateToken(hashedToken, user);
-			data = this.createProfile(true, user, hashedToken);
+			data = this.createProfile(true, user);
 			console.log('User already exist, updating token in db !');
 		}
 		return (data);
 	}
 
-	createProfile(registered: boolean, user: any, hashedToken?: string) : Profile
+
+	createProfile(secret: boolean, user: any) : Profile
 	{
 		let data: Profile;
-		data =
+		if (secret === true)
 		{
-			name : user.name,
-			registered : registered,
-			newtoken : hashedToken,
-			TwoFA : user.TwoFA, 
-		};
+			data =
+			{
+				name : user.name,
+				registered : user.registered,
+				newtoken : user.token,
+				TwoFA : user.TwoFA, 
+			};
+		}
+		else
+		{
+			data =
+			{
+				name : user.name,
+				registered : user.registered,
+				newtoken : undefined,
+				TwoFA : user.TwoFA, 
+			};
+		}
 		return (data);
 	}
 
+	
 	async defineName(name: string, token: string | undefined) : Promise<number>
 	{
 		let ret = await this.userService.findOneByName(name);
@@ -174,6 +190,7 @@ export class AuthService
 		return (1);
 	}
 
+
 	async generate2FA(token: string | undefined) : Promise<number>
 	{
 		const user = await this.userService.findOneByToken(token);
@@ -187,7 +204,7 @@ export class AuthService
 		await this.userService.updateTwoFASecret(secret, user);
 		let qrCode = await toDataURL(otpauthUrl);
 		const buffer = Buffer.from(qrCode.substring(22), 'base64');
-		fs.writeFile("QRCODE/" + user.uid + ".png", buffer,
+		fs.writeFile("QRCODE/" + user.uid, buffer,
 			(err) =>
 			{
         		if (err)
@@ -201,11 +218,16 @@ export class AuthService
 		const user = await this.userService.findOneByToken(token);
 		if (user === null || token === undefined)
 			return (-1);
-		const isCodeValid = authenticator.verify({token: token, secret: user.TwoFASecret});
+			console.log(code.code);
+		console.log(code.code.toString());
+		const isCodeValid = await authenticator.verify({token: code.code.toString(), secret: user.TwoFASecret});
+
 		if (isCodeValid === false)
 			return (-2);
 		let TwoFAToken = randomstring.generate({lenght: 20});
-		this.userService.updateTwoFAToken(TwoFAToken, Date.now() + 7200000, user);
+		console.log(Date.now());
+		let expire = (Date.now() + 720000).toString();
+		this.userService.updateTwoFAToken(TwoFAToken, expire, user);
 		return (1);
 	}
 }

@@ -13,7 +13,6 @@ import { urls } from './common/global';
 
 async function bootstrap()
 {
-
 	/*const httpsOptions =
 	{
   		key: fs.readFileSync('./secret/cert.key'),
@@ -21,6 +20,7 @@ async function bootstrap()
 	};*/
 
   	const app = await NestFactory.create(AppModule);
+
 	app.use(cookieParser());
 	app.enableCors
 	({
@@ -31,8 +31,10 @@ async function bootstrap()
 
 		//preflightContinue: false,
 		//optionsSuccessStatus: 204,
+
 	});
 	app.useGlobalPipes(new ValidationPipe());
   	await app.listen(3630);
+
 }
 bootstrap();

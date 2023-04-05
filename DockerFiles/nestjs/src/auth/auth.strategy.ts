@@ -15,7 +15,7 @@ export class AuthStrategy
 
 	async checkRequest(request : any) : Promise<number>
 	{
-		//console.log(request, { depth: null });
+		console.log(request.headers.authorization);
 		const user = await this.userService.findOneByToken(request.headers.authorization);
 		if (user === null)
 		{
@@ -29,16 +29,17 @@ export class AuthStrategy
 		{
 			/*if (user.TwoFA === true)
 			{
-				if (Date.now() > user.TwoFAExpire)
+				if (Date.now().toString() > user.TwoFAExpire)
 					return (-3);
 				if (request.headers.TwoFAToken === user.TwoFAToken)
-					return (true);
+					return (1);
+					console.log("tt");
 				return (-3);
 			}
 			else
 			{*/
 				return (1);
-		//	}
+			//}
 		}
 		return (-4);
 	}

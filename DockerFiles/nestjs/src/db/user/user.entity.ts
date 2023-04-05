@@ -29,5 +29,5 @@ export class User
 	TwoFAToken: string;
 
 	@Column({ nullable: true })
-	TwoFAExpire: number
+	TwoFAExpire: string
 }
