@@ -10,8 +10,10 @@ export class AuthStrategy
 
 	}
 
+	
 	async checkRequest(request : any) : Promise<number>
 	{
+		console.log(request.headers.TwoFAToken);
 		const user = await this.userService.findOneByToken(request.headers.authorization);
 		if (user === null)
 			return (-1);
