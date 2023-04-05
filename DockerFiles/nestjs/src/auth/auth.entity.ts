@@ -36,6 +36,7 @@ export class Profile
 	name: string;
 	registered: boolean;
 	newtoken: string | undefined;
+	newFA: string | undefined;
 	TwoFA: boolean;
 	//status: boolean;
 	//avatar; image;
