@@ -191,26 +191,25 @@ export class AuthService
 	}
 
 
-	async generate2FA(token: string | undefined) : Promise<number>
+	async generate2FA(token: string | undefined) : Promise<number | string>
 	{
 		const user = await this.userService.findOneByToken(token);
 		if (user === null)
 			return (-1);
 		//if (user.TwoFA === true)
 		//	return (-2);
-		await this.userService.updateTwoFA(true, user);
 		const secret = authenticator.generateSecret();
-		const otpauthUrl = authenticator.keyuri(user.name, 'Transcendence', secret);
+		const url = authenticator.keyuri(user.name, 'Transcendence', secret);
 		await this.userService.updateTwoFASecret(secret, user);
-		let qrCode = await toDataURL(otpauthUrl);
-		const buffer = Buffer.from(qrCode.substring(22), 'base64');
-		fs.writeFile("QRCODE/" + user.uid, buffer,
-			(err) =>
-			{
-        		if (err)
-					return (-2);
-      		});
-		return (user.uid);
+		//let qrCode = await toDataURL(otpauthUrl);
+		//const buffer = Buffer.from(qrCode.substring(22), 'base64');
+		//fs.writeFile("QRCODE/" + user.uid, buffer,
+		//	(err) =>
+		//	{
+        //		if (err)
+		//			return (-2);
+      	//	});
+		return (url);
 	}
 
 	async twoFALogin(token: string | undefined, code: TwoFADto)
@@ -221,9 +220,10 @@ export class AuthService
 			console.log(code.code);
 		console.log(code.code.toString());
 		const isCodeValid = await authenticator.verify({token: code.code.toString(), secret: user.TwoFASecret});
-
 		if (isCodeValid === false)
 			return (-2);
+		if (user.TwoFA === false)
+			await this.userService.updateTwoFA(true, user);
 		let TwoFAToken = randomstring.generate({lenght: 20});
 		console.log(Date.now());
 		let expire = (Date.now() + 720000).toString();

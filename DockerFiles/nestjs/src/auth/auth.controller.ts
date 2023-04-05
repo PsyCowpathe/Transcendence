@@ -160,10 +160,8 @@ export class AuthController
 			return (sendError(res, -48, errorMessages.INVALIDUSER));
 		if (ret === -2)
 			return (sendError(res, -47, errorMessages.ALREADYACTIVATE));
-		
-		//return (res.status(200).sendFile("/root/backend/avatars/default.png"));
 		console.log(ret);
-		return (res.status(200).sendFile("/root/backend/QRCODE/" + ret));
+		return (sendSuccess(res, 14, ret));
 	}
 
 	@Post('2FAlogin')
