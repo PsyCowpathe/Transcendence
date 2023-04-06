@@ -5,6 +5,10 @@ import { AuthDto, TwoFADto } from './auth.entity';
 import { urls } from '../common/global';
 
 import { UserService } from '../db/user/user.service';
+import { ChannelService } from '../db/chat/channel.service';
+import { MessageService } from '../db/chat/message.service';
+import { JoinChannelService } from '../db/chat/joinchannel.service';
+import { RelationService } from '../db/relation/relation.service';
 import { User } from '../db/user/user.entity';
 
 import { Profile } from './auth.entity';
@@ -19,7 +23,11 @@ var randomstring = require("randomstring");
 @Injectable()
 export class AuthService
 {
-	constructor(private readonly userService : UserService)
+	constructor(private readonly userService : UserService,
+				private readonly channelService : ChannelService,
+				private readonly messageService : MessageService,
+				private readonly joinChannelService : JoinChannelService,
+				private readonly relationService : RelationService)
 	{
 
 	}
@@ -200,22 +208,49 @@ export class AuthService
 	}
 
 	
-	async twoFALogin(token: string | undefined, code: TwoFADto)
+	async twoFALogin(token: string | undefined, code: TwoFADto) : Promise<number>
 	{
 		const user = await this.userService.findOneByToken(token);
 		if (user === null || token === undefined)
 			return (-1);
-			console.log(code.code);
-		console.log(code.code.toString());
 		const isCodeValid = await authenticator.verify({token: code.code.toString(), secret: user.TwoFASecret});
 		if (isCodeValid === false)
 			return (-2);
 		if (user.TwoFA === false)
 			await this.userService.updateTwoFA(true, user);
 		let TwoFAToken = randomstring.generate({lenght: 20});
-		console.log(Date.now());
 		let expire = (Date.now() + 720000).toString();
 		await this.userService.updateTwoFAToken(TwoFAToken, expire, user);
 		return (1);
+	}
+
+	async resumeChannel(token: string | undefined, channelName: string) : Promise <number | any>
+	{
+		const user = await this.userService.findOneByToken(token);
+		if (user === null)
+			return (-1);
+		const channel = await this.channelService.findOneByName(channelName);
+		if (channel === null)
+			return (-2);
+		if (await this.joinChannelService.findOneByJoined(channel, user) === null)
+			return (-3);
+		const messageList = await this.messageService.findOneByChannel(channel);
+		if (messageList === null)
+			return (null);
+		const annoyingList = await this.relationService.getAnnoyingUser(user);
+		let data = [];
+		let i = 0;
+		while (messageList[i])
+		{
+			let	j = 0;
+			while (annoyingList && annoyingList[j] && annoyingList[j].user2.name !== messageList[i].sender.name)
+				j++;
+			if (!annoyingList || (annoyingList[j].user2.name !== messageList[i].sender.name))
+				data.push({ username: messageList[i].sender.name, message: messageList[i].message });
+			else
+				data.push({ username: messageList[i].sender.name, message: "Blocked message" });
+			i++;
+		}
+		return (data);
 	}
 }

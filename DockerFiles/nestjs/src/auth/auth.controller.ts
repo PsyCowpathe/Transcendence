@@ -173,7 +173,6 @@ export class AuthController
 		console.log("login with 2fa");
 		console.log(TwoFAForm);
 		let ret = await this.authService.twoFALogin(req.headers.authorization, TwoFAForm);
-		console.log("ret =" + ret)
 		if (ret === -1)
 			return (sendError(res, -48, errorMessages.INVALIDUSER));
 		if (ret === -2)
@@ -181,5 +180,21 @@ export class AuthController
 		let user = await this.userService.findOneByToken(req.headers.authorization);
 		let data = await this.authService.createProfile(true, user);
 		return (sendSuccess(res, 15, data));
+	}
+
+	@Get('resumechannel/:channel')
+	@UseGuards(AuthGuard)
+	async resumeChannel(@Req() req: Request, @Res() res: Response, @Param('channel') channelName: string)
+	{
+		console.log("resume channe;");
+		console.log(channelName);
+		let ret = await this.authService.resumeChannel(req.headers.authorization, channelName);
+		if (ret === -1)
+			return (sendError(res, -48, errorMessages.INVALIDUSER));
+		if (ret === -2)
+			return (sendError(res, -48, errorMessages.CHANNELDONTEXIST));
+		if (ret === -3)
+			return (sendError(res, -48, errorMessages.NOTJOINED));
+		return (sendSuccess(res, 16, "prout"));
 	}
 }

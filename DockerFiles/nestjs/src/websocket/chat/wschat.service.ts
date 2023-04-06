@@ -11,10 +11,11 @@ import { JoinChannelService } from '../../db/chat/joinchannel.service';
 import { InviteListService } from '../../db/chat/invitelist.service';
 import { BansService } from '../../db/chat/bans.service';
 import { MutesService } from '../../db/chat/mutes.service';
+import { MessageService } from '../../db/chat/message.service';
 
 import { createChannelDto, channelOperationDto, userOperationDto, sanctionOperationDto, messageDto } from './wschat.entity';
 
-import { Channel, Admins, JoinChannel, InviteList, Bans, Mutes } from '../../db/chat/chat.entity';
+import { Channel, Admins, JoinChannel, InviteList, Bans, Mutes, Message } from '../../db/chat/chat.entity';
 import { User } from '../../db/user/user.entity';
 
 import * as bcrypt from 'bcrypt';
@@ -29,7 +30,8 @@ export class WsChatService
 				private readonly inviteListService : InviteListService,
 				private readonly bansService : BansService,
 				private readonly mutesService : MutesService,
-				private readonly relationService : RelationService)
+				private readonly relationService : RelationService,
+				private readonly messageService : MessageService)
 	{
 
 	}
@@ -88,7 +90,8 @@ export class WsChatService
 		let banList: any = await this.bansService.findOneByBan(user, channel);
 		let i = 0;
 		let time = Date.now();
-
+		if (banList === null)
+			return (false);
 		while (banList[i])
 		{
 			console.log(banList[i++]);
@@ -103,7 +106,8 @@ export class WsChatService
 		let muteList: any = await this.mutesService.findOneByMute(user, channel);
 		let i = 0;
 		let time = Date.now();
-
+		if (muteList === null)
+			return (false);
 		while (muteList[i])
 		{
 			console.log(muteList[i++]);
@@ -266,9 +270,14 @@ export class WsChatService
 		let userSocket = await this.sockets.get(askMan.id);
 		if (userSocket === undefined)
 			return (1);
+		let newMessage = new Message();
+		newMessage.channel = channel;
+		newMessage.sender = askMan;
+		newMessage.message = messageForm.message;
+		this.messageService.create(newMessage);
 		let excludedUser;
 		let i = 0;
-		while (annoyedUserList[i])
+		while (annoyedUserList && annoyedUserList[i])
 		{
 			excludedUser = await this.sockets.get(annoyedUserList[i].user1.id);
 			if (excludedUser)

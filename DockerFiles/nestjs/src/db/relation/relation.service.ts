@@ -91,6 +91,21 @@ export class RelationService
 		return (ret);
 	}
 
+	async getAnnoyingUser(annoyedMan: User) : Promise<Relation[] | null>
+	{
+		let ret = await this.relationRepository
+			.find
+			({
+				where:
+				[
+					{type: -1, user1: annoyedMan}
+				]
+			});
+		if (ret[0] === undefined)
+			return (null);
+		return (ret);
+	}
+
 	async getFriendUser(user: User) : Promise<Relation[] | null>
 	{
 		let ret = await this.relationRepository

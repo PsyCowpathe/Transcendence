@@ -107,3 +107,20 @@ export class InviteList
 	@JoinColumn()
 	user: User;
 }
+
+@Entity()
+export class Message
+{
+	@PrimaryGeneratedColumn()
+	id: number;
+
+	@ManyToOne(() => Channel, (channel) => channel.id, { onDelete: 'CASCADE' })
+	@JoinColumn()
+	channel: Channel
+
+	@ManyToOne(() => User, (user) => user.id, {eager: true})
+	sender: User;
+
+	@Column()
+	message: string;
+}
