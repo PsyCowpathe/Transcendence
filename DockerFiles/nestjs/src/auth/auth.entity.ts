@@ -38,7 +38,7 @@ export class Profile
 	newtoken: string | undefined;
 	newFA: string | undefined;
 	TwoFA: boolean;
-	
+	Status: string;
 	//status: boolean;
 	//avatar; image;
 }

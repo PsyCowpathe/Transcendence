@@ -69,7 +69,7 @@ export class AuthService
 			console.log("Erreur 4");
 			return (error);
 		});
-		let user = await this.getUserInfos(undefined, response.data.id);
+		let user = await this.userService.findOneById(response.data.id);
 		if (user === null)
 		{
 			let newUser : User = new User(); 
@@ -79,6 +79,7 @@ export class AuthService
 			newUser.registered = false;
 			newUser.TwoFASecret = "";
 			newUser.TwoFA = false;
+			newUser.Status = "Online";
 			this.userService.create(newUser);
 			data = this.createProfile(true, newUser);
 			console.log('User successfully added to the database !');
@@ -92,7 +93,6 @@ export class AuthService
 		return (data);
 	}
 
-
 	createProfile(secret: boolean, user: any) : Profile
 	{
 		let data: Profile;
@@ -104,7 +104,8 @@ export class AuthService
 				registered : user.registered,
 				newtoken : user.token,
 				newFA : user.TwoFAToken,
-				TwoFA : user.TwoFA, 
+				TwoFA : user.TwoFA,
+				Status : user.Status,
 			};
 		}
 		else
@@ -115,7 +116,8 @@ export class AuthService
 				registered : user.registered,
 				newtoken : undefined,
 				newFA : undefined,
-				TwoFA : user.TwoFA, 
+				TwoFA : user.TwoFA,
+				Status : user.Status,
 			};
 		}
 		return (data);
@@ -135,15 +137,6 @@ export class AuthService
 				await this.userService.updateRegister(true, user);
 		}
 		return (1);
-	}
-
-	async getUserInfos(name?: string, uid?: number) : Promise<User | null>
-	{
-		if (name !== undefined)
-			return (this.userService.findOneByName(name));
-		else if (uid !== undefined)
-			return (this.userService.findOneByUid(uid));
-		return (null);
 	}
 
 	async hashMyToken(originalToken: string) : Promise<string>
@@ -198,19 +191,11 @@ export class AuthService
 		const user = await this.userService.findOneByToken(token);
 		if (user === null)
 			return (-1);
-		//if (user.TwoFA === true)
-		//	return (-2);
+		if (user.TwoFA === true)
+			return (-2);
 		const secret = authenticator.generateSecret();
 		const url = authenticator.keyuri(user.name, 'Transcendence', secret);
 		await this.userService.updateTwoFASecret(secret, user);
-		//let qrCode = await toDataURL(otpauthUrl);
-		//const buffer = Buffer.from(qrCode.substring(22), 'base64');
-		//fs.writeFile("QRCODE/" + user.uid, buffer,
-		//	(err) =>
-		//	{
-        //		if (err)
-		//			return (-2);
-      	//	});
 		return (url);
 	}
 

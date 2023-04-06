@@ -64,6 +64,11 @@ export class UserService
 		return this.usersRepository.update(user.id, {TwoFAExpire: expire});
 	}
 
+	updateStatus(newStatus: string, user: User)
+	{
+		return this.usersRepository.update(user.id, {Status: newStatus});
+	}
+
 	create(newUser : User)
 	{
 		return (this.usersRepository.save(newUser));

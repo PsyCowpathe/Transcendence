@@ -10,7 +10,7 @@ import { errorMessages } from '../../common/global';
 import { WsChatService }  from './wschat.service';
 import { createChannelDto, channelOperationDto, userOperationDto, sanctionOperationDto, messageDto } from './wschat.entity';
 
-import { WsExceptionFilter } from './ws.filter'; 
+import { WsExceptionFilter } from '../guard/ws.filter'; 
 
 @UseFilters(WsExceptionFilter)
 @WebSocketGateway(3632, {cors: true})

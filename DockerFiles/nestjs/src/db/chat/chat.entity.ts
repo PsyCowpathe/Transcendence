@@ -52,7 +52,7 @@ export class Bans
 	user: User;
 
 	@Column()
-	end: number;
+	end: string;
 
 	@Column()
 	reason: string;
@@ -73,7 +73,7 @@ export class Mutes
 	user: User;
 
 	@Column()
-	end: number;
+	end: string;
 
 	@Column()
 	reason: string;

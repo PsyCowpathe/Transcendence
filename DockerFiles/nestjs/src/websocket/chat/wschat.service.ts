@@ -449,7 +449,7 @@ export class WsChatService
 		let newBan = new Bans();
 		newBan.channel = channel;
 		newBan.user = toBan;
-		newBan.end = Date.now() + (banForm.time * 60 * 1000)
+		newBan.end = (Date.now() + (banForm.time * 60 * 1000)).toString();
 		newBan.reason = banForm.reason;
 		await this.bansService.create(newBan);
 		await this.joinChannelService.remove(toBan, channel);
@@ -475,7 +475,7 @@ export class WsChatService
 			return (-4);
 		if (await this.isBan(toUnban, channel) === false)
 			return (-5);
-		this.bansService.updateBanEnd(toUnban, channel, Date.now());
+		this.bansService.updateBanEnd(toUnban, channel, Date.now().toString());
 		let channelMessage = `User ${toUnban.name} has been unbanned !`;
 		let userMessage = `You have been unbanned from channel ${channel.name} !`;
 		this.notifyUser(toUnban.id, "unbanuser", userMessage, channel.name);
@@ -508,7 +508,7 @@ export class WsChatService
 		let newMute = new Mutes();
 		newMute.channel = channel;
 		newMute.user = toMute;
-		newMute.end = Date.now() + (muteForm.time * 60 * 1000)
+		newMute.end = (Date.now() + (muteForm.time * 60 * 1000)).toString();
 		newMute.reason = muteForm.reason;
 		await this.mutesService.create(newMute);
 		let channelMessage = `User ${toMute.name} has been muted !`;
@@ -533,7 +533,7 @@ export class WsChatService
 			return (-4);
 		if (await this.isMute(toUnmute, channel) === false)
 			return (-5);
-		this.mutesService.updateMuteEnd(toUnmute, channel, Date.now());
+		this.mutesService.updateMuteEnd(toUnmute, channel, Date.now().toString());
 		let channelMessage = `User ${toUnmute.name} has been unmuted !`;
 		let userMessage = `You have been unmuted from channel ${channel.name} !`;
 		this.notifyUser(toUnmute.id, "unmuteuser", userMessage, channel.name);

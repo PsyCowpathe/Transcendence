@@ -10,14 +10,14 @@ export class SocketStrategy
 
 	}
 
-	async checkRequest(request : any) : Promise<number>
+	async checkRequest(tokenBearer: string, twoFAToken: string) : Promise<number>
 	{
-		const user = await this.userService.findOneByToken(request);
+		const user = await this.userService.findOneByToken(tokenBearer);
 		if (user === null)
 			return (-1);
 		if (user.registered === false)
 			return (-2);
-		if (user.token === request.headers.authorization)
+		if (user.token === tokenBearer)
 		{
 			/*if (user.TwoFA === true)
 			{

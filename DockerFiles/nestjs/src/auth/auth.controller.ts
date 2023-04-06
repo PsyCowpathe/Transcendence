@@ -102,7 +102,7 @@ export class AuthController
 		let ret = await this.authService.defineName(registerForm.name, req.headers.authorization);
 		if (ret === -1)
 			return (sendError(res, -45, errorMessages.ALREADYTAKEN));
-		let user = await this.authService.getUserInfos(registerForm.name);
+		let user = await this.userService.findOneByName(registerForm.name);
 		let data = await this.authService.createProfile(true, user);
 		return (sendSuccess(res, 11, data));
 	}

@@ -15,10 +15,11 @@ export class SocketGuard implements CanActivate
 	async canActivate(context: any) : Promise<boolean>
 	{
 		console.log('Socket Guard');
-		//console.log(context.args[0].handshake);
+		console.log(context.args[0].handshake);
 		//console.log(context.args[0].handshake.auth.token);
-		const request = context.args[0].handshake.auth.token;
-		let ret = await this.socketStrategy.checkRequest(request);
+		const tokenBearer = context.args[0].handshake.auth.token;
+		const twoFAToken = context.args[0].handshake.auth.twoFAToken;
+		let ret = await this.socketStrategy.checkRequest(tokenBearer, twoFAToken);
 		if (ret === 1)
 			return (true);
 		if (ret === -1)
