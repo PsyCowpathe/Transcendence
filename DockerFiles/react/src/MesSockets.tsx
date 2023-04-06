@@ -1,5 +1,6 @@
 import io from 'socket.io-client';
 import { urls } from './global';
+import { VraimentIlSaoule } from './aurelcassecouilles/VraimentIlEstCasseCouille';
 class SocketManager {
   private chatSocket: any;
   private FriendRequestSocket: any;
@@ -13,7 +14,9 @@ class SocketManager {
     if (this.chatSocket === null) {
       this.chatSocket = io(`${urls.SOCKETCHAT}/`, {
         auth: {
-          token: token
+          token: token,
+          twoFAToken: localStorage.getItem('2FA')
+
         }
       });
 
@@ -25,7 +28,8 @@ class SocketManager {
     if (this.FriendRequestSocket === null) {
       this.FriendRequestSocket = io(`${urls.SOCKETFRIENDSHIP}`, {
         auth: {
-          token: token
+          token: token,
+          twoFAToken: localStorage.getItem('2FA')
         }
       });
     }

@@ -53,7 +53,6 @@ function App()
 			<Route  path='/askFriend' element={<AskFriend />}/>
 			<Route path='/test' element={<IconLabelButtons />}/> 
 			<Route path='/TopBar' element={<TopBar />}/> 
-			{/* <Route path='/UserTest' element={<AffTheUser MyName={"test"} />}/>  */}
 			<Route path='/*' element={<NotFound />}/> 
 			</Routes> 
 	</BrowserRouter>

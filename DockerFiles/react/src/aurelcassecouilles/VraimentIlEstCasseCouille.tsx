@@ -14,7 +14,8 @@ export function VraimentIlSaoule()
     {
         responseType: 'blob', 
         headers: { Authorization: `${token}`,
-        TwoFAToken: `${FA}` }
+        TwoFAToken: `${FA}` 
+    }
     };
     
     

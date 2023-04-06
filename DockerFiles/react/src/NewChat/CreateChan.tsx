@@ -176,6 +176,7 @@ export function Chat() {
  }
  
  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+ const [selectedChannel, setSelectedChannel] = useState(null);
  const [User , setUser] = useState<User | null>(null);
    
      const handleUserClick = (user: User | null) => {
@@ -200,6 +201,11 @@ export function Chat() {
   };
 
   const renderMessages = () => {
+
+    //axios.get( ) //recupere les message du channel
+    //setMessages([...messages, {}]); //ajoute les message recup a la liste des message
+
+
     return messages.map((message) => {
       const messageClass = message.isSent ? "sent-message" : "received-message";
       const userClass = message.isSent ? "sent-user" : "received-user";
@@ -228,12 +234,7 @@ export function Chat() {
 
   /////////////////////////////////////TEST //////////////////////////////////////////
   
-  
-  const Gotochan = () => {
-    console.log("je suis dans la fonction")
 
-  
-  }
   
 
   useEffect(() => {
@@ -264,6 +265,85 @@ export function Chat() {
 
   /////////////////////////////////////TEST //////////////////////////////////////////
 
+
+  const OpenChannel = (ChanUse : any) => {
+    console.log(ChanUse)
+    setSelectedChannel(ChanUse)
+
+
+
+    }
+
+
+    interface IMessage {
+      id: number;
+      text: string;
+    }
+    
+    interface IChannel {
+      id: number;
+      name: string;
+      messages: IMessage[];
+    }
+    
+    interface IProps {
+      channels: IChannel[];
+    }
+    
+    const MessageDisplay: React.FC<IProps> = ({ channels }) => {
+      const [selectedChannelId, setSelectedChannelId] = useState<number>(
+        channels[0].id
+      );
+      const [selectedChannelMessages, setSelectedChannelMessages] = useState<
+        IMessage[]
+      >(channels[0].messages);
+    
+      const handleChannelClick = (channelId: number) => {
+        setSelectedChannelId(channelId);
+        setSelectedChannelMessages(
+          channels.find((channel) => channel.id === channelId)?.messages || []
+        );
+      };
+    
+      return (
+        <div>
+          <div>
+            {channels.map((channel) => (
+              <button key={channel.id} onClick={() => handleChannelClick(channel.id)}>
+                {channel.name}
+              </button>
+            ))}
+          </div>
+          <div>
+            {selectedChannelMessages.map((message) => (
+              <div key={message.id}>{message.text}</div>
+            ))}
+          </div>
+        </div>
+      );
+    };
+    
+    const getMessagesForChannel = (channelName : any) => {
+      return messages.filter((msg : any) => msg.channel === channelName);
+    };
+
+    const MessageList = ({ messages }: { messages: any }) => {
+            return (
+        <div className="message-list">
+          {messages.map((msg : any) => (
+            <div className="message-item" key={msg.id}>
+              <div className="message-text">{msg.text}</div>
+              <div className="message-time">{msg.time}</div>
+            </div>
+          ))}
+        </div>
+      );
+    };
+
+
+
+
+
   return (
     <div>
       <TopBar />
@@ -282,10 +362,12 @@ export function Chat() {
             <ul className="containers" >
             {/* // onClick={Gotochan} > */}
               {Chanlist.map((chanName) => (
-                <li className="active" key={chanName.id} >
-                  {chanName.name} </li>
+                <li className="active" key={chanName.id} onClick={() => OpenChannel(chanName.name)} >
+                  {chanName.name}
+                </li>
               ))}
             </ul>
+
             {selectedUser && (
               <UserInfoModal user={selectedUser} onClose= {handleCloseModal} />
             )}
@@ -317,35 +399,30 @@ export function Chat() {
 
         <div className="chat-app__main">
           <div className="channel-header">
-            <h2>General</h2>
+            <h2>{selectedChannel || 'General'}</h2>
             <button className="add-message-button">New Message</button>
           </div>
-
-              {/* {/* <div className="message-sender">{messages.user}</div>
-              <div className="message-text">{messages.text}</div> */}
-             {/* <div className="message-input">
-            <div className="message-item received">
-              <div className="message-sender">My user</div>
-              <div className="message-text">{newMessage}</div>
-            </div> */}
-
-
-
+   
           <div className="message-list">
-          
-           <div id="tamere" className="chat-list">
-             {renderMessages()}
-           </div>
+         
+            <div id="tamere" className="chat-list">
+              {renderMessages()}
+            </div>
+
+
             <div className="message-item sent">
                 <form className="message-input" onSubmit={HandleNewMessage} >
-                  <input type="text" placeholder="New message" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} />
+                  <input
+                   type="text"
+                  placeholder="New message"
+                   value={newMessage}
+                   onChange={(e) => setNewMessage(e.target.value)} />
                   <button className="add-message-button" >Add Message</button>
                 </form>
               </div>
-            {/* </div> */}
 
-          </div>
-        </div>
+          </div> 
+        </div> 
       </div><ToastContainer />
     </div>
   );

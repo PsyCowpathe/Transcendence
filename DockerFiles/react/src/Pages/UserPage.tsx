@@ -14,17 +14,21 @@ import { VraimentIlSaoule2 } from '../aurelcassecouilles/VraimentIlEstCasseCouil
 import { PicGetRequest } from '../Api/PicGetRequest';
 import { GetUserInfo } from '../Api/GetUserInfo';
 import React from 'react';
+import PicModal from '../Modale/PicModale';
+import { ChangeLogin } from './LoginPage';
+import LoginModal from '../Modale/LoginModal';
+import '../css/UserPage.css';
 
 
 
 export function AffMyUserPage ({ShowBar} : {ShowBar : boolean})
 {
+  const [ClickLog, setClickLog] = useState(false)
+  const [Clickde, setClickde] = useState(false)
+  const [Click, setClick] = useState(false)
   const [PicUp, setPic] = React.useState("non")
-  let Pic : any = localStorage.getItem('ProfilPic')
-  if(Pic === null)
-  {
-    Pic = Profil
-  }
+  const [Pic, setPicUrl] = useState(localStorage.getItem('ProfilPic') || "Profil")
+
   useEffect(() =>
   {
     console.log("Use effect de la photo")
@@ -36,7 +40,8 @@ export function AffMyUserPage ({ShowBar} : {ShowBar : boolean})
       console.log("|")
       const url = window.URL.createObjectURL(new Blob([res.data]));
       localStorage.setItem('ProfilPic', url)
-
+       setPicUrl(url)
+      console.log(Pic)
       setPic("oui")
     })
     .catch((err) =>
@@ -47,14 +52,9 @@ export function AffMyUserPage ({ShowBar} : {ShowBar : boolean})
         autoClose: 2000,
         progressClassName: "my-progress-bar"
     })
+
     })
-  }, [])
-
-  useEffect (() =>
-  {
-    Pic = localStorage.getItem('ProfilPic')
-  }, [PicUp])
-
+  }, [Click])
   
   
   const UserName : any= localStorage.getItem('name')
@@ -64,62 +64,101 @@ export function AffMyUserPage ({ShowBar} : {ShowBar : boolean})
   GetUserInfo(UserName) //je recupere toute les info sur mon user 
   .then((res) =>
   {
-    console.log("coucou")
-    console.log(UserName)
     console.log(res)
   })
   .catch((err) =>
   {
-      console.log(err)
+    toast.error(err, {
+      position: toast.POSITION.TOP_RIGHT,
+      autoClose: 2000,
+      progressClassName: "my-progress-bar"
+  })
+
+      if(err.response.data.message == "Invalid user" || err.message.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+      {
+        console.log("coucou ?")
+        window.location.assign('/')
+      }
+      if ( err.message === "User not registered")// ==> redirection vers la page de register
+      {
+        console.log("ERROR")
+        console.log(err)
+        window.location.assign('/Change')
+     }
+     // if(err.message === "Invalid 2FA token") erreur de 2FA ==> redirection vers la page de 2FA
+
+      console.log(err.response.data.message)
   })
   }, [])
-
 
   const navigate = useNavigate();
   const onClick = (() =>
   {
-    console.log("pkkkkkkkkkkkkkkkkkkkkkkkk")
-     navigate('/change');
+    console.log("ass")
+    setClickLog(!ClickLog)
+
   })
 
 
-  const handleNotificationClick = () => {
-    // Naviguer vers une autre page
-    navigate('/changepic')
-  };
-
     const Notif = () => {
-      // afficher une notification de succès
-      toast.success('Success Notification !', {
-        position: toast.POSITION.TOP_RIGHT,
-        onClick: handleNotificationClick
-    });
+      console.log("-------------------Q--------------------")
+      setClick(!Click)
+    
+      console.log(Click)
+
     };
 
-const [Click, setClick] = useState(false)
 
-    const SetClick = (() =>
-    {
-      setClick(!Click)
-    })
-
-    return (
-    		<div className="App">
-          {ShowBar && <TopBar/>}
-
-    {/* <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "2em", height: "100vh" }}> */}
-        <img src={Pic} alt="Profile" style={{ borderRadius: "50%", width: "200px", height: "200px", objectFit: "cover", boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)" }} />
-        <h1 style={{ fontSize: "2.5em", margin: "1em 0 0.5em" }}>{UserName}</h1><button className="SettingsButton" onClick={onClick}>
-      <FaCog  className="SettingsButtonIcon" />
-    </button>
-        <p style={{ fontSize: "1.2em", marginBottom: "1em",  }}>Age | Ville</p>
-        <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
-          <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"><button style={{ fontSize: "1.2em", padding: "0.5em 2em", borderRadius: "5px", backgroundColor: "#4285F4", color: "#FFFFFF", border: "none", boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)", cursor: "pointer" }}>Visiter mon site web</button></a>
-        <button onClick={Notif}>NOTIF</button>
-
-        </div><ToastContainer/>
+return (
+  <div className="user-page">
+    <TopBar />
+    <div className="user-info">
+      <div className="profile-pic-container">
+        <img className="profile-pic" src={Pic} alt="Profile" />
+        <button className="profile-pic-button" onClick={Notif}>
+          Change your image
+        </button>
+        {Click && <PicModal onClose={Notif} />}
       </div>
-    );
+      <div className="user-details">
+        <h1 className="user-name">{UserName}</h1>
+        <p className="user-age-ville">Age | Ville</p>
+        <button className="settings-button" onClick={onClick}>
+          <FaCog className="settings-button-icon" />
+          <span>Change your login</span>
+        </button>
+        {ClickLog && <LoginModal onClose={onClick} />}
+      </div>
+    </div>
+    <div className="user-buttons">
+      <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" className="user-button">
+        Visiter mon site web
+      </a>
+    </div>
+  </div>
+);
+
+  // return (
+  //   <div className="App">
+  //     {ShowBar && <TopBar />}
+
+  //     {/* <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "2em", height: "100vh" }}> */}
+  //     <img src={Pic} alt="Profile" style={{ borderRadius: "50%", width: "200px", height: "200px", objectFit: "cover", boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)" }} />
+  //     <h1 style={{ fontSize: "2.5em", margin: "1em 0 0.5em" }}>{UserName}</h1>
+  //     <button className="SettingsButton" onClick={onClick}>
+  //       <h2>Change yor login</h2>
+  //       <FaCog className="SettingsButtonIcon" />
+  //     </button>
+  //     {ClickLog && <LoginModal onClose={onClick} />}
+  //     <p style={{ fontSize: "1.2em", marginBottom: "1em", }}>Age | Ville</p>
+  //     <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
+  //       <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"><button style={{ fontSize: "1.2em", padding: "0.5em 2em", borderRadius: "5px", backgroundColor: "#4285F4", color: "#FFFFFF", border: "none", boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)", cursor: "pointer" }}>Visiter mon site web</button></a>
+  //       <button onClick={Notif}>Change your image</button>
+  //       {Click && <PicModal onClose={Notif} />}
+
+  //     </div><ToastContainer />
+  //   </div>
+  // );
   }
   
   

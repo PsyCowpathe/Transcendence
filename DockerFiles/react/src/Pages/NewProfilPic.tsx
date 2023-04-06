@@ -18,6 +18,8 @@ function ProfilePictureUploader() {
           autoClose: 2000,
           progressClassName: "my-progress-bar"
         })
+        const url = window.URL.createObjectURL(new Blob([data]));
+        localStorage.setItem('ProfilPic', url)
         console.log("CA SEND")
         console.log(response)
       })

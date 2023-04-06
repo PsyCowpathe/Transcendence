@@ -12,24 +12,20 @@ let tt : boolean = true
 
 export  function AskFriend()
 {
-	//console.log(socket )
 	
 	if (tt === true && socket && socket.connected !== false)
 	{
-		console.log("ta mere l groooooosse pute")
 		tt = false ;
 	}
 	if (tt === true)
 	{
 		socket = socketManager.getFriendRequestSocket()
-		console.log("je suis null1")
 		console.log(socket )
 		if (socket == null)
 		{ 
-			console.log("je suis null2")
 			if ( test === false && VraimentIlSaoule().headers.Authorization !== null)
 			{
-				console.log("je suis null3")
+				console.log("je sui null3")
 				socket = socketManager.initializeFriendRequestSocket(VraimentIlSaoule().headers.Authorization)
 				console.log(socket )
 				test = true
@@ -37,7 +33,6 @@ export  function AskFriend()
 		}
 		if (socket && socket.connected !== false)
 		{
-			console.log("ta mere l groooooosse pute")
 			tt = false ;
 		}
 		console.log(socket)
@@ -72,6 +67,7 @@ const MyCustomToast = ({response, Acceptnow, Refusednow, closeToast} : any) => {
 			})
 		}
 		const handleErrorRequest = (response: any) => {
+			
 			console.log(response)
 			toast.error(response, {
 				position: toast.POSITION.TOP_RIGHT,

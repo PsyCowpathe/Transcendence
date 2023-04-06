@@ -60,8 +60,8 @@ interface chiant {
 				console.log("CA SEND")
 				// alt.emit('notify:sendMessage', {iconType: 0, title: 'notification', message: 'this is a notification send from the client', color: 'F88F01', width: 244, duration: 3000})
 				console.log(response.data)
-				if (response.data != null)
-				{
+				// if (response.data != null)
+				// {
 					console.log(`voila la data de la reponse ${response.data}`)
 					localStorage.setItem('Token', response.data.newtoken);
 					 localStorage.setItem('name', response.data.name);
@@ -71,9 +71,9 @@ interface chiant {
 					console.log(date)
 					console.log(response.data)
 					console.log("BITE ?")
-					let reg : boolean = response.data.registered
 					onLogin()
-
+					
+					let reg : boolean = response.data.registered
 					if (reg === true)
 					{
 						console.log("je suis deja inscrit")
@@ -86,7 +86,7 @@ interface chiant {
 						setMybool(true)
 						//nope so first connect
 					}
-				}
+// }
 			})
 			.catch(error => 
 			{
@@ -101,52 +101,35 @@ interface chiant {
 	async function sendToken()
 	{ 
 		handleToken()
-	    const date : string | null = localStorage.getItem('Token')
-		console.log("tema le Token1")
-		console.log(date)
-
 	}
 	
 	const handleUrlSearchParams = async() => 
 	{
-        console.log("wesh les params changent")
         const urlSearchParams = new URLSearchParams(window.location.search);
         let codes : string | null = urlSearchParams.get('code')
         let second_states : string | null = urlSearchParams.get('state')
-		const testtoken : any = localStorage.getItem('Token') 
-		console.log("bdjslvablkdgvb")
-		console.log(testtoken)
+		// const testtoken : any = localStorage.getItem('Token') 
         if (codes != null)
 		{
-        	console.log("wesh le token")
 			setToken({state: second_states, code: codes})
     		console.log(tokenForm)
     		sendToken();
 		}
-		else if (testtoken !== null)
-		{
-			console.log("pk je passe pas ici")
-			onLogin()
-			navigate('/affUser')
-		}
+
     }
 
 
     useEffect(() => 
     {
-        console.log("wesh le useeffect")
         handleUrlSearchParams(); 
     }, [tokenForm.code]);
 	
 	useEffect(() =>
 	{
-		console.log(`----------------------777--------------${Mybool}`)
 		if (Mybool !== false)
 		{
-			console.log("trueeeeeeeeeeeeeeeeeeeee22222222222222222222222")
 			onLogin()
 			navigate('/change')
-			
 			setMybool(false)
 		}
 	}, [Mybool])
@@ -158,19 +141,7 @@ interface chiant {
 			setReg(false)
 			socketManager.initializeChatSocket(VraimentIlSaoule().headers.Authorization)
 			socketManager.initializeFriendRequestSocket(VraimentIlSaoule().headers.Authorization)
-			// socket.on("sendfriendrequest", (reponse: any) => 
-			// {
-			// 	toast.success(reponse, {
-			// 		position: toast.POSITION.TOP_RIGHT, 
-						  
-			// 	});
-			// 	console.log("la rep :")
-			// 	console.log(reponse)
-			// });
-			// socketManager.initializePogSocket(VraimentIlSaoule().headers.Authorization)
-			console.log(socketManager.getChatSocket())
-			console.log("c bon frere j ai cree ta merde")
-			console.log("trueeeeeeeeeeeeeeeeeeeee")
+		
 			onLogin()
 			navigate('/affUser')
 		}		
@@ -183,33 +154,7 @@ interface chiant {
 			  <Button onClick={onClick} >login</Button>
 			</div>
 		  );
-
-		// <div >
-		// 		<h1 className="h1t">Ft_trancendence <br/>
-		// 		</h1>
-		// 			<Button onClick={onClick} >login</Button>
-		
-		
-		// </div>
 	}
-	export {socketManager};
+export {socketManager};
 
 export default HomePage;
-
-// 	const sendptn = (() =>{
-// 	const urlSearchParams = new URLSearchParams(window.location.search);
-// 	let codes : string | null = urlSearchParams.get('code')
-// 	let second_states : string | null = urlSearchParams.get('state')
-// 	        //  token.code = codes
-//         //  token.second_state = second_states
-//     //setToken = [{state : second_states ,code: codes}]
-// 	console.log(token.code)
-// 	})
-//   //  window.location.replace("/auth/register")
-//   useEffect(() => 
-//   {
-// 	  console.log("wesh le useeffect")
-// 	  console.log(token.code)
-	  
-// 		sendptn()
-// 	}, [window.location.search]);

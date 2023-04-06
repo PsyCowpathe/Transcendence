@@ -91,29 +91,15 @@ export class MyComponent extends Component <{}, MyComponentState>
     console.log(res.data)
     let uri = new OTPAuth.URI()
     uri = res.data
-    
-
-    // const totp = OTPAuth.URI(res.data)
 
     this.setState({ image: res.data, error: null });
-    
-    // const pic2 : any = localStorage.getItem('QR')
-    // setVerif(true)
   })
   .catch((err) =>
   {
     this.setState({ image: null, error: err });
     console.log(err)
   })
-
-
   }
-
- 
-
-
-    
-
 
   render(){
     const { image, error } = this.state;
