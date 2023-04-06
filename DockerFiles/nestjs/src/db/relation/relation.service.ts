@@ -42,7 +42,6 @@ export class RelationService
 			});
 		if (ret[0] === undefined)
 			return ("neutral");
-		//console.log(ret)
 		if (ret[0].type === -1 && ret[1].type === -1)
 			return ("enemy");
 		else if (ret[0].type === -1)
@@ -140,7 +139,6 @@ export class RelationService
 			.execute();
 		if (ret.affected === 0)
 		{
-
 			let newRelation1: Relation = new Relation();
 			let newRelation2: Relation = new Relation();
 

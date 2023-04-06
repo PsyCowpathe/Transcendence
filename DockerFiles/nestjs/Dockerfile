@@ -66,7 +66,10 @@ RUN cd \
 && yarn add otplib \
 && yarn add qrcode \
 && yarn add @types/qrcode \
-&& yarn add randomstring
+&& yarn add randomstring \
+&& yarn add express-session \
+&& yarn add @types/express-session
+
 
 EXPOSE 3630 3631 3632
 

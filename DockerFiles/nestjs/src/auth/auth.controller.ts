@@ -117,6 +117,8 @@ export class AuthController
 		if (file === undefined)
 			return (sendError(res, -46, errorMessages.INVALIDIMAGE));
 		let ret = await this.authService.changeAvatar(req.headers.authorization, file);
+		console.log("avatar ret =")
+		console.log(ret);
 		if (ret === -1)
 			return (sendError(res, -46, errorMessages.INVALIDIMAGE));
 		if (ret === -2)

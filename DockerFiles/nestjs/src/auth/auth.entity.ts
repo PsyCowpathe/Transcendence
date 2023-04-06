@@ -1,4 +1,4 @@
-import { IsPositive, IsNotEmpty, Length, IsString, IsNumber, IsDivisibleBy } from 'class-validator';
+import { IsPositive, IsNotEmpty, Length, IsString, IsNumber, IsDivisibleBy, IsAlphanumeric } from 'class-validator';
 
 export class AuthDto
 {
@@ -12,6 +12,7 @@ export class AuthDto
 export class ChangeLoginDto
 {
 	@IsString({message: `Your username must be a string !`})
+	@IsAlphanumeric(undefined, {message: 'Your username must be an alphanumeric string !'})
 	@Length(3, 20, {message: 'Your username must contain between 3 and 20 caracters !'})
 	name: string;
 }
@@ -26,6 +27,7 @@ export class TwoFADto
 export class UserDto
 {
 	@IsString({message: `The username must be a string!`})
+	@IsAlphanumeric(undefined, {message: 'The username must be an alphanumeric string !'})
 	@Length(3, 20, {message: 'Your username must contain between 3 and 20 caracters !'})
 	name: string;
 }
