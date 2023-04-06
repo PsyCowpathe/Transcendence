@@ -170,7 +170,7 @@ export class AuthService
 			if (file.buffer[0] !== 0xff || file.buffer[1] !== 0xd8 || file.buffer[2] !== 0xff)
 			return (-3);
 		}
-		if (file.size > 1000000)
+		if (file.size > 8000000)
 			return (-4);
 		const user = await this.userService.findOneByToken(token);
 		if (user === null)
