@@ -96,7 +96,8 @@ export function Chat() {
         autoClose: 2000,
         progressClassName: "my-progress-bar"
       })
-      setResponse("dont change");
+      GetChannel()
+      // setResponse("dont change");
     }
     const handleCreateChannels = (response: any) => {
       console.log(response)
@@ -107,7 +108,6 @@ export function Chat() {
       })
       // console.log("coucou jsuis sence rentrer")
       // setResponse("change");
-      GetChannel()
 
     }
 
