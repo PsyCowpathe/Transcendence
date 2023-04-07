@@ -369,13 +369,14 @@ export function Chat() {
                 </li>
               ))}
             </ul>
-            <form onSubmit={Channels} >
+            {isChecked && <form onSubmit={Channels} >
               <input type="text" placeholder="New chan" value={Channame} onChange={(e) => setChanname(e.target.value)} />
-              {isChecked && <button type="submit" className="add-channel-button" >Add Channel</button>}
-            </form>
+              {isChecked && <button  className="add-channel-button" >Add Channel</button>}
+            </form>}
             <div>
               {!isChecked && (
                 <form onSubmit={ChannelsMdp} >
+                  <input type="text" placeholder="New chan" value={Channame} onChange={(e) => setChanname(e.target.value)} />
                   <input type="password" placeholder="Mot de passe" value={ChanMdp} onChange={(e) => setChanMdp(e.target.value)} />
                   <button type="submit" className="other" >Add Channel</button>
                 </form>
