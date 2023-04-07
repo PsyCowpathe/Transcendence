@@ -30,18 +30,16 @@ interface Message {
   isSent: boolean;
 }
 
-
 export function Chat() {
   ////////////////////////////////////////////////////////////////////// chan manager //////////////////////////////////////////////////////////////////
   const UserName: any = localStorage.getItem('name')
-
+  
   const [responses, setResponse] = useState<string>("vide");
-  const [Chanlist, setChanlist] = useState<Chati[]>([]);
   const [Channame, setChanname] = useState<string>('');
   const [ChanMdp, setChanMdp] = useState<string>('');
-
-
-  useEffect(() => {
+  const [Chanlist, setChanlist] = useState<Chati[]>([]);
+  function GetChannel() 
+  {
     setChanlist([])
     GetChannelList()
       .then((response) => {
@@ -52,7 +50,7 @@ export function Chat() {
         }
         ))
         console.log("xxxs")
-
+  
         console.log(Chanlist)
       })
       .catch((err) => {
@@ -69,9 +67,14 @@ export function Chat() {
         window.location.assign('/Change')
      }
         console.log(err)
-
+  
       }
       )
+    }
+
+  
+  useEffect(() => {
+  GetChannel()
   }, [])
 
   socket = socketManager.getChatSocket()
@@ -103,7 +106,9 @@ export function Chat() {
         progressClassName: "my-progress-bar"
       })
       // console.log("coucou jsuis sence rentrer")
-      setResponse("change");
+      // setResponse("change");
+      GetChannel()
+
     }
 
     socket.on("createchannel", handleCreateChannel);
@@ -127,7 +132,9 @@ export function Chat() {
       })
       console.log(response.channel)
       setChanname(response.channel);
-      setResponse("dont change");
+      // setResponse("dont change");
+  GetChannel()
+
     }
 
 
