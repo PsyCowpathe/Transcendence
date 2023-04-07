@@ -118,6 +118,8 @@ export function Chat() {
   useEffect(() => {
     const handleCreateChannel = (response: any) => {
       console.log("response")
+      console.log(response)
+
       toast.success(response.data.message, {
         position: toast.POSITION.TOP_RIGHT,
         autoClose: 2000,
