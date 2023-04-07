@@ -213,8 +213,9 @@ export function Chat() {
         autoClose: 2000,
         progressClassName: "my-progress-bar"
       })
-      console.log(response.channel)
-      const newMessageObj = { id: (messages.length + Date.now()), channel:response.channel, user: response.user, text: response.texte, isSent: false };
+      console.log("LE USER FRR------------------------------------------------------------")
+      console.log(response)
+      const newMessageObj = { id: (messages.length + Date.now()), channel:response.channel, user: response.user, text: response.message, isSent: false };
 
       setMessages(prevMessages => [...prevMessages, newMessageObj]);
     }
@@ -233,7 +234,7 @@ export function Chat() {
 
 
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [selectedChannel, setSelectedChannel] = useState(null);
+  const [selectedChannel, setSelectedChannel] = useState('');
 
   const [User, setUser] = useState<User | null>(null);
 
@@ -253,7 +254,7 @@ export function Chat() {
     console.log("je suis la")
     console.log(selectedChannel)
     socket.emit("channelmsg", { destination: selectedChannel, message: newMessage })
-    const newMessageObj = { id: (messages.length + Date.now()), channel:Channame, user: UserName, text: newMessage, isSent: true };
+    const newMessageObj = { id: (messages.length + Date.now()), channel:selectedChannel, user: UserName, text: newMessage, isSent: true };
 
     setMessages(prevMessages => [...prevMessages, newMessageObj]);
     setNewMessage("");
@@ -275,9 +276,12 @@ export function Chat() {
         userClass = "sent-user"
       else
         userClass = "received-user";
-      if (message.channel !== UseChan)
+      if (message.channel !== selectedChannel)
       {
-        console.log(UseChan)
+        console.log("USe")
+        console.log(selectedChannel)
+        console.log("message.channel")
+        console.log(message.channel)
         console.log("C PAS LE BON CHAN FDP")
         return
       }
@@ -333,6 +337,7 @@ export function Chat() {
             const isSent = message.username === UserName;
             return {
               id: messages.length + Date.now(),
+              channel: ChanUse,
               user: message.username,
               text: message.message,
               isSent: isSent
