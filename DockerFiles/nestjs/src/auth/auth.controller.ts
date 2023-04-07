@@ -211,4 +211,15 @@ export class AuthController
 			return (sendError(res, -48, errorMessages.INVALIDUSER));
 		return (sendSuccess(res, 16, ret));
 	}
+
+	@Get('channelist')
+	@UseGuards(AuthGuard)
+	async getChannelList(@Req() req: Request, @Res() res: Response)
+	{
+		console.log("get channel list");
+		let ret = await this.authService.getChannelList(req.headers.authorization);
+		if (ret === -1)
+			return (sendError(res, -48, errorMessages.INVALIDUSER));
+		return (sendSuccess(res, 16, ret));
+	}
 }

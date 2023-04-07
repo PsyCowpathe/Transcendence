@@ -211,9 +211,12 @@ export class WsChatService
 			return (-4)
 		if (channel.visibility === "public")
 		{
-			const isMatch = await bcrypt.compare(joinForm.password, channel.password);
-			if (isMatch === false)
-				return (-5);
+			if (channel.password !== null)
+			{
+				const isMatch = await bcrypt.compare(joinForm.password, channel.password);
+				if (isMatch === false)
+					return (-5);
+			}
 			let newJoin = new JoinChannel();
 			newJoin.channel = channel;
 			if (askMan)

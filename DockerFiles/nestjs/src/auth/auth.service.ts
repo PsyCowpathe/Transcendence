@@ -291,4 +291,21 @@ export class AuthService
 		data.reverse();
 		return (data);
 	}
+
+	async getChannelList(token: string | undefined) : Promise <number | String[]>
+	{
+		const askMan = await this.userService.findOneByToken(token);
+		if (askMan === null)
+			return (-1);
+		let channelList = await this.joinChannelService.getJoinedChannel(askMan);
+		let i = 0;
+		let data = [];
+		while (channelList && channelList[i])
+		{
+			data.push(channelList[i].channel.name);
+			i++;
+		}
+		data.reverse();
+		return (data);
+	}
 }
