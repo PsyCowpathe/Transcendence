@@ -48,7 +48,7 @@ export function Chat() {
         console.log("ssss")
         console.log(response)
         setChanlist(response.data.map((chan:any, index : any) => {
-          return { id: index, name: chan}
+          return { id: Chanlist.length + 1 , name: chan}
         }
         ))
         console.log("xxxs")
