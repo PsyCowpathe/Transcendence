@@ -205,17 +205,17 @@ export function Chat() {
   useEffect(() => {
     const handlelistenMsg = (response: any) => {
       console.log("djj sjjdj")
-      toast.success(response, {
+      toast.success("New message", {
         position: toast.POSITION.TOP_RIGHT,
         autoClose: 2000,
         progressClassName: "my-progress-bar"
       })
-      console.log(response.texte)
+      console.log(response)
       const newMessageObj = { id: (messages.length + Date.now()), user: response.user, text: response.texte, isSent: false };
 
       setMessages(prevMessages => [...prevMessages, newMessageObj]);
     }
-
+    socket.removeListener("channelmsg");
     socket.on("channelmsg", handlelistenMsg);
 
     return () => {
