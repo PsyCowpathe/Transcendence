@@ -7,6 +7,6 @@ import { VraimentIlSaoule } from '../aurelcassecouilles/VraimentIlEstCasseCouill
 export async function GetChannelList()
 {
     const config : any = VraimentIlSaoule()
-    let ret = await axios.get(`${urls.SERVER}/auth/listchannel`, config);
+    let ret = await axios.get(`${urls.SERVER}/auth/channellist`, config);
     return(ret);
 }
