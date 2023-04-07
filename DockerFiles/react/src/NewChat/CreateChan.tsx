@@ -7,7 +7,8 @@ import { TopBar } from "../Pages/TopBar";
 import { ToastContainer, toast } from 'react-toastify';
 import UserInfoModal from '../Modale/UserModal'
 import { GetChannelInfo } from "../Api/GetChanMessage";
-
+import { GetUserInfo } from "../Api/GetUserInfo";
+import { GetChannelList } from "../Api/GetChannelList";
 let test: boolean = false
 let socket: any
 
@@ -40,7 +41,17 @@ export function Chat() {
   const [ChanMdp, setChanMdp] = useState<string>('');
 
 
-  
+  useEffect(() => {
+    setChanlist([])
+    GetChannelList()
+      .then((response) => {
+        setChanlist(response.data)
+      })
+      .catch((error) => {
+        console.log(error)
+      }
+      )
+  }, [])
   
   socket = socketManager.getChatSocket()
   
@@ -85,6 +96,8 @@ export function Chat() {
 
   const Channels = (e: any) => {
     //case cocher    
+    console.log("test sans  mdp")
+
     e.preventDefault();
     if (Channame === '') {
       toast.error('Channel name is empty', {
@@ -99,7 +112,7 @@ export function Chat() {
 
   const ChannelsMdp = async (e: any) => {
     //case non cocher
-    console.log("test")
+    console.log("test avec mdp")
     e.preventDefault();
     
     if (Channame === '') {
@@ -110,6 +123,9 @@ export function Chat() {
       });
       return
     }
+    console.log("LE NOM DU CHANNEL")
+    console.log(ChanMdp)
+
     socket.emit("createchannel", { channelname: Channame, visibility: "public", password: ChanMdp })
   }
   const [isChecked, setIsChecked] = useState(false);
@@ -226,9 +242,26 @@ export function Chat() {
   }
 
   /////////////////////////////////////TEST //////////////////////////////////////////
-  
+  const [ChanTo , setChanTo] = useState<any>(null);
+  const [ChanMdpTo , setChanMdpTo] = useState<any>(null);
+  const JoinChannel = () => { 
 
-  
+    socket.emit("joinchannel", { channelname: ChanTo, visibility: "private", password: undefined })
+    //channel nane + password
+
+
+}
+const JoinChannelMdp = () => { 
+  socket.emit("joinchannel", { channelname: ChanTo, visibility: "private", password: ChanMdpTo })
+  //channel nane + password
+}
+  const [isChanchecked, setIsChanchecked] = useState(false);
+
+  const handleChanChange = () => {
+    setIsChanchecked(!isChanchecked);
+  };
+
+
 
   /////////////////////////////////////TEST //////////////////////////////////////////
 
@@ -339,13 +372,13 @@ export function Chat() {
             <form onSubmit={Channels} >
               <input type="text" placeholder="New chan" value={Channame} onChange={(e) => setChanname(e.target.value)} />
 
-              {isChecked && <button className="add-channel-button" >Add Channel</button>}
+              {isChecked && <button type="submit" className="add-channel-button" >Add Channel</button>}
             </form>
             <div>
               {!isChecked && (
                 <form onSubmit={ChannelsMdp} >
                   <input type="password" placeholder="Mot de passe" value={ChanMdp} onChange={(e) => setChanMdp(e.target.value)} />
-                  {!isChecked && <button className="other" >Add Channel</button>}
+                  <button type="submit" className="other" >Add Channel</button>
                 </form>
               )}
       
@@ -358,8 +391,35 @@ export function Chat() {
                 private channel
               </label>
             </div>
+
+            {/* ////////////////?/////////////////////TEST ////////////////////////////////////////// */}
+            
+            <form onSubmit={JoinChannel} >
+              <input type="text" placeholder="New chan" value={ChanTo} onChange={(e) => setChanTo(e.target.value)} />
+
+              {isChanchecked && <button type="submit" className="add-channel-button" >Join Channel</button>}
+            </form>
+            <div>
+              {!isChanchecked && (
+                <form onSubmit={JoinChannelMdp} >
+                  <input type="password" placeholder="Mot de passe" value={ChanMdpTo} onChange={(e) => setChanMdpTo(e.target.value)} />
+                   <button type="submit" className="other" >Join Channel</button>
+                </form>
+              )}
+            <label>
+                <input
+                  type="checkbox"
+                  checked={isChanchecked}
+                  onChange={handleChanChange}
+                  />
+                private channel
+              </label>
+          </div>
           </div>
         </div>
+
+
+
 
 
         <div className="chat-app__main">
