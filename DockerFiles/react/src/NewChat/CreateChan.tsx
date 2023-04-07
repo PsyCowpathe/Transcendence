@@ -123,6 +123,7 @@ export function Chat() {
         autoClose: 2000,
         progressClassName: "my-progress-bar"
       })
+      console.log(response.data.channel)
       setChanname(response.data.channel);
       setResponse("dont change");
     }
