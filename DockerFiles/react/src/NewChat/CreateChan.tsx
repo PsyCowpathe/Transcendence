@@ -288,8 +288,8 @@ export function Chat() {
   }
 
   /////////////////////////////////////TEST //////////////////////////////////////////
-  const [ChanTo, setChanTo] = useState<any>(null);
-  const [ChanMdpTo, setChanMdpTo] = useState<any>(null);
+  const [ChanTo, setChanTo] = useState<any>('');
+  const [ChanMdpTo, setChanMdpTo] = useState<any>('');
 
   const JoinChannelMdp = (e: any) => {
     e.preventDefault();
