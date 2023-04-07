@@ -118,7 +118,7 @@ export function Chat() {
   useEffect(() => {
     const handleCreateChannel = (response: any) => {
       console.log("response")
-      toast.success(response, {
+      toast.success(response.data.message, {
         position: toast.POSITION.TOP_RIGHT,
         autoClose: 2000,
         progressClassName: "my-progress-bar"
