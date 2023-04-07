@@ -210,7 +210,7 @@ export function Chat() {
         autoClose: 2000,
         progressClassName: "my-progress-bar"
       })
-      console.log("ejbey")
+      console.log(response.texte)
       const newMessageObj = { id: (messages.length + Date.now()), user: response.user, text: response.texte, isSent: false };
 
       setMessages(prevMessages => [...prevMessages, newMessageObj]);
@@ -324,7 +324,7 @@ export function Chat() {
           const newMessages = response.data.map((message: any, index: any) => {
             const isSent = message.username === UserName;
             return {
-              id: index,
+              id: messages.length + Date.now(),
               user: message.username,
               text: message.message,
               isSent: isSent
