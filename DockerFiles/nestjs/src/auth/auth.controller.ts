@@ -186,7 +186,7 @@ export class AuthController
 	@UseGuards(AuthGuard)
 	async resumeChannel(@Req() req: Request, @Res() res: Response, @Param('channel') channelName: string)
 	{
-		console.log("resume channe;");
+		console.log("resume channel");
 		console.log(channelName);
 		let ret = await this.authService.resumeChannel(req.headers.authorization, channelName);
 		if (ret === -1)
@@ -195,6 +195,20 @@ export class AuthController
 			return (sendError(res, -48, errorMessages.CHANNELDONTEXIST));
 		if (ret === -3)
 			return (sendError(res, -48, errorMessages.NOTJOINED));
-		return (sendSuccess(res, 16, "prout"));
+		return (sendSuccess(res, 16, ret));
+	}
+
+	@Get('resumeprivate/:user')
+	@UseGuards(AuthGuard)
+	async resumePrivate(@Req() req: Request, @Res() res: Response, @Param('user') username: string)
+	{
+		console.log("resume private message with ");
+		console.log(username);
+		let ret = await this.authService.resumeprivate(req.headers.authorization, username);
+		if (ret === -1)
+			return (sendError(res, -48, errorMessages.INVALIDUSER));
+		if (ret === -2)
+			return (sendError(res, -48, errorMessages.INVALIDUSER));
+		return (sendSuccess(res, 16, ret));
 	}
 }

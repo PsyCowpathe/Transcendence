@@ -41,6 +41,9 @@ export class Profile
 	newFA: string | undefined;
 	TwoFA: boolean;
 	Status: string;
+	Match: number;
+	Victory: number;
+	Defeat: number;
 	//status: boolean;
 	//avatar; image;
 }

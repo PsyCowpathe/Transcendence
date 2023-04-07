@@ -19,15 +19,15 @@ export class SocketStrategy
 			return (-2);
 		if (user.token === tokenBearer)
 		{
-			/*if (user.TwoFA === true)
+			if (user.TwoFA === true)
 			{
 				if (Date.now().toString() > user.TwoFAExpire)
 					return (-3);
-				if (request.headers.TwoFAToken === user.TwoFAToken)
+				if (twoFAToken === user.TwoFAToken)
 					return (1);
 				return (-3);
 			}
-			else*/
+			else
 				return (1);
 		}
 		return (-4);

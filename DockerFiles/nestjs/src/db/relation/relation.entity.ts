@@ -19,4 +19,3 @@ export class Relation
 	@Column()
 	type: number;
 }
-

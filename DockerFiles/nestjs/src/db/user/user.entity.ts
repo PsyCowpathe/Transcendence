@@ -33,4 +33,13 @@ export class User
 
 	@Column()
 	Status: string
+	
+	@Column()
+	Match: number
+
+	@Column()
+	Victory: number
+
+	@Column()
+	Defeat: number
 }

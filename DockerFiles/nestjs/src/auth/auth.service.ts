@@ -7,6 +7,7 @@ import { urls } from '../common/global';
 import { UserService } from '../db/user/user.service';
 import { ChannelService } from '../db/chat/channel.service';
 import { MessageService } from '../db/chat/message.service';
+import { PrivateService } from '../db/chat/private.service';
 import { JoinChannelService } from '../db/chat/joinchannel.service';
 import { RelationService } from '../db/relation/relation.service';
 import { User } from '../db/user/user.entity';
@@ -27,7 +28,9 @@ export class AuthService
 				private readonly channelService : ChannelService,
 				private readonly messageService : MessageService,
 				private readonly joinChannelService : JoinChannelService,
-				private readonly relationService : RelationService)
+				private readonly relationService : RelationService,
+				private readonly privateService : PrivateService)
+
 	{
 
 	}
@@ -88,6 +91,9 @@ export class AuthService
 			newUser.TwoFASecret = "";
 			newUser.TwoFA = false;
 			newUser.Status = "Online";
+			newUser.Match = 0;
+			newUser.Victory = 0;
+			newUser.Defeat = 0;
 			this.userService.create(newUser);
 			data = this.createProfile(true, newUser);
 			console.log('User successfully added to the database !');
@@ -114,6 +120,9 @@ export class AuthService
 				newFA : user.TwoFAToken,
 				TwoFA : user.TwoFA,
 				Status : user.Status,
+				Match : user.Match,
+				Victory : user.Victory,
+				Defeat : user.Defeat,
 			};
 		}
 		else
@@ -126,12 +135,14 @@ export class AuthService
 				newFA : undefined,
 				TwoFA : user.TwoFA,
 				Status : user.Status,
+				Match : user.Match,
+				Victory : user.Victory,
+				Defeat : user.Defeat,
 			};
 		}
 		return (data);
 	}
 
-	
 	async defineName(name: string, token: string | undefined) : Promise<number>
 	{
 		let ret = await this.userService.findOneByName(name);
@@ -249,6 +260,31 @@ export class AuthService
 				data.push({ username: messageList[i].sender.name, message: messageList[i].message });
 			else
 				data.push({ username: messageList[i].sender.name, message: "Blocked message" });
+			i++;
+		}
+		return (data);
+	}
+
+	async resumeprivate(token: string | undefined, username: string) : Promise <number | any>
+	{
+		const receiver = await this.userService.findOneByToken(token);
+		if (receiver === null)
+			return (-1);
+		const sender = await this.userService.findOneByName(username);
+		if (sender === null)
+			return (-2);
+		const messageList = await this.privateService.findOneByPrivate(receiver, sender);
+		if (messageList === null)
+			return (null);
+		let data = [];
+		let ret = await this.relationService.getRelationStatus(receiver, sender);
+		let i = 0;
+		while (messageList[i])
+		{
+			if (ret === "XV" || ret === "enemy")
+				data.push({ username: messageList[i].user1.name, message: "Blocked message" });
+			else
+				data.push({ username: messageList[i].user1.name, message: messageList[i].message });
 			i++;
 		}
 		return (data);

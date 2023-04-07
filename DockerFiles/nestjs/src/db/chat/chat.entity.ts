@@ -124,3 +124,19 @@ export class Message
 	@Column()
 	message: string;
 }
+
+@Entity()
+export class Private
+{
+	@PrimaryGeneratedColumn()
+	id: number;
+
+	@ManyToOne(() => User, (user) => user.id, {eager: true})
+	user1: User;
+
+	@ManyToOne(() => User, (user) => user.id, {eager: true})
+	user2: User;
+
+	@Column()
+	message: string;
+}

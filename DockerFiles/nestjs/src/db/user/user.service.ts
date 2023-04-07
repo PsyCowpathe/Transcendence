@@ -69,6 +69,30 @@ export class UserService
 		return this.usersRepository.update(user.id, {Status: newStatus});
 	}
 
+	async addMatch(newStatus: string, user: User)
+	{
+		await this.usersRepository.createQueryBuilder()
+		.update(User)
+		.set({ Match: () => "Match + 1" })
+		.execute();
+	}
+
+	async addVictory(newStatus: string, user: User)
+	{
+		await this.usersRepository.createQueryBuilder()
+		.update(User)
+		.set({ Victory: () => "Victory + 1" })
+		.execute();
+	}
+
+	async addDefeat(newStatus: string, user: User)
+	{
+		await this.usersRepository.createQueryBuilder()
+		.update(User)
+		.set({ Defeat: () => "Defeat + 1" })
+		.execute();
+	}
+
 	create(newUser : User)
 	{
 		return (this.usersRepository.save(newUser));

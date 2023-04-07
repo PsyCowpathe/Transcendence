@@ -12,10 +12,11 @@ import { InviteListService } from '../../db/chat/invitelist.service';
 import { BansService } from '../../db/chat/bans.service';
 import { MutesService } from '../../db/chat/mutes.service';
 import { MessageService } from '../../db/chat/message.service';
+import { PrivateService } from '../../db/chat/private.service';
 
 import { createChannelDto, channelOperationDto, userOperationDto, sanctionOperationDto, messageDto } from './wschat.entity';
 
-import { Channel, Admins, JoinChannel, InviteList, Bans, Mutes, Message } from '../../db/chat/chat.entity';
+import { Channel, Admins, JoinChannel, InviteList, Bans, Mutes, Message, Private } from '../../db/chat/chat.entity';
 import { User } from '../../db/user/user.entity';
 
 import * as bcrypt from 'bcrypt';
@@ -31,7 +32,8 @@ export class WsChatService
 				private readonly bansService : BansService,
 				private readonly mutesService : MutesService,
 				private readonly relationService : RelationService,
-				private readonly messageService : MessageService)
+				private readonly messageService : MessageService,
+				private readonly privateService : PrivateService)
 	{
 
 	}
@@ -397,6 +399,11 @@ export class WsChatService
 			return (-3);
 		if (ret === "XV" || ret === "enemy")
 			return (-4);
+		let newPrivate = new Private();
+		newPrivate.user1 = askMan;
+		newPrivate.user2 = receiver;
+		newPrivate.message = messageForm.message;
+		this.privateService.create(newPrivate);
 		return (this.notifyUser(receiver.id, "messageuser", messageForm.message, askMan.name));
 	}
 
