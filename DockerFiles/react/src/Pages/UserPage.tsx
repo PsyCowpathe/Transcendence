@@ -28,7 +28,7 @@ export function AffMyUserPage ({ShowBar} : {ShowBar : boolean})
   const [Click, setClick] = useState(false)
   const [PicUp, setPic] = React.useState("non")
   const [Pic, setPicUrl] = useState(localStorage.getItem('ProfilPic') || "Profil")
-
+  setPicUrl(localStorage.getItem('ProfilPic') || "Profil")
   useEffect(() =>
   {
     console.log("Use effect de la photo")
@@ -40,7 +40,7 @@ export function AffMyUserPage ({ShowBar} : {ShowBar : boolean})
       console.log("|")
       const url = window.URL.createObjectURL(new Blob([res.data]));
       localStorage.setItem('ProfilPic', url)
-       setPicUrl(url)
+      setPicUrl(url)
       console.log(Pic)
       setPic("oui")
     })
@@ -54,7 +54,7 @@ export function AffMyUserPage ({ShowBar} : {ShowBar : boolean})
     })
 
     })
-  }, [Click])
+  }, [])
   
   
   const UserName : any= localStorage.getItem('name')

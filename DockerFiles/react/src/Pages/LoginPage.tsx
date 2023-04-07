@@ -32,7 +32,7 @@ export function ChangeLogin()
         })
         .catch(err =>
         {
-            toast.error(err.response.data.message[0], {
+            toast.error(err.response.data.message, {
                 position: toast.POSITION.TOP_RIGHT,
                 autoClose: 2000,
                 progressClassName: "my-progress-bar"

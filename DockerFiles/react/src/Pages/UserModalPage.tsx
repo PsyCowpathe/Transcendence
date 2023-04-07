@@ -17,23 +17,55 @@ import { PicGetRequest } from '../Api/PicGetRequest';
 import { VraimentIlSaoule } from '../aurelcassecouilles/VraimentIlEstCasseCouille';
 import Button from '../style/Button';
 import { GetUserInfo } from '../Api/GetUserInfo';
+import socketManager from '../MesSockets';
 interface User {
   name: string;
 }
 
-export function AffTheUser({MyName} : {MyName : User})
+export function AffTheUser({User, Channel} : {User : User, Channel : string  | null}) 
 {
+  console.log("Channel name")
+  console.log(Channel)
     const [ShowBan, setShowBan] = useState<boolean>(false)
     const [timer , setTimer] = useState<number>(0)
     const [reason, setReason] = useState<string>("")
     
+    const socket = socketManager.getChatSocket();
+  useEffect(() => {
+
+    const handleBanUser = (data : any) => {
+      toast.success(data, {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 2000,
+        progressClassName: "my-progress-bar"
+    })
+    }
+
+    const handleBanUsererror = (data : any) => {
+      toast.error(data, {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 2000,
+        progressClassName: "my-progress-bar"
+    })
+    }
+
+
+
+    socket.on("banuser", handleBanUser);
+    socket.on("ChatError", handleBanUsererror);
+    return () => {
+      socket.off("banuser", handleBanUser);
+      socket.off("ChatError", handleBanUsererror);
+    };
+
+    }, [])
 
     useEffect(() => {
-    GetUserInfo(MyName.name)
+    GetUserInfo(User.name)
     .then((res) =>
     {
       console.log("coucou")
-      console.log(MyName.name)
+      console.log(User.name)
         console.log(res)
     })
     .catch((err) =>
@@ -79,40 +111,33 @@ export function AffTheUser({MyName} : {MyName : User})
       Pic = localStorage.getItem('ProfilPic')
     }, [PicUp])
     
-  
-  
     const UserName : any= localStorage.getItem('name')
     console.log(UserName)
   
+const handleReasonChange = (e : React.ChangeEvent<HTMLInputElement>) =>
+{
+  setReason(e.target.value)
+}
+const handleTimeChange = (e : React.ChangeEvent<HTMLInputElement>) =>
+{
+  setTimer(parseInt(e.target.value))
+}
 
-
-
-
-
-
-
-
-
-const Ban = (e : any) =>
+const Ban = (e : React.FormEvent<HTMLFormElement>) =>
 {
   e.preventDefault()
-  // alert("bim t es ban fdp" + UserName)
-  // socket.emit("banuser", { name: UserName, channelname: "coucou", time: timer, reason: reason })
+  alert("bim t es ban fdp" + UserName)
+  socket.emit("banuser", { name: UserName, channelname: Channel, time: timer, reason: reason })
+  setReason("")
+  setTimer(0)
 }
 
-const BanUser = () => {
 
-  return (
-    <div>
 
-      <form action="onSubmit" onSubmit={Ban}>
-      <input type="text" placeholder="why?" value={reason} onChange={(e) => setReason(e.target.value)} />
-      <input type="number" placeholder="12" value={timer} onChange={(e) => setTimer(parseInt(e.target.value))} />
-      <button className="add-message-button" >Ban</button>
-      </form>
-    </div>
-  )
-}
+const onClickTwo = (() =>
+{
+  setShowBan(!ShowBan)
+})
 
 const navigate = useNavigate();
 const onClick = (() =>
@@ -121,32 +146,28 @@ const onClick = (() =>
    navigate('/change');
 })
 
-const OpenBan = () =>
-{
-  if (ShowBan === false)
-    setShowBan(true)
-  else 
-    setShowBan(false)
-}
-
- 
 
 return(
     <div className="App">
 
  <img src={Pic} alt="Profile" style={{ borderRadius: "50%", width: "200px", height: "200px", objectFit: "cover", boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)" }} />
-  <h1 style={{ fontSize: "2.5em", margin: "1em 0 0.5em" }}>{UserName}</h1><button className="SettingsButton" onClick={onClick}>
-<FaCog  className="SettingsButtonIcon" />
-</button>
+  <h1 style={{ fontSize: "2.5em", margin: "1em 0 0.5em" }}>{User.name}</h1>
   <p style={{ fontSize: "1.2em", marginBottom: "1em",  }}>Age | Ville</p>
   <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
     <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"><button style={{ fontSize: "1.2em", padding: "0.5em 2em", borderRadius: "5px", backgroundColor: "#4285F4", color: "#FFFFFF", border: "none", boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)", cursor: "pointer" }}>Visiter mon site web</button></a>
-  <button onClick={OpenBan}>Ban</button>
-      {ShowBan && <BanUser/>} 
+  <button onClick={onClickTwo}>Ban</button>
+      {ShowBan && 
+      <div>
+
+      <form  onSubmit={Ban}>
+      <input type="text" placeholder="reason" value={reason} onChange={(e) => {setReason(e.target.value)}} />
+      <input type="texte" placeholder="0" value={timer} onChange={(e) => {setTimer(parseInt(e.target.value))}} />
+      <button className="add-message-button" >Ban</button>
+      </form>
+    </div>
+      } 
 
   </div><ToastContainer/>
 </div>
 );
-
-
 }

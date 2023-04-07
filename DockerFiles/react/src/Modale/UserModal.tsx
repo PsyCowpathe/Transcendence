@@ -9,10 +9,11 @@ interface User {
 
 interface Props {
   user: User;
+  Channel : string | null;
   onClose: () => void;
 }
 
-const UserInfoModal: React.FC<Props> = ({ user, onClose }) => {
+const UserInfoModal: React.FC<Props> = ({ user, Channel, onClose }) => {
   const [showModal, setShowModal] = useState(false);
 
 useEffect(() => {
@@ -37,7 +38,7 @@ useEffect(() => {
             </div>
             <div className="modal-body">
              <div className="test">
-              <AffTheUser MyName={user}/>
+              <AffTheUser User={user} Channel={Channel}/>
               </div>
               <div/>
             </div>

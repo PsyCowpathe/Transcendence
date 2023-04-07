@@ -6,6 +6,8 @@ import { VraimentIlSaoule } from "../aurelcassecouilles/VraimentIlEstCasseCouill
 import { TopBar } from "../Pages/TopBar";
 import { ToastContainer, toast } from 'react-toastify';
 import UserInfoModal from '../Modale/UserModal'
+import { GetChannelInfo } from "../Api/GetChanMessage";
+
 let test: boolean = false
 let socket: any
 
@@ -31,16 +33,17 @@ interface Message {
 export function Chat() {
   ////////////////////////////////////////////////////////////////////// chan manager //////////////////////////////////////////////////////////////////
   const UserName : any= localStorage.getItem('name')
+
   const [responses, setResponse] = useState<string>("vide");
   const [Chanlist, setChanlist] = useState<Chati[]>([]);
   const [Channame, setChanname] = useState<string>('');
   const [ChanMdp, setChanMdp] = useState<string>('');
-  const [newMessage, setNewMessage] = useState<string>('');
-  const [messages, setMessages] = useState<Message[]>([]);
 
 
+  
+  
   socket = socketManager.getChatSocket()
-
+  
   if (socket == null) {
     if (test === false && VraimentIlSaoule().headers.Authorization !== null) {
       socket = socketManager.initializeChatSocket(VraimentIlSaoule().headers.Authorization)
@@ -48,7 +51,7 @@ export function Chat() {
       test = true
     }
   }
-
+  
 
   useEffect(() => {
     const handleCreateChannel = (response: any) => {
@@ -70,18 +73,18 @@ export function Chat() {
       // console.log("coucou jsuis sence rentrer")
       setResponse("change");
     }
-
+    
     socket.on("createchannel", handleCreateChannel);
     socket.on("ChatError", handleCreateChannels);
-
+    
     return () => {
       socket.off("createchannel", handleCreateChannel);
       socket.off("ChatError", handleCreateChannels);
     }
   }, [])
-  const Channels = (e: any) => {
-    //case cocher
 
+  const Channels = (e: any) => {
+    //case cocher    
     e.preventDefault();
     if (Channame === '') {
       toast.error('Channel name is empty', {
@@ -98,7 +101,7 @@ export function Chat() {
     //case non cocher
     console.log("test")
     e.preventDefault();
-
+    
     if (Channame === '') {
       toast.error('Channel name is empty', {
         position: toast.POSITION.TOP_RIGHT,
@@ -113,7 +116,7 @@ export function Chat() {
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
   };
-
+  
   useEffect(() => {
     if (responses !== "change") {
       console.log("je use effect")
@@ -123,11 +126,13 @@ export function Chat() {
     setChanMdp('')
     setResponse("vide")
   }, [responses])
-
-
+  
+  
   /////////////////////////////////////////////////////////////////////////message manager///////////////////////////////////////////
-
-
+  
+  const [newMessage, setNewMessage] = useState<string>('');
+  const [messages, setMessages] = useState<Message[]>([]);
+  
   useEffect(() => {
     const handlelistenMsg = (response: any) => {
       console.log("djj sjjdj")
@@ -149,36 +154,17 @@ export function Chat() {
     }
   }, [])
   
-  
-  
-  // const HandleNewMessage = (e: any) => {
-  //   e.preventDefault();
-  //   setMessages([...messages, {id:1, user: "Me", text: newMessage, isSent: true }]);
-  //   socket.emit("chatmsg", { text: newMessage }) //envoie le message
-    
-  // const updatedMessages = [...messages, { id: messages.length + 1, user: "Me", text: newMessage, isSent: true }];
-  // setMessages(updatedMessages);
-  // setNewMessage("");
-  //   setNewMessage('')
-  //   testiii()
-  //   setMessages([...messages, {id:2, user: "l autre", text: "baleck  frere", isSent: false }]);
-  //   console.log(messages)
-
-  // }
-  
  interface User {
-   name: string;
+  name: string;
    ///////// interface a modifer pour avoir toute les info des user puis initialiser un User  avec toute ses info quand on recoit le token
  }
  
- interface Props {
-   user: User;
- }
+
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedChannel, setSelectedChannel] = useState(null);
+
+  const [User , setUser] = useState<User | null>(null);
  
- const [selectedUser, setSelectedUser] = useState<User | null>(null);
- const [selectedChannel, setSelectedChannel] = useState(null);
- const [User , setUser] = useState<User | null>(null);
-   
      const handleUserClick = (user: User | null) => {
        setSelectedUser(user);
        console.log("je suis la")
@@ -192,7 +178,9 @@ export function Chat() {
 
   const HandleNewMessage = (e: any) => {
     e.preventDefault();
-    socket.emit("channelmsg", { message: newMessage, destination: "meillu" }) 
+    console.log("je suis la")
+    console.log(selectedChannel)
+    socket.emit("channelmsg", { destination: selectedChannel, message: newMessage }) 
     const newMessageObj = { id: (messages.length + Date.now()), user: UserName, text: newMessage, isSent: true };
     
     setMessages(prevMessages => [...prevMessages, newMessageObj]);
@@ -202,17 +190,22 @@ export function Chat() {
 
   const renderMessages = () => {
 
-    //axios.get( ) //recupere les message du channel
     //setMessages([...messages, {}]); //ajoute les message recup a la liste des message
-
-
     return messages.map((message) => {
-      const messageClass = message.isSent ? "sent-message" : "received-message";
-      const userClass = message.isSent ? "sent-user" : "received-user";
-     
+
+      let messageClass
+      if (message.user === UserName)
+        messageClass = "sent-message"
+      else
+        messageClass =  "received-message";
+      let userClass
+      if (message.user === UserName)
+      userClass = "sent-user"
+    else
+     userClass =  "received-user";
+      
       return (
           <div>
-
       <div className={`message ${userClass}`} onClick={() => handleUserClick({name: message.user})}>
           {message.user}
         </div>
@@ -237,41 +230,43 @@ export function Chat() {
 
   
 
-  useEffect(() => {
-    const handlellistenban = (response: any) => {
-      console.log("djj sjjdj")
-      toast.success(response, {
-        position: toast.POSITION.TOP_RIGHT,
-        autoClose: 2000,
-        progressClassName: "my-progress-bar"
-      })
-      socket.on("banuser", handlellistenban);
-
-      return () => {
-        socket.off("banuser", handlellistenban);
-      }
-    }
-  }, [])
-
-      
-  const [UserToBan, setUserToBan] = useState('')
-  const [reason , setReason] = useState('')
-  const [timer , setTimer] = useState<number>(0)
-  const BanUser = (e: any) => {
-    e.preventDefault();
-    socket.emit("banuser", { name: UserToBan, channelname: "coucou", time: timer, reason: reason })
-  
-  }
-
   /////////////////////////////////////TEST //////////////////////////////////////////
 
 
   const OpenChannel = (ChanUse : any) => {
     console.log(ChanUse)
     setSelectedChannel(ChanUse)
-
-
-
+    console.log(ChanUse)
+    setMessages([])
+    if (ChanUse !== null) 
+    {
+    GetChannelInfo(ChanUse)    //recupere les message du channel
+    .then((response) => {
+      console.log(response)
+      console.log("lol")
+      // if (response.data !== undefined)
+      // {
+      const newMessages = response.data.map((message : any, index : any) => {
+        const isSent = message.username === UserName;
+        return {
+          id: index,
+          user: message.username,
+          text: message.message,
+          isSent: isSent
+        };
+      });
+      setMessages(newMessages);
+    // }
+      // const newMessageObj = { id: (messages.length + Date.now()), user: UserName, text: newMessage, isSent: true };
+      
+      // setMessages(response.data.messages)
+      // setMessages(prevMessages => [...prevMessages, newMessageObj]);
+      // setNewMessage("");
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+  }
     }
 
 
@@ -316,45 +311,18 @@ export function Chat() {
           </div>
           <div>
             {selectedChannelMessages.map((message) => (
-              <div key={message.id}>{message.text}</div>
+              <div key={message.id}> fdcd{message.text}</div>
             ))}
           </div>
         </div>
       );
     };
     
-    const getMessagesForChannel = (channelName : any) => {
-      return messages.filter((msg : any) => msg.channel === channelName);
-    };
-
-    const MessageList = ({ messages }: { messages: any }) => {
-            return (
-        <div className="message-list">
-          {messages.map((msg : any) => (
-            <div className="message-item" key={msg.id}>
-              <div className="message-text">{msg.text}</div>
-              <div className="message-time">{msg.time}</div>
-            </div>
-          ))}
-        </div>
-      );
-    };
-
-
-
-
 
   return (
     <div>
       <TopBar />
-              {/* <div>
-              <form onSubmit={BanUser} >
-              <input type="text" placeholder="who i ban ?" value={UserToBan} onChange={(i) => setUserToBan(i.target.value)} />
-              <input type="text" placeholder="why?" value={reason} onChange={(i) => setReason(i.target.value)} />
-              <input type="number" placeholder="12" value={timer} onChange={(i) => setTimer(parseInt(i.target.value))} />
-              <button className="add-message-button" >Ban</button>
-            </form>
-              </div> */}
+
       <div className="chat-app" style={{ height: "100vh" }}>
         <div className="chat-app__sidebar">
           <div className="channel-list">
@@ -368,9 +336,6 @@ export function Chat() {
               ))}
             </ul>
 
-            {selectedUser && (
-              <UserInfoModal user={selectedUser} onClose= {handleCloseModal} />
-            )}
             <form onSubmit={Channels} >
               <input type="text" placeholder="New chan" value={Channame} onChange={(e) => setChanname(e.target.value)} />
 
@@ -389,7 +354,7 @@ export function Chat() {
                   type="checkbox"
                   checked={isChecked}
                   onChange={handleCheckboxChange}
-                />
+                  />
                 private channel
               </label>
             </div>
@@ -408,13 +373,14 @@ export function Chat() {
             <div id="tamere" className="chat-list">
               {renderMessages()}
             </div>
-
-
+                  {selectedUser && (
+                    <UserInfoModal user={selectedUser} Channel={selectedChannel} onClose= {handleCloseModal} />
+                  )}
             <div className="message-item sent">
                 <form className="message-input" onSubmit={HandleNewMessage} >
                   <input
                    type="text"
-                  placeholder="New message"
+                   placeholder="New message"
                    value={newMessage}
                    onChange={(e) => setNewMessage(e.target.value)} />
                   <button className="add-message-button" >Add Message</button>
