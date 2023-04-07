@@ -120,13 +120,13 @@ export function Chat() {
       console.log("response")
       console.log(response)
 
-      toast.success(response.data.message, {
+      toast.success(response.message, {
         position: toast.POSITION.TOP_RIGHT,
         autoClose: 2000,
         progressClassName: "my-progress-bar"
       })
-      console.log(response.data.channel)
-      setChanname(response.data.channel);
+      console.log(response.channel)
+      setChanname(response.channel);
       setResponse("dont change");
     }
 
