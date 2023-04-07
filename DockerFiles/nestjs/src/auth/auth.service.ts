@@ -248,6 +248,8 @@ export class AuthService
 		const messageList = await this.messageService.findOneByChannel(channel);
 		if (messageList === null)
 			return (null);
+		console.log("meesage =");
+		console.log(messageList);
 		const annoyingList = await this.relationService.getAnnoyingUser(user);
 		let data = [];
 		let i = 0;
@@ -288,7 +290,6 @@ export class AuthService
 				data.push({ username: messageList[i].user1.name, message: messageList[i].message });
 			i++;
 		}
-		data.reverse();
 		return (data);
 	}
 
@@ -305,7 +306,6 @@ export class AuthService
 			data.push(channelList[i].channel.name);
 			i++;
 		}
-		data.reverse();
 		return (data);
 	}
 }

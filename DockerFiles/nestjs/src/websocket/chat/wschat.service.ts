@@ -174,6 +174,8 @@ export class WsChatService
 		if (creator)
 			newChannel.owner = creator;
 		newChannel.visibility = channelForm.visibility;
+		console.log("password");
+		console.log(channelForm.password)
 		if (channelForm.password !== undefined)
 			newChannel.password = cryptedPassword;
 		let channel = await this.channelService.create(newChannel);

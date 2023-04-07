@@ -24,9 +24,13 @@ export class MessageService
 			.find
 			({
 				where:
-				[
-					{channel: channel}
-				]
+				{
+					channel: channel,
+				},
+				order:
+				{
+					id: "ASC",
+				},
 			});
 			if (ret[0] === undefined)
 				return (null);
