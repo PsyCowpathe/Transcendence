@@ -60,11 +60,20 @@ export class WsChatService
 
 	async updateRoom(user: User, client: Socket)
 	{
+		console.log("user : " + user.name + " subscribed to channel");
 		let joinedChannel = await this.joinChannelService.getJoinedChannel(user);
 		if (joinedChannel === null)
 			return ;
-		let list = joinedChannel.map(function(id) { return id['id'] });
-		client.join(list.toString());
+		let i = 0;
+		let list = [];
+		while (joinedChannel[i])
+		{
+			list.push(joinedChannel[i].channel.name);
+			i++;
+		}
+		console.log("channellist = ")
+		console.log(list);
+		client.join(list);
 	}
 
 	async userPower(user: User | null, channel: Channel) : Promise<number>
@@ -295,7 +304,7 @@ export class WsChatService
 				excludedUser.join("exclusionList");
 			i++;
 		}
-		userSocket.to(messageForm.destination).except("exclusionList").emit(messageForm.message);
+		userSocket.to(messageForm.destination).except("exclusionList").emit("channelmsg", {channel: channel.name, user: askMan.name, message : messageForm.message});
 		userSocket.in("exclusionList").socketsLeave("exclusionList");
 		return (1);
 	}

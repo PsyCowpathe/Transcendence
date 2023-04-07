@@ -29,7 +29,7 @@ export class MessageService
 				},
 				order:
 				{
-					id: "ASC",
+					id: "DESC",
 				},
 			});
 			if (ret[0] === undefined)
