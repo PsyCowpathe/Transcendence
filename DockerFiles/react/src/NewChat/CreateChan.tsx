@@ -251,9 +251,11 @@ export function Chat() {
 
 
 }
-const JoinChannelMdp = () => { 
+const JoinChannelMdp = (e: any) => { 
+  e.preventDefault();
   socket.emit("joinchannel", { channelname: ChanTo, visibility: "private", password: ChanMdpTo })
   //channel nane + password
+  setChanMdpTo('')
 }
   const [isChanchecked, setIsChanchecked] = useState(false);
 
@@ -267,6 +269,7 @@ const JoinChannelMdp = () => {
 
 
   const OpenChannel = (ChanUse : any) => {
+
     console.log(ChanUse)
     setSelectedChannel(ChanUse)
     console.log(ChanUse)
@@ -393,27 +396,13 @@ const JoinChannelMdp = () => {
             </div>
 
             {/* ////////////////?/////////////////////TEST ////////////////////////////////////////// */}
-            
-            <form onSubmit={JoinChannel} >
-              <input type="text" placeholder="New chan" value={ChanTo} onChange={(e) => setChanTo(e.target.value)} />
-
-              {isChanchecked && <button type="submit" className="add-channel-button" >Join Channel</button>}
-            </form>
             <div>
-              {!isChanchecked && (
                 <form onSubmit={JoinChannelMdp} >
+              <input type="text" placeholder="New chan" value={ChanTo} onChange={(e) => setChanTo(e.target.value)} />
                   <input type="password" placeholder="Mot de passe" value={ChanMdpTo} onChange={(e) => setChanMdpTo(e.target.value)} />
                    <button type="submit" className="other" >Join Channel</button>
                 </form>
-              )}
-            <label>
-                <input
-                  type="checkbox"
-                  checked={isChanchecked}
-                  onChange={handleChanChange}
-                  />
-                private channel
-              </label>
+       
           </div>
           </div>
         </div>
