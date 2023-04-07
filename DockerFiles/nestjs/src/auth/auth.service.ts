@@ -262,6 +262,7 @@ export class AuthService
 				data.push({ username: messageList[i].sender.name, message: "Blocked message" });
 			i++;
 		}
+		data.reverse();
 		return (data);
 	}
 
@@ -287,6 +288,7 @@ export class AuthService
 				data.push({ username: messageList[i].user1.name, message: messageList[i].message });
 			i++;
 		}
+		data.reverse();
 		return (data);
 	}
 }
