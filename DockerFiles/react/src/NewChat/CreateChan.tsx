@@ -34,7 +34,7 @@ interface Message {
 export function Chat() {
   ////////////////////////////////////////////////////////////////////// chan manager //////////////////////////////////////////////////////////////////
   const UserName: any = localStorage.getItem('name')
-  
+  const [UseChan, setUseChan] = useState<string>('');
   const [responses, setResponse] = useState<string>("vide");
   const [Channame, setChanname] = useState<string>('');
   const [ChanMdp, setChanMdp] = useState<string>('');
@@ -133,6 +133,7 @@ export function Chat() {
       })
       console.log(response.channel)
       setChanname(response.channel);
+      setUseChan(response.channel);
       // setResponse("dont change");
   GetChannel()
 
@@ -192,6 +193,7 @@ export function Chat() {
       console.log("je use effect")
       setChanlist([...Chanlist, { id: Chanlist.length + Date.now(), name: Channame }]);
     }
+    setUseChan(Channame)
     setChanname('')
     setChanMdp('')
     setResponse("vide")
@@ -206,12 +208,12 @@ export function Chat() {
   useEffect(() => {
     const handlelistenMsg = (response: any) => {
       console.log("djj sjjdj")
-      toast.success("New message on" + response.channel, {
+      toast.success("New message on " + response.channel, {
         position: toast.POSITION.TOP_RIGHT,
         autoClose: 2000,
         progressClassName: "my-progress-bar"
       })
-      console.log(response)
+      console.log(response.channel)
       const newMessageObj = { id: (messages.length + Date.now()), channel:response.channel, user: response.user, text: response.texte, isSent: false };
 
       setMessages(prevMessages => [...prevMessages, newMessageObj]);
@@ -273,8 +275,9 @@ export function Chat() {
         userClass = "sent-user"
       else
         userClass = "received-user";
-      if (message.channel !== Channame)
+      if (message.channel !== UseChan)
       {
+        console.log(UseChan)
         console.log("C PAS LE BON CHAN FDP")
         return
       }
