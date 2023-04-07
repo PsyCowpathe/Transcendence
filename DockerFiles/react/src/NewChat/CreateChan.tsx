@@ -144,8 +144,10 @@ export function Chat() {
     }
     console.log("LE NOM DU CHANNEL")
     console.log(ChanMdp)
-
-    socket.emit("createchannel", { channelname: Channame, visibility: "public", password: ChanMdp })
+    if (ChanMdp === '') 
+      socket.emit("createchannel", { channelname: Channame, visibility: "public", password: undefined })
+    else
+      socket.emit("createchannel", { channelname: Channame, visibility: "public", password: ChanMdp })
   }
   const [isChecked, setIsChecked] = useState(false);
   const handleCheckboxChange = () => {
