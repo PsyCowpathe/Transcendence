@@ -28,7 +28,7 @@ export class Admins
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@OneToOne(() => Channel)
+	@OneToOne(() => Channel, {eager: true})
 	@JoinColumn()
 	channel: Channel
 
@@ -85,7 +85,7 @@ export class JoinChannel
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@ManyToOne(() => Channel, (channel) => channel.id, { onDelete: 'CASCADE' })
+	@ManyToOne(() => Channel, (channel) => channel.id, { onDelete: 'CASCADE', eager: true })
 	@JoinColumn()
 	channel: Channel
 

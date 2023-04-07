@@ -35,7 +35,6 @@ export class channelOperationDto
 	@Length(3, 20, {message: 'The channel name must contain between 3 and 20 caracters !'})
 	channelname: string;
 
-	@IsString({message: `The password name must be a string !`})
 	password: string;
 }
 

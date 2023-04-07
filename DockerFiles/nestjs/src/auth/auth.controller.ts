@@ -212,7 +212,7 @@ export class AuthController
 		return (sendSuccess(res, 16, ret));
 	}
 
-	@Get('channelist')
+	@Get('channellist')
 	@UseGuards(AuthGuard)
 	async getChannelList(@Req() req: Request, @Res() res: Response)
 	{

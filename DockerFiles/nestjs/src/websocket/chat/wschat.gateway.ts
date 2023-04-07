@@ -80,8 +80,7 @@ export class WsChatGateway
 		}
 		client.emit("deletechannel", response);
 	}
-
-
+	
 	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('joinchannel')
