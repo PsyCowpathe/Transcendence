@@ -48,7 +48,7 @@ export function Chat() {
         console.log("ssss")
         console.log(response)
         setChanlist(response.data.map((chan:any, index : any) => {
-          return { id: Chanlist.length + 1 , name: chan}
+          return { id: index, name: chan}
         }
         ))
         console.log("xxxs")
@@ -182,7 +182,7 @@ export function Chat() {
   useEffect(() => {
     if (responses !== "change") {
       console.log("je use effect")
-      setChanlist([...Chanlist, { id: Chanlist.length + 1, name: Channame }]);
+      setChanlist([...Chanlist, { id: Chanlist.length + Date.now(), name: Channame }]);
     }
     setChanname('')
     setChanMdp('')
