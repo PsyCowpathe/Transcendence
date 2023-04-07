@@ -25,6 +25,7 @@ interface Chati {
 
 interface Message {
   id: number;
+  channel : string;
   user: string;
   text: string;
   isSent: boolean;
@@ -205,13 +206,13 @@ export function Chat() {
   useEffect(() => {
     const handlelistenMsg = (response: any) => {
       console.log("djj sjjdj")
-      toast.success("New message", {
+      toast.success("New message on" + response.channel, {
         position: toast.POSITION.TOP_RIGHT,
         autoClose: 2000,
         progressClassName: "my-progress-bar"
       })
       console.log(response)
-      const newMessageObj = { id: (messages.length + Date.now()), user: response.user, text: response.texte, isSent: false };
+      const newMessageObj = { id: (messages.length + Date.now()), channel:response.channel, user: response.user, text: response.texte, isSent: false };
 
       setMessages(prevMessages => [...prevMessages, newMessageObj]);
     }
@@ -250,7 +251,7 @@ export function Chat() {
     console.log("je suis la")
     console.log(selectedChannel)
     socket.emit("channelmsg", { destination: selectedChannel, message: newMessage })
-    const newMessageObj = { id: (messages.length + Date.now()), user: UserName, text: newMessage, isSent: true };
+    const newMessageObj = { id: (messages.length + Date.now()), channel:Channame, user: UserName, text: newMessage, isSent: true };
 
     setMessages(prevMessages => [...prevMessages, newMessageObj]);
     setNewMessage("");
@@ -272,7 +273,11 @@ export function Chat() {
         userClass = "sent-user"
       else
         userClass = "received-user";
-
+      if (message.channel !== Channame)
+      {
+        console.log("C PAS LE BON CHAN FDP")
+        return
+      }
       return (
         <div>
           <div className={`message ${userClass}`} onClick={() => handleUserClick({ name: message.user })}>
