@@ -45,10 +45,31 @@ export function Chat() {
     setChanlist([])
     GetChannelList()
       .then((response) => {
-        setChanlist(response.data)
+        console.log("ssss")
+        console.log(response)
+        setChanlist(response.data.map((chan:any, index : any) => {
+          return { id: index, name: chan}
+        }
+        ))
+        console.log("xxxs")
+
+        console.log(Chanlist)
       })
-      .catch((error) => {
-        console.log(error)
+      .catch((err) => {
+        
+      if(err.response.data.message == "Invalid user" || err.message.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+      {
+        console.log("coucou ?")
+        window.location.assign('/')
+      }
+      if ( err.message === "User not registered")// ==> redirection vers la page de register
+      {
+        console.log("ERROR")
+        console.log(err)
+        window.location.assign('/Change')
+     }
+        console.log(err)
+
       }
       )
   }, [])
@@ -271,6 +292,7 @@ export function Chat() {
     socket.emit("joinchannel", { channelname: ChanTo, visibility: "private", password: ChanMdpTo })
     //channel nane + password
     setChanMdpTo('')
+    setChanTo('')
   }
   /////////////////////////////////////TEST //////////////////////////////////////////
 
