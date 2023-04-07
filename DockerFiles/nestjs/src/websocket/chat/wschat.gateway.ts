@@ -149,8 +149,6 @@ export class WsChatGateway
 		console.log(messageForm.message);//
 		console.log(" to ");//
 		console.log(messageForm.destination);//
-		client.emit('channelmsg', {user: "PsyCowpathe", texte: "coucou"});//
-
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
