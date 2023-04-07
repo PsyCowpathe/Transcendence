@@ -123,6 +123,7 @@ export function Chat() {
         autoClose: 2000,
         progressClassName: "my-progress-bar"
       })
+      setChanname(response.data.channel);
       setResponse("dont change");
     }
 
@@ -321,60 +322,71 @@ export function Chat() {
           });
           setMessages(newMessages);
         })
-        .catch((error) => {
-          console.log(error)
+        .catch((err) => {
+          if(err.response.data.message == "Invalid user" || err.message.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+          {
+            console.log("coucou ?")
+            window.location.assign('/')
+          }
+          if ( err.message === "User not registered")// ==> redirection vers la page de register
+          {
+            console.log("ERROR")
+            console.log(err)
+            window.location.assign('/Change')
+         }
+          console.log(err)
         })
     }
   }
 
 
-  interface IMessage {
-    id: number;
-    text: string;
-  }
+  // interface IMessage {
+  //   id: number;
+  //   text: string;
+  // }
 
-  interface IChannel {
-    id: number;
-    name: string;
-    messages: IMessage[];
-  }
+  // interface IChannel {
+  //   id: number;
+  //   name: string;
+  //   messages: IMessage[];
+  // }
 
-  interface IProps {
-    channels: IChannel[];
-  }
+  // interface IProps {
+  //   channels: IChannel[];
+  // }
 
-  const MessageDisplay: React.FC<IProps> = ({ channels }) => {
-    const [selectedChannelId, setSelectedChannelId] = useState<number>(
-      channels[0].id
-    );
-    const [selectedChannelMessages, setSelectedChannelMessages] = useState<
-      IMessage[]
-    >(channels[0].messages);
+  // const MessageDisplay: React.FC<IProps> = ({ channels }) => {
+  //   const [selectedChannelId, setSelectedChannelId] = useState<number>(
+  //     channels[0].id
+  //   );
+  //   const [selectedChannelMessages, setSelectedChannelMessages] = useState<
+  //     IMessage[]
+  //   >(channels[0].messages);
 
-    const handleChannelClick = (channelId: number) => {
-      setSelectedChannelId(channelId);
-      setSelectedChannelMessages(
-        channels.find((channel) => channel.id === channelId)?.messages || []
-      );
-    };
+  //   const handleChannelClick = (channelId: number) => {
+  //     setSelectedChannelId(channelId);
+  //     setSelectedChannelMessages(
+  //       channels.find((channel) => channel.id === channelId)?.messages || []
+  //     );
+  //   };
 
-    return (
-      <div>
-        <div>
-          {channels.map((channel) => (
-            <button key={channel.id} onClick={() => handleChannelClick(channel.id)}>
-              {channel.name}
-            </button>
-          ))}
-        </div>
-        <div>
-          {selectedChannelMessages.map((message) => (
-            <div key={message.id}> fdcd{message.text}</div>
-          ))}
-        </div>
-      </div>
-    );
-  };
+  //   return (
+  //     <div>
+  //       <div>
+  //         {channels.map((channel) => (
+  //           <button key={channel.id} onClick={() => handleChannelClick(channel.id)}>
+  //             {channel.name}
+  //           </button>
+  //         ))}
+  //       </div>
+  //       <div>
+  //         {selectedChannelMessages.map((message) => (
+  //           <div key={message.id}> fdcd{message.text}</div>
+  //         ))}
+  //       </div>
+  //     </div>
+  //   );
+  // };
 
 
   return (
