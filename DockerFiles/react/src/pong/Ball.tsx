@@ -17,8 +17,8 @@ export default class Ball
 	{
 		if (ball)
 			this.ball = ball;
-		this.pos = {	x: parseFloat(getComputedStyle(this.paddle).getPropertyValue("--x")),
-				y: parseFloat(getComputedStyle(this.paddle).getPropertyValue("--y")) };
+		this.pos = {	x: parseFloat(getComputedStyle(this.ball).getPropertyValue("--x")),
+				y: parseFloat(getComputedStyle(this.ball).getPropertyValue("--y")) };
 	}
 
 	/*getRandomDirection ()

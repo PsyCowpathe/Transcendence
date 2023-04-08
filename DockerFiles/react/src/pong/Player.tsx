@@ -3,15 +3,15 @@ import { useState, useEffect, useRef, Ref } from "react";
 
 import Ball from "./Ball";
 import Paddle from "./Paddle";
-import moveBall from "./MoveBall";
 
 export default class Player
 {
 	paddle!: Paddle;
-	score:any = 0;
 	name:string = "";
+	score:number = 0;
+	id: number = 0;
 
-	constructor(name: string, paddle: Paddle)
+	constructor(name: string)
 	{
 		this.name = name;
 	}
