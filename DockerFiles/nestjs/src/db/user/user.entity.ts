@@ -18,4 +18,28 @@ export class User
 
 	@Column()
 	registered: boolean;
+
+	@Column({ nullable: true })
+	TwoFASecret: string;
+
+	@Column()
+	TwoFA: boolean;
+
+	@Column({ nullable: true })
+	TwoFAToken: string;
+
+	@Column({ nullable: true })
+	TwoFAExpire: string
+
+	@Column()
+	Status: string
+	
+	@Column()
+	Match: number
+
+	@Column()
+	Victory: number
+
+	@Column()
+	Defeat: number
 }

@@ -32,6 +32,15 @@ export class MutesService
 				return (null);
 			return (ret);
 	}
+	
+	updateMuteEnd(user: User, channel: Channel, end: string)
+	{
+		return this.mutesRepository.createQueryBuilder()
+		.update(Mutes)
+		.set({end: end})
+		.where("channel = :channel AND user = user", {channel: channel, user: user})
+		.execute();
+	}
 
 	create(newMute: Mutes)
 	{

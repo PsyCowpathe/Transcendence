@@ -9,7 +9,7 @@ interface Message {
   text: string;
 }
 
-export const Chat = () => {
+export const Chati = () => {
   const [messages, setMessages] = useState<Message[]>([]);
 
   const handleSendMessage = (messageText: string) => {

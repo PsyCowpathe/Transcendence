@@ -8,18 +8,25 @@ import '../css/App.css'
 import { useNavigate } from 'react-router-dom'
 import socketManager from "../MesSockets";
 import { VraimentIlSaoule } from "../aurelcassecouilles/VraimentIlEstCasseCouille";
+import { TopBar } from "./TopBar";
+// https://mui.com/material-ui/getting-started/installation/ 
 // let Mysocks : any = new SocketManager
 const info = {
 	name : 'name'
 }
 
+interface chiant {
+	tokenForm : any,
+	setToken : any,
+	onLogin : () => void
 
-export function HomePage ({tokenForm, setToken} : any)
+}
+	const HomePage : React.FC<chiant> =  ({tokenForm, setToken, onLogin}) =>
 {
 	const [Mybool, setMybool] = useState<boolean>(false)
 	const [Registered, setReg] = useState<boolean>(false)
-
-	const navigate = useNavigate();
+	const [FirstCo, setFirstCo] = useState<boolean>(false)
+	const navigate = useNavigate();  
 
 	const localStorage = window.localStorage;
 	console.log("debut de fonction")
@@ -32,7 +39,7 @@ export function HomePage ({tokenForm, setToken} : any)
 			window.location.assign(data)
 		}
 		catch (e)
-		{
+		{  
 			console.error(e)
 		}
 	}
@@ -47,32 +54,39 @@ export function HomePage ({tokenForm, setToken} : any)
 		{
 			console.log("je send un truc")
 			console.log(tokenForm.code)
-			await SendTokenRequest(tokenForm)
+			 SendTokenRequest(tokenForm)
 			.then(response => 
 			{
 				console.log("CA SEND")
 				// alt.emit('notify:sendMessage', {iconType: 0, title: 'notification', message: 'this is a notification send from the client', color: 'F88F01', width: 244, duration: 3000})
 				console.log(response.data)
-				if (response.data != null)
-				{
-					console.log(`voila la data de la reponse ${response.data.newtoken}`)
+				// if (response.data != null)
+				// {
+					console.log(`voila la data de la reponse ${response.data}`)
 					localStorage.setItem('Token', response.data.newtoken);
+					 localStorage.setItem('name', response.data.name);
 					const date : any = localStorage.getItem('Token')
 
-					console.log("tema le Token")
+					console.log("----------------------------------------------------------------------------------------------")
 					console.log(date)
 					console.log(response.data)
-
+					console.log("BITE ?")
+					onLogin()
+					
 					let reg : boolean = response.data.registered
 					if (reg === true)
 					{
-						setReg(true)	
+						console.log("je suis deja inscrit")
+						setReg(true)
 						//register --> profil user
 					}
 					else
+					{
+						console.log("je suis pas inscrit")
 						setMybool(true)
 						//nope so first connect
-				}
+					}
+// }
 			})
 			.catch(error => 
 			{
@@ -85,33 +99,28 @@ export function HomePage ({tokenForm, setToken} : any)
 	}
 
 	async function sendToken()
-	{
-		 handleToken()
-	    const date : string | null = localStorage.getItem('Token')
-		console.log("tema le Token1")
-		console.log(date)
-
+	{ 
+		handleToken()
 	}
 	
 	const handleUrlSearchParams = async() => 
 	{
-        console.log("wesh les params changent")
         const urlSearchParams = new URLSearchParams(window.location.search);
         let codes : string | null = urlSearchParams.get('code')
         let second_states : string | null = urlSearchParams.get('state')
+		// const testtoken : any = localStorage.getItem('Token') 
         if (codes != null)
 		{
 			setToken({state: second_states, code: codes})
-        	console.log("wesh le token")
     		console.log(tokenForm)
     		sendToken();
 		}
+
     }
 
 
     useEffect(() => 
     {
-        console.log("wesh le useeffect")
         handleUrlSearchParams(); 
     }, [tokenForm.code]);
 	
@@ -119,8 +128,9 @@ export function HomePage ({tokenForm, setToken} : any)
 	{
 		if (Mybool !== false)
 		{
-			setMybool(false)
+			onLogin()
 			navigate('/change')
+			setMybool(false)
 		}
 	}, [Mybool])
 	
@@ -129,11 +139,10 @@ export function HomePage ({tokenForm, setToken} : any)
 		if (Registered !== false)
 		{
 			setReg(false)
-			// socketManager.initializeChatSocket(VraimentIlSaoule().headers.Authorization)
+			socketManager.initializeChatSocket(VraimentIlSaoule().headers.Authorization)
 			socketManager.initializeFriendRequestSocket(VraimentIlSaoule().headers.Authorization)
-			// socketManager.initializePogSocket(VraimentIlSaoule().headers.Authorization)
-			console.log(socketManager.getChatSocket())
-			console.log("c bon frere j ai cree ta merde")
+		
+			onLogin()
 			navigate('/affUser')
 		}		
 	}, [Registered])
@@ -145,33 +154,7 @@ export function HomePage ({tokenForm, setToken} : any)
 			  <Button onClick={onClick} >login</Button>
 			</div>
 		  );
-
-		// <div >
-		// 		<h1 className="h1t">Ft_trancendence <br/>
-		// 		</h1>
-		// 			<Button onClick={onClick} >login</Button>
-		
-		
-		// </div>
 	}
-	export {socketManager};
+export {socketManager};
 
-
-
-// 	const sendptn = (() =>{
-// 	const urlSearchParams = new URLSearchParams(window.location.search);
-// 	let codes : string | null = urlSearchParams.get('code')
-// 	let second_states : string | null = urlSearchParams.get('state')
-// 	        //  token.code = codes
-//         //  token.second_state = second_states
-//     //setToken = [{state : second_states ,code: codes}]
-// 	console.log(token.code)
-// 	})
-//   //  window.location.replace("/auth/register")
-//   useEffect(() => 
-//   {
-// 	  console.log("wesh le useeffect")
-// 	  console.log(token.code)
-	  
-// 		sendptn()
-// 	}, [window.location.search]);
+export default HomePage;

@@ -1,8 +1,8 @@
 import React from "react";
 import {useState, useEffect} from 'react'
 import { RequestChangeLogin } from "../Api/ChangeLogRequest";
-
-
+import { TopBar } from "./TopBar";
+import { ToastContainer, toast } from 'react-toastify';
 
 export function ChangeLogin()
 {
@@ -24,30 +24,52 @@ export function ChangeLogin()
         .then(response => 
         {
             setOk(true)
-            console.log("JE SEND UN LOGIN")   
-            console.log(response.data)
+            console.log("JE SEND UN LOGIN")
+			localStorage.setItem('name', response.data.name);
+
+            console.log(response.data) 
+            
         })
-        .catch(error =>
+        .catch(err =>
         {
+            toast.error(err.response.data.message, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 2000,
+                progressClassName: "my-progress-bar"
+            })
+
+            if(err.response.data.message == "Invalid user" || err.message.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+            {
+              console.log("coucou ?")
+              window.location.assign('/')
+            }
+            if ( err.message === "User not registered")// ==> redirection vers la page de register
+            {
+              console.log("ERROR")
+              console.log(err)
+              window.location.assign('/Change')
+           }
+           // if(err.message === "Invalid 2FA token") erreur de 2FA ==> redirection vers la page de 2FA
             console.log("ERROR AVEC  UN LOGIN")
-            console.log(error.message)
+            console.log(err.response.data.message[0])
         })
         setwait({name:''})
     }
-    
+
     const Change = ((event : any) =>
     {
         setwait({name : event.target.value})
     })
+
     useEffect(() =>
     {
-        if (Ok === true )
-            window.location.assign('/affUser') ///change to profile page
+        // if (Ok === true )
+        //     window.location.assign('/affUser') ///change to profile page
     }, [Ok])
  
     return(
-        <div style={{ height: "100vh"}}>
-
+        <div>
+        <TopBar/>
         <form action="submit" onSubmit={replaceLog}>
         <input 
         
@@ -56,8 +78,8 @@ export function ChangeLogin()
         placeholder='add log'
         onChange={Change}
         />
-        <button>met moi un login frr</button>
-        </form>
+        <button>New Login</button>
+        </form><ToastContainer />
         </div>
        
 

@@ -12,8 +12,7 @@ export class Channel
 	@Column()
 	name: string;
 
-	@ManyToOne(() => User, (user) => user.id)
-	//@JoinColumn()
+	@ManyToOne(() => User, (user) => user.id, {eager: true})
 	owner: User;
 
 	@Column()
@@ -29,7 +28,7 @@ export class Admins
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@OneToOne(() => Channel)
+	@OneToOne(() => Channel, {eager: true})
 	@JoinColumn()
 	channel: Channel
 
@@ -53,7 +52,7 @@ export class Bans
 	user: User;
 
 	@Column()
-	end: number;
+	end: string;
 
 	@Column()
 	reason: string;
@@ -74,7 +73,7 @@ export class Mutes
 	user: User;
 
 	@Column()
-	end: number;
+	end: string;
 
 	@Column()
 	reason: string;
@@ -86,7 +85,7 @@ export class JoinChannel
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@ManyToOne(() => Channel, (channel) => channel.id, { onDelete: 'CASCADE' })
+	@ManyToOne(() => Channel, (channel) => channel.id, { onDelete: 'CASCADE', eager: true })
 	@JoinColumn()
 	channel: Channel
 
@@ -107,4 +106,37 @@ export class InviteList
 	@OneToOne(() => User)
 	@JoinColumn()
 	user: User;
+}
+
+@Entity()
+export class Message
+{
+	@PrimaryGeneratedColumn()
+	id: number;
+
+	@ManyToOne(() => Channel, (channel) => channel.id, { onDelete: 'CASCADE' })
+	@JoinColumn()
+	channel: Channel
+
+	@ManyToOne(() => User, (user) => user.id, {eager: true})
+	sender: User;
+
+	@Column()
+	message: string;
+}
+
+@Entity()
+export class Private
+{
+	@PrimaryGeneratedColumn()
+	id: number;
+
+	@ManyToOne(() => User, (user) => user.id, {eager: true})
+	user1: User;
+
+	@ManyToOne(() => User, (user) => user.id, {eager: true})
+	user2: User;
+
+	@Column()
+	message: string;
 }

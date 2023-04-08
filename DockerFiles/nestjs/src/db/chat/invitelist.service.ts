@@ -20,7 +20,6 @@ export class InviteListService
 
 	async findOneByInvite(channel: Channel, user: User): Promise<InviteList | null>
 	{
-
 		let ret = await this.inviteListRepository
 			.find
 			({

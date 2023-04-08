@@ -5,12 +5,14 @@ import { AuthService } from './auth.service';
 import { AuthStrategy } from './auth.strategy';
 
 import { UserModule } from '../db/user/user.module';
+import { ChatModule } from '../db/chat/chat.module';
+import { RelationModule } from '../db/relation/relation.module';
 
 //import { HttpsRedirectMiddleware } from './auth.middleware';
 
 @Module
 ({
-	imports: [UserModule],
+	imports: [UserModule, ChatModule, RelationModule],
 	controllers: [AuthController],
 	providers: [AuthService, AuthStrategy],
 })

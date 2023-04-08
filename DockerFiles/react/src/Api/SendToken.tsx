@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { CookiesProvider } from "react-cookie";
 import { urls } from "../global";
 import { VraimentIlSaoule } from '../aurelcassecouilles/VraimentIlEstCasseCouille';
 

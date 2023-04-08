@@ -7,6 +7,7 @@ interface Message {
 
 interface ChatProps {
   messages: Message[];
+  
 }
 
 export const ChatList = ({ messages }: ChatProps) => {

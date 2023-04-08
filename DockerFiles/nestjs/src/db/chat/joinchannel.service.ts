@@ -55,9 +55,13 @@ export class JoinChannelService
 				.find
 				({
 					where:
-					[
-						{user: user}
-					]
+					{
+						user: user,
+					},
+					order:
+					{
+						id: "DESC",
+					},
 				});
 		if (ret[0] === undefined)
 			return (null);

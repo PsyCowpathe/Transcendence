@@ -1,5 +1,7 @@
 FROM debian:buster
 
+
+
 RUN apt-get upgrade -y \
 && apt-get update -y \
 && apt-get install -y vim \
@@ -31,7 +33,9 @@ RUN rm -rf ~/backend/src \
 #&& cd ~/backend/secret \
 #&& openssl req -x509 -nodes -days 365 -subj "/C=FR/ST=France/L=Lyon/O=42/OU=42/CN=agirona" -newkey rsa:4096 -keyout ./cert.key -out ./cert.crt
 
-RUN mkdir ~/backend/src/
+RUN mkdir ~/backend/src/ \
+&& mkdir ~/backend/avatars/ \
+&& mkdir ~/backend/QRCODE/
 
 COPY ./src/* /root/backend/src/
 
@@ -40,6 +44,8 @@ COPY ./tools/init.sh ./
 COPY ./config/tsconfig.build.json /root/backend/
 
 COPY ./config/vimrc.local /etc/vim/
+
+COPY ./config/default.png /root/backend/avatars
 
 RUN chmod +x init.sh
 
@@ -55,7 +61,15 @@ RUN cd \
 && yarn add @types/bcrypt \
 && yarn add @nestjs/websockets @nestjs/platform-socket.io \
 && yarn add class-validator \
-&& yarn add class-transformer
+&& yarn add class-transformer \
+&& yarn add @types/multer \
+&& yarn add otplib \
+&& yarn add qrcode \
+&& yarn add @types/qrcode \
+&& yarn add randomstring \
+&& yarn add express-session \
+&& yarn add @types/express-session
+
 
 EXPOSE 3630 3631 3632
 

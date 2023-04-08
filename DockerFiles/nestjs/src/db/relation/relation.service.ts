@@ -42,7 +42,6 @@ export class RelationService
 			});
 		if (ret[0] === undefined)
 			return ("neutral");
-		//console.log(ret)
 		if (ret[0].type === -1 && ret[1].type === -1)
 			return ("enemy");
 		else if (ret[0].type === -1)
@@ -92,6 +91,36 @@ export class RelationService
 		return (ret);
 	}
 
+	async getAnnoyingUser(annoyedMan: User) : Promise<Relation[] | null>
+	{
+		let ret = await this.relationRepository
+			.find
+			({
+				where:
+				[
+					{type: -1, user1: annoyedMan}
+				]
+			});
+		if (ret[0] === undefined)
+			return (null);
+		return (ret);
+	}
+
+	async getFriendUser(user: User) : Promise<Relation[] | null>
+	{
+		let ret = await this.relationRepository
+			.find
+			({
+				where:
+				[
+					{type: 2, user1: user}
+				]
+			});
+		if (ret[0] === undefined)
+			return (null);
+		return (ret);
+	}
+
 	async doesRelationExist(id1: User, id2: User) : Promise<boolean>
 	{
 		let ret = await this.relationRepository
@@ -125,7 +154,6 @@ export class RelationService
 			.execute();
 		if (ret.affected === 0)
 		{
-
 			let newRelation1: Relation = new Relation();
 			let newRelation2: Relation = new Relation();
 
