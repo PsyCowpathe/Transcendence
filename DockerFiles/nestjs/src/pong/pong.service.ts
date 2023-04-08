@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common'
-import { Cat } from './interfaces/cat.interface'
 
 @Injectable()
 export class PongService
 {
-	private readonly pong: Pong[] = [];
+/*	private readonly pong: Pong[] = [];
 
 	create(pong: Pong)
 	{
@@ -14,5 +13,5 @@ export class PongService
 	findAll(): Pong
 	{
 		return (this.pong);
-	}
+	}*/
 }

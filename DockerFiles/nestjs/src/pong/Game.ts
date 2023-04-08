@@ -7,15 +7,13 @@ import Ball from "./Ball";
 import Paddle from "./Paddle";
 
 
-export default function PongGame (p1_name: string, p2_name: string)
+export default function Game (p1: Player, p2: Player)
 {
-	let deltaTime: number = 0;
+/*	let deltaTime: number = 0;
 	let prevTime: number = 0;
 	let ball = Ball();
 	let p1_paddle = Paddle(3);
 	let p2_paddle = Paddle(96);
-	let p1 = Player(p1_name);
-	let p1 = Player(p2_name);
 	let GOAL:boolean = false;
 
 	ball.reset();
@@ -99,7 +97,9 @@ export default function PongGame (p1_name: string, p2_name: string)
 		return ({
 				ballpos: ball.pos,
 				p1_paddlepos: p1_paddle.pos,
-				p2_paddlepos: p2_paddle.pos
+				p2_paddlepos: p2_paddle.pos,
+				p1.score,
+				p2.score;
 			});
-	}
+	}*/
 }

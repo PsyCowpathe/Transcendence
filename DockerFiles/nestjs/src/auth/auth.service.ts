@@ -71,6 +71,7 @@ export class AuthService
 		{
 			headers:
 			{
+		
 				authorization: `Bearer ${originalToken}`,
 			}
 		}
@@ -80,7 +81,7 @@ export class AuthService
 			console.log("Erreur 4");
 			return (error);
 		});
-		let user = await this.userService.findOneById(response.data.id);
+		let user = await this.userService.findOneByUid(response.data.id);
 		if (user === null)
 		{
 			let newUser : User = new User(); 

@@ -17,12 +17,8 @@ import { ChatModule } from './db/chat/chat.module';
 
 import { WsChatModule } from './websocket/chat/wschat.module';
 
-<<<<<<< HEAD
-import { PongModule } from './pong/pong.module;
+import { PongModule } from './pong/pong.module';
 
-
-=======
->>>>>>> origin/home
 @Module
 ({
 	imports:
@@ -36,3 +32,5 @@ export class AppModule
 {
 
 }
+
+
