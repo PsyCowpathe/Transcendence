@@ -101,7 +101,8 @@ export class AuthService
 		else 
 		{
 			await this.userService.updateToken(hashedToken, user);
-			data = this.createProfile(true, user);
+			let updatedUser = await this.userService.findOneByUid(response.data.id);
+			data = this.createProfile(true, updatedUser);
 			console.log('User already exist, updating token in db !');
 		}
 		return (data);
@@ -174,6 +175,7 @@ export class AuthService
 			return (false);
 		return (true);
 	}
+
 
 	async changeAvatar(token: string | undefined, file: Express.Multer.File) : Promise<number>
 	{

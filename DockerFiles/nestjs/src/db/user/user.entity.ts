@@ -34,12 +34,12 @@ export class User
 	@Column()
 	Status: string
 	
-	@Column()
+	@Column({ nullable: true })
 	Match: number
 
-	@Column()
+	@Column({ nullable: true })
 	Victory: number
 
-	@Column()
+	@Column({ nullable: true })
 	Defeat: number
 }
