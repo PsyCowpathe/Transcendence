@@ -312,4 +312,52 @@ export class AuthService
 		}
 		return (data);
 	}
+
+	async getFriends(token: string | undefined) : Promise <number | String[]>
+	{
+		const askMan = await this.userService.findOneByToken(token);
+		if (askMan === null)
+			return (-1);
+		let friendList = await this.relationService.getFriendUser(askMan);
+		let i = 0;
+		let data = [];
+		while (friendList && friendList[i])
+		{
+			data.push(friendList[i].user2.name);
+			i++;
+		}
+		return (data);
+	}
+
+	async getFriendRequest(token: string | undefined) : Promise <number | String[]>
+	{
+		const askMan = await this.userService.findOneByToken(token);
+		if (askMan === null)
+			return (-1);
+		let requestList = await this.relationService.getFriendRequest(askMan);
+		let i = 0;
+		let data = [];
+		while (requestList && requestList[i])
+		{
+			data.push(requestList[i].user1.name);
+			i++;
+		}
+		return (data);
+	}
+
+	async getBlocked(token: string | undefined) : Promise <number | String[]>
+	{
+		const askMan = await this.userService.findOneByToken(token);
+		if (askMan === null)
+			return (-1);
+		let blockedList = await this.relationService.getAnnoyingUser(askMan);
+		let i = 0;
+		let data = [];
+		while (blockedList && blockedList[i])
+		{
+			data.push(blockedList[i].user2.name);
+			i++;
+		}
+		return (data);
+	}
 }

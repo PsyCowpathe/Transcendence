@@ -222,4 +222,37 @@ export class AuthController
 			return (sendError(res, -48, errorMessages.INVALIDUSER));
 		return (sendSuccess(res, 16, ret));
 	}
+
+	@Get('getfriends')
+	@UseGuards(AuthGuard)
+	async getFriends(@Req() req: Request, @Res() res: Response)
+	{
+		console.log("get friend list");
+		let ret = await this.authService.getFriends(req.headers.authorization);
+		if (ret === -1)
+			return (sendError(res, -48, errorMessages.INVALIDUSER));
+		return (sendSuccess(res, 16, ret));
+	}
+
+	@Get('getfriendrequest')
+	@UseGuards(AuthGuard)
+	async getFriendRequest(@Req() req: Request, @Res() res: Response)
+	{
+		console.log("get friend request list");
+		let ret = await this.authService.getFriendRequest(req.headers.authorization);
+		if (ret === -1)
+			return (sendError(res, -48, errorMessages.INVALIDUSER));
+		return (sendSuccess(res, 16, ret));
+	}
+
+	@Get('getblocked')
+	@UseGuards(AuthGuard)
+	async getBlocked(@Req() req: Request, @Res() res: Response)
+	{
+		console.log("get blocked list");
+		let ret = await this.authService.getBlocked(req.headers.authorization);
+		if (ret === -1)
+			return (sendError(res, -48, errorMessages.INVALIDUSER));
+		return (sendSuccess(res, 16, ret));
+	}
 }
