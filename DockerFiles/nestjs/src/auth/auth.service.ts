@@ -250,20 +250,22 @@ export class AuthService
 		const messageList = await this.messageService.findOneByChannel(channel);
 		if (messageList === null)
 			return (null);
-		console.log("meesage =");
-		console.log(messageList);
+		//console.log("meesage =");
+		//console.log(messageList);
 		const annoyingList = await this.relationService.getAnnoyingUser(user);
 		let data = [];
 		let i = 0;
+		console.log("asker = ");
+		console.log(user.name);
 		while (messageList[i])
 		{
 			let	j = 0;
 			while (annoyingList && annoyingList[j] && annoyingList[j].user2.name !== messageList[i].sender.name)
 				j++;
-			if (!annoyingList || (annoyingList[j].user2.name !== messageList[i].sender.name))
-				data.push({ username: messageList[i].sender.name, message: messageList[i].message });
-			else
+			if (messageList[i].sender.name !== user.name && annoyingList && annoyingList[j])
 				data.push({ username: messageList[i].sender.name, message: "Blocked message" });
+			else
+				data.push({ username: messageList[i].sender.name, message: messageList[i].message });
 			i++;
 		}
 		data.reverse();
