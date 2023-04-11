@@ -1,0 +1,154 @@
+.chat-app {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .chat-app__sidebar {
+    width: 20%;
+    background-color: #f2f2f2;
+    height: 100%;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  .chat-app__main {
+    width: 60%;
+    background-color: #fff;
+    height: 100%;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  .channel-list {
+    margin-bottom: 20px;
+  }
+  
+  .channel-list h2 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .channel-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .channel-list li {
+    cursor: pointer;
+    margin-bottom: 5px;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .channel-list li.active {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
+  .add-channel-button, .other {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .add-channel-button:hover, .other:hover {
+    background-color: #0069d9;
+  }
+  
+  label {
+    display: block;
+    margin-top: 10px;
+  }
+  
+  .friend-app__sidebar {
+    width: 20%;
+    background-color: #f2f2f2;
+    height: 100%;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  .friend-app__sidebar h1 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .friend-app__sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .friend-app__sidebar li {
+    cursor: pointer;
+    margin-bottom: 5px;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .friend-app__sidebar li.active {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
+  .message-list {
+    margin-top: 20px;
+  }
+  
+  .message-list .chat-list {
+    overflow-y: auto;
+    max-height: calc(100vh - 300px);
+  }
+  
+  .message-item {
+    display: flex;
+    margin-bottom: 10px;
+  }
+  
+  .message-item .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #007bff;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    margin-right: 10px;
+  }
+  
+  .message-item.sent .avatar {
+    margin-right: 0;
+    margin-left: 10px;
+  }
+  
+  .message-item .message-content {
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px 0 5px 5px;
+    padding: 10px;
+  }
+  
+  .message-item.sent .message-content {
+    background-color: #e5e5e5;
+    color: #333;
+    border-radius: 0 5px 5px 5px;
+  }
+  
+  .channel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  padding: 10px;
+  background-color: #f2f2f2;
+  border-radius: 5px 5px 0 0;
+}
