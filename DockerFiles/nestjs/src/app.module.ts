@@ -7,8 +7,6 @@ import { UserModule } from './db/user/user.module';
 
 import { AuthModule } from './auth/auth.module';
 
-import { HomeModule } from './home/home.module';
-
 import { RelationModule } from './db/relation/relation.module'; 
 
 import { WsRelationModule } from './websocket/relation/wsrelation.module'; 
@@ -22,7 +20,7 @@ import { WsChatModule } from './websocket/chat/wschat.module';
 	imports:
 	[
 		DbModule, UserModule, RelationModule, AuthModule,
-		HomeModule, WsRelationModule, ChatModule, WsChatModule
+		WsRelationModule, ChatModule, WsChatModule
 	],
 })
 export class AppModule

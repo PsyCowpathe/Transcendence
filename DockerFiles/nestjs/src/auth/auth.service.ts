@@ -80,7 +80,7 @@ export class AuthService
 			console.log("Erreur 4");
 			return (error);
 		});
-		let user = await this.userService.findOneById(response.data.id);
+		let user = await this.userService.findOneByUid(response.data.id);
 		if (user === null)
 		{
 			let newUser : User = new User(); 
@@ -101,7 +101,8 @@ export class AuthService
 		else 
 		{
 			await this.userService.updateToken(hashedToken, user);
-			data = this.createProfile(true, user);
+			let updatedUser = await this.userService.findOneByUid(response.data.id);
+			data = this.createProfile(true, updatedUser);
 			console.log('User already exist, updating token in db !');
 		}
 		return (data);
@@ -174,6 +175,7 @@ export class AuthService
 			return (false);
 		return (true);
 	}
+
 
 	async changeAvatar(token: string | undefined, file: Express.Multer.File) : Promise<number>
 	{
@@ -248,20 +250,22 @@ export class AuthService
 		const messageList = await this.messageService.findOneByChannel(channel);
 		if (messageList === null)
 			return (null);
-		console.log("meesage =");
-		console.log(messageList);
+		//console.log("meesage =");
+		//console.log(messageList);
 		const annoyingList = await this.relationService.getAnnoyingUser(user);
 		let data = [];
 		let i = 0;
+		console.log("asker = ");
+		console.log(user.name);
 		while (messageList[i])
 		{
 			let	j = 0;
 			while (annoyingList && annoyingList[j] && annoyingList[j].user2.name !== messageList[i].sender.name)
 				j++;
-			if (!annoyingList || (annoyingList[j].user2.name !== messageList[i].sender.name))
-				data.push({ username: messageList[i].sender.name, message: messageList[i].message });
-			else
+			if (messageList[i].sender.name !== user.name && annoyingList && annoyingList[j])
 				data.push({ username: messageList[i].sender.name, message: "Blocked message" });
+			else
+				data.push({ username: messageList[i].sender.name, message: messageList[i].message });
 			i++;
 		}
 		data.reverse();
@@ -304,6 +308,54 @@ export class AuthService
 		while (channelList && channelList[i])
 		{
 			data.push(channelList[i].channel.name);
+			i++;
+		}
+		return (data);
+	}
+
+	async getFriends(token: string | undefined) : Promise <number | String[]>
+	{
+		const askMan = await this.userService.findOneByToken(token);
+		if (askMan === null)
+			return (-1);
+		let friendList = await this.relationService.getFriendUser(askMan);
+		let i = 0;
+		let data = [];
+		while (friendList && friendList[i])
+		{
+			data.push(friendList[i].user2.name);
+			i++;
+		}
+		return (data);
+	}
+
+	async getFriendRequest(token: string | undefined) : Promise <number | String[]>
+	{
+		const askMan = await this.userService.findOneByToken(token);
+		if (askMan === null)
+			return (-1);
+		let requestList = await this.relationService.getFriendRequest(askMan);
+		let i = 0;
+		let data = [];
+		while (requestList && requestList[i])
+		{
+			data.push(requestList[i].user1.name);
+			i++;
+		}
+		return (data);
+	}
+
+	async getBlocked(token: string | undefined) : Promise <number | String[]>
+	{
+		const askMan = await this.userService.findOneByToken(token);
+		if (askMan === null)
+			return (-1);
+		let blockedList = await this.relationService.getAnnoyingUser(askMan);
+		let i = 0;
+		let data = [];
+		while (blockedList && blockedList[i])
+		{
+			data.push(blockedList[i].user2.name);
 			i++;
 		}
 		return (data);

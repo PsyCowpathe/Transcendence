@@ -121,6 +121,21 @@ export class RelationService
 		return (ret);
 	}
 
+	async getFriendRequest(user: User) : Promise<Relation[] | null>
+	{
+		let ret = await this.relationRepository
+			.find
+			({
+				where:
+				[
+					{type: 1, user2: user}
+				]
+			});
+		if (ret[0] === undefined)
+			return (null);
+		return (ret);
+	}
+
 	async doesRelationExist(id1: User, id2: User) : Promise<boolean>
 	{
 		let ret = await this.relationRepository
