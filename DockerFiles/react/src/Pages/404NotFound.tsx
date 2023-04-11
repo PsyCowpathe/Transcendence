@@ -7,7 +7,7 @@ import IMGS from '../imgs/404.gif';
 const NotFound: React.FC = () => {
     const navigate = useNavigate();
     const ComeBackHome = () => {
-        navigate("/changepic");
+        navigate("/affUser");
     };
 
 

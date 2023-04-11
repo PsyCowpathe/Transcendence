@@ -41,7 +41,6 @@
     height: 70vh; /* Hauteur fixe de votre conteneur */
     overflow-x:scroll; /* Ajoute une barre de défilement verticale*/
     scroll-behavior: smooth;
-
   }
   .channel-list li {
     margin-bottom: 10px;
@@ -375,4 +374,10 @@
   height: fit-content;
   
   
+}
+
+.friend-app__sidebar li {
+  margin-bottom: 10px;
+  font-size: 16px;
+  cursor: pointer;
 }

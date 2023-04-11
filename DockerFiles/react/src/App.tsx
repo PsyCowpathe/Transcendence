@@ -15,7 +15,7 @@ import { AskFriend } from "./Pages/AskFrindPage";
 import IconLabelButtons from './PageTest';
 import { TopBar } from './Pages/TopBar';
 // import { Chat } from './chat/ChatComp';
-import { Chat } from './NewChat/CreateChan';
+import { Chat } from './NewChat/Chat';
 import  ProfilePictureUploader  from './Pages/NewProfilPic';
 import NotFound from './Pages/404NotFound';
 import { Set2FA } from './Pages/Set2FA';

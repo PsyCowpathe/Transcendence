@@ -54,7 +54,7 @@ export function AffMyUserPage ({ShowBar} : {ShowBar : boolean})
     })
 
     })
-  }, [])
+  }, [Click])
   
   
   const UserName : any= localStorage.getItem('name')
@@ -100,7 +100,7 @@ export function AffMyUserPage ({ShowBar} : {ShowBar : boolean})
   })
 
 
-    const Notif = () => {
+    const CloseMod = () => {
       console.log("-------------------Q--------------------")
       setClick(!Click)
     
@@ -115,10 +115,10 @@ return (
     <div className="user-info">
       <div className="profile-pic-container">
         <img className="profile-pic" src={Pic} alt="Profile" />
-        <button className="profile-pic-button" onClick={Notif}>
+        <button className="profile-pic-button" onClick={CloseMod}>
           Change your image
         </button>
-        {Click && <PicModal onClose={Notif} />}
+        {Click && <PicModal onClose={CloseMod} />}
       </div>
       <div className="user-details">
         <h1 className="user-name">{UserName}</h1>

@@ -1,7 +1,7 @@
 export enum urls
 {
-SERVER="http://localhost:3630",
-SOCKETFRIENDSHIP="http://localhost:3631",
-SOCKETCHAT="http://localhost:3632",
-SOCKETGAME="http://localhost:3633",
+SERVER="http://10.13.8.1:3630",
+SOCKETFRIENDSHIP="http://10.13.8.1:3631",
+SOCKETCHAT="http://10.13.8.1:3632",
+SOCKETGAME="http://10.13.8.1:3633",
 }

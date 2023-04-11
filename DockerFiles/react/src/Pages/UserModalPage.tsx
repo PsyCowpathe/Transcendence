@@ -48,9 +48,6 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
         progressClassName: "my-progress-bar"
     })
     }
-
-
-
     socket.on("banuser", handleBanUser);
     socket.on("ChatError", handleBanUsererror);
     return () => {
@@ -64,7 +61,7 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
     GetUserInfo(User.name)
     .then((res) =>
     {
-      console.log("coucou")
+      console.log("couxcou")
       console.log(User.name)
         console.log(res)
     })
@@ -114,37 +111,67 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
     const UserName : any= localStorage.getItem('name')
     console.log(UserName)
   
-const handleReasonChange = (e : React.ChangeEvent<HTMLInputElement>) =>
-{
-  setReason(e.target.value)
-}
-const handleTimeChange = (e : React.ChangeEvent<HTMLInputElement>) =>
-{
-  setTimer(parseInt(e.target.value))
-}
+ ////////////////////////////////////////////////////////BAN   
+    
+ const Ban = (e : React.FormEvent<HTMLFormElement>) =>
+ {
+   e.preventDefault()
+   console.log(User)
+   console.log(Channel)
+   socket.emit("banuser", { name: User.name, channelname: Channel, time: timer, reason: reason })
+   setReason("")
+   setTimer(0)
+   setShowBan(!ShowBan)
+   
+  }
+  const onClickTwo = (() =>
+  {
+    setShowBan(!ShowBan)
+  })
 
-const Ban = (e : React.FormEvent<HTMLFormElement>) =>
+
+//////////////////////////////////////////////////////MUTE
+const Mute =  (e : React.FormEvent<HTMLFormElement>) =>
 {
   e.preventDefault()
-  alert("bim t es ban fdp" + UserName)
-  socket.emit("banuser", { name: UserName, channelname: Channel, time: timer, reason: reason })
+  if (Channel !== '')
+    socket.emit("muteuser", { name: User.name, channelname: Channel, time: timer, reason: reason })
+  // else 
+  //   socket.emit("muteuser", { name: User, channelname: Channel, time: timer, reason: reason })
   setReason("")
   setTimer(0)
+  setShowMute(!ShowMute)
+
 }
 
-
-
-const onClickTwo = (() =>
+const [ShowMute, setShowMute] = useState<boolean>(false)
+const onClickTree = (() =>
 {
-  setShowBan(!ShowBan)
+  setShowMute(!ShowMute)
+})
+
+//////////////////////////////////////////////////////KICK
+// -kickuser (nom de l’user a kick, nom du channel, raison)
+const Kick =  (e : React.FormEvent<HTMLFormElement>) =>
+{
+  e.preventDefault()
+  if (Channel !== '')
+    socket.emit("kickuser", { name: User.name, channelname: Channel, reason: reason })
+  // else 
+  //   socket.emit("muteuser", { name: User, channelname: Channel, time: timer, reason: reason })
+  setReason("")
+  setShowKick(!ShowKick)
+
+}
+
+const [ShowKick, setShowKick] = useState<boolean>(false)
+const onClickfour = (() =>
+{
+  setShowKick(!ShowKick)
 })
 
 const navigate = useNavigate();
-const onClick = (() =>
-{
-  console.log("pkkkkkkkkkkkkkkkkkkkkkkkk")
-   navigate('/change');
-})
+
 
 
 return(
@@ -155,7 +182,7 @@ return(
   <p style={{ fontSize: "1.2em", marginBottom: "1em",  }}>Age | Ville</p>
   <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
     <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"><button style={{ fontSize: "1.2em", padding: "0.5em 2em", borderRadius: "5px", backgroundColor: "#4285F4", color: "#FFFFFF", border: "none", boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)", cursor: "pointer" }}>Visiter mon site web</button></a>
-  <button onClick={onClickTwo}>Ban</button>
+  {!ShowBan && <button className="add-message-button" onClick={onClickTwo}>Ban</button>}
       {ShowBan && 
       <div>
 
@@ -166,6 +193,26 @@ return(
       </form>
     </div>
       } 
+  {!ShowMute && <button className="add-message-button" onClick={onClickTree}>Mute</button>}
+     {ShowMute && 
+      <div>
+      <form  onSubmit={Mute}>
+      <input type="text" placeholder="reason" value={reason} onChange={(e) => {setReason(e.target.value)}} />
+      <input type="texte" placeholder="0" value={timer} onChange={(e) => {setTimer(parseInt(e.target.value))}} />
+      <button className="add-message-button">Mute</button>
+      </form>
+    </div>
+      } 
+      {!ShowKick && <button className="add-message-button" onClick={onClickfour}>Kick</button>}
+     {ShowKick && 
+      <div>
+      <form  onSubmit={Kick}>
+      <input type="text" placeholder="reason" value={reason} onChange={(e) => {setReason(e.target.value)}} />
+      <button className="add-message-button">Kick</button>
+      </form>
+    </div>
+      } 
+
 
   </div><ToastContainer/>
 </div>

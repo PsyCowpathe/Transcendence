@@ -34,7 +34,7 @@ useEffect(() => {
         <div className="modal-overlay">
           <div className="modal">
             <div className="modal-header">
-              <h2>New Pic</h2>
+              <h2>New Login</h2>
               <button onClick={handleCloseModal}>Close</button>
             </div>
             <div className="modal-body">
