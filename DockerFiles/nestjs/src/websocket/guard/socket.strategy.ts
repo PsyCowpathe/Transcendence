@@ -12,8 +12,6 @@ export class SocketStrategy
 
 	async checkRequest(tokenBearer: string, twoFAToken: string) : Promise<number>
 	{
-		console.log("2fa = ");
-		console.log(twoFAToken);
 		const user = await this.userService.findOneByToken(tokenBearer);
 		if (user === null)
 			return (-1);

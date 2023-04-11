@@ -14,7 +14,6 @@ export class SocketGuard implements CanActivate
 
 	async canActivate(context: any) : Promise<boolean>
 	{
-		console.log('Socket Guard');
 		//console.log(context.args[0].handshake);
 		//console.log(context.args[0].handshake.auth.token);
 		const tokenBearer = context.args[0].handshake.auth.token;

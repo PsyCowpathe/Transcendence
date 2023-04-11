@@ -37,7 +37,7 @@ async function bootstrap()
 	({
 		allowedHeaders: ['content-type', 'authorization', 'TwoFAToken'],
 		credentials : true,
-		origin: [urls.ORIGIN, "http://10.13.4.3:3000"],
+		origin: [urls.ORIGIN, "http://10.13.8.3:3000"],
 		methods: 'GET, POST',
 
 		//preflightContinue: false,
@@ -47,6 +47,5 @@ async function bootstrap()
 	app.useGlobalPipes(new ValidationPipe());
 
   	await app.listen(3630);
-
 }
 bootstrap();

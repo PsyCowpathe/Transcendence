@@ -29,7 +29,6 @@ export class AuthController
 	async Redirect(@Req() req: Request)
 	{
 		console.log("Redirection");
-		//console.log("redir req = " + req.headers.authorization);
 		let ret = await this.authService.isTokenValid(req.headers.authorization);
 		if (ret === true)
 		{
@@ -51,40 +50,33 @@ export class AuthController
 	async Register(@Body() tokenForm: AuthDto, @Res() res: Response)
 	{
 		console.log('Register received');
-		//console.log("state = " + tokenForm.state);
-		//console.log("code = " + tokenForm.code);
 		if (tokenForm.state === undefined || tokenForm.code === undefined)
 		{
 			console.log('ERROR 1');
-			return (sendError(res, -42, errorMessages.MISSING));
+			return (sendError(res, 400, errorMessages.MISSING));
 		}
 		else if (tokenForm.state !== random)
 		{
 			console.log('ERROR 2');
-			return (sendError(res, -43, errorMessages.DIFFERENT));
+			return (sendError(res, 400, errorMessages.DIFFERENT));
 		}
 		else
 		{
-			try
-			{
-				const apiToken = await this.authService.getUserToken(tokenForm);
-				if (apiToken === undefined)
-					return (sendError(res, -45, errorMessages.CODEINVALID));
-				console.log('User token obtained !');
-				await new Promise(r => setTimeout(r, 500));
-				const hashedToken = await this.authService.hashMyToken(apiToken);
-				const data = await this.authService.createUser(apiToken, hashedToken);
-				console.log('Sending token to client !');
-				//console.log(hashedToken);
-				console.log(data);
-				return (sendSuccess(res, 10, data));
-			}
-			catch (error)
-			{
-				console.log("Erreur 3");
-				console.log(error);
-				return (sendError(res, -44, errorMessages.INVALIDARG));
-			}
+			const apiToken = await this.authService.getUserToken(tokenForm);
+			if (apiToken === undefined)
+				return (sendError(res, 400, errorMessages.INVALIDCODE));
+			console.log('User token obtained !');
+			await new Promise(r => setTimeout(r, 500));
+			const hashedToken = await this.authService.hashMyToken(apiToken);
+			if (hashedToken === undefined)
+				return (sendError(res, 500, errorMessages.HASHFAIL));
+			const data = await this.authService.createUser(apiToken, hashedToken);
+			if (data === -1)
+				return (sendError(res, 500, errorMessages.APIFAIL));
+			if (data === null)
+				return (sendError(res, 500, errorMessages.CREATEFAIL));
+			console.log('Sending token to client !');
+			return (sendSuccess(res, 201, data));
 		}
 	}
 
@@ -93,18 +85,12 @@ export class AuthController
 	async firstConnect(@Body() registerForm: ChangeLoginDto, @Res() res: Response, @Req() req: Request)
 	{
 		console.log("changement de login = " + registerForm.name);
-		if (registerForm.name === undefined)
-		{
-			console.log('ERROR 11');
-			return (sendError(res, -44, errorMessages.NONAME));
-		}
-		console.log(req.headers.authorization);
 		let ret = await this.authService.defineName(registerForm.name, req.headers.authorization);
 		if (ret === -1)
-			return (sendError(res, -45, errorMessages.ALREADYTAKEN));
+			return (sendError(res, 400, errorMessages.ALREADYTAKEN));
 		let user = await this.userService.findOneByName(registerForm.name);
 		let data = await this.authService.createProfile(true, user);
-		return (sendSuccess(res, 11, data));
+		return (sendSuccess(res, 201, data));
 	}
 
 	@Post('avatar')
@@ -115,15 +101,15 @@ export class AuthController
 		console.log("changement d'avatar");
 		console.log(file);
 		if (file === undefined)
-			return (sendError(res, -46, errorMessages.INVALIDIMAGE));
+			return (sendError(res, 400, errorMessages.INVALIDIMAGE));
 		let ret = await this.authService.changeAvatar(req.headers.authorization, file);
-		console.log("avatar ret =")
-		console.log(ret);
 		if (ret === -1)
-			return (sendError(res, -46, errorMessages.INVALIDIMAGE));
+			return (sendError(res, 400, errorMessages.INVALIDIMAGE));
 		if (ret === -2)
-			return (sendError(res, -47, errorMessages.CANTSAVE));
-		return (sendSuccess(res, 12, "You successfully changed your avatar !"));
+			return (sendError(res, 500, errorMessages.CANTSAVE));
+		if (ret === -3)
+			return (sendError(res, 500, errorMessages.DBFAIL));
+		return (sendSuccess(res, 200, "You successfully changed your avatar !"));
 	}
 
 	@Get('getuserinfos/:name')
@@ -133,9 +119,9 @@ export class AuthController
 		console.log("demande info for user : " + name);
 		let toFind = await this.userService.findOneByName(name);
 		if (toFind === null)
-			return (sendError(res, -47, errorMessages.CANTSAVE));
+			return (sendError(res, 400, errorMessages.INVALIDNAME));
 		let data = await this.authService.createProfile(true, toFind);
-		return (sendSuccess(res, 13, data));
+		return (sendSuccess(res, 200, data));
 	}
 
 	@Get('avatar')
@@ -144,10 +130,11 @@ export class AuthController
 	{
 		console.log("demande d'avatar");
 		const user = await this.userService.findOneByToken(req.headers.authorization);
+		if (user === null)
+			return (sendError(res, 401, errorMessages.NOTLOGGED));
 		if (user === null || !fs.existsSync("/root/backend/avatars/" + user.uid))
 			return (res.status(200).sendFile("/root/backend/avatars/default.png"));
 		console.log("avatar send");
-		//return (res.status(200).sendFile("/root/backend/QRCODE/78466"));
 		return (res.status(200).sendFile("/root/backend/avatars/" + user.uid));
 	}
 
@@ -157,13 +144,11 @@ export class AuthController
 	{
 		console.log("Try to activate 2FA")
 		let ret = await this.authService.generate2FA(req.headers.authorization);
-		console.log("ret =" + ret)
 		if (ret === -1)
-			return (sendError(res, -48, errorMessages.INVALIDUSER));
+			return (sendError(res, 401, errorMessages.NOTLOGGED));
 		if (ret === -2)
-			return (sendError(res, -47, errorMessages.ALREADYACTIVATE));
-		console.log(ret);
-		return (sendSuccess(res, 14, ret));
+			return (sendError(res, 400, errorMessages.ALREADYACTIVATE));
+		return (sendSuccess(res, 200, ret));
 	}
 
 	@Post('2FAlogin')
@@ -174,12 +159,12 @@ export class AuthController
 		console.log(TwoFAForm);
 		let ret = await this.authService.twoFALogin(req.headers.authorization, TwoFAForm);
 		if (ret === -1)
-			return (sendError(res, -48, errorMessages.INVALIDUSER));
+			return (sendError(res, 401, errorMessages.NOTLOGGED));
 		if (ret === -2)
-			return (sendError(res, -48, errorMessages.INVALIDCODE));
+			return (sendError(res, 400, errorMessages.INVALIDCODE));
 		let user = await this.userService.findOneByToken(req.headers.authorization);
 		let data = await this.authService.createProfile(true, user);
-		return (sendSuccess(res, 15, data));
+		return (sendSuccess(res, 201, data));
 	}
 
 	@Get('resumechannel/:channel')
@@ -190,12 +175,12 @@ export class AuthController
 		console.log(channelName);
 		let ret = await this.authService.resumeChannel(req.headers.authorization, channelName);
 		if (ret === -1)
-			return (sendError(res, -48, errorMessages.INVALIDUSER));
+			return (sendError(res, 401, errorMessages.NOTLOGGED));
 		if (ret === -2)
-			return (sendError(res, -48, errorMessages.CHANNELDONTEXIST));
+			return (sendError(res, 400, errorMessages.CHANNELDONTEXIST));
 		if (ret === -3)
-			return (sendError(res, -48, errorMessages.NOTJOINED));
-		return (sendSuccess(res, 16, ret));
+			return (sendError(res, 401, errorMessages.NOTJOINED));
+		return (sendSuccess(res, 200, ret));
 	}
 
 	@Get('resumeprivate/:user')
@@ -206,10 +191,10 @@ export class AuthController
 		console.log(username);
 		let ret = await this.authService.resumeprivate(req.headers.authorization, username);
 		if (ret === -1)
-			return (sendError(res, -48, errorMessages.INVALIDUSER));
+			return (sendError(res, 401, errorMessages.NOTLOGGED));
 		if (ret === -2)
-			return (sendError(res, -48, errorMessages.INVALIDUSER));
-		return (sendSuccess(res, 16, ret));
+			return (sendError(res, 400, errorMessages.INVALIDNAME));
+		return (sendSuccess(res, 200, ret));
 	}
 
 	@Get('channellist')
@@ -219,8 +204,8 @@ export class AuthController
 		console.log("get channel list");
 		let ret = await this.authService.getChannelList(req.headers.authorization);
 		if (ret === -1)
-			return (sendError(res, -48, errorMessages.INVALIDUSER));
-		return (sendSuccess(res, 16, ret));
+			return (sendError(res, 401, errorMessages.NOTLOGGED));
+		return (sendSuccess(res, 200, ret));
 	}
 
 	@Get('getfriends')
@@ -230,8 +215,8 @@ export class AuthController
 		console.log("get friend list");
 		let ret = await this.authService.getFriends(req.headers.authorization);
 		if (ret === -1)
-			return (sendError(res, -48, errorMessages.INVALIDUSER));
-		return (sendSuccess(res, 16, ret));
+			return (sendError(res, 401, errorMessages.NOTLOGGED));
+		return (sendSuccess(res, 200, ret));
 	}
 
 	@Get('getfriendrequest')
@@ -241,8 +226,8 @@ export class AuthController
 		console.log("get friend request list");
 		let ret = await this.authService.getFriendRequest(req.headers.authorization);
 		if (ret === -1)
-			return (sendError(res, -48, errorMessages.INVALIDUSER));
-		return (sendSuccess(res, 16, ret));
+			return (sendError(res, 401, errorMessages.NOTLOGGED));
+		return (sendSuccess(res, 200, ret));
 	}
 
 	@Get('getblocked')
@@ -252,7 +237,7 @@ export class AuthController
 		console.log("get blocked list");
 		let ret = await this.authService.getBlocked(req.headers.authorization);
 		if (ret === -1)
-			return (sendError(res, -48, errorMessages.INVALIDUSER));
-		return (sendSuccess(res, 16, ret));
+			return (sendError(res, 401, errorMessages.NOTLOGGED));
+		return (sendSuccess(res, 200, ret));
 	}
 }

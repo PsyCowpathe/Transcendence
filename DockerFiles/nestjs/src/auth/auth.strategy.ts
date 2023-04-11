@@ -13,10 +13,6 @@ export class AuthStrategy
 
 	async checkRequest(request : any) : Promise<number>
 	{
-		console.log("token =") 
-		console.log(request.headers.authorization);
-		console.log("2fatoken =") 
-		console.log(request.headers.twofatoken);
 		const user = await this.userService.findOneByToken(request.headers.authorization);
 		if (user === null)
 			return (-1);

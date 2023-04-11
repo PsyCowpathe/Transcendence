@@ -28,7 +28,7 @@ export class Admins
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@OneToOne(() => Channel, {eager: true})
+	@ManyToOne(() => Channel, {eager: true})
 	@JoinColumn()
 	channel: Channel
 
@@ -47,7 +47,7 @@ export class Bans
 	@JoinColumn()
 	channel: Channel
 
-	@OneToOne(() => User)
+	@ManyToOne(() => User)
 	@JoinColumn()
 	user: User;
 
@@ -64,11 +64,11 @@ export class Mutes
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@OneToOne(() => Channel)
+	@ManyToOne(() => Channel)
 	@JoinColumn()
 	channel: Channel
 
-	@OneToOne(() => User)
+	@ManyToOne(() => User)
 	@JoinColumn()
 	user: User;
 
@@ -99,11 +99,11 @@ export class InviteList
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@OneToOne(() => Channel)
+	@ManyToOne(() => Channel)
 	@JoinColumn()
 	channel: Channel
 
-	@OneToOne(() => User)
+	@ManyToOne(() => User)
 	@JoinColumn()
 	user: User;
 }

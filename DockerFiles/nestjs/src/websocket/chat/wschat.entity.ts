@@ -61,6 +61,24 @@ export class sanctionOperationDto
 	reason: string;
 }
 
+export class kickDto
+{
+	@IsString({message: `The user name must be a string !`})
+	@IsAlphanumeric(undefined, {message: 'The user name must be an alphanumeric string !'})
+	@Length(3, 20, {message: 'The user name must contain between 3 and 20 caracters !'})
+	name: string;
+
+	@IsString({message: `The channel name must be a string !`})
+	@IsAlphanumeric(undefined, {message: 'The channel name must be an alphanumeric string !'})
+	@Length(3, 20, {message: 'The channel name must contain between 3 and 20 caracters !'})
+	channelname: string;
+
+	@IsString({message: `The reason must be a string !`})
+	@IsAlphanumeric(undefined, {message: 'The reason must be an alphanumeric string !'})
+	@Length(3, 60, {message: 'The reason must contain between 3 and 60 caracters !'})
+	reason: string;
+}
+
 export class messageDto
 {
 	@IsString({message: `The destination must be a string !`})

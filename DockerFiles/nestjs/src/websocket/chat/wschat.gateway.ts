@@ -8,7 +8,7 @@ import { sendError, sendSuccess } from '../../common/response';
 import { errorMessages } from '../../common/global';
 
 import { WsChatService }  from './wschat.service';
-import { createChannelDto, channelOperationDto, userOperationDto, sanctionOperationDto, messageDto } from './wschat.entity';
+import { createChannelDto, channelOperationDto, userOperationDto, sanctionOperationDto, messageDto, kickDto } from './wschat.entity';
 
 import { WsExceptionFilter } from '../guard/ws.filter'; 
 
@@ -260,7 +260,7 @@ export class WsChatGateway
 			return (client.emit("ChatError", errorMessages.YOUAREIGNORED));
 		if (ret === -4)
 			return (client.emit("ChatError", errorMessages.MESSAGETOIGNORE));
-		client.emit("usermessage", `You successfully send a message to ${messageForm.destination} !`);
+		//client.emit("usermessage", `You successfully send a message to ${messageForm.destination} !`);
 	}
 
 	@UseGuards(SocketGuard)
@@ -292,7 +292,7 @@ export class WsChatGateway
 	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('kickuser')
-	async kickUser(client: Socket, kickForm: sanctionOperationDto)
+	async kickUser(client: Socket, kickForm: kickDto)
 	{
 		console.log("Kick user ");
 		console.log(kickForm.name);

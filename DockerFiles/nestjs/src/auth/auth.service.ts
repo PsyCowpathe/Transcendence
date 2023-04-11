@@ -35,8 +35,7 @@ export class AuthService
 
 	}
 
-
-	async getUserToken(token : AuthDto)
+	async getUserToken(token : AuthDto) : Promise<string | undefined>
 	{
 		console.log("state = ");
 		console.log(token.state);
@@ -54,16 +53,14 @@ export class AuthService
 		const response = await axios.post(urls.TOKEN, user)
 		.catch ((error: any) =>
 		{
-			console.log("Erreur 5");
-			console.log(error);
-			return (error);
+			return (undefined)
 		});
-		if (response.data === undefined)
+		if (response === undefined)
 			return (undefined)
 		return (response.data.access_token);
 	}
 
-	async createUser(originalToken: string, hashedToken: string) : Promise<Profile>
+	async createUser(originalToken: string, hashedToken: string) : Promise<Profile | number>
 	{
 		let data: Profile;
 
@@ -77,9 +74,10 @@ export class AuthService
 		const response = await axios.get(urls.ME, Header)
 		.catch((error: any) =>
 		{
-			console.log("Erreur 4");
-			return (error);
+			return (undefined);
 		});
+		if (response === undefined)
+			return (-1);
 		let user = await this.userService.findOneByUid(response.data.id);
 		if (user === null)
 		{
@@ -95,22 +93,24 @@ export class AuthService
 			newUser.Victory = 0;
 			newUser.Defeat = 0;
 			this.userService.create(newUser);
-			data = this.createProfile(true, newUser);
+			data = await this.createProfile(true, newUser);
 			console.log('User successfully added to the database !');
 		}
 		else 
 		{
 			await this.userService.updateToken(hashedToken, user);
 			let updatedUser = await this.userService.findOneByUid(response.data.id);
-			data = this.createProfile(true, updatedUser);
+			data = await this.createProfile(true, updatedUser);
 			console.log('User already exist, updating token in db !');
 		}
 		return (data);
 	}
 
-	createProfile(secret: boolean, user: any) : Profile
+	createProfile(secret: boolean, user: User | null) : Profile
 	{
-		let data: Profile;
+		let data: any;
+		if (user === null)
+			return (data);
 		if (secret === true)
 		{
 			data =
@@ -159,11 +159,18 @@ export class AuthService
 		return (1);
 	}
 
-	async hashMyToken(originalToken: string) : Promise<string>
+	async hashMyToken(originalToken: string) : Promise<string | undefined>
 	{
-		const salt = await bcrypt.genSalt();
-		const hashedToken = await bcrypt.hash(originalToken, salt);
-		return (hashedToken);
+		try
+		{
+			const salt = await bcrypt.genSalt();
+			const hashedToken = await bcrypt.hash(originalToken, salt);
+			return (hashedToken);
+		}
+		catch (err)
+		{
+			return (undefined);
+		}
 	}
 
 	async isTokenValid(token: string | undefined): Promise<boolean>
@@ -175,7 +182,6 @@ export class AuthService
 			return (false);
 		return (true);
 	}
-
 
 	async changeAvatar(token: string | undefined, file: Express.Multer.File) : Promise<number>
 	{
@@ -189,13 +195,13 @@ export class AuthService
 		else
 		{
 			if (file.buffer[0] !== 0xff || file.buffer[1] !== 0xd8 || file.buffer[2] !== 0xff)
-			return (-3);
+			return (-1);
 		}
 		if (file.size > 8000000)
-			return (-4);
+			return (-1);
 		const user = await this.userService.findOneByToken(token);
 		if (user === null)
-			return (-2);
+			return (-3);
 		fs.writeFile("avatars/" + user.uid, file.buffer,
 			(err) =>
 			{
@@ -205,7 +211,6 @@ export class AuthService
 		console.log("avatar changer avec success");
 		return (1);
 	}
-
 
 	async generate2FA(token: string | undefined) : Promise<number | string>
 	{
@@ -219,7 +224,6 @@ export class AuthService
 		await this.userService.updateTwoFASecret(secret, user);
 		return (url);
 	}
-
 	
 	async twoFALogin(token: string | undefined, code: TwoFADto) : Promise<number>
 	{
@@ -250,13 +254,9 @@ export class AuthService
 		const messageList = await this.messageService.findOneByChannel(channel);
 		if (messageList === null)
 			return (null);
-		//console.log("meesage =");
-		//console.log(messageList);
 		const annoyingList = await this.relationService.getAnnoyingUser(user);
 		let data = [];
 		let i = 0;
-		console.log("asker = ");
-		console.log(user.name);
 		while (messageList[i])
 		{
 			let	j = 0;
