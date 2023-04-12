@@ -26,7 +26,7 @@ export function ChangeLogin()
             setOk(true)
             console.log("JE SEND UN LOGIN")
 			localStorage.setItem('name', response.data.name);
-
+            window.location.assign('/AffUser')
             console.log(response.data) 
             
         })
@@ -56,27 +56,19 @@ export function ChangeLogin()
         setwait({name:''})
     }
 
-    const Change = ((event : any) =>
-    {
-        setwait({name : event.target.value})
-    })
+    // const Change = ((event : any) =>
+    // {
+    //     setwait({name : event.target.value})
+    // })
 
-    useEffect(() =>
-    {
-        // if (Ok === true )
-        //     window.location.assign('/affUser') ///change to profile page
-    }, [Ok])
- 
     return(
         <div>
-        <TopBar/>
         <form action="submit" onSubmit={replaceLog}>
         <input 
-        
         value={wait.name}
         type="text"
         placeholder='add log'
-        onChange={Change}
+        onChange={(e) =>  setwait({name : e.target.value})}
         />
         <button>New Login</button>
         </form><ToastContainer />

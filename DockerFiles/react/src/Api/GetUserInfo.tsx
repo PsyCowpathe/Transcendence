@@ -5,6 +5,6 @@ import { VraimentIlSaoule } from '../aurelcassecouilles/VraimentIlEstCasseCouill
 export async function GetUserInfo(UserName : string)
 {
     const config : any = VraimentIlSaoule()
-    let ret = await axios.get(`${urls.SERVER}/auth/getuserinfos/${UserName}`, config);
+    let ret = await axios.get(`${urls.SERVER}/main/getuserinfos/${UserName}`, config);
     return(ret);
 }

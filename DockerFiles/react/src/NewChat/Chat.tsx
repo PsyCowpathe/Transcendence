@@ -42,6 +42,18 @@ export function Chat() {
   const [Channame, setChanname] = useState<string>('');
   const [ChanMdp, setChanMdp] = useState<string>('');
   const [Chanlist, setChanlist] = useState<Chati[]>([]);
+  
+  
+  socket = socketManager.getChatSocket()
+  
+  if (socket == null) {
+    if (test === false && VraimentIlSaoule().headers.Authorization !== null) {
+      socket = socketManager.initializeChatSocket(VraimentIlSaoule().headers.Authorization)
+      console.log(socket)
+      test = true
+    }
+  }
+  
   function GetChannel() 
   {
     setChanlist([])
@@ -77,21 +89,11 @@ export function Chat() {
       )
     }
 
-  
   useEffect(() => {
   GetChannel()
 
   }, [])
 
-  socket = socketManager.getChatSocket()
-
-  if (socket == null) {
-    if (test === false && VraimentIlSaoule().headers.Authorization !== null) {
-      socket = socketManager.initializeChatSocket(VraimentIlSaoule().headers.Authorization)
-      console.log(socket)
-      test = true
-    }
-  }
 
 
   useEffect(() => {
@@ -103,6 +105,8 @@ export function Chat() {
         progressClassName: "my-progress-bar"
       })
       GetChannel()
+      GetChannelInfo(selectedChannel)
+
       // setResponse("dont change");
     }
     const handleCreateChannels = (response: any) => {
@@ -114,12 +118,13 @@ export function Chat() {
       })
       GetChannel()
       setSelectedChannel('')
-      GetChannelInfo('e')
+      GetChannelInfo(selectedChannel)
       // console.log("coucou jsuis sence rentrer")
       // setResponse("change");
 
     }
-
+      socket.removeListener("createchannel", handleCreateChannel);
+      socket.removeListener("ChatError", handleCreateChannels);
     socket.on("createchannel", handleCreateChannel);
     socket.on("ChatError", handleCreateChannels);
 
@@ -212,6 +217,16 @@ export function Chat() {
   }, [responses])
 
 
+  const [ChanTo, setChanTo] = useState<any>('');
+  const [ChanMdpTo, setChanMdpTo] = useState<any>('');
+
+  const JoinChannelMdp = (e: any) => {
+    e.preventDefault();
+    socket.emit("joinchannel", { channelname: ChanTo, visibility: "private", password: ChanMdpTo })
+    //channel nane + password
+    setChanMdpTo('')
+    setChanTo('')
+  }
   /////////////////////////////////////////////////////////////////////////message manager///////////////////////////////////////////
 
   const [newMessage, setNewMessage] = useState<string>('');
@@ -219,6 +234,7 @@ export function Chat() {
 
   useEffect(() => {
     const handlelistenMsg = (response: any) => {
+      console.log("recieved")
       toast.success("New message on " + response.channel, {
         position: toast.POSITION.TOP_RIGHT,
         autoClose: 2000,
@@ -331,16 +347,6 @@ export function Chat() {
   }
 
   /////////////////////////////////////TEST //////////////////////////////////////////
-  const [ChanTo, setChanTo] = useState<any>('');
-  const [ChanMdpTo, setChanMdpTo] = useState<any>('');
-
-  const JoinChannelMdp = (e: any) => {
-    e.preventDefault();
-    socket.emit("joinchannel", { channelname: ChanTo, visibility: "private", password: ChanMdpTo })
-    //channel nane + password
-    setChanMdpTo('')
-    setChanTo('')
-  }
   /////////////////////////////////////TEST //////////////////////////////////////////
 
 
@@ -374,20 +380,20 @@ export function Chat() {
           setMessages(newMessages);
         }
         })
-        // .catch((err) => {
-        //   if(err.response.data.message == "Invalid user" || err.message.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-        //   {
-        //     console.log("coucou ?")
-        //     window.location.assign('/')
-        //   }
-        //   if ( err.message === "User not registered")// ==> redirection vers la page de register
-        //   {
-        //     console.log("ERROR")
-        //     console.log(err)
-        //     window.location.assign('/Change')
-        //  }
-        //   console.log(err)
-        // })
+        .catch((err) => {
+          if(err.response.data.message == "Invalid user" || err.message.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+          {
+            console.log("coucou ?")
+            window.location.assign('/')
+          }
+          if ( err.message === "User not registered")// ==> redirection vers la page de register
+          {
+            console.log("ERROR")
+            console.log(err)
+            window.location.assign('/Change')
+         }
+          console.log(err)
+        })
     }
   }
   
@@ -439,18 +445,18 @@ export function Chat() {
         })
         .catch((err) => {
           console.log(err)
-        //   if(err == "Invalid user" || err.message.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-        //   {
-        //     console.log("coucou ?")
-        //     window.location.assign('/')
-        //   }
-        //   if ( err.message === "User not registered")// ==> redirection vers la page de register
-        //   {
-        //     console.log("ERROR")
-        //     console.log(err)
-        //     window.location.assign('/Change')
-        //  }
-        //   console.log(err)
+          if(err == "Invalid user" || err.message.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+          {
+            console.log("coucou ?")
+            window.location.assign('/')
+          }
+          if ( err.message === "User not registered")// ==> redirection vers la page de register
+          {
+            console.log("ERROR")
+            console.log(err)
+            window.location.assign('/Change')
+         }/////////////////addd 2faa
+          console.log(err)
         }
         )
     
@@ -480,6 +486,7 @@ export function Chat() {
   const [ChanToLeave, setChanToLeave] = useState<any>('');
   const LeaveChan = (chan : string) => {
     socket.emit("leavechannel", { channelname: chan })
+    GetChannel()
     setChanToLeave('')
   
   }
@@ -487,6 +494,9 @@ export function Chat() {
   const [ChanToDelete, setChanToDelete] = useState<any>('');
   const DeleteChan = (chan : string) => {
     socket.emit("deletechannel", { channelname: chan })
+    console.log("delete")
+    GetChannel()
+    console.log(Chanlist)
     setChanToDelete('')
   }
 

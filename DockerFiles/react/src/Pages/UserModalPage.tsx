@@ -57,19 +57,65 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
 
     }, [])
 
-    useEffect(() => {
-    GetUserInfo(User.name)
-    .then((res) =>
-    {
-      console.log("couxcou")
-      console.log(User.name)
+    // useEffect(() => {
+    // GetUserInfo(User.name)
+    // .then((res) =>
+    // {
+    //   console.log("couxcou")
+    //   console.log(User.name)
+    //     console.log(res)
+    // })
+    // .catch((err) =>
+    // {
+    //     console.log(err)
+    // })
+    // }, [])
+
+  const [redirected, setRedirected] = useState(false)
+
+  useEffect(() => {
+    if (redirected) {
+      return
+    }
+
+    GetUserInfo(UserName)
+      .then((res) => {
         console.log(res)
-    })
-    .catch((err) =>
-    {
-        console.log(err)
-    })
-    }, [])
+      })
+      .catch((err) => {
+        console.log("ICI////////////////////////ICI")
+        toast.error(err.message, {
+          position: toast.POSITION.TOP_RIGHT,
+          autoClose: 2000,
+          progressClassName: "my-progress-bar"
+        })
+        console.log("============");
+        console.log(err.message)
+        console.log("============");
+        console.log(err.response)
+        console.log("============");
+        console.log("============");
+
+        if (err.message !== "Request aborted")
+        {
+          if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")
+          {
+            console.log("coucou ?")
+            setRedirected(true) // mettre redirected à true après la redirection
+            window.location.assign('/')
+            console.log("t s sence te barrer fdp")
+          }
+          else if (err.response.data.message === "User not registered")
+          {
+            console.log("ERROR")
+            console.log(err)
+            setRedirected(true) // mettre redirected à true après la redirection
+            window.location.assign('/Change')
+          }
+        }
+      })
+  }, [redirected])
+
 
 
     const [PicUp, setPic] = React.useState("non")
@@ -78,8 +124,13 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
     {
       Pic = Profil
     }
+  const [redirectedd, setRedirectedd] = useState(false)
+
     useEffect(() =>
     {
+      if (redirectedd) {
+        return
+      } 
       console.log("Use effect de la photo")
       PicGetRequest()
       .then((res) =>
@@ -100,8 +151,28 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
           autoClose: 2000,
           progressClassName: "my-progress-bar"
       })
+
+      if (err.message !== "Request aborted")
+      {
+        if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")
+        {
+          console.log("coucou ?")
+          setRedirected(true) // mettre redirected à true après la redirection
+          window.location.assign('/')
+          console.log("t s sence te barrer fdp")
+        }
+        else if (err.response.data.message === "User not registered")
+        {
+          console.log("ERROR")
+          console.log(err)
+          setRedirected(true) // mettre redirected à true après la redirection
+          window.location.assign('/Change')
+        }
+         //    //if(err.message === "Invalid 2FA token") erreur de 2FA ==> redirection vers la page de 2FA
+
+      }
       })
-    }, [])
+    }, [redirectedd])
   
     useEffect (() =>
     {

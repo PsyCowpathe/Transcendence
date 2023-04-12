@@ -5,6 +5,6 @@ import { VraimentIlSaoule } from '../aurelcassecouilles/VraimentIlEstCasseCouill
 export async function GetFriendList()
 {
     const config : any = VraimentIlSaoule()
-    let ret = await axios.get(`${urls.SERVER}/auth/getfriends`, config);
+    let ret = await axios.get(`${urls.SERVER}/main/getfriends`, config);
     return(ret);
 }

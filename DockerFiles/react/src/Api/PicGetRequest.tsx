@@ -5,6 +5,6 @@ import { VraimentIlSaoule2 } from '../aurelcassecouilles/VraimentIlEstCasseCouil
 export async function PicGetRequest()
 {
     const config : any = VraimentIlSaoule2()
-    let ret = await axios.get(`${urls.SERVER}/auth/avatar`, config);
+    let ret = await axios.get(`${urls.SERVER}/main/avatar`, config);
     return(ret);
 }

@@ -7,6 +7,6 @@ import { VraimentIlSaoule } from '../aurelcassecouilles/VraimentIlEstCasseCouill
 export async function GetPrivMsg(user : string)
 {
     const config : any = VraimentIlSaoule()
-    let ret = await axios.get(`${urls.SERVER}/auth/resumeprivate/${user}`, config);
+    let ret = await axios.get(`${urls.SERVER}/main/resumeprivate/${user}`, config);
     return(ret);
 }

@@ -129,7 +129,7 @@ interface chiant {
 		if (Mybool !== false)
 		{
 			onLogin()
-			navigate('/change')
+			navigate('/log')
 			setMybool(false)
 		}
 	}, [Mybool])
