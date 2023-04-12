@@ -1,4 +1,4 @@
-import { ArgumentsHost, Catch, HttpException,  BadRequestException  } from '@nestjs/common';
+import { ArgumentsHost, Catch, HttpException } from '@nestjs/common';
 import { WsException, BaseWsExceptionFilter } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 

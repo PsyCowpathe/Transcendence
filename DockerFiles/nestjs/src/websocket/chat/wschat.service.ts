@@ -137,7 +137,6 @@ export class WsChatService
 
 	notifyChannel(socket: Socket | undefined, destination: string, message: string, data: string) : number
 	{
-		console.log(destination);
 		if (socket)
 			socket.to(destination).emit(message, data);
 		return (1);
@@ -196,8 +195,13 @@ export class WsChatService
 		let newJoin = new JoinChannel();
 		newJoin.channel = channel;
 		if (creator)
+		{
 			newJoin.user = creator;
-		await this.joinChannelService.create(newJoin);
+			let creatorSocket = this.sockets.get(creator.id);
+			if (creatorSocket)
+				creatorSocket.join(channel.name);
+			await this.joinChannelService.create(newJoin);
+		}
 		return (1);
 	}
 

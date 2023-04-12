@@ -69,8 +69,8 @@ export class WsChatGateway
 		let ret = await this.wsChatService.deleteChannel(sender, deleteForm);
 		if (ret === -1)
 			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
-		if (ret === -2) // may be useless
-			return (client.emit("ChatError", errorMessages.INVALIDNAME));//may be useless
+		if (ret === -2)
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
 		if (ret === -3)
 			return (client.emit("ChatError", errorMessages.NOTTHEOWNER));
 		let response =
@@ -94,8 +94,8 @@ export class WsChatGateway
 		let ret = await this.wsChatService.joinChannel(sender, joinForm);
 		if (ret === -1)
 			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
-		if (ret === -2)//may be useless
-			return (client.emit("ChatError", errorMessages.INVALIDNAME));//may be useless
+		if (ret === -2)
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
 		if (ret === -3)
 			return (client.emit("ChatError", errorMessages.ALREADYINCHANNEL));
 		if (ret === -4)
@@ -125,8 +125,8 @@ export class WsChatGateway
 		let ret = await this.wsChatService.leaveChannel(sender, leaveForm);
 		if (ret === -1)
 			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
-		if (ret === -2)//may be useless
-			return (client.emit("ChatError", errorMessages.INVALIDNAME));//may be useless
+		if (ret === -2)
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
 		if (ret === -3)
 			return (client.emit("ChatError", errorMessages.NOTJOINED));
 		if (ret === -4)
@@ -144,10 +144,10 @@ export class WsChatGateway
 	@SubscribeMessage('channelmsg')
 	async sendChannelMessage(client: Socket, messageForm: messageDto)
 	{
-		console.log("New message :");//
-		console.log(messageForm.message);//
-		console.log(" to ");//
-		console.log(messageForm.destination);//
+		console.log("New message :");
+		console.log(messageForm.message);
+		console.log(" to ");
+		console.log(messageForm.destination);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));

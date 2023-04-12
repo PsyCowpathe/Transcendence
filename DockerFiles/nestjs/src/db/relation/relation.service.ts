@@ -238,7 +238,6 @@ export class RelationService
 				.set({type:0})
 				.execute();
 		}
-
 	}
 
 	async unIgnore(forgivingMan: User, forgivedMan: User)

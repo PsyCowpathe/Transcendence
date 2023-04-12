@@ -42,7 +42,6 @@ export class AdminsService
 	{
 		let ret = await this.adminsRepository.createQueryBuilder("admins")
 			.delete()
-			//.from("admins")
 			.where("channel = :id1 AND user = :id2", {id1: chanId, id2: user.id})
 			.execute();
 	}

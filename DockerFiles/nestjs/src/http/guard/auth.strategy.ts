@@ -1,6 +1,6 @@
-import { Injectable} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import { UserService} from '../db/user/user.service';
+import { UserService } from '../../db/user/user.service';
 
 @Injectable()
 export class AuthStrategy
@@ -9,7 +9,6 @@ export class AuthStrategy
 	{
 
 	}
-
 
 	async checkRequest(request : any) : Promise<number>
 	{
@@ -20,7 +19,7 @@ export class AuthStrategy
 			return (-2);
 		if (user.token === request.headers.authorization)
 		{
-			if (user.TwoFA === true)
+			if (user.TwoFA === true && request.route.path !== "/auth/2FAlogin")
 			{
 				if (Date.now().toString() > user.TwoFAExpire)
 					return (-3);

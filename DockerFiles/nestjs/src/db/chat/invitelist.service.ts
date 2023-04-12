@@ -28,9 +28,24 @@ export class InviteListService
 					{channel: channel, user: user}
 				]
 			});
-			if (ret[0] === undefined)
-				return (null);
-			return (ret[0]);
+		if (ret[0] === undefined)
+			return (null);
+		return (ret[0]);
+	}
+
+	async getInvite(askMan: User) : Promise<InviteList[] | null>
+	{
+		let ret = await this.inviteListRepository
+			.find
+			({
+				where:
+				[
+					{user: askMan}
+				]
+			});
+		if (ret[0] === undefined)
+			return (null);
+		return (ret);
 	}
 
 	create(newInvite: InviteList)

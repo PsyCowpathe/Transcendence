@@ -1,147 +1,28 @@
 import { Injectable } from '@nestjs/common';
 
-import { AuthDto, TwoFADto } from './auth.entity';
+import { UserService } from '../../db/user/user.service';
+import { ChannelService } from '../../db/chat/channel.service';
+import { MessageService } from '../../db/chat/message.service';
+import { PrivateService } from '../../db/chat/private.service';
+import { JoinChannelService } from '../../db/chat/joinchannel.service';
+import { RelationService } from '../../db/relation/relation.service';
+import { InviteListService } from '../../db/chat/invitelist.service';
+import { User } from '../../db/user/user.entity';
 
-import { urls } from '../common/global';
-
-import { UserService } from '../db/user/user.service';
-import { ChannelService } from '../db/chat/channel.service';
-import { MessageService } from '../db/chat/message.service';
-import { PrivateService } from '../db/chat/private.service';
-import { JoinChannelService } from '../db/chat/joinchannel.service';
-import { RelationService } from '../db/relation/relation.service';
-import { User } from '../db/user/user.entity';
-
-import { Profile } from './auth.entity';
-
-import * as bcrypt from 'bcrypt';
 import * as fs from 'fs';
-import { authenticator } from 'otplib';
-import { toDataURL } from 'qrcode';
-const axios = require('axios');
-var randomstring = require("randomstring");
 
 @Injectable()
-export class AuthService
+export class MainService
 {
 	constructor(private readonly userService : UserService,
 				private readonly channelService : ChannelService,
 				private readonly messageService : MessageService,
 				private readonly joinChannelService : JoinChannelService,
 				private readonly relationService : RelationService,
-				private readonly privateService : PrivateService)
-
+				private readonly privateService : PrivateService,
+				private readonly inviteListService :InviteListService)
 	{
 
-	}
-
-	async getUserToken(token : AuthDto) : Promise<string | undefined>
-	{
-		console.log("state = ");
-		console.log(token.state);
-		console.log("code = ");
-		console.log(token.code);
-		let user =
-		{
-			grant_type: 'authorization_code',
-			client_id: process.env.UID, 
-			client_secret: process.env.SECRET,
-			code: token.code,
-			redirect_uri : urls.URI,
-			state: token.state,
-		}
-		const response = await axios.post(urls.TOKEN, user)
-		.catch ((error: any) =>
-		{
-			return (undefined)
-		});
-		if (response === undefined)
-			return (undefined)
-		return (response.data.access_token);
-	}
-
-	async createUser(originalToken: string, hashedToken: string) : Promise<Profile | number>
-	{
-		let data: Profile;
-
-		const Header =
-		{
-			headers:
-			{
-				authorization: `Bearer ${originalToken}`,
-			}
-		}
-		const response = await axios.get(urls.ME, Header)
-		.catch((error: any) =>
-		{
-			return (undefined);
-		});
-		if (response === undefined)
-			return (-1);
-		let user = await this.userService.findOneByUid(response.data.id);
-		if (user === null)
-		{
-			let newUser : User = new User(); 
-			newUser.token = hashedToken;
-			newUser.name = response.data.login;
-			newUser.uid = response.data.id;
-			newUser.registered = false;
-			newUser.TwoFASecret = "";
-			newUser.TwoFA = false;
-			newUser.Status = "Online";
-			newUser.Match = 0;
-			newUser.Victory = 0;
-			newUser.Defeat = 0;
-			this.userService.create(newUser);
-			data = await this.createProfile(true, newUser);
-			console.log('User successfully added to the database !');
-		}
-		else 
-		{
-			await this.userService.updateToken(hashedToken, user);
-			let updatedUser = await this.userService.findOneByUid(response.data.id);
-			data = await this.createProfile(true, updatedUser);
-			console.log('User already exist, updating token in db !');
-		}
-		return (data);
-	}
-
-	createProfile(secret: boolean, user: User | null) : Profile
-	{
-		let data: any;
-		if (user === null)
-			return (data);
-		if (secret === true)
-		{
-			data =
-			{
-				name : user.name,
-				registered : user.registered,
-				newtoken : user.token,
-				newFA : user.TwoFAToken,
-				TwoFA : user.TwoFA,
-				Status : user.Status,
-				Match : user.Match,
-				Victory : user.Victory,
-				Defeat : user.Defeat,
-			};
-		}
-		else
-		{
-			data =
-			{
-				name : user.name,
-				registered : user.registered,
-				newtoken : undefined,
-				newFA : undefined,
-				TwoFA : user.TwoFA,
-				Status : user.Status,
-				Match : user.Match,
-				Victory : user.Victory,
-				Defeat : user.Defeat,
-			};
-		}
-		return (data);
 	}
 
 	async defineName(name: string, token: string | undefined) : Promise<number>
@@ -159,30 +40,6 @@ export class AuthService
 		return (1);
 	}
 
-	async hashMyToken(originalToken: string) : Promise<string | undefined>
-	{
-		try
-		{
-			const salt = await bcrypt.genSalt();
-			const hashedToken = await bcrypt.hash(originalToken, salt);
-			return (hashedToken);
-		}
-		catch (err)
-		{
-			return (undefined);
-		}
-	}
-
-	async isTokenValid(token: string | undefined): Promise<boolean>
-	{
-		if (token === undefined)
-			return (false);
-		const user = await this.userService.findOneByToken(token);
-		if (user === null)
-			return (false);
-		return (true);
-	}
-
 	async changeAvatar(token: string | undefined, file: Express.Multer.File) : Promise<number>
 	{
 		if (file.mimetype === 'image/png')
@@ -195,13 +52,13 @@ export class AuthService
 		else
 		{
 			if (file.buffer[0] !== 0xff || file.buffer[1] !== 0xd8 || file.buffer[2] !== 0xff)
-			return (-1);
+			return (-3);
 		}
 		if (file.size > 8000000)
-			return (-1);
+			return (-4);
 		const user = await this.userService.findOneByToken(token);
 		if (user === null)
-			return (-3);
+			return (-2);
 		fs.writeFile("avatars/" + user.uid, file.buffer,
 			(err) =>
 			{
@@ -209,35 +66,6 @@ export class AuthService
 					return (-2);
       		});
 		console.log("avatar changer avec success");
-		return (1);
-	}
-
-	async generate2FA(token: string | undefined) : Promise<number | string>
-	{
-		const user = await this.userService.findOneByToken(token);
-		if (user === null)
-			return (-1);
-		if (user.TwoFA === true)
-			return (-2);
-		const secret = authenticator.generateSecret();
-		const url = authenticator.keyuri(user.name, 'Transcendence', secret);
-		await this.userService.updateTwoFASecret(secret, user);
-		return (url);
-	}
-	
-	async twoFALogin(token: string | undefined, code: TwoFADto) : Promise<number>
-	{
-		const user = await this.userService.findOneByToken(token);
-		if (user === null || token === undefined)
-			return (-1);
-		const isCodeValid = await authenticator.verify({token: code.code.toString(), secret: user.TwoFASecret});
-		if (isCodeValid === false)
-			return (-2);
-		if (user.TwoFA === false)
-			await this.userService.updateTwoFA(true, user);
-		let TwoFAToken = randomstring.generate({lenght: 20});
-		let expire = (Date.now() + 720000).toString();
-		await this.userService.updateTwoFAToken(TwoFAToken, expire, user);
 		return (1);
 	}
 
@@ -356,6 +184,22 @@ export class AuthService
 		while (blockedList && blockedList[i])
 		{
 			data.push(blockedList[i].user2.name);
+			i++;
+		}
+		return (data);
+	}
+
+	async getChannelInvite(token: string | undefined) : Promise <number | String[]>
+	{
+		const askMan = await this.userService.findOneByToken(token);
+		if (askMan === null)
+			return (-1);
+		let inviteList = await this.inviteListService.getInvite(askMan);
+		let i = 0;
+		let data = [];
+		while (inviteList && inviteList[i])
+		{
+			data.push(inviteList[i].channel.name);
 			i++;
 		}
 		return (data);

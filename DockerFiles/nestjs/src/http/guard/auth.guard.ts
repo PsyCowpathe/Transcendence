@@ -1,4 +1,4 @@
-import { Res, Injectable, ExecutionContext, CanActivate, UnauthorizedException } from '@nestjs/common';
+import { Res, Injectable, ExecutionContext, CanActivate, UnauthorizedException, ForbiddenException } from '@nestjs/common';
 
 import { Observable } from 'rxjs';
 
@@ -14,6 +14,7 @@ export class AuthGuard implements CanActivate
 
 	async canActivate(context: ExecutionContext) : Promise<boolean>
 	{
+		console.log("AuthGuard");
 		const request = context.switchToHttp().getRequest();
 		let ret = await this.authStrategy.checkRequest(request);
 		if (ret === 1)
@@ -22,9 +23,9 @@ export class AuthGuard implements CanActivate
 		if (ret === -1 || ret === -5)
 			throw new UnauthorizedException("Invalid user");
 		if (ret === -2)
-			throw new UnauthorizedException("User not registered");
+			throw new ForbiddenException("User not registered");
 		if (ret === -3)
-			throw new UnauthorizedException("Invalid 2FA token");
+			throw new ForbiddenException("Invalid 2FA token");
 		if (ret === -4)
 			throw new UnauthorizedException("Invalid Bearer token");
 		return (false);

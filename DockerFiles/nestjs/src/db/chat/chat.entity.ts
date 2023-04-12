@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { Socket } from 'socket.io';
 
 import { User } from '../user/user.entity';
@@ -12,7 +12,7 @@ export class Channel
 	@Column()
 	name: string;
 
-	@ManyToOne(() => User, (user) => user.id, {eager: true})
+	@ManyToOne(() => User, (user) => user.id, {eager: true, onDelete: 'CASCADE' })
 	owner: User;
 
 	@Column()
@@ -28,12 +28,10 @@ export class Admins
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@ManyToOne(() => Channel, {eager: true})
-	@JoinColumn()
+	@ManyToOne(() => Channel, { eager: true, onDelete: 'CASCADE' })
 	channel: Channel
 
-	@OneToOne(() => User)
-	@JoinColumn()
+	@ManyToOne(() => User, { onDelete: 'CASCADE' })
 	user: User;
 }
 
@@ -43,12 +41,10 @@ export class Bans
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@ManyToOne(() => Channel)
-	@JoinColumn()
+	@ManyToOne(() => Channel, { onDelete: 'CASCADE' })
 	channel: Channel
 
-	@ManyToOne(() => User)
-	@JoinColumn()
+	@ManyToOne(() => User, { onDelete: 'CASCADE' })
 	user: User;
 
 	@Column()
@@ -64,12 +60,10 @@ export class Mutes
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@ManyToOne(() => Channel)
-	@JoinColumn()
+	@ManyToOne(() => Channel, { onDelete: 'CASCADE' })
 	channel: Channel
 
-	@ManyToOne(() => User)
-	@JoinColumn()
+	@ManyToOne(() => User, { onDelete: 'CASCADE' })
 	user: User;
 
 	@Column()
@@ -86,10 +80,9 @@ export class JoinChannel
 	id: number;
 
 	@ManyToOne(() => Channel, (channel) => channel.id, { onDelete: 'CASCADE', eager: true })
-	@JoinColumn()
 	channel: Channel
 
-	@ManyToOne(() => User, (user) => user.id)
+	@ManyToOne(() => User, (user) => user.id, { onDelete: 'CASCADE' })
 	user: User;
 }
 
@@ -99,12 +92,10 @@ export class InviteList
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@ManyToOne(() => Channel)
-	@JoinColumn()
+	@ManyToOne(() => Channel, { onDelete: 'CASCADE' })
 	channel: Channel
 
-	@ManyToOne(() => User)
-	@JoinColumn()
+	@ManyToOne(() => User, { onDelete: 'CASCADE' })
 	user: User;
 }
 
@@ -115,10 +106,9 @@ export class Message
 	id: number;
 
 	@ManyToOne(() => Channel, (channel) => channel.id, { onDelete: 'CASCADE' })
-	@JoinColumn()
 	channel: Channel
 
-	@ManyToOne(() => User, (user) => user.id, {eager: true})
+	@ManyToOne(() => User, (user) => user.id, {eager: true, onDelete: 'CASCADE'})
 	sender: User;
 
 	@Column()
@@ -131,10 +121,10 @@ export class Private
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@ManyToOne(() => User, (user) => user.id, {eager: true})
+	@ManyToOne(() => User, (user) => user.id, {eager: true, onDelete: 'CASCADE'})
 	user1: User;
 
-	@ManyToOne(() => User, (user) => user.id, {eager: true})
+	@ManyToOne(() => User, (user) => user.id, {eager: true, onDelete: 'CASCADE'})
 	user2: User;
 
 	@Column()
