@@ -52,15 +52,14 @@ export class WsChatService
 		let user = await this.userService.findOneByToken(token);
 		if (user !== null)
 		{
+			console.log(user.name);
 			await this.sockets.set(user.id, client);
-			console.log("New socket saved : " + user.name);
 			await this.updateRoom(user, client);
 		}
 	}
 
 	async updateRoom(user: User, client: Socket)
 	{
-		console.log("user : " + user.name + " subscribed to channel");
 		let joinedChannel = await this.joinChannelService.getJoinedChannel(user);
 		if (joinedChannel === null)
 			return ;
@@ -71,8 +70,6 @@ export class WsChatService
 			list.push(joinedChannel[i].channel.name);
 			i++;
 		}
-		console.log("channellist = ")
-		console.log(list);
 		client.join(list);
 	}
 
@@ -105,7 +102,6 @@ export class WsChatService
 			return (false);
 		while (banList[i])
 		{
-			console.log(banList[i]);
 			if (time.toString() < banList[i].end)
 				return (true);
 			i++;
@@ -122,7 +118,6 @@ export class WsChatService
 			return (false);
 		while (muteList[i])
 		{
-			console.log(muteList[i]);
 			if (time.toString() < muteList[i].end)
 				return (true);
 			i++;
@@ -145,9 +140,6 @@ export class WsChatService
 	async notifyUser(userId: number, destination: string, message: string, first_data: any, second_data?: any)
 	{
 		let userSocket = this.sockets.get(userId);
-		let tmp = await this.userService.findOneById(userId);
-		if (tmp)
-		console.log(tmp.name);
 		if (userSocket !== undefined)
 		{
 			let response =
@@ -187,8 +179,6 @@ export class WsChatService
 		if (creator)
 			newChannel.owner = creator;
 		newChannel.visibility = channelForm.visibility;
-		console.log("password");
-		console.log(channelForm.password)
 		if (channelForm.password !== undefined)
 			newChannel.password = cryptedPassword;
 		let channel = await this.channelService.create(newChannel);
@@ -316,7 +306,7 @@ export class WsChatService
 				excludedUser.join("exclusionList");
 			i++;
 		}
-		userSocket.to(messageForm.destination).except("exclusionList").emit("channelmsg", {channel: channel.name, user: askMan.name, message : messageForm.message});
+		userSocket.to(messageForm.destination).except("exclusionList").emit("channelmsg", {channel: channel.name, id: askMan.id, user: askMan.name, message : messageForm.message});
 		userSocket.in("exclusionList").socketsLeave("exclusionList");
 		return (1);
 	}
@@ -328,7 +318,7 @@ export class WsChatService
 	async addAdmin(sender: number, adminForm: userOperationDto) : Promise<number>
 	{
 		let askMan = await this.userService.findOneById(sender);
-		let toPromote = await this.userService.findOneByName(adminForm.name);
+		let toPromote = await this.userService.findOneById(adminForm.id);
 		let channel = await this.channelService.findOneByName(adminForm.channelname);
 		if (channel === null)
 			return (-1);
@@ -353,7 +343,7 @@ export class WsChatService
 	async removeAdmin(sender: number, adminForm: userOperationDto) : Promise<number>
 	{
 		let askMan = await this.userService.findOneById(sender);
-		let toDemote = await this.userService.findOneByName(adminForm.name);
+		let toDemote = await this.userService.findOneById(adminForm.id);
 		let channel = await this.channelService.findOneByName(adminForm.channelname);
 		if (channel === null)
 			return (-1);
@@ -376,7 +366,7 @@ export class WsChatService
 	async createInvitation(sender: number, inviteForm: userOperationDto) : Promise<number>
 	{
 		let askMan = await this.userService.findOneById(sender);
-		let toInvite = await this.userService.findOneByName(inviteForm.name);
+		let toInvite = await this.userService.findOneById(inviteForm.id);
 		let channel = await this.channelService.findOneByName(inviteForm.channelname);
 		if (channel === null)
 			return (-1);
@@ -401,7 +391,7 @@ export class WsChatService
 	async deleteInvitation(sender: number, inviteForm: userOperationDto) : Promise<number>
 	{
 		let askMan = await this.userService.findOneById(sender);
-		let toUninvite = await this.userService.findOneByName(inviteForm.name);
+		let toUninvite = await this.userService.findOneById(inviteForm.id);
 		let channel = await this.channelService.findOneByName(inviteForm.channelname);
 		if (channel === null)
 			return (-1);
@@ -434,7 +424,7 @@ export class WsChatService
 		newPrivate.user2 = receiver;
 		newPrivate.message = messageForm.message;
 		this.privateService.create(newPrivate);
-		return (this.notifyUser(receiver.id, "usermessage", messageForm.message, askMan.name));
+		return (this.notifyUser(receiver.id, "usermessage", messageForm.message, {id: askMan.id, name: askMan.name}));
 	}
 
 
@@ -475,7 +465,7 @@ export class WsChatService
 	async banUser(sender: number, banForm: sanctionOperationDto) : Promise<number>
 	{
 		let askMan = await this.userService.findOneById(sender);
-		let toBan = await this.userService.findOneByName(banForm.name)
+		let toBan = await this.userService.findOneById(banForm.id)
 		let channel = await this.channelService.findOneByName(banForm.channelname);
 		if (channel === null)
 			return (-1);
@@ -514,7 +504,7 @@ export class WsChatService
 	async unbanUser(sender: number, unbanForm: sanctionOperationDto) : Promise<number>
 	{
 		let askMan = await this.userService.findOneById(sender);
-		let toUnban = await this.userService.findOneByName(unbanForm.name)
+		let toUnban = await this.userService.findOneById(unbanForm.id)
 		let channel = await this.channelService.findOneByName(unbanForm.channelname);
 		if (channel === null)
 			return (-1);
@@ -537,7 +527,7 @@ export class WsChatService
 	async muteUser(sender: number, muteForm: sanctionOperationDto) : Promise<number>
 	{
 		let askMan = await this.userService.findOneById(sender);
-		let toMute = await this.userService.findOneByName(muteForm.name)
+		let toMute = await this.userService.findOneById(muteForm.id)
 		let channel = await this.channelService.findOneByName(muteForm.channelname);
 		if (channel === null)
 			return (-1);
@@ -572,7 +562,7 @@ export class WsChatService
 	async unmuteUser(sender: number, unmuteForm: sanctionOperationDto) : Promise<number>
 	{
 		let askMan = await this.userService.findOneById(sender);
-		let toUnmute = await this.userService.findOneByName(unmuteForm.name)
+		let toUnmute = await this.userService.findOneById(unmuteForm.id)
 		let channel = await this.channelService.findOneByName(unmuteForm.channelname);
 		if (channel === null)
 			return (-1);

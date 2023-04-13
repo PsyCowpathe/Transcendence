@@ -20,8 +20,8 @@ export class WsRelationService
 		let user = await this.userService.findOneByToken(token);
 		if (user !== null)
 		{
+			console.log(user.name);
 			this.sockets.set(user.id, client);
-			console.log("New socket saved : " + user.name);
 		}
 	}
 
@@ -65,10 +65,11 @@ export class WsRelationService
 		return (1);
 	}
 
-	async acceptFriendRequest(sender: number, target: string) : Promise<number>
+
+	async acceptFriendRequest(sender: number, target: number) : Promise<number>
 	{
 		let yesMan = await this.userService.findOneById(sender);
-		let askMan = await this.userService.findOneByName(target);
+		let askMan = await this.userService.findOneById(target);
 		if (askMan === null || yesMan === null)
 			return (-1);
 		let ret = await this.relationService.getRelationStatus(yesMan, askMan);
@@ -85,10 +86,10 @@ export class WsRelationService
 		return (-3);
 	}
 
-	async refuseFriendRequest(sender: number, target: string) : Promise<number>
+	async refuseFriendRequest(sender: number, target: number) : Promise<number>
 	{
 		let noMan = await this.userService.findOneById(sender);
-		let askMan = await this.userService.findOneByName(target);
+		let askMan = await this.userService.findOneById(target);
 		if (askMan === null || noMan === null)
 			return (-1);
 		let ret = await this.relationService.getRelationStatus(noMan, askMan);
@@ -103,10 +104,10 @@ export class WsRelationService
 		return (-2);
 	}
 
-	async deleteFriend(sender: number, target: string)
+	async deleteFriend(sender: number, target: number)
 	{
 		let deletor = await this.userService.findOneById(sender);
-		let victim = await this.userService.findOneByName(target);
+		let victim = await this.userService.findOneById(target);
 		if (victim === null || deletor === null)
 			return (-1);
 		let ret = await this.relationService.getRelationStatus(deletor, victim);
@@ -121,10 +122,10 @@ export class WsRelationService
 		return (-2);
 	}
 
-	async blockUser(sender: number, target: string)
+	async blockUser(sender: number, target: number)
 	{
 		let angryMan = await this.userService.findOneById(sender);
-		let annoyingMan = await this.userService.findOneByName(target);
+		let annoyingMan = await this.userService.findOneById(target);
 		if (annoyingMan === null || angryMan === null)
 			return (-1);
 		if (angryMan.uid === annoyingMan.uid)
@@ -140,10 +141,10 @@ export class WsRelationService
 		return (1);
 	}
 
-	async unBlockUser(sender: number, target: string)
+	async unBlockUser(sender: number, target: number)
 	{
 		let forgivingMan = await this.userService.findOneById(sender);
-		let forgivedMan = await this.userService.findOneByName(target);
+		let forgivedMan = await this.userService.findOneById(target);
 		if (forgivedMan === null || forgivingMan === null)
 			return (-1);
 		let ret = await this.relationService.getRelationStatus(forgivingMan, forgivedMan);

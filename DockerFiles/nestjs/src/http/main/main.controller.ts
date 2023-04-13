@@ -1,9 +1,10 @@
-import { Controller, Get, Redirect, Header, Req, Post, Body, Res, UseGuards, UsePipes, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, StreamableFile, Param } from '@nestjs/common';
+import { Controller, Get, Redirect, Header, Req, Post, Body, Res, UseGuards, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, StreamableFile, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express'; 
 import { join } from 'path';
 import { Response, Request } from 'express'; 
 
 import { MainService } from './main.service';
+import { stringParameterDto, numberParameterDto } from './main.entity';
 import { AuthGuard } from '../guard/auth.guard';
 import { UserService } from '../../db/user/user.service';
 import { AuthService } from '../auth/auth.service';
@@ -45,12 +46,13 @@ export class MainController
 		return (sendSuccess(res, 200, "You successfully changed your avatar !"));
 	}
 
-	@Get('getuserinfos/:name')
+	@Get('getuserinfos')
 	@UseGuards(AuthGuard)
-	async getUserInfos(@Req() req: Request, @Res() res: Response, @Param('name') name: string)
+	@UsePipes(new ValidationPipe())
+	async getUserInfos(@Req() req: Request, @Res() res: Response, @Query('user') userId: numberParameterDto)
 	{
-		console.log("demande info for user : " + name);
-		let toFind = await this.userService.findOneByName(name);
+		console.log("demande d'user info");
+		let toFind = await this.userService.findOneById(userId.id);
 		if (toFind === null)
 			return (sendError(res, 400, errorMessages.INVALIDNAME));
 		let data = await this.authService.createProfile(true, toFind);
@@ -59,25 +61,30 @@ export class MainController
 
 	@Get('avatar')
 	@UseGuards(AuthGuard)
-	async getAvatar(@Req() req: Request, @Res() res: Response)
+	@UsePipes(new ValidationPipe())
+	async getAvatar(@Req() req: Request, @Res() res: Response, @Query('user') userId: numberParameterDto)
 	{
 		console.log("demande d'avatar");
-		const user = await this.userService.findOneByToken(req.headers.authorization);
+		console.log(userId);
+		//console.log(req);
+		const user = await this.userService.findOneById(userId.id);
 		if (user === null)
-			return (sendError(res, 401, errorMessages.NOTLOGGED));
-		if (user === null || !fs.existsSync("/root/backend/avatars/" + user.uid))
+			return (sendError(res, 400, errorMessages.INVALIDNAME));
+		if (!fs.existsSync("/root/backend/avatars/" + user.uid))
 			return (res.status(200).sendFile("/root/backend/avatars/default.png"));
 		console.log("avatar send");
 		return (res.status(200).sendFile("/root/backend/avatars/" + user.uid));
 	}
 
-	@Get('resumechannel/:channel')
+
+	@Get('resumechannel')
 	@UseGuards(AuthGuard)
-	async resumeChannel(@Req() req: Request, @Res() res: Response, @Param('channel') channelName: string)
+	@UsePipes(new ValidationPipe())
+	async resumeChannel(@Req() req: Request, @Res() res: Response, @Query('channel') channel: stringParameterDto)
 	{
 		console.log("resume channel");
-		console.log(channelName);
-		let ret = await this.mainService.resumeChannel(req.headers.authorization, channelName);
+		console.log(channel.channelName);
+		let ret = await this.mainService.resumeChannel(req.headers.authorization, channel.channelName);
 		if (ret === -1)
 			return (sendError(res, 401, errorMessages.NOTLOGGED));
 		if (ret === -2)
@@ -87,13 +94,14 @@ export class MainController
 		return (sendSuccess(res, 200, ret));
 	}
 
-	@Get('resumeprivate/:user')
+	@Get('resumeprivate')
 	@UseGuards(AuthGuard)
-	async resumePrivate(@Req() req: Request, @Res() res: Response, @Param('user') username: string)
+	@UsePipes(new ValidationPipe())
+	async resumePrivate(@Req() req: Request, @Res() res: Response, @Query('user') userId: numberParameterDto)
 	{
 		console.log("resume private message with ");
-		console.log(username);
-		let ret = await this.mainService.resumeprivate(req.headers.authorization, username);
+		console.log(userId);
+		let ret = await this.mainService.resumeprivate(req.headers.authorization, userId.id);
 		if (ret === -1)
 			return (sendError(res, 401, errorMessages.NOTLOGGED));
 		if (ret === -2)
@@ -120,7 +128,6 @@ export class MainController
 		let ret = await this.mainService.getFriends(req.headers.authorization);
 		if (ret === -1)
 			return (sendError(res, 401, errorMessages.NOTLOGGED));
-		console.log(ret);
 		return (sendSuccess(res, 200, ret));
 	}
 

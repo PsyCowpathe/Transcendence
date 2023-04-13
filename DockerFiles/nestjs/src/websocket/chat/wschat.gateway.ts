@@ -1,5 +1,5 @@
-import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import {UsePipes, ValidationPipe, UseGuards, UseFilters } from '@nestjs/common';
+import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnection} from '@nestjs/websockets';
+import { UsePipes, ValidationPipe, UseGuards, UseFilters } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 
 import { SocketGuard } from '../guard/socket.guard';
@@ -14,24 +14,19 @@ import { WsExceptionFilter } from '../guard/ws.filter';
 
 @UseFilters(WsExceptionFilter)
 @WebSocketGateway(3632, {cors: true})
-export class WsChatGateway
+export class WsChatGateway implements OnGatewayConnection
 {
 	constructor(private readonly wsChatService: WsChatService)
 	{
 
 	}
 
-	@WebSocketServer()
-	server: Server;
-
-	@UseGuards(SocketGuard)
-	@SubscribeMessage('newlink')
-	createLink(client: Socket)
-	{
-		console.log("Newlink requested !");
+	async handleConnection(client: Socket)
+    {
+        console.log("CHAT CONNECTED");
 		let clientToken = client.handshake.auth.token;
-		this.wsChatService.saveChatSocket(client, clientToken);
-	}
+		await this.wsChatService.saveChatSocket(client, clientToken);
+    }
 
 
 	//=======					Channel					=======
@@ -48,7 +43,6 @@ export class WsChatGateway
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
 		let ret = await this.wsChatService.createChannel(sender, channelForm);
-		console.log("ret = " + ret);
 		if (ret === -1)
 			return (client.emit("ChatError", errorMessages.CHANNELALREADYEXIST));
 		if (ret === -2)
@@ -80,6 +74,7 @@ export class WsChatGateway
 		}
 		client.emit("deletechannel", response);
 	}
+
 	
 	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
@@ -172,7 +167,7 @@ export class WsChatGateway
 	async addAdmin(client: Socket, adminForm: userOperationDto)
 	{
 		console.log("New admin !");
-		console.log(adminForm.name + " for " + adminForm.channelname);
+		console.log(adminForm.id + " for " + adminForm.channelname);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
@@ -187,7 +182,7 @@ export class WsChatGateway
 			return (client.emit("ChatError", errorMessages.NOTINTHISCHANNEL));
 		if (ret === -5)
 			return (client.emit("ChatError", errorMessages.ALREADYADMIN));
-		client.emit("addadmin", `User ${adminForm.name} successfully promoted to administrator !`);
+		client.emit("addadmin", `User ${adminForm.id} successfully promoted to administrator !`);
 	}
 
 	@UseGuards(SocketGuard)
@@ -196,7 +191,7 @@ export class WsChatGateway
 	async removeAdmin(client: Socket, adminForm: userOperationDto)
 	{
 		console.log("Remove admin !");
-		console.log(adminForm.name + " for " + adminForm.channelname);
+		console.log(adminForm.id + " for " + adminForm.channelname);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
@@ -211,7 +206,7 @@ export class WsChatGateway
 			return (client.emit("ChatError", errorMessages.NOTINTHISCHANNEL));
 		if (ret === -5)
 			return (client.emit("ChatError", errorMessages.NOTANADMINISTRATOR));
-		client.emit("removeadmin", `User ${adminForm.name} successfully demoted from administrator !`);
+		client.emit("removeadmin", `User ${adminForm.id} successfully demoted from administrator !`);
 	}
 
 	@UseGuards(SocketGuard)
@@ -220,7 +215,7 @@ export class WsChatGateway
 	async createInvitation(client: Socket, invitationForm: userOperationDto)
 	{
 		console.log("Create invitation !");
-		console.log(invitationForm.name + " for " + invitationForm.channelname);
+		console.log(invitationForm.id + " for " + invitationForm.channelname);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
@@ -238,7 +233,7 @@ export class WsChatGateway
 		if (ret === -6)
 			return (client.emit("ChatError", errorMessages.NOTOP));
 		client.emit("createinvitation",
-			`User ${invitationForm.name} has been successfully invited to channel ${invitationForm.channelname}!`);
+			`User ${invitationForm.id} has been successfully invited to channel ${invitationForm.channelname}!`);
 	}
 
 	@UseGuards(SocketGuard)
@@ -269,7 +264,7 @@ export class WsChatGateway
 	async deleteInvitation(client: Socket, invitationForm: userOperationDto)
 	{
 		console.log("Delete invitation !");
-		console.log(invitationForm.name + " for " + invitationForm.channelname);
+		console.log(invitationForm.id + " for " + invitationForm.channelname);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
@@ -282,7 +277,7 @@ export class WsChatGateway
 			return (client.emit("ChatError", errorMessages.INVALIDNAME));
 		if (ret === -4)
 			return (client.emit("ChatError", errorMessages.NOTINVITED));
-		client.emit("deleteinvitation", `You successfully deleted the invitation of ${invitationForm.name} for channel ${invitationForm.channelname} !`);
+		client.emit("deleteinvitation", `You successfully deleted the invitation of ${invitationForm.id} for channel ${invitationForm.channelname} !`);
 	}
 
 
@@ -328,7 +323,7 @@ export class WsChatGateway
 	async banUser(client: Socket, banForm: sanctionOperationDto)
 	{
 		console.log("Ban user ");
-		console.log(banForm.name);
+		console.log(banForm.id);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
@@ -351,8 +346,8 @@ export class WsChatGateway
 			return (client.emit("ChatError", errorMessages.ALREADYBAN));
 		let response =
 		{
-			message : `You successfully banned user ${banForm.name} !`,
-			user : banForm.name,
+			message : `You successfully banned user ${banForm.id} !`,
+			user : banForm.id,
 		}
 		client.emit("banuser", response);
 	}
@@ -363,7 +358,7 @@ export class WsChatGateway
 	async unbanUser(client: Socket, unbanForm: sanctionOperationDto)
 	{
 		console.log("Unban user ");
-		console.log(unbanForm.name);
+		console.log(unbanForm.id);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
@@ -380,8 +375,8 @@ export class WsChatGateway
 			return (client.emit("ChatError", errorMessages.NOTBAN));
 		let response =
 		{
-			message : `You successfully unbanned user ${unbanForm.name} !`,
-			user : unbanForm.name,
+			message : `You successfully unbanned user ${unbanForm.id} !`,
+			user : unbanForm.id,
 		}
 		client.emit("unbanuser", response);
 	}
@@ -392,7 +387,7 @@ export class WsChatGateway
 	async muteUser(client: Socket, muteForm: sanctionOperationDto)
 	{
 		console.log("Mute user ");
-		console.log(muteForm.name);
+		console.log(muteForm.id);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
@@ -416,8 +411,8 @@ export class WsChatGateway
 
 		let response =
 		{
-			message : `You successfully muted user ${muteForm.name} !`,
-			user : muteForm.name,
+			message : `You successfully muted user ${muteForm.id} !`,
+			user : muteForm.id,
 		}
 		client.emit("muteuser", response);
 	}
@@ -428,7 +423,7 @@ export class WsChatGateway
 	async unmuteUser(client: Socket, unmuteForm: sanctionOperationDto)
 	{
 		console.log("Unmute user ");
-		console.log(unmuteForm.name);
+		console.log(unmuteForm.id);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
@@ -445,8 +440,8 @@ export class WsChatGateway
 			return (client.emit("ChatError", errorMessages.NOTMUTE));
 		let response =
 		{
-			message : `You successfully unmuted user ${unmuteForm.name} !`,
-			user : unmuteForm.name,
+			message : `You successfully unmuted user ${unmuteForm.id} !`,
+			user : unmuteForm.id,
 		}
 		client.emit("unmuteuser", response);
 	}
