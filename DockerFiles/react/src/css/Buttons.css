@@ -1,0 +1,43 @@
+button {
+  background-color: #093c46; /* couleur de fond */
+  border: none;
+  color: white; /* couleur du texte */
+  padding: 15px 32px; /* taille de police et padding */
+  text-align: center;
+  text-decoration: black;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer; /* pointer le curseur au survol */
+  border-radius: 50px; /* arrondir les coins */
+  box-shadow: 0 8px 16px rgba(37, 25, 133, 0.2); /* ajouter une ombre */
+  transition: all 0.3s ease 0s; /* effet de transition */
+  float:inline-start;
+}
+
+button:hover {
+  background-color: #3e8e41; /* changer la couleur de fond au survol */
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.4); /* changer l'ombre au survol */
+  box-shadow: 0 8px 16px rgba(66, 207, 19, 0.752); /* ajouter une ombre */
+
+}
+
+.SettingsButton {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.SettingsButtonIcon {
+  font-size: 24px;
+  color: gray;
+  transition: transform 0.2s ease-in-out;
+}
+
+.SettingsButton:hover .SettingsButtonIcon {
+  transform: rotate(90deg);
+}
+
+
