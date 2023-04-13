@@ -575,8 +575,8 @@ export function Chat() {
               ))}
             </ul>
             <div >
-            {isChecked && <form onSubmit={Channels} >
-              <input type="text" placeholder="New chan" value={Channame} onChange={(e) => setChanname(e.target.value)} />
+            {isChecked && <form  onSubmit={Channels} >
+              <input  type="text" placeholder="New chan" value={Channame} onChange={(e) => setChanname(e.target.value)} />
               {isChecked && <button  className="add-channel-button" >Add Channel</button>}
             </form>}
               {!isChecked && (
