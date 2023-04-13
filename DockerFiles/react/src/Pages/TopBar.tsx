@@ -20,7 +20,9 @@ export function TopBar(){
 		{/* <li><MyNavLink to="/changepic" label="change my pic"/></li> */}
 		<li><MyNavLink to="/askFriend" label="demande d ami"/></li>
 		{/* </nav> */}
+		<li><MyNavLink to="/pong/menu" label="pong"/></li>
+		{/* </nav> */}
 		</div>
-		// </div>       
+		// </div>
 	)
 };

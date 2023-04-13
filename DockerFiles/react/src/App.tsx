@@ -1,12 +1,11 @@
+
 import {useState, createContext } from 'react'
 import { BrowserRouter} from 'react-router-dom'
 import {  Routes, Route } from 'react-router-dom';
 import LoadingPage from "./Pages/LoadingPage";
 import HomePage  from './Pages/HomePage';
 import { ChangeLogin } from "./Pages/LoginPage";
-//import { Chat } from "./chat/ChatComp";
-import PongMenu from "./pong/PongMenu";
-import Pong from "./pong/Pong";
+// import { Chat } from "./chat/ChatComp";
 import "./css/List.css"; 
 import "./css/NavLink.css"; 
 import "./css/TopBar.css"
@@ -20,11 +19,15 @@ import { Chat } from './NewChat/CreateChan';
 import  ProfilePictureUploader  from './Pages/NewProfilPic';
 import NotFound from './Pages/404NotFound';
 import { Set2FA } from './Pages/Set2FA';
+import Pong from './pong/Pong' 
+import PongMenu from './pong/PongMenu' 
 
   
 function App() 
 {
  const AuthContext = createContext(false);
+
+
 	  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
 	  
@@ -52,12 +55,14 @@ function App()
 			<Route  path='/askFriend' element={<AskFriend />}/>
 			<Route path='/test' element={<IconLabelButtons />}/> 
 			<Route path='/TopBar' element={<TopBar />}/> 
+			<Route path='/pong/menu' element={<PongMenu />}/> 
+			<Route path='/pong/game' element={<Pong />}/> 
+			<Route path='/pong/spectate' element={<Pong />}/> 
 			<Route path='/*' element={<NotFound />}/> 
-			<Route path='/PongMenu' element={<PongMenu/>}/>
-			<Route path="/pong/:param" element={<Pong/>} />
 			</Routes> 
 	</BrowserRouter>
 		);
 }
 	
 	export default App;
+	

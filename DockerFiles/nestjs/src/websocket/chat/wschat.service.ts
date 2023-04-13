@@ -14,7 +14,7 @@ import { MutesService } from '../../db/chat/mutes.service';
 import { MessageService } from '../../db/chat/message.service';
 import { PrivateService } from '../../db/chat/private.service';
 
-import { createChannelDto, channelOperationDto, userOperationDto, sanctionOperationDto, messageDto } from './wschat.entity';
+import { createChannelDto, channelOperationDto, userOperationDto, sanctionOperationDto, messageDto, kickDto } from './wschat.entity';
 
 import { Channel, Admins, JoinChannel, InviteList, Bans, Mutes, Message, Private } from '../../db/chat/chat.entity';
 import { User } from '../../db/user/user.entity';
@@ -98,16 +98,17 @@ export class WsChatService
 
 	async isBan(user: User, channel: Channel) : Promise<boolean>
 	{
-		let banList: any = await this.bansService.findOneByBan(user, channel);
+		let banList = await this.bansService.findOneByBan(user, channel);
 		let i = 0;
 		let time = Date.now();
 		if (banList === null)
 			return (false);
 		while (banList[i])
 		{
-			console.log(banList[i++]);
-			if (time < banList[i].end)
+			console.log(banList[i]);
+			if (time.toString() < banList[i].end)
 				return (true);
+			i++;
 		}
 		return (false);
 	}
@@ -121,9 +122,10 @@ export class WsChatService
 			return (false);
 		while (muteList[i])
 		{
-			console.log(muteList[i++]);
-			if (time < muteList[i].end)
+			console.log(muteList[i]);
+			if (time.toString() < muteList[i].end)
 				return (true);
+			i++;
 		}
 		return (false);
 	}
@@ -135,15 +137,17 @@ export class WsChatService
 
 	notifyChannel(socket: Socket | undefined, destination: string, message: string, data: string) : number
 	{
-		console.log(destination);
 		if (socket)
 			socket.to(destination).emit(message, data);
 		return (1);
 	}
 
-	notifyUser(userId: number, destination: string, message: string, first_data: any, second_data?: any)
+	async notifyUser(userId: number, destination: string, message: string, first_data: any, second_data?: any)
 	{
 		let userSocket = this.sockets.get(userId);
+		let tmp = await this.userService.findOneById(userId);
+		if (tmp)
+		console.log(tmp.name);
 		if (userSocket !== undefined)
 		{
 			let response =
@@ -191,8 +195,13 @@ export class WsChatService
 		let newJoin = new JoinChannel();
 		newJoin.channel = channel;
 		if (creator)
+		{
 			newJoin.user = creator;
-		await this.joinChannelService.create(newJoin);
+			let creatorSocket = this.sockets.get(creator.id);
+			if (creatorSocket)
+				creatorSocket.join(channel.name);
+			await this.joinChannelService.create(newJoin);
+		}
 		return (1);
 	}
 
@@ -270,6 +279,9 @@ export class WsChatService
 		if (await this.userPower(askMan, channel) === 2)
 			return (-4);
 		await this.joinChannelService.remove(askMan, channel);
+		let userSocket = this.sockets.get(askMan.id);
+		if (userSocket)
+			userSocket.leave(channel.name);
 		let channelMessage = `User ${askMan.name} leaved the channel !`;
 		return (this.notifyChannel(this.sockets.get(sender), channel.name, channelMessage, askMan.name));
 	}
@@ -422,14 +434,14 @@ export class WsChatService
 		newPrivate.user2 = receiver;
 		newPrivate.message = messageForm.message;
 		this.privateService.create(newPrivate);
-		return (this.notifyUser(receiver.id, "messageuser", messageForm.message, askMan.name));
+		return (this.notifyUser(receiver.id, "usermessage", messageForm.message, askMan.name));
 	}
 
 
 	//=======					Sanction					=======
 
 
-	async kickUser(sender: number, kickForm: sanctionOperationDto) : Promise<number>
+	async kickUser(sender: number, kickForm: kickDto) : Promise<number>
 	{
 		let askMan = await this.userService.findOneById(sender);
 		let toKick = await this.userService.findOneByName(kickForm.name)
@@ -451,6 +463,9 @@ export class WsChatService
 		if (await this.joinChannelService.findOneByJoined(channel, toKick) === null)
 			return (-7);
 		await this.joinChannelService.remove(toKick, channel);
+		let userSocket = this.sockets.get(askMan.id);
+		if (userSocket)
+			userSocket.leave(channel.name);
 		let channelMessage = `User ${toKick.name} has been kicked !`;
 		let userMessage = `You have been kicked from channel ${channel.name} for : ${kickForm.reason} !`;
 		this.notifyUser(toKick.id, "kickuser", userMessage, channel.name);
@@ -487,6 +502,9 @@ export class WsChatService
 		newBan.reason = banForm.reason;
 		await this.bansService.create(newBan);
 		await this.joinChannelService.remove(toBan, channel);
+		let userSocket = this.sockets.get(askMan.id);
+		if (userSocket)
+			userSocket.leave(channel.name);
 		let channelMessage = `User ${toBan.name} has been banned !`;
 		let userMessage = `${Date.now()}: You have been banned from channel ${channel.name} for ${banForm.time} minutes for reason ${banForm.reason} !`;
 		this.notifyUser(toBan.id, "banuser", userMessage, channel.name);

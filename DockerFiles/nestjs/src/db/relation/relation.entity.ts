@@ -8,11 +8,11 @@ export class Relation
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@ManyToOne(() => User, {eager: true})
+	@ManyToOne(() => User, {eager: true, onDelete: 'CASCADE'})
 	@JoinColumn()
 	user1: User;
 
-	@ManyToOne(() => User, {eager: true})
+	@ManyToOne(() => User, {eager: true, onDelete: 'CASCADE'})
 	@JoinColumn()
 	user2: User;
 

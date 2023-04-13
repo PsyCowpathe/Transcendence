@@ -1,11 +1,16 @@
+import { User } from '../db/user/user.entity'
+
 export default class Player
 {
 	name: string;
+	uid: number;
+	user: User;
 	score: number;
 
-	constructor(name: string)
+	constructor(user: User)
 	{
-		this.name = name;
+		this.name = user.name;
+		this.user = user;
 		this.score = 0;
 	}
 }

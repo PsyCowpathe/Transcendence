@@ -20,6 +20,21 @@ export class PrivateService
 
 	async findOneByPrivate(user1: User, user2: User): Promise<Private[] | null>
 	{
-        return (null);
+		let ret = await this.privateRepository
+			.find
+			({
+				where:
+				[
+					{user1: user1, user2: user2},
+					{user1: user2, user2: user1},
+				],
+				order:
+				{
+					id: "ASC",
+				},
+			});
+			if (ret[0] === undefined)
+				return (null);
+			return (ret);
 	}
 }

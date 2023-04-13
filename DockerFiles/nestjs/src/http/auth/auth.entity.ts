@@ -32,7 +32,6 @@ export class UserDto
 	name: string;
 }
 
-
 export class Profile
 {
 	name: string;
@@ -44,8 +43,6 @@ export class Profile
 	Match: number;
 	Victory: number;
 	Defeat: number;
-	//status: boolean;
-	//avatar; image;
 }
 
 

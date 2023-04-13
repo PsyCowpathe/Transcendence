@@ -1,19 +1,25 @@
 .chat-app {
-   height: 70vh; /* Hauteur fixe de votre conteneur */
+   height: 100vh; /* Hauteur fixe de votre conteneur */
     overflow-x: auto; /* Ajoute une barre de défilement verticale*/
     display: flex;
-    height: 100%;
   }
   
-  .chat-app__sidebar {
+  /* .chat-app__sidebar {
     width: 240px;
     background-color: #fff;
     border-right: 1px solid #ddd;
     padding: 20px;
+    min-height: 100vh;
+    height: fit-content;
     
-    
+  } */
+  .chat-app__sidebar {
+    width: 15%;
+    background-color: #f2f2f2;
+    height: 100%;
+    padding: 20px;
+    overflow-y: auto;
   }
-  
   .chat-app__sidebar h2 {
     font-size: 18px;
     font-weight: bold;
@@ -49,6 +55,14 @@
     /* height: 300px; */
     
   }
+.channel-list_size {
+  max-height: calc(70vh - 120px); /* ajustez la hauteur en fonction de la hauteur de votre barre latérale */
+  overflow-y: auto;
+  height: 70vh; /* Hauteur fixe de votre conteneur */
+  overflow-x: auto; /* Ajoute une barre de défilement verticale*/
+  scroll-behavior: smooth;
+}
+
   .modal-overlay {
   position: fixed;
   top: 0;
@@ -158,10 +172,15 @@
   }
   
   .chat-app__main {
-    flex: 1;
+    /* flex: 1;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: hidden; */
+    width: 70%;
+    background-color: #fff;
+    height: 100%;
+    padding: 20px;
+    overflow-y: auto;
   }
   
   .channel-header {
@@ -193,16 +212,18 @@
     height: 70vh; /* Hauteur fixe de votre conteneur */
     overflow-x: auto; /* Ajoute une barre de défilement verticale*/
    }
-  .message-list {
-    flex: 1;
-    background-color: #f8f8f8;
-    overflow-y: scroll;
-    padding: 20px;
-  }
-  
-  .message-item {
-    display: flex;
-    flex-direction: column;
+   .message-list {
+     flex: 1;
+     background-color: #f8f8f8;
+     overflow-y: scroll;
+     padding: 20px;
+         min-height: 100vh;
+    height: fit-content;
+    }
+    
+    .message-item {
+      display: flex;
+      flex-direction: column;
     margin-bottom: 20px;
   }
   
@@ -255,10 +276,10 @@
   
 
 
-
-
-
-
+  
+  
+  
+  
 
 
 .textcol
@@ -266,7 +287,7 @@
   text-decoration: solid;
   color: #cf22b2;
   font-size: 10px;
-
+  
 }
 
 .textcol2
@@ -274,7 +295,7 @@
   text-decoration: solid;
   color: #cf22b2;
   font-size: 40px;
-
+  
 }
 
 .test{
@@ -282,11 +303,11 @@
 }
 
 
-  .dropzone {
-    border: 50px dashed #0087F7;
-      border-radius:100%;
-       width: 100px;
-      height: 100px;
+.dropzone {
+  border: 50px dashed #0087F7;
+  border-radius:100%;
+  width: 100px;
+  height: 100px;
       min-height: 0px !important;
       min-width: 0px !important;
       margin: 0 auto;
@@ -329,10 +350,29 @@
 .sent-user {
   display: flex;
   flex-direction: row-reverse;
-
+  
 }
 
 .received-user {
-display: flex;
- 
+  display: flex;
+  
+}
+
+
+.friend-app__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.friend-app__sidebar {
+  width: 15%;
+  background-color: #fff;
+  border-right: 1px solid #ddd;
+  padding: 20px;
+  min-height: 100vh;
+  height: fit-content;
+  
+  
 }

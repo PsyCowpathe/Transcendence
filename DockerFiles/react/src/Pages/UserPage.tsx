@@ -74,7 +74,7 @@ export function AffMyUserPage ({ShowBar} : {ShowBar : boolean})
       progressClassName: "my-progress-bar"
   })
 
-      if(err.response.data.message == "Invalid user" || err.message.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+      if(err.response.data.message === "Invalid user" || err.message.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
       {
         console.log("coucou ?")
         window.location.assign('/')

@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Channel } from './chat.entity';
-import { User } from '../user/user.entity';
 
 @Injectable()
 export class ChannelService
@@ -28,9 +27,12 @@ export class ChannelService
 		return (this.channelRepository.save(newChannel));
 	}
 
-	delete(channelToDelete: Channel)
+	async delete(channelToDelete: Channel)
 	{
-		return (this.channelRepository.delete(channelToDelete));
+		let ret = await this.channelRepository.createQueryBuilder("channel")
+			.delete()
+			.where("name = :id1", {id1: channelToDelete.name})
+			.execute();
 	}
 
 	changeChannelName(chanId: number, newName: string)

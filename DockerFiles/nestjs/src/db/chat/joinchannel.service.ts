@@ -75,10 +75,10 @@ export class JoinChannelService
 
 	async remove(user: User, chanId: Channel)
 	{
-		let ret = await this.joinChannelRepository.createQueryBuilder()
+		let ret = await this.joinChannelRepository.createQueryBuilder("join_channel")
 			.delete()
-			.from(JoinChannel)
-			.where("channel = :id1 AND user = :id2", {id1: chanId, id2: user.id})
+			//.from("join_channel")
+			.where("channel = :id1 AND user = :id2", {id1: chanId.id, id2: user.id})
 			.execute();
 	}
 }

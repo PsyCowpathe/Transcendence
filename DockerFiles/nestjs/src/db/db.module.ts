@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { DbService } from './db.service'
-
 import { User } from './user/user.entity';
 
 import { Relation } from './relation/relation.entity';
@@ -28,6 +26,5 @@ import { Game } from './game/game.entity';
 		}),
 	],
 	controllers: [],
-	providers: [DbService],
 })
 export class DbModule {}

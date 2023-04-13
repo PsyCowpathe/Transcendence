@@ -9,6 +9,7 @@ import UserInfoModal from '../Modale/UserModal'
 import { GetChannelInfo } from "../Api/GetChanMessage";
 import { GetUserInfo } from "../Api/GetUserInfo";
 import { GetChannelList } from "../Api/GetChannelList";
+import { GetFriendList } from "../Api/GetFriendList";
 let test: boolean = false
 let socket: any
 
@@ -182,7 +183,10 @@ export function Chat() {
       socket.emit("createchannel", { channelname: Channame, visibility: "public", password: undefined })
     else
       socket.emit("createchannel", { channelname: Channame, visibility: "public", password: ChanMdp })
-  }
+    setChanMdp('')
+    setChanname('')
+      
+    }
   const [isChecked, setIsChecked] = useState(false);
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
@@ -410,13 +414,32 @@ export function Chat() {
   //     </div>
   //   );
   // };
+  interface IUser {
+    id: number;
+    username: string;
+  }
+  const [UserList, setUserList] = useState<IUser[]>([]);
+  const OpenUser = (UserUse: any) => {
+    GetFriendList()
+      .then((response) => {
+        setUserList(response.data.map((chan:any, index : any) => {
+          return { id: index, name: chan}
+        }
+        ))
+        console.log(response)
+      })
+      .catch((err) => {
+        console.log(err)
+      }
+      )
+  }
 
 
   return (
     <div>
       <TopBar />
 
-      <div className="chat-app" style={{ height: "100vh" }}>
+      <div className="chat-app">
         <div className="chat-app__sidebar">
           <div className="channel-list">
             <h2>Channels</h2>
@@ -428,11 +451,11 @@ export function Chat() {
                 </li>
               ))}
             </ul>
+            <div >
             {isChecked && <form onSubmit={Channels} >
               <input type="text" placeholder="New chan" value={Channame} onChange={(e) => setChanname(e.target.value)} />
               {isChecked && <button  className="add-channel-button" >Add Channel</button>}
             </form>}
-            <div>
               {!isChecked && (
                 <form onSubmit={ChannelsMdp} >
                   <input type="text" placeholder="New chan" value={Channame} onChange={(e) => setChanname(e.target.value)} />
@@ -448,9 +471,6 @@ export function Chat() {
                 />
                 private channel
               </label>
-            </div>
-            {/* ////////////////?/////////////////////TEST ////////////////////////////////////////// */}
-            <div>
               <form onSubmit={JoinChannelMdp} >
                 <input type="text" placeholder="New chan" value={ChanTo} onChange={(e) => setChanTo(e.target.value)} />
                 <input type="password" placeholder="Mot de passe" value={ChanMdpTo} onChange={(e) => setChanMdpTo(e.target.value)} />
@@ -486,6 +506,19 @@ export function Chat() {
 
           </div>
         </div>
+        {/* <div className="friend-app__main"> */}
+          <div className="friend-app__sidebar">
+            <h1>Friend List</h1>
+              <ul className="container">
+
+                {UserList.map((user) => (
+                  <li className="active" key={user.id} onClick={() => OpenUser(user.username)} >
+                    {user.username}
+                  </li>
+                ))}
+              </ul>
+              </div>
+        {/* </div> */}
       </div><ToastContainer />
     </div>
   );

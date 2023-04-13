@@ -1,18 +1,16 @@
 import "./styles.css"
 import React from "react"
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useState, useEffect, useRef, Ref } from "react"
 import { io } from 'socket.io-client'
 
+import { socketManager } from '../Pages/HomePage'
 import Player from "./Player"
 import Ball from "./Ball"
 import Paddle from "./Paddle"
 
 export default function PongGame ()
 {
-
-	const { role } = useParams();
-
 	let buttonReady: HTMLElement | null;
 	let p_score: HTMLElement | null;
 	let o_score: HTMLElement | null;
@@ -20,18 +18,19 @@ export default function PongGame ()
 	let o_name: HTMLElement | null;
 	
 	let game_id = 0;
+	let player_id = 0;
 	let deltaTime: number = 0;
 	let prevTime: number = 0;
 	let ball: Ball;
 	let p_paddle!: Paddle;
 	let o_paddle!: Paddle;
-	let player: Player = new Player("name");
+	let player: Player = new Player("waiting for player info...");
 	let opponent: Player = new Player("waiting for other player...");
 	
 	let input: number; 
 	let GOAL:boolean = false;
 
-	const socket = io('https://localhost:3000', {query: { username: player.name } });
+	const socket = socketManager.getChatSocket();
 
 	const createBall = () =>
 	{
@@ -48,8 +47,6 @@ export default function PongGame ()
 		createBall();
 		createPaddles();
 		buttonReady = document.getElementById("player_ready");
-		if (role == "spectator" && buttonReady)
-			buttonReady.style.display = "none";
 		p_name = document.getElementById("p_name");
 		o_name = document.getElementById("o_name");
 		if (p_name && o_name)
@@ -66,18 +63,32 @@ export default function PongGame ()
 		}
 	}, []);
 
-	socket.on('gameFound', (id: number, opponent_name: string, player_id: number) =>
+	socket.on('gameFound', (id: number, player_name: string, opponent_name: string, player_id: number) =>
 	{
+		player.name = player_name;
 		opponent.name = opponent_name;
-		if (o_name && o_score)
+		if (o_name && p_name)
 		{
+			p_name.textContent = player.name;
 			o_name.textContent = opponent.name;
-			o_score.textContent = opponent.score.toString();
 		}
 		game_id = game_id;
+		player_id = player_id;
+		document.addEventListener("mousemove", eMouseMoved);
+	});
+
+	socket.on('youreASpectatorPeasant', (id: number, player_name: string, opponent_name: string) =>
+	{
+		if (id == 3 && buttonReady)
+			buttonReady.style.display = "none";
+		player.name = player_name;
+		opponent.name = opponent_name;
+		if (o_name && p_name)
+		{
+			p_name.textContent = player.name;
+			o_name.textContent = opponent.name;
+		}
 		player.id = player_id;
-		if (role != "spectator")
-			document.addEventListener("mousemove", eMouseMoved);
 	});
 	
 	function eMouseMoved(e: any)
@@ -89,14 +100,14 @@ export default function PongGame ()
 
 	function playerReady()
 	{
-		if (buttonReady && role != "spectator")
+		if (buttonReady)
 		{
 			socket.emit('playerReady', player.id);
 			buttonReady.style.display = "none";
 		}
 	}
 
-	socket.on('GOOOAAAAAAL', (strikerID) =>
+	socket.on('GOOOAAAAAAL', (strikerID: number) =>
 	{
 		if (strikerID == player.id)
 		{
@@ -112,7 +123,7 @@ export default function PongGame ()
 		}
 	});
 
-	socket.on('update', (gameState) =>
+	socket.on('update', (gameState: any) =>
 	{
 		ball.setPosition(gameState.ballpos);
 		if (player.id == 1)
@@ -125,6 +136,11 @@ export default function PongGame ()
 			o_paddle.setPosition(gameState.p1_paddlepos);
 			p_paddle.setPosition(gameState.p2_paddlepos);
 		}
+	});
+
+	socket.on('opponentReady', () =>
+	{
+		console.log("lol");
 	});
 
 	socket.on('opponentLeft', () =>

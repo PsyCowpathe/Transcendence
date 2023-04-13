@@ -7,99 +7,109 @@ import Ball from "./Ball";
 import Paddle from "./Paddle";
 
 
-export default function Game (p1: Player, p2: Player)
+export default class Game 
 {
-/*	let deltaTime: number = 0;
-	let prevTime: number = 0;
-	let ball = Ball();
-	let p1_paddle = Paddle(3);
-	let p2_paddle = Paddle(96);
-	let GOAL:boolean = false;
+	p1: Player;
+	p2: Player;
+	tag: number;
+	deltaTime: number = 0;
+	prevTime: number = 0;
+	ball = new Ball();
+	p1_paddle = new Paddle(3);
+	p2_paddle = new Paddle(96);
+	p1_ready: boolean = false;
+	p2_ready: boolean = false;
+	playing: boolean = false;
+	GOAL:boolean = false;
 
-	ball.reset();
-
-	function moveBall()
+	constructor(p1: Player, p2: Player, tag: number)
 	{
-		let ballrect = ball.getRect();
-		let p1_paddlerect = p1_paddle.getRect();
+		this.p1 = p1;
+		this.p2 = p2;
+		this.tag = tag;
+		this.ball.reset();
+	}
+
+	moveBall()
+	{
+		let ballrect = this.ball.getRect();
+		let p1_paddlerect = this.p1_paddle.getRect();
 		let newdir = { x: 0, y: 0};
 		let newpos = { x: 0, y: 0};
 	
 		if (ballrect.up <= 20)
-			ball.dir.y = Math.abs(ball.dir.y);
+			this.ball.dir.y = Math.abs(this.ball.dir.y);
 		else if (ballrect.down >= 80)
-			ball.dir.y = -Math.abs(ball.dir.y);
+			this.ball.dir.y = -Math.abs(this.ball.dir.y);
 		
-		if (ball.pos.x < 15)
+		if (this.ball.pos.x < 15)
 		{
-			const p_paddlerect = p_paddle.getRect();
+			const p1_paddlerect = this.p1_paddle.getRect();
 			
-			if (	ballrect.left <= p_paddlerect.right &&
-				ballrect.up <= p_paddlerect.down &&
-				ballrect.down >= p_paddlerect.up &&
-				ball.pos.x >= p_paddlerect.left	)
+			if (	ballrect.left <= p1_paddlerect.right &&
+				ballrect.up <= p1_paddlerect.down &&
+				ballrect.down >= p1_paddlerect.up &&
+				this.ball.pos.x >= p1_paddlerect.left	)
 				{
-				let rad:number = ((ball.pos.y - p_paddle.pos.y) / 20);	
+				let rad:number = ((this.ball.pos.y - this.p1_paddle.pos.y) / 20);	
 				newdir = {	x: Math.cos(rad * Math.PI),
 						y: Math.sin(rad * Math.PI)	};
-				ball.setDirection(newdir);
-				ball.speed = ball.GAME_SPEED;
+				this.ball.setDirection(newdir);
+				this.ball.speed = this.ball.GAME_SPEED;
 			}
 		}
-		else if (ball.pos.x > 75)
+		else if (this.ball.pos.x > 75)
 		{
-			const o_paddlerect = o_paddle.getRect();
+			const p2_paddlerect = this.p2_paddle.getRect();
 			
-			if (	ballrect.right >= o_paddlerect.left &&
-				ballrect.up <= o_paddlerect.down &&
-				ballrect.down >= o_paddlerect.up &&
-				ball.pos.x <= o_paddlerect.right	)
+			if (	ballrect.right >= p2_paddlerect.left &&
+				ballrect.up <= p2_paddlerect.down &&
+				ballrect.down >= p2_paddlerect.up &&
+				this.ball.pos.x <= p2_paddlerect.right	)
 			{
-				let rad:number = ((ball.pos.y - o_paddle.pos.y) / 20);
+				let rad:number = ((this.ball.pos.y - this.p2_paddle.pos.y) / 20);
 				newdir = {	x: -Math.cos(rad * Math.PI),
 						y: Math.sin(rad * Math.PI)	};
-				ball.setDirection(newdir);
-				ball.speed = ball.GAME_SPEED;
-				ball.wasHit = true;
+				this.ball.setDirection(newdir);
+				this.ball.speed = this.ball.GAME_SPEED;
+				this.ball.wasHit = true;
 			}
 		}
 	
-		newpos = {	x: ball.pos.x + (ball.dir.x * ball.speed * deltaTime),
-				y: ball.pos.y + (ball.dir.y * ball.speed * deltaTime)	};
+		newpos = {	x: this.ball.pos.x + (this.ball.dir.x * this.ball.speed * this.deltaTime),
+				y: this.ball.pos.y + (this.ball.dir.y * this.ball.speed * this.deltaTime)	};
 		
-		ball.setPosition(newpos);
+		this.ball.setPosition(newpos);
 	}
 
-	function GOOOAAAAAAL()
+	GOOOAAAAAAL()
 	{
-		if (ball.pos.x > 50)
-			p1.score++;
+		if (this.ball.pos.x > 50)
+			this.p1.score++;
 		else
-			p2.score++;
-		GOAL = true;
-		ball.reset();
+			this.p2.score++;
+		this.GOAL = true;
+		this.ball.reset();
 	}
 
-	function update(time : number)
+	update(time : number)
 	{
-		if (prevTime)
+		if (this.prevTime)
 		{
-			deltaTime = time - prevTime;
-			moveBall();
-			if (ball.pos.x >= 99.9 || ball.pos.x <= 0.1)
-				GOOOAAAAAAL(ball);
+			this.deltaTime = time - this.prevTime;
+			this.moveBall();
+			if (this.ball.pos.x >= 99.9 || this.ball.pos.x <= 0.1)
+				this.GOOOAAAAAAL();
 		}
-		prevTime = time;
+		this.prevTime = time;
 	}
 
-	function getGameState()
+	getGameState()
 	{
 		return ({
-				ballpos: ball.pos,
-				p1_paddlepos: p1_paddle.pos,
-				p2_paddlepos: p2_paddle.pos,
-				p1.score,
-				p2.score;
+				ballpos: this.ball.pos,
+				p1_paddlepos: this.p1_paddle.pos,
+				p2_paddlepos: this.p2_paddle.pos,
 			});
-	}*/
+	}
 }
