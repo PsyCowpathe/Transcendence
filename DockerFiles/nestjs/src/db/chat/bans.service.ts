@@ -33,7 +33,7 @@ export class BansService
 			return (ret);
 	}
 
-	updateBanEnd(user: User, channel: Channel, end: number)
+	updateBanEnd(user: User, channel: Channel, end: string)
 	{
 		return this.bansRepository.createQueryBuilder()
 		.update(Bans)

@@ -11,10 +11,12 @@ import { JoinChannelService } from '../../db/chat/joinchannel.service';
 import { InviteListService } from '../../db/chat/invitelist.service';
 import { BansService } from '../../db/chat/bans.service';
 import { MutesService } from '../../db/chat/mutes.service';
+import { MessageService } from '../../db/chat/message.service';
+import { PrivateService } from '../../db/chat/private.service';
 
-import { createChannelDto, channelOperationDto, userOperationDto, sanctionOperationDto, messageDto } from './wschat.entity';
+import { createChannelDto, channelOperationDto, userOperationDto, sanctionOperationDto, messageDto, kickDto } from './wschat.entity';
 
-import { Channel, Admins, JoinChannel, InviteList, Bans, Mutes } from '../../db/chat/chat.entity';
+import { Channel, Admins, JoinChannel, InviteList, Bans, Mutes, Message, Private } from '../../db/chat/chat.entity';
 import { User } from '../../db/user/user.entity';
 
 import * as bcrypt from 'bcrypt';
@@ -29,7 +31,9 @@ export class WsChatService
 				private readonly inviteListService : InviteListService,
 				private readonly bansService : BansService,
 				private readonly mutesService : MutesService,
-				private readonly relationService : RelationService)
+				private readonly relationService : RelationService,
+				private readonly messageService : MessageService,
+				private readonly privateService : PrivateService)
 	{
 
 	}
@@ -56,11 +60,20 @@ export class WsChatService
 
 	async updateRoom(user: User, client: Socket)
 	{
+		console.log("user : " + user.name + " subscribed to channel");
 		let joinedChannel = await this.joinChannelService.getJoinedChannel(user);
 		if (joinedChannel === null)
 			return ;
-		let list = joinedChannel.map(function(id) { return id['id'] });
-		client.join(list.toString());
+		let i = 0;
+		let list = [];
+		while (joinedChannel[i])
+		{
+			list.push(joinedChannel[i].channel.name);
+			i++;
+		}
+		console.log("channellist = ")
+		console.log(list);
+		client.join(list);
 	}
 
 	async userPower(user: User | null, channel: Channel) : Promise<number>
@@ -85,15 +98,17 @@ export class WsChatService
 
 	async isBan(user: User, channel: Channel) : Promise<boolean>
 	{
-		let banList: any = await this.bansService.findOneByBan(user, channel);
+		let banList = await this.bansService.findOneByBan(user, channel);
 		let i = 0;
 		let time = Date.now();
-
+		if (banList === null)
+			return (false);
 		while (banList[i])
 		{
-			console.log(banList[i++]);
-			if (time < banList[i].end)
+			console.log(banList[i]);
+			if (time.toString() < banList[i].end)
 				return (true);
+			i++;
 		}
 		return (false);
 	}
@@ -103,12 +118,14 @@ export class WsChatService
 		let muteList: any = await this.mutesService.findOneByMute(user, channel);
 		let i = 0;
 		let time = Date.now();
-
+		if (muteList === null)
+			return (false);
 		while (muteList[i])
 		{
-			console.log(muteList[i++]);
-			if (time < muteList[i].end)
+			console.log(muteList[i]);
+			if (time.toString() < muteList[i].end)
 				return (true);
+			i++;
 		}
 		return (false);
 	}
@@ -118,15 +135,19 @@ export class WsChatService
 		return (this.joinChannelService.getUser(channel));
 	}
 
-	notifyChannel(destination: string, message: string, data: string) : number
+	notifyChannel(socket: Socket | undefined, destination: string, message: string, data: string) : number
 	{
-		this.io.to(destination).emit(message, data);
+		if (socket)
+			socket.to(destination).emit(message, data);
 		return (1);
 	}
 
-	notifyUser(userId: number, destination: string, message: string, first_data: any, second_data?: any)
+	async notifyUser(userId: number, destination: string, message: string, first_data: any, second_data?: any)
 	{
 		let userSocket = this.sockets.get(userId);
+		let tmp = await this.userService.findOneById(userId);
+		if (tmp)
+		console.log(tmp.name);
 		if (userSocket !== undefined)
 		{
 			let response =
@@ -166,13 +187,21 @@ export class WsChatService
 		if (creator)
 			newChannel.owner = creator;
 		newChannel.visibility = channelForm.visibility;
-		newChannel.password = cryptedPassword;
+		console.log("password");
+		console.log(channelForm.password)
+		if (channelForm.password !== undefined)
+			newChannel.password = cryptedPassword;
 		let channel = await this.channelService.create(newChannel);
 		let newJoin = new JoinChannel();
 		newJoin.channel = channel;
 		if (creator)
+		{
 			newJoin.user = creator;
-		await this.joinChannelService.create(newJoin);
+			let creatorSocket = this.sockets.get(creator.id);
+			if (creatorSocket)
+				creatorSocket.join(channel.name);
+			await this.joinChannelService.create(newJoin);
+		}
 		return (1);
 	}
 
@@ -188,8 +217,9 @@ export class WsChatService
 			return (-3);
 		await this.channelService.delete(channel);
 		let channelMessage = `The channel ${channel.name} has been deleted !`;
-		return (this.notifyChannel(channel.name, channelMessage, channel.name));
+		return (this.notifyChannel(this.sockets.get(sender), channel.name, channelMessage, channel.name));
 	}
+
 
 	async joinChannel(sender: number, joinForm: channelOperationDto) : Promise<number>
 	{
@@ -199,15 +229,18 @@ export class WsChatService
 			return (-1);
 		if (askMan === null)
 			return (-2);
-		if (await this.joinChannelService.findOneByJoined(channel, askMan) === null)
+		if (await this.joinChannelService.findOneByJoined(channel, askMan) !== null)
 			return (-3)
 		if (await this.isBan(askMan, channel) === true)
 			return (-4)
 		if (channel.visibility === "public")
 		{
-			const isMatch = await bcrypt.compare(joinForm.password, channel.password);
-			if (isMatch === false)
-				return (-5);
+			if (channel.password !== null)
+			{
+				const isMatch = await bcrypt.compare(joinForm.password, channel.password);
+				if (isMatch === false)
+					return (-5);
+			}
 			let newJoin = new JoinChannel();
 			newJoin.channel = channel;
 			if (askMan)
@@ -230,7 +263,7 @@ export class WsChatService
 		let channelMessage = `User ${askMan.name} joined the channel !`;
 		let userMessage = `The list of user in this channel :`;
 		this.notifyUser(askMan.id, "joinchannel", userMessage, channel.name, this.getUserInChannel(channel));
-		return (this.notifyChannel(channel.name, channelMessage, askMan.name));
+		return (this.notifyChannel(this.sockets.get(sender), channel.name, channelMessage, askMan.name));
 	}
 
 	async leaveChannel(sender: number, leaveForm: channelOperationDto) : Promise<number>
@@ -246,8 +279,11 @@ export class WsChatService
 		if (await this.userPower(askMan, channel) === 2)
 			return (-4);
 		await this.joinChannelService.remove(askMan, channel);
+		let userSocket = this.sockets.get(askMan.id);
+		if (userSocket)
+			userSocket.leave(channel.name);
 		let channelMessage = `User ${askMan.name} leaved the channel !`;
-		return (this.notifyChannel(channel.name, channelMessage, askMan.name));
+		return (this.notifyChannel(this.sockets.get(sender), channel.name, channelMessage, askMan.name));
 	}
 
 	async channelMessage(sender: number, messageForm: messageDto) : Promise<number>
@@ -266,16 +302,21 @@ export class WsChatService
 		let userSocket = await this.sockets.get(askMan.id);
 		if (userSocket === undefined)
 			return (1);
+		let newMessage = new Message();
+		newMessage.channel = channel;
+		newMessage.sender = askMan;
+		newMessage.message = messageForm.message;
+		this.messageService.create(newMessage);
 		let excludedUser;
 		let i = 0;
-		while (annoyedUserList[i])
+		while (annoyedUserList && annoyedUserList[i])
 		{
 			excludedUser = await this.sockets.get(annoyedUserList[i].user1.id);
 			if (excludedUser)
 				excludedUser.join("exclusionList");
 			i++;
 		}
-		userSocket.to(messageForm.destination).except("exclusionList").emit(messageForm.message);
+		userSocket.to(messageForm.destination).except("exclusionList").emit("channelmsg", {channel: channel.name, user: askMan.name, message : messageForm.message});
 		userSocket.in("exclusionList").socketsLeave("exclusionList");
 		return (1);
 	}
@@ -306,7 +347,7 @@ export class WsChatService
 		let channelMessage = `User ${toPromote.name} is now an administrator !`;
 		let userMessage = `Congratulation you have been promoted !`;
 		this.notifyUser(toPromote.id, "addadmin", userMessage, channel.name);
-		return (this.notifyChannel(channel.name, channelMessage, toPromote.name));
+		return (this.notifyChannel(this.sockets.get(sender), channel.name, channelMessage, toPromote.name));
 	}
 
 	async removeAdmin(sender: number, adminForm: userOperationDto) : Promise<number>
@@ -328,7 +369,7 @@ export class WsChatService
 		let channelMessage = `User ${toDemote.name} is now an administrator !`;
 		let userMessage = `You are no longer administrator of this channel !`;
 		this.notifyUser(toDemote.id, "removeadmin", userMessage, channel.name);
-		return (this.notifyChannel(channel.name, channelMessage, toDemote.name));
+		return (this.notifyChannel(this.sockets.get(sender), channel.name, channelMessage, toDemote.name));
 
 	}
 
@@ -388,14 +429,19 @@ export class WsChatService
 			return (-3);
 		if (ret === "XV" || ret === "enemy")
 			return (-4);
-		return (this.notifyUser(receiver.id, "messageuser", messageForm.message, askMan.name));
+		let newPrivate = new Private();
+		newPrivate.user1 = askMan;
+		newPrivate.user2 = receiver;
+		newPrivate.message = messageForm.message;
+		this.privateService.create(newPrivate);
+		return (this.notifyUser(receiver.id, "usermessage", messageForm.message, askMan.name));
 	}
 
 
 	//=======					Sanction					=======
 
 
-	async kickUser(sender: number, kickForm: sanctionOperationDto) : Promise<number>
+	async kickUser(sender: number, kickForm: kickDto) : Promise<number>
 	{
 		let askMan = await this.userService.findOneById(sender);
 		let toKick = await this.userService.findOneByName(kickForm.name)
@@ -417,10 +463,13 @@ export class WsChatService
 		if (await this.joinChannelService.findOneByJoined(channel, toKick) === null)
 			return (-7);
 		await this.joinChannelService.remove(toKick, channel);
+		let userSocket = this.sockets.get(askMan.id);
+		if (userSocket)
+			userSocket.leave(channel.name);
 		let channelMessage = `User ${toKick.name} has been kicked !`;
 		let userMessage = `You have been kicked from channel ${channel.name} for : ${kickForm.reason} !`;
 		this.notifyUser(toKick.id, "kickuser", userMessage, channel.name);
-		return (this.notifyChannel(channel.name, channelMessage, toKick.name));
+		return (this.notifyChannel(this.sockets.get(sender), channel.name, channelMessage, toKick.name));
 	}
 
 	async banUser(sender: number, banForm: sanctionOperationDto) : Promise<number>
@@ -449,14 +498,17 @@ export class WsChatService
 		let newBan = new Bans();
 		newBan.channel = channel;
 		newBan.user = toBan;
-		newBan.end = Date.now() + (banForm.time * 60 * 1000)
+		newBan.end = (Date.now() + (banForm.time * 60 * 1000)).toString();
 		newBan.reason = banForm.reason;
 		await this.bansService.create(newBan);
 		await this.joinChannelService.remove(toBan, channel);
+		let userSocket = this.sockets.get(askMan.id);
+		if (userSocket)
+			userSocket.leave(channel.name);
 		let channelMessage = `User ${toBan.name} has been banned !`;
 		let userMessage = `${Date.now()}: You have been banned from channel ${channel.name} for ${banForm.time} minutes for reason ${banForm.reason} !`;
 		this.notifyUser(toBan.id, "banuser", userMessage, channel.name);
-		return (this.notifyChannel(channel.name, channelMessage, toBan.name));
+		return (this.notifyChannel(this.sockets.get(sender), channel.name, channelMessage, toBan.name));
 	}
 
 	async unbanUser(sender: number, unbanForm: sanctionOperationDto) : Promise<number>
@@ -475,11 +527,11 @@ export class WsChatService
 			return (-4);
 		if (await this.isBan(toUnban, channel) === false)
 			return (-5);
-		this.bansService.updateBanEnd(toUnban, channel, Date.now());
+		this.bansService.updateBanEnd(toUnban, channel, Date.now().toString());
 		let channelMessage = `User ${toUnban.name} has been unbanned !`;
 		let userMessage = `You have been unbanned from channel ${channel.name} !`;
 		this.notifyUser(toUnban.id, "unbanuser", userMessage, channel.name);
-		return (this.notifyChannel(channel.name, channelMessage, toUnban.name));
+		return (this.notifyChannel(this.sockets.get(sender), channel.name, channelMessage, toUnban.name));
 	}
 
 	async muteUser(sender: number, muteForm: sanctionOperationDto) : Promise<number>
@@ -508,13 +560,13 @@ export class WsChatService
 		let newMute = new Mutes();
 		newMute.channel = channel;
 		newMute.user = toMute;
-		newMute.end = Date.now() + (muteForm.time * 60 * 1000)
+		newMute.end = (Date.now() + (muteForm.time * 60 * 1000)).toString();
 		newMute.reason = muteForm.reason;
 		await this.mutesService.create(newMute);
 		let channelMessage = `User ${toMute.name} has been muted !`;
 		let userMessage = `${Date.now()}: You have been muted for ${muteForm.time} minutes for reason ${muteForm.reason} !`;
 		this.notifyUser(toMute.id, "muteuser", userMessage, channel.name);
-		return (this.notifyChannel(channel.name, channelMessage, toMute.name));
+		return (this.notifyChannel(this.sockets.get(sender), channel.name, channelMessage, toMute.name));
 	}
 
 	async unmuteUser(sender: number, unmuteForm: sanctionOperationDto) : Promise<number>
@@ -533,11 +585,11 @@ export class WsChatService
 			return (-4);
 		if (await this.isMute(toUnmute, channel) === false)
 			return (-5);
-		this.mutesService.updateMuteEnd(toUnmute, channel, Date.now());
+		this.mutesService.updateMuteEnd(toUnmute, channel, Date.now().toString());
 		let channelMessage = `User ${toUnmute.name} has been unmuted !`;
 		let userMessage = `You have been unmuted from channel ${channel.name} !`;
 		this.notifyUser(toUnmute.id, "unmuteuser", userMessage, channel.name);
-		return (this.notifyChannel(channel.name, channelMessage, toUnmute.name));
+		return (this.notifyChannel(this.sockets.get(sender), channel.name, channelMessage, toUnmute.name));
 	}
 
 

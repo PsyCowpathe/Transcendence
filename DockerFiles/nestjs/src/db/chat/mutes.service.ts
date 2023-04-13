@@ -33,7 +33,7 @@ export class MutesService
 			return (ret);
 	}
 	
-	updateMuteEnd(user: User, channel: Channel, end: number)
+	updateMuteEnd(user: User, channel: Channel, end: string)
 	{
 		return this.mutesRepository.createQueryBuilder()
 		.update(Mutes)

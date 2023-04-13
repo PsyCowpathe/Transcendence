@@ -8,9 +8,9 @@ import { sendError, sendSuccess } from '../../common/response';
 import { errorMessages } from '../../common/global';
 
 import { WsChatService }  from './wschat.service';
-import { createChannelDto, channelOperationDto, userOperationDto, sanctionOperationDto, messageDto } from './wschat.entity';
+import { createChannelDto, channelOperationDto, userOperationDto, sanctionOperationDto, messageDto, kickDto } from './wschat.entity';
 
-import { WsExceptionFilter } from './ws.filter'; 
+import { WsExceptionFilter } from '../guard/ws.filter'; 
 
 @UseFilters(WsExceptionFilter)
 @WebSocketGateway(3632, {cors: true})
@@ -69,8 +69,8 @@ export class WsChatGateway
 		let ret = await this.wsChatService.deleteChannel(sender, deleteForm);
 		if (ret === -1)
 			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
-		if (ret === -2) // may be useless
-			return (client.emit("ChatError", errorMessages.INVALIDNAME));//may be useless
+		if (ret === -2)
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
 		if (ret === -3)
 			return (client.emit("ChatError", errorMessages.NOTTHEOWNER));
 		let response =
@@ -80,8 +80,7 @@ export class WsChatGateway
 		}
 		client.emit("deletechannel", response);
 	}
-
-
+	
 	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('joinchannel')
@@ -95,8 +94,8 @@ export class WsChatGateway
 		let ret = await this.wsChatService.joinChannel(sender, joinForm);
 		if (ret === -1)
 			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
-		if (ret === -2)//may be useless
-			return (client.emit("ChatError", errorMessages.INVALIDNAME));//may be useless
+		if (ret === -2)
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
 		if (ret === -3)
 			return (client.emit("ChatError", errorMessages.ALREADYINCHANNEL));
 		if (ret === -4)
@@ -126,8 +125,8 @@ export class WsChatGateway
 		let ret = await this.wsChatService.leaveChannel(sender, leaveForm);
 		if (ret === -1)
 			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
-		if (ret === -2)//may be useless
-			return (client.emit("ChatError", errorMessages.INVALIDNAME));//may be useless
+		if (ret === -2)
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
 		if (ret === -3)
 			return (client.emit("ChatError", errorMessages.NOTJOINED));
 		if (ret === -4)
@@ -145,12 +144,10 @@ export class WsChatGateway
 	@SubscribeMessage('channelmsg')
 	async sendChannelMessage(client: Socket, messageForm: messageDto)
 	{
-		console.log("New message :");//
-		console.log(messageForm.message);//
-		console.log(" to ");//
-		console.log(messageForm.destination);//
-		client.emit('channelmsg', {user: "PsyCowpathe", texte: "coucou"});//
-
+		console.log("New message :");
+		console.log(messageForm.message);
+		console.log(" to ");
+		console.log(messageForm.destination);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
@@ -263,7 +260,7 @@ export class WsChatGateway
 			return (client.emit("ChatError", errorMessages.YOUAREIGNORED));
 		if (ret === -4)
 			return (client.emit("ChatError", errorMessages.MESSAGETOIGNORE));
-		client.emit("usermessage", `You successfully send a message to ${messageForm.destination} !`);
+		//client.emit("usermessage", `You successfully send a message to ${messageForm.destination} !`);
 	}
 
 	@UseGuards(SocketGuard)
@@ -295,7 +292,7 @@ export class WsChatGateway
 	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('kickuser')
-	async kickUser(client: Socket, kickForm: sanctionOperationDto)
+	async kickUser(client: Socket, kickForm: kickDto)
 	{
 		console.log("Kick user ");
 		console.log(kickForm.name);

@@ -1,5 +1,5 @@
-import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { UseGuards } from '@nestjs/common';
+import { SubscribeMessage, WebSocketGateway, WebSocketServer  } from '@nestjs/websockets';
+import { UseGuards, UseFilters } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 
 import { SocketGuard } from '../guard/socket.guard';
@@ -8,9 +8,10 @@ import { sendError, sendSuccess } from '../../common/response';
 import { errorMessages } from '../../common/global'; 
 
 import { WsRelationService } from './wsrelation.service';
+import { WsExceptionFilter } from '../guard/ws.filter'; 
 
+@UseFilters(WsExceptionFilter)
 @WebSocketGateway(3631, {cors: true}) //userspace relation
-
 export class WsRelationGateway
 {
 	constructor(private readonly wsRelationService: WsRelationService)

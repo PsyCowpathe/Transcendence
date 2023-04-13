@@ -29,5 +29,17 @@ export class User
 	TwoFAToken: string;
 
 	@Column({ nullable: true })
-	TwoFAExpire: number
+	TwoFAExpire: string
+
+	@Column()
+	Status: string
+	
+	@Column({ nullable: true })
+	Match: number
+
+	@Column({ nullable: true })
+	Victory: number
+
+	@Column({ nullable: true })
+	Defeat: number
 }
