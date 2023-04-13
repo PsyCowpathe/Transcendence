@@ -12,14 +12,16 @@ import { TopBar } from './TopBar';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import {urls } from "../global"
-import { VraimentIlSaoule2 } from '../aurelcassecouilles/VraimentIlEstCasseCouille';
+import { VraimentIlSaoule2 } from '../Headers/VraimentIlEstCasseCouille';
 import { PicGetRequest } from '../Api/PicGetRequest';
-import { VraimentIlSaoule } from '../aurelcassecouilles/VraimentIlEstCasseCouille';
+import { VraimentIlSaoule } from '../Headers/VraimentIlEstCasseCouille';
 import Button from '../style/Button';
 import { GetUserInfo } from '../Api/GetUserInfo';
 import socketManager from '../MesSockets';
+
 interface User {
   name: string;
+  uid: number;
 }
 
 export function AffTheUser({User, Channel} : {User : User, Channel : string  | null}) 
@@ -78,7 +80,7 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
       return
     }
 
-    GetUserInfo(UserName)
+    GetUserInfo(User.uid)
       .then((res) => {
         console.log(res)
       })
@@ -89,13 +91,6 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
           autoClose: 2000,
           progressClassName: "my-progress-bar"
         })
-        console.log("============");
-        console.log(err.message)
-        console.log("============");
-        console.log(err.response)
-        console.log("============");
-        console.log("============");
-
         if (err.message !== "Request aborted")
         {
           if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")
@@ -132,7 +127,7 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
         return
       } 
       console.log("Use effect de la photo")
-      PicGetRequest()
+      PicGetRequest(User.uid)
       .then((res) =>
       {
         console.log("|")
@@ -174,12 +169,13 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
       })
     }, [redirectedd])
   
-    useEffect (() =>
-    {
-      Pic = localStorage.getItem('ProfilPic')
-    }, [PicUp])
+    // useEffect (() =>
+    // {
+    //   Pic = localStorage.getItem('ProfilPic')
+    // }, [PicUp])
     
     const UserName : any= localStorage.getItem('name')
+    // const UserUID : any= localStorage.getItem('UID')
     console.log(UserName)
   
  ////////////////////////////////////////////////////////BAN   
@@ -189,7 +185,7 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
    e.preventDefault()
    console.log(User)
    console.log(Channel)
-   socket.emit("banuser", { name: User.name, channelname: Channel, time: timer, reason: reason })
+   socket.emit("banuser", { id: User.uid, channelname: Channel, time: timer, reason: reason })
    setReason("")
    setTimer(0)
    setShowBan(!ShowBan)
@@ -206,7 +202,7 @@ const Mute =  (e : React.FormEvent<HTMLFormElement>) =>
 {
   e.preventDefault()
   if (Channel !== '')
-    socket.emit("muteuser", { name: User.name, channelname: Channel, time: timer, reason: reason })
+    socket.emit("muteuser", { id: User.uid, channelname: Channel, time: timer, reason: reason })
   // else 
   //   socket.emit("muteuser", { name: User, channelname: Channel, time: timer, reason: reason })
   setReason("")
@@ -227,7 +223,7 @@ const Kick =  (e : React.FormEvent<HTMLFormElement>) =>
 {
   e.preventDefault()
   if (Channel !== '')
-    socket.emit("kickuser", { name: User.name, channelname: Channel, reason: reason })
+    socket.emit("kickuser", { id: User.uid, channelname: Channel, reason: reason })
   // else 
   //   socket.emit("muteuser", { name: User, channelname: Channel, time: timer, reason: reason })
   setReason("")

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
 import "./truc.css";
 import { socketManager } from "../Pages/HomePage";
-import { VraimentIlSaoule } from "../aurelcassecouilles/VraimentIlEstCasseCouille";
+import { VraimentIlSaoule } from "../Headers/VraimentIlEstCasseCouille";
 import { TopBar } from "../Pages/TopBar";
 import { ToastContainer, toast } from 'react-toastify';
 import UserInfoModal from '../Modale/UserModal'
@@ -14,6 +14,17 @@ import { GetPrivMsg } from "../Api/GetPrivateMsg";
 let test: boolean = false
 let socket: any
 
+
+interface IUser {
+  username: string;
+  id: number;
+}
+
+interface User {
+  name: string;
+  uid : number
+  ///////// interface a modifer pour avoir toute les info des user puis initialiser un User  avec toute ses info quand on recoit le token
+}
 
 interface ChanEmit {
   name: string;
@@ -29,6 +40,7 @@ interface Message {
   id: number;
   channel : string;
   user: string;
+  userUID : number;
   text: string;
   isSent: boolean;
   isPriv : boolean;
@@ -37,6 +49,7 @@ interface Message {
 export function Chat() {
   ////////////////////////////////////////////////////////////////////// chan manager //////////////////////////////////////////////////////////////////
   const UserName: any = localStorage.getItem('name')
+  const UserUID: any = localStorage.getItem('UID')
   // const [UseChan, setUseChan] = useState<string>('');
   const [responses, setResponse] = useState<string>("vide");
   const [Channame, setChanname] = useState<string>('');
@@ -84,7 +97,6 @@ export function Chat() {
         window.location.assign('/Change')
      }
         console.log(err)
-  
       }
       )
     }
@@ -105,7 +117,7 @@ export function Chat() {
         progressClassName: "my-progress-bar"
       })
       GetChannel()
-      GetChannelInfo(selectedChannel)
+      GetMsgChan()
 
       // setResponse("dont change");
     }
@@ -118,7 +130,7 @@ export function Chat() {
       })
       GetChannel()
       setSelectedChannel('')
-      GetChannelInfo(selectedChannel)
+      GetMsgChan()
       // console.log("coucou jsuis sence rentrer")
       // setResponse("change");
 
@@ -240,7 +252,7 @@ export function Chat() {
         autoClose: 2000,
         progressClassName: "my-progress-bar"
       })
-      const newMessageObj = { id: Date.now(), channel:response.channel, user: response.user, text: response.message, isSent: false, isPriv: false };
+      const newMessageObj = { id: Date.now(), channel:response.channel, user: response.user, userUID:response.id ,text: response.message, isSent: false, isPriv: false };
 
       setMessages(prevMessages => [...prevMessages, newMessageObj]);
     }
@@ -255,7 +267,7 @@ export function Chat() {
 
   useEffect(() => {
     const handlelistenMsg = (response: any) => {
-      const newMessageObj = { id:  Date.now(), channel:'', user: response.first_data, text: response.message, isSent: false, isPriv: true };
+      const newMessageObj = { id:  Date.now(), channel:'', user: response.first_data, userUID:response.id , text: response.message, isSent: false, isPriv: true };
       setMessages(prevMessages => [...prevMessages, newMessageObj]);
     }
     socket.removeListener("usermessage");
@@ -266,10 +278,7 @@ export function Chat() {
     }
   }, [])
 
-  interface User {
-    name: string;
-    ///////// interface a modifer pour avoir toute les info des user puis initialiser un User  avec toute ses info quand on recoit le token
-  }
+ 
 
 
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -278,6 +287,9 @@ export function Chat() {
   const [User, setUser] = useState<User | null>(null);
 
   const handleUserClick = (user: User | null) => {
+    console.log("USERUIDDDDDD")
+    if (user !== null)
+    console.log(user.name)
     setSelectedUser(user);
   };
 
@@ -292,14 +304,14 @@ export function Chat() {
     if (selectedChannel !== '') {
 
     socket.emit("channelmsg", { destination: selectedChannel, message: newMessage })
-    const newMessageObj = { id: Date.now(), channel:selectedChannel, user: UserName, text: newMessage, isSent: true, isPriv: false };
+    const newMessageObj = { id: Date.now(), channel:selectedChannel, user: UserName, userUID: UserUID,  text: newMessage, isSent: true, isPriv: false };
     setMessages(prevMessages => [...prevMessages, newMessageObj]);
     }
     else if (UserTo !== '')
     {
 
       socket.emit("usermessage", { destination: UserTo, message: newMessage })
-      const newMessageObj = { id: Date.now(), channel:'', user: UserName, text: newMessage, isSent: true, isPriv: true };
+      const newMessageObj = { id: Date.now(), channel:'', user: UserName, userUID:UserUID, text: newMessage, isSent: true, isPriv: true };
       setMessages(prevMessages => [...prevMessages, newMessageObj]);
       console.log(messages)
     }
@@ -327,7 +339,7 @@ export function Chat() {
         return
       return (
         <div>
-          <div className={`message ${userClass}`} onClick={() => handleUserClick({ name: message.user })}>
+          <div className={`message ${userClass}`} onClick={() => handleUserClick({ name: message.user, uid: message.userUID })}>
             {message.user}
           </div>
           <div className="message-container">
@@ -351,11 +363,51 @@ export function Chat() {
 
 
 
+  const GetMsgChan = () =>
+  {
+    console.log("selectedChannel")
+    console.log(selectedChannel)
+    GetChannelInfo(selectedChannel)    //recupere les message du channel
+    .then((response) => {
+      console.log(response)
+      console.log("lol")
+       if (response.data !== null)
+       {
+      const newMessages = response.data.map((message: any, index: any) => {
+        const isSent = message.username === UserName;
+        return {
+          id:  Date.now(),
+          channel: selectedChannel,
+          user: message.username,
+          text: message.message,
+          isSent: isSent
+        };
+      });
+      setMessages(newMessages);
+    }
+    })
+    .catch((err) => {
+      if(err.response.data.message == "Invalid user" || err.message.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+      {
+        console.log("coucou ?")
+        window.location.assign('/')
+      }
+      if ( err.message === "User not registered")// ==> redirection vers la page de register
+      {
+        console.log("ERROR")
+        console.log(err)
+        window.location.assign('/Change')
+     }
+      console.log(err)
+    })
 
+    
+  }
 
 
   const OpenChannel = (ChanUse: any) => {
 
+    console.log("heuuuuuuuuu")
     console.log(ChanUse)
     setSelectedChannel(ChanUse)
     console.log(ChanUse)
@@ -381,6 +433,7 @@ export function Chat() {
         }
         })
         .catch((err) => {
+          console.log(err)
           if(err.response.data.message == "Invalid user" || err.message.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
           {
             console.log("coucou ?")
@@ -392,16 +445,12 @@ export function Chat() {
             console.log(err)
             window.location.assign('/Change')
          }
-          console.log(err)
         })
     }
   }
   
-    interface IUser {
-      id: number;
-      username: string;
-    }
-    const [UserList, setUserList] = useState<IUser[]>([]);
+
+    const [UserList, setUserList] = useState<User[]>([]);
 
   useEffect(() => { /// get la friend list
     GetFriendList()
@@ -409,7 +458,7 @@ export function Chat() {
         console.log("FRIENDLIST:")
         console.log(response)
         setUserList(response.data.map((user:any, index : any) => {
-          return { id:  Date.now(), username: user}
+          return { uid:  user.id, username: user.name}
         }
         ))
         console.log("UserLIST:")
@@ -586,8 +635,8 @@ export function Chat() {
               <ul className="containers">
 
                 {UserList.map((user) => (
-                  <li className="active" key={user.id} onClick={() => OpenUser(user.username)} >
-                    {user.username}
+                  <li className="active" key={user.uid} onClick={() => OpenUser(user.name)} >
+                    {user.name}
                   </li>
                 ))}
               </ul>

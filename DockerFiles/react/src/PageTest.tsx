@@ -1,6 +1,5 @@
 import react from 'react';
 import io from 'socket.io-client';
-import { VraimentIlSaoule } from './aurelcassecouilles/VraimentIlEstCasseCouille';
 import { socketManager } from './Pages/HomePage';
   
 import * as React from 'react';

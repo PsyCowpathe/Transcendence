@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { urls } from "../global";
-import { VraimentIlSaoule } from '../aurelcassecouilles/VraimentIlEstCasseCouille';
+import { VraimentIlSaoule } from '../Headers/VraimentIlEstCasseCouille';
 
 
 export async  function  Send2FA(Code2FA  : any)

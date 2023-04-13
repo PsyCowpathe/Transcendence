@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { VraimentIlSaoule } from '../aurelcassecouilles/VraimentIlEstCasseCouille'
+import { VraimentIlSaoule } from '../Headers/VraimentIlEstCasseCouille'
 import '../css/Buttons.css'
 import { socketManager } from '../Pages/HomePage'
 import { ToastContainer, toast, ToastOptions } from 'react-toastify';

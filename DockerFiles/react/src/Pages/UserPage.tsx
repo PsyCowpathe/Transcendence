@@ -10,7 +10,7 @@ import { TopBar } from './TopBar';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { urls } from "../global"
-import { VraimentIlSaoule2 } from '../aurelcassecouilles/VraimentIlEstCasseCouille';
+import { VraimentIlSaoule2 } from '../Headers/VraimentIlEstCasseCouille';
 import { PicGetRequest } from '../Api/PicGetRequest';
 import { GetUserInfo } from '../Api/GetUserInfo';
 import React from 'react';
@@ -21,6 +21,15 @@ import '../css/UserPage.css';
 import ModalSet2FA from '../Modale/Modal2FA';
 import './test.css'
 import { GetFriendList } from '../Api/GetFriendList';
+import { AskFriend } from './AskFrindPage';
+import { GetInvitationList } from '../Api/GetInvitationList';
+import socketManager from '../MesSockets';
+import { VraimentIlSaoule } from '../Headers/VraimentIlEstCasseCouille';
+import { GetBlockList } from '../Api/GetBlockedList';
+let test : boolean = false
+let socket: any
+let tt : boolean = true
+
 
 
 export function AffMyUserPage({ ShowBar }: { ShowBar: boolean })
@@ -29,17 +38,22 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean })
   {
     id: number
     name : string
+    UID : string
   }
   const [friends, setFriend] = useState<friend[]>([])
-  useEffect(() =>
+  const [invit, setInvit] = useState<friend[]>([])
+  const [blockedList, setBlockedList] = useState<friend[]>([])
+  
+  const MAJFriendList = () =>
   {
     GetFriendList()
     .then((res) =>
     {
-      console.log("ssss")
+      console.log("iiiii")
       console.log(res)
-      setFriend(res.data.map((name:any, index : any) => {
-        return { id:  Date.now(), name: name}
+      setFriend([])
+      setFriend(res.data.map((name:any) => {
+        return { id:  name.id, name: name.name}
       }
       ))
     })
@@ -47,14 +61,84 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean })
     {
       if (err.message !== "Request aborted") {
         if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-          window.location.assign('/')
+        window.location.assign('/')
         if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
-          window.location.assign('/Change')
+        window.location.assign('/Change')
         if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
           window.location.assign('/Send2FA')////////////////////////////////////////////////////////////////////////////////////
       }
     })
+  }
+  const MAJBlockList = () =>
+  {
+    GetBlockList()
+    .then((res) =>
+    {
+      console.log("iiiii")
+      console.log(res)
+      setBlockedList([])
+      setBlockedList(res.data.map((name:any) => {
+        return { id:  name.id, name: name.name}
+      }
+      ))
+    })
+    .catch((err) =>
+    {
+      if (err.message !== "Request aborted") {
+        if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+        window.location.assign('/')
+        if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+        window.location.assign('/Change')
+        if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+          window.location.assign('/Send2FA')////////////////////////////////////////////////////////////////////////////////////
+      }
+    })
+  }
+  
+
+  const MAJinvitationList = () =>
+  {
+    GetInvitationList()
+    .then((res) =>
+    {
+      console.log("ssss")
+      console.log(res)
+      setInvit(res.data.map((name:any) => {
+        return { id:  name.id, name: name.name}
+      }
+      ))
+      console.log(invit)
+    })
+    .catch((err) =>
+    {
+      if (err.message !== "Request aborted") {
+        if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+        window.location.assign('/')
+        if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+        window.location.assign('/Change')
+        if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+          window.location.assign('/Send2FA')
+      }
+    })
+  }
+  
+  const MAJList = () =>
+  {
+    MAJFriendList()
+    MAJinvitationList()
+    MAJBlockList()
+  }
+
+  useEffect(() =>
+  {
+    MAJList()
   }, [])
+
+  
+  
+    const UserName: any = localStorage.getItem('name')
+    const UserID: any = localStorage.getItem('UID')
+    const [redirected, setRedirected] = useState(false)
 
 
   const [ClickLog, setClickLog] = useState(false)
@@ -62,10 +146,11 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean })
   const [Click, setClick] = useState(false)
   const [PicUp, setPic] = React.useState("non")
   const [Pic, setPicUrl] = useState(localStorage.getItem('ProfilPic') || "Profil")
+
   // setPicUrl(localStorage.getItem('ProfilPic') || "Profil")
   useEffect(() => {
     console.log("Use effect de la photo")
-    PicGetRequest()
+    PicGetRequest(UserID)
       .then((res) => {
         console.log("|")
         console.log(res)
@@ -107,79 +192,21 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean })
       })
   }, [Click])
 
-
-  const UserName: any = localStorage.getItem('name')
-  // console.log(UserName)
-  // useEffect(() =>
-  // {
-  // GetUserInfo(UserName) //je recupere toute les info sur mon user 
-  // .then((res) =>
-  // {
-  //   console.log(res)
-  // })
-  // .catch((err) =>
-  // {
-  //   console.log("ICI////////////////////////ICI")
-  //   toast.error(err.message, {
-  //     position: toast.POSITION.TOP_RIGHT,
-  //     autoClose: 2000,
-  //     progressClassName: "my-progress-bar"
-  // })
-  // console.log("============");
-  // console.log(err.message)
-  // console.log("============");
-  // console.log(err.response)
-  // console.log("============");
-  // // console.log(err.response.data.message)
-  // console.log("============");
-  // console.log("============");
-  //    // 401 --> token invalide 
-  //    // 403 --> user non enregistré
-  //    if (err.message !== "Request aborted" )
-  //    { 
-  //    if(err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-  //     {
-  //       console.log("coucou ?")
-  //       window.location.assign('/')
-  //       console.log("t s sence te barrer fdp")
-  //     }
-  //     if (err.response.data.message=== "User not registered")// ==> redirection vers la page de register
-  //     {
-  //       console.log("ERROR")
-  //       console.log(err)
-  //       window.location.assign('/Change')
-  //    }
-  //   }
-  //    //if(err.message === "Invalid 2FA token") erreur de 2FA ==> redirection vers la page de 2FA
-
-  // })
-  // }, [])
-
-  const [redirected, setRedirected] = useState(false)
-
   useEffect(() => {
     if (redirected) {
       return
     }
 
-    GetUserInfo(UserName)
+    GetUserInfo(UserID)
       .then((res) => {
         console.log(res)
       })
       .catch((err) => {
-        console.log("ICI////////////////////////ICI")
         toast.error(err.message, {
           position: toast.POSITION.TOP_RIGHT,
           autoClose: 2000,
           progressClassName: "my-progress-bar"
         })
-        console.log("============");
-        console.log(err.message)
-        console.log("============");
-        console.log(err.response)
-        console.log("============");
-        console.log("============");
-
         if (err.message !== "Request aborted")
         {
           if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")
@@ -222,6 +249,262 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean })
   }
 
 
+  /*************************************************************************************************/
+  /*                                                                                               */
+  /*                                                                                               */
+  /*                                                                                               */
+  /*                                         FRIEND REQUEST                                        */
+  /*                                                                                               */
+  /*                                                                                               */
+  /*                                                                                               */
+  /*                                                                                               */
+  /*************************************************************************************************/
+
+
+  if (tt === true && socket && socket.connected !== false)
+	{
+		tt = false ;
+	}
+	if (tt === true)
+	{
+		socket = socketManager.getFriendRequestSocket()
+		console.log(socket )
+		if (socket == null)
+		{ 
+			if ( test === false && VraimentIlSaoule().headers.Authorization !== null)
+			{
+				socket = socketManager.initializeFriendRequestSocket(VraimentIlSaoule().headers.Authorization)
+				console.log(socket )
+				test = true
+			}
+		}
+		if (socket && socket.connected !== false)
+		{
+			tt = false ;
+		}
+		console.log(socket)
+	}
+	
+	interface user
+	{
+		user : number;
+	}
+
+	
+const MyCustomToast = ({response, Acceptnow, Refusednow, closeToast} : any) => {
+	return (
+	  <div>
+		<p> {response.message}</p>
+		<button onClick={ () => {Acceptnow(response); closeToast()}}>Accept</button>
+		<button onClick={ () => {Refusednow(response); closeToast()}}>Refuse</button>
+	  </div>
+	);
+  };
+
+
+
+
+	useEffect(() => {
+		const handleFriendRequest = (response: any) => {
+      MAJList()
+
+
+			console.log("response")
+			toast.success(response, {
+				position: toast.POSITION.TOP_RIGHT,
+				autoClose: 2000,
+				progressClassName: "my-progress-bar"
+			})
+		}
+		const handleErrorRequest = (response: any) => {
+      MAJList()
+			
+			console.log(response)
+			toast.error(response, {
+				position: toast.POSITION.TOP_RIGHT,
+				autoClose: 2000,
+				progressClassName: "my-progress-bar"
+			})
+		}
+
+		const handleFriendRequestSpe = (response: any) => {
+			console.log("NKJBDKSVBKJSHBDLKDBLKHSBHNSKJBHLKHDBLKHDBDLKHDHNDKJ")
+      MAJList()
+			if (response.message === `${response.user} send you a friend request !`) {
+				console.log("dddd")
+				toast.success(<MyCustomToast response={response} Acceptnow={Acceptnow} Refusednow={Refusednow} usera={userAc} closeToast={toast.dismiss} />,
+					{
+						position: toast.POSITION.TOP_RIGHT,
+						autoClose: 2000,
+						progressClassName: "my-progress-bar"
+					})
+			}
+			else {
+				toast.success(response, {
+					position: toast.POSITION.TOP_RIGHT,
+					autoClose: 2000,
+					progressClassName: "my-progress-bar"
+				})
+
+			}
+		}
+		socket.removeListener('sendfriendrequest');
+		socket.removeListener('acceptfriendrequest');
+		socket.removeListener('refusefriendrequest');
+		socket.removeListener('blockuser');
+		socket.removeListener('deletefriend');
+		socket.removeListener('unblockuser');
+		socket.removeListener('RelationError');
+
+		socket.on("sendfriendrequest", handleFriendRequestSpe);
+		socket.on("refusefriendrequest", handleFriendRequest);
+		socket.on("blockuser", handleFriendRequest);
+		socket.on("deletefriend", handleFriendRequest);
+		socket.on("unblockuser", handleFriendRequest);
+		socket.on("acceptfriendrequest", handleFriendRequest);
+		socket.on("RelationError", handleErrorRequest);
+
+		return () => {
+			socket.off("sendfriendrequest", handleFriendRequestSpe);
+			socket.off("refusefriendrequest", handleFriendRequest);
+			socket.off("blockuser", handleFriendRequest);
+			socket.off("deletefriend", handleFriendRequest);
+			socket.off("unblockuser", handleFriendRequest);
+			socket.off("acceptfriendrequest", handleFriendRequest);
+			socket.off("RelationError", handleErrorRequest);
+		}
+	}, [])
+
+
+
+
+	
+	///////////////////////////////////////////////////////////////////////// request send      ///////////////////////////////////////////////////////
+	interface user2
+  {
+    user : string
+  }
+  const [userAsk, setUserAsk] = useState<user2>({user:''})
+                                                                                                                                                                /*FAIT*/
+	
+	const AskRequest = async(event : any) =>
+	{         
+		event.preventDefault()
+		//emit  
+		console.log("xljdslhnvklzfdn--------------------")
+		await socket.emit("sendfriendrequest", userAsk);
+		console.log("xljdslhnvklzfdn--------------------")
+		setUserAsk({user: ''})
+    
+	}
+	const ChangeAsk = ((event : any) =>
+	{
+		setUserAsk({user : event.target.value})
+	})
+	
+
+
+	///////////////////////////////////////////////////////////////////////// request accept      ///////////////////////////////////////////////////////
+
+	const [userAc, setUserAccept] = useState<user>({user:0})//1
+                                                                                                                                                                /*FAIT*/
+	
+	const Accept = async(user : number) =>
+	{
+    console.log("ACCEPT :")
+    console.log(user)
+    setUserAccept({user:user})
+		await socket.emit("acceptfriendrequest", {user});
+	}
+
+	const Acceptnow = async(userAs : user) =>
+	{
+		console.log(userAs)
+		await socket.emit("acceptfriendrequest", userAs);
+	}
+	
+	///////////////////////////////////////////////////////////////////////// request refused      ///////////////////////////////////////////////////////
+
+
+
+                                                                                                                                                                /*FAIT*/
+	
+	
+	const Refused = async(user : number) =>
+	{
+    console.log("USER REFUSE ?")
+    console.log(user)
+		await socket.emit("refusefriendrequest", {user});
+	}
+
+
+	const Refusednow = async (userRef : user) =>
+	{
+		console.log(userRef)
+		await socket.emit("refusefriendrequest", userRef);
+	}
+
+	///////////////////////////////////////////////////////////////////////// request block      ///////////////////////////////////////////////////////
+
+                                                                                                                                                                /*FAIT*/
+	
+	
+	const block = async(user : number) =>
+	{
+    console.log("BLOCK :")
+    console.log(user)
+    console.log("WTF" + user)
+		await socket.emit("blockuser", {user});
+	}
+
+
+	///////////////////////////////////////////////////////////////////////// request delete      ///////////////////////////////////////////////////////
+	
+	const [userdelete, setUserdelete] = useState<user>({user:0})//4
+	
+                                                                                                                                                                /*FAIT*/
+	
+	const deleteU = async(user : number) =>
+	{         
+    console.log("DELETE :")
+    console.log(user)
+		await socket.emit("deletefriend", {user});
+	}
+	const Changedelete= ((event : any) =>
+	{
+		setUserdelete({user : event.target.value})
+	})
+
+	///////////////////////////////////////////////////////////////////////// request unblock      ///////////////////////////////////////////////////////
+	
+	
+	
+	const unblock = async(user : any) =>
+	{         
+		await socket.emit("unblockuser", {user});
+
+	}
+
+
+
+
+
+
+
+
+
+  /*************************************************************************************************/
+  /*                                                                                               */
+  /*                                                                                               */
+  /*                                                                                               */
+  /*                                         FRIEND REQUEST                                        */
+  /*                                                                                               */
+  /*                                                                                               */
+  /*                                                                                               */
+  /*                                                                                               */
+  /*************************************************************************************************/
+
+
 
   return (
     <div className="user-page">
@@ -249,6 +532,20 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean })
           Visiter mon site web
         </a>
       </div>
+
+      <form action="submit" onSubmit={AskRequest}>
+		<input 
+		
+		value={userAsk.user}
+		type="text"
+		placeholder='friend request'
+		onChange={ChangeAsk}
+		/>
+		<button>send</button>
+		</form>
+
+
+     
       <div>
         <button onClick={set2FA}>Set 2FA</button>
         {open2FA && <ModalSet2FA onClose={set2FA}/>}
@@ -256,36 +553,27 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean })
       <div className="friends-list">
       <h3>Friends</h3>
       <ul>
-        {friends.map((friend) => (
-          <li key={friend.id}>{friend.name}</li>
-        ))}
+        {  friends.map((friend) => (
+          <li key={friend.id}>{friend.name} <button className="test" onClick={() => deleteU(friend.id) }>delete</button> <button onClick={() => block(friend.id)}>block</button></li> ////chabge css button is horrible
+          ))}
+      </ul>
+    </div>
+    <div className="Invitation-list">
+      <h3>Invitation</h3>
+      <ul>
+        {  invit.map((invite) => (
+          <li key={invite.id}>{invite.name} <button onClick={() => Refused(invite.id)}>refuse</button> <button onClick={() => Accept(invite.id)}>Accept</button> </li>
+          ))}
+      </ul>
+    </div>
+    <div className="Blocked-list">
+      <h3>Blocked Friend</h3>
+      <ul>
+        {  blockedList.map((Block) => (
+          <li key={Block.id}>{Block.name} <button onClick={() => unblock(Block.id)}>Blocked</button></li>
+          ))}
       </ul>
     </div>
     </div>
   );
-
-  // return (
-  //   <div className="App">
-  //     {ShowBar && <TopBar />}
-
-  //     {/* <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "2em", height: "100vh" }}> */}
-  //     <img src={Pic} alt="Profile" style={{ borderRadius: "50%", width: "200px", height: "200px", objectFit: "cover", boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)" }} />
-  //     <h1 style={{ fontSize: "2.5em", margin: "1em 0 0.5em" }}>{UserName}</h1>
-  //     <button className="SettingsButton" onClick={onClick}>
-  //       <h2>Change yor login</h2>
-  //       <FaCog className="SettingsButtonIcon" />
-  //     </button>
-  //     {ClickLog && <LoginModal onClose={onClick} />}
-  //     <p style={{ fontSize: "1.2em", marginBottom: "1em", }}>Age | Ville</p>
-  //     <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
-  //       <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"><button style={{ fontSize: "1.2em", padding: "0.5em 2em", borderRadius: "5px", backgroundColor: "#4285F4", color: "#FFFFFF", border: "none", boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)", cursor: "pointer" }}>Visiter mon site web</button></a>
-  //       <button onClick={Notif}>Change your image</button>
-  //       {Click && <PicModal onClose={Notif} />}
-
-  //     </div><ToastContainer />
-  //   </div>
-  // );
 }
-
-
-  // export default AffMyUserPage;

@@ -4,7 +4,7 @@ import { Get2FA } from '../Api/Get2FA';
 import LoadingPage from './LoadingPage';
 import React, { Component } from 'react';
 import { useState } from 'react';
-import { VraimentIlSaoule } from '../aurelcassecouilles/VraimentIlEstCasseCouille';
+import { VraimentIlSaoule } from '../Headers/VraimentIlEstCasseCouille';
 import axios from 'axios';
 import { urls } from '../global';
 import { TopBar } from './TopBar';
@@ -27,7 +27,7 @@ export function Set2FA ()
     e.preventDefault()
     let config = VraimentIlSaoule()
     console.log("-------------------------------QQQQAAA---------------------------------------------------")
-    console.log(Code2FA)
+    console.log("???")
     Send2FA(Code2FA)
     .then((res) =>
     {
@@ -40,6 +40,17 @@ export function Set2FA ()
     })
     .catch((err) =>
     {
+      if (err.message !== "Request aborted") {
+        if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+        { 
+          console.log("BBBBBBIIIITTTTEEEEEEEEE-----------------------------------------------")
+          window.location.assign('/')
+        }
+          else if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+          window.location.assign('/Change')
+        else if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+          window.location.assign('/Send2FA')
+      }
       console.log(err)
     })
     console.log("pour aurel")
@@ -102,10 +113,13 @@ export class MyComponent extends Component <{}, MyComponentState>
     console.log(err)
     if (err.message !== "Request aborted") {
       if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+      { 
+        console.log("BBBBBBIIIITTTTEEEEEEEEE-----------------------------------------------")
         window.location.assign('/')
-      if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+      }
+        else if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
         window.location.assign('/Change')
-      if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+      else if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
         window.location.assign('/Send2FA')
     }
   })

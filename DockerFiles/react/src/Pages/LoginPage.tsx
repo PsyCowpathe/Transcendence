@@ -26,6 +26,7 @@ export function ChangeLogin()
             setOk(true)
             console.log("JE SEND UN LOGIN")
 			localStorage.setItem('name', response.data.name);
+            localStorage.setItem('UID', response.data.id); 
             window.location.assign('/AffUser')
             console.log(response.data) 
             

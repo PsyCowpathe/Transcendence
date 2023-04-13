@@ -1,13 +1,15 @@
 import io from 'socket.io-client';
 import { urls } from './global';
-import { VraimentIlSaoule } from './aurelcassecouilles/VraimentIlEstCasseCouille';
+import { VraimentIlSaoule } from './Headers/VraimentIlEstCasseCouille';
 class SocketManager {
   private chatSocket: any;
   private FriendRequestSocket: any;
+  private PongSocket: any;
 
   constructor() {
     this.chatSocket = null;
     this.FriendRequestSocket = null;
+    this.PongSocket = null;
   }
 
   initializeChatSocket(token: string) {
@@ -21,7 +23,6 @@ class SocketManager {
       });
 
     }
-    this.chatSocket.emit("newlink")
 
   }
   initializeFriendRequestSocket(token: string) {
@@ -33,9 +34,18 @@ class SocketManager {
         }
       });
     }
-    this.FriendRequestSocket.emit("newlink")
   }
 
+  initializePongSocket(token: string) {
+    if (this.PongSocket === null) {
+      this.PongSocket = io(`${urls.SOCKETGAME}`, {
+        auth: {
+          token: token,
+          twoFAToken: localStorage.getItem('2FA')
+        }
+      });
+    }
+  }
 
 
   getChatSocket(): any {
@@ -44,6 +54,9 @@ class SocketManager {
 
   getFriendRequestSocket(): any {
     return this.FriendRequestSocket;
+  }
+  getPongSocket(): any {
+    return this.PongSocket;
   }
 }
 

@@ -7,7 +7,7 @@ import { Send2FA } from "../Api/send2FA";
 import { ChangeLogin } from "./LoginPage";
 import { useState } from "react";
 import '../css/Force.css'
-import { VraimentIlSaoule } from "../aurelcassecouilles/VraimentIlEstCasseCouille";
+import { VraimentIlSaoule } from "../Headers/VraimentIlEstCasseCouille";
 import { socketManager } from "./HomePage";
 
 interface code {
@@ -30,6 +30,17 @@ function Resend()
             window.location.assign('/AffUser')
         })
         .catch((err) => {
+            if (err.message !== "Request aborted") {
+                if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+                { 
+                  console.log("BBBBBBIIIITTTTEEEEEEEEE-----------------------------------------------")
+                  window.location.assign('/')
+                }
+                  else if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+                  window.location.assign('/Change')
+                else if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+                  window.location.assign('/Send2FA')
+              }
             console.log(err)
         }
         )
