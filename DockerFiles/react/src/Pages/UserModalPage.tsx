@@ -12,9 +12,9 @@ import { TopBar } from './TopBar';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import {urls } from "../global"
-import { VraimentIlSaoule2 } from '../Headers/VraimentIlEstCasseCouille';
+import { SetParamsToGetPost2 } from '../Headers/VraimentIlEstCasseCouille';
 import { PicGetRequest } from '../Api/PicGetRequest';
-import { VraimentIlSaoule } from '../Headers/VraimentIlEstCasseCouille';
+import { SetParamsToGetPost } from '../Headers/VraimentIlEstCasseCouille';
 import Button from '../style/Button';
 import { GetUserInfo } from '../Api/GetUserInfo';
 import socketManager from '../MesSockets';
@@ -59,19 +59,6 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
 
     }, [])
 
-    // useEffect(() => {
-    // GetUserInfo(User.name)
-    // .then((res) =>
-    // {
-    //   console.log("couxcou")
-    //   console.log(User.name)
-    //     console.log(res)
-    // })
-    // .catch((err) =>
-    // {
-    //     console.log(err)
-    // })
-    // }, [])
 
   const [redirected, setRedirected] = useState(false)
 
@@ -114,11 +101,11 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
 
 
     const [PicUp, setPic] = React.useState("non")
-    let Pic : any = localStorage.getItem('ProfilPic')
-    if(Pic === null)
-    {
-      Pic = Profil
-    }
+     let Pic : any = localStorage.getItem(`UserPic${User.uid}`)
+    // if(Pic === null)
+    // {
+    //   Pic = Profil
+    // }
   const [redirectedd, setRedirectedd] = useState(false)
 
     useEffect(() =>
@@ -127,6 +114,7 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
         return
       } 
       console.log("Use effect de la photo")
+      console.log(User.uid)
       PicGetRequest(User.uid)
       .then((res) =>
       {
@@ -134,7 +122,8 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
         console.log(res)
         console.log("|")
         const url = window.URL.createObjectURL(new Blob([res.data]));
-        localStorage.setItem('ProfilPic', url)
+        localStorage.setItem(`UserPic${User.uid}`, url)
+        
   
         setPic("oui")
       })
@@ -169,10 +158,7 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
       })
     }, [redirectedd])
   
-    // useEffect (() =>
-    // {
-    //   Pic = localStorage.getItem('ProfilPic')
-    // }, [PicUp])
+  
     
     const UserName : any= localStorage.getItem('name')
     // const UserUID : any= localStorage.getItem('UID')
@@ -203,8 +189,7 @@ const Mute =  (e : React.FormEvent<HTMLFormElement>) =>
   e.preventDefault()
   if (Channel !== '')
     socket.emit("muteuser", { id: User.uid, channelname: Channel, time: timer, reason: reason })
-  // else 
-  //   socket.emit("muteuser", { name: User, channelname: Channel, time: timer, reason: reason })
+
   setReason("")
   setTimer(0)
   setShowMute(!ShowMute)
@@ -224,8 +209,7 @@ const Kick =  (e : React.FormEvent<HTMLFormElement>) =>
   e.preventDefault()
   if (Channel !== '')
     socket.emit("kickuser", { id: User.uid, channelname: Channel, reason: reason })
-  // else 
-  //   socket.emit("muteuser", { name: User, channelname: Channel, time: timer, reason: reason })
+
   setReason("")
   setShowKick(!ShowKick)
 

@@ -1,10 +1,10 @@
 import react from 'react'
 import axios from 'axios'
 import { urls } from "../global"
-import { VraimentIlSaoule } from '../Headers/VraimentIlEstCasseCouille';
+import { SetParamsToGetPost4 } from '../Headers/VraimentIlEstCasseCouille';
 export async function GetUserInfo(UserName : number)
 {
-    const config : any = VraimentIlSaoule()
-    let ret = await axios.get(`${urls.SERVER}/main/getuserinfos/${UserName}`, config);
+    const config : any = SetParamsToGetPost4(UserName)
+    let ret = await axios.get(`${urls.SERVER}/main/getuserinfos`, config);
     return(ret);
 }

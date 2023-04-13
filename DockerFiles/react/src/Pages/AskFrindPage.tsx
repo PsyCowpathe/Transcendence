@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { VraimentIlSaoule } from '../Headers/VraimentIlEstCasseCouille'
+import { SetParamsToGetPost } from '../Headers/VraimentIlEstCasseCouille'
 import '../css/Buttons.css'
 import { socketManager } from '../Pages/HomePage'
 import { ToastContainer, toast, ToastOptions } from 'react-toastify';
@@ -23,9 +23,9 @@ export  function AskFriend()
 		console.log(socket )
 		if (socket == null)
 		{ 
-			if ( test === false && VraimentIlSaoule().headers.Authorization !== null)
+			if ( test === false && SetParamsToGetPost().headers.Authorization !== null)
 			{
-				socket = socketManager.initializeFriendRequestSocket(VraimentIlSaoule().headers.Authorization)
+				socket = socketManager.initializeFriendRequestSocket(SetParamsToGetPost().headers.Authorization)
 				console.log(socket )
 				test = true
 			}

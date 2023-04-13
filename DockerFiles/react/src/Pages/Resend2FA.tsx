@@ -7,7 +7,7 @@ import { Send2FA } from "../Api/send2FA";
 import { ChangeLogin } from "./LoginPage";
 import { useState } from "react";
 import '../css/Force.css'
-import { VraimentIlSaoule } from "../Headers/VraimentIlEstCasseCouille";
+import { SetParamsToGetPost } from "../Headers/VraimentIlEstCasseCouille";
 import { socketManager } from "./HomePage";
 
 interface code {
@@ -25,8 +25,8 @@ function Resend()
         Send2FA(Code)
         .then((res) => {
             localStorage.setItem('2FA', res.data.newFA)
-            socketManager.initializeChatSocket(VraimentIlSaoule().headers.Authorization)
-			socketManager.initializeFriendRequestSocket(VraimentIlSaoule().headers.Authorization)
+            socketManager.initializeChatSocket(SetParamsToGetPost().headers.Authorization)
+			socketManager.initializeFriendRequestSocket(SetParamsToGetPost().headers.Authorization)
             window.location.assign('/AffUser')
         })
         .catch((err) => {

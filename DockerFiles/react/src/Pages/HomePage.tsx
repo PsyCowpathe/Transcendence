@@ -7,7 +7,7 @@ import { SendTokenRequest } from "../Api/SendToken";
 import '../css/App.css'
 import { useNavigate } from 'react-router-dom'
 import socketManager from "../MesSockets";
-import { VraimentIlSaoule } from "../Headers/VraimentIlEstCasseCouille";
+import { SetParamsToGetPost } from "../Headers/VraimentIlEstCasseCouille";
 import { TopBar } from "./TopBar";
 // https://mui.com/material-ui/getting-started/installation/ 
 // let Mysocks : any = new SocketManager
@@ -140,9 +140,9 @@ interface chiant {
 		if (Registered !== false)
 		{
 			setReg(false)
-			socketManager.initializeChatSocket(VraimentIlSaoule().headers.Authorization)
-			socketManager.initializeFriendRequestSocket(VraimentIlSaoule().headers.Authorization)
-			socketManager.initializePongSocket(VraimentIlSaoule().headers.Authorization)
+			socketManager.initializeChatSocket(SetParamsToGetPost().headers.Authorization)
+			socketManager.initializeFriendRequestSocket(SetParamsToGetPost().headers.Authorization)
+			socketManager.initializePongSocket(SetParamsToGetPost().headers.Authorization)
 		
 			onLogin()
 			navigate('/affUser')

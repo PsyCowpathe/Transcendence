@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
 import "./truc.css";
 import { socketManager } from "../Pages/HomePage";
-import { VraimentIlSaoule } from "../Headers/VraimentIlEstCasseCouille";
+import { SetParamsToGetPost } from "../Headers/VraimentIlEstCasseCouille";
 import { TopBar } from "../Pages/TopBar";
 import { ToastContainer, toast } from 'react-toastify';
 import UserInfoModal from '../Modale/UserModal'
@@ -60,8 +60,8 @@ export function Chat() {
   socket = socketManager.getChatSocket()
   
   if (socket == null) {
-    if (test === false && VraimentIlSaoule().headers.Authorization !== null) {
-      socket = socketManager.initializeChatSocket(VraimentIlSaoule().headers.Authorization)
+    if (test === false && SetParamsToGetPost().headers.Authorization !== null) {
+      socket = socketManager.initializeChatSocket(SetParamsToGetPost().headers.Authorization)
       console.log(socket)
       test = true
     }
@@ -286,11 +286,11 @@ export function Chat() {
 
   const [User, setUser] = useState<User | null>(null);
 
-  const handleUserClick = (user: User | null) => {
+  const handleUserClick = (useri: User | null) => {
     console.log("USERUIDDDDDD")
-    if (user !== null)
-    console.log(user.name)
-    setSelectedUser(user);
+    if (useri !== null)
+      console.log(useri)
+    setSelectedUser(useri);
   };
 
   const handleCloseModal = () => {
@@ -320,7 +320,9 @@ export function Chat() {
   };
 
   const renderMessages = () => {
+    console.log("ID-----------------------------------------------------------------------------------------------------------")
 
+    
     return messages.map((message) => {
 
       let messageClass
@@ -336,7 +338,7 @@ export function Chat() {
       if (message.isPriv == false && message.channel !== selectedChannel)
         return
       else if (message.isPriv == true && (message.user !== UserTo && message.user !== UserName))
-        return
+        return      
       return (
         <div>
           <div className={`message ${userClass}`} onClick={() => handleUserClick({ name: message.user, uid: message.userUID })}>
@@ -378,11 +380,13 @@ export function Chat() {
         return {
           id:  Date.now(),
           channel: selectedChannel,
+          uid: message.id,
           user: message.username,
           text: message.message,
           isSent: isSent
         };
       });
+    
       setMessages(newMessages);
     }
     })
@@ -419,16 +423,19 @@ export function Chat() {
           console.log("lol")
            if (response.data !== null)
            {
-          const newMessages = response.data.map((message: any, index: any) => {
+
+          const newMessages = response.data.map((message: any, index:number) => {
             const isSent = message.username === UserName;
             return {
-              id:  Date.now(),
+              id:  Date.now() + index,
               channel: ChanUse,
               user: message.username,
+              userUID: message.id,
               text: message.message,
               isSent: isSent
             };
           });
+
           setMessages(newMessages);
         }
         })
@@ -484,6 +491,7 @@ export function Chat() {
             return {
               id: messages.length + Date.now(),
               channel: null,
+              userUID: message.id,
               user: message.username,
               text: message.message,
               isSent: isSent

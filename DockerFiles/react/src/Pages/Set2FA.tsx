@@ -4,7 +4,7 @@ import { Get2FA } from '../Api/Get2FA';
 import LoadingPage from './LoadingPage';
 import React, { Component } from 'react';
 import { useState } from 'react';
-import { VraimentIlSaoule } from '../Headers/VraimentIlEstCasseCouille';
+import { SetParamsToGetPost } from '../Headers/VraimentIlEstCasseCouille';
 import axios from 'axios';
 import { urls } from '../global';
 import { TopBar } from './TopBar';
@@ -25,7 +25,7 @@ export function Set2FA ()
   const HandleCode = (e : any) =>
   {
     e.preventDefault()
-    let config = VraimentIlSaoule()
+    let config = SetParamsToGetPost()
     console.log("-------------------------------QQQQAAA---------------------------------------------------")
     console.log("???")
     Send2FA(Code2FA)
@@ -35,8 +35,8 @@ export function Set2FA ()
 
     console.log(res.data.newFA)
     localStorage.setItem('2FA', res.data.newFA)
-    socketManager.initializeChatSocket(VraimentIlSaoule().headers.Authorization)
-			socketManager.initializeFriendRequestSocket(VraimentIlSaoule().headers.Authorization)
+    socketManager.initializeChatSocket(SetParamsToGetPost().headers.Authorization)
+			socketManager.initializeFriendRequestSocket(SetParamsToGetPost().headers.Authorization)
     })
     .catch((err) =>
     {

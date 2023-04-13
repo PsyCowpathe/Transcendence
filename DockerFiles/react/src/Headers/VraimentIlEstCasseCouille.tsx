@@ -1,5 +1,5 @@
 
-export function VraimentIlSaoule()
+export function SetParamsToGetPost()
 {
     const token = localStorage.getItem('Token')
     const FA = localStorage.getItem('2FA')
@@ -27,7 +27,7 @@ export function VraimentIlSaoule()
     return config
 
 }
-export function VraimentIlSaoule2()
+export function SetParamsToGetPost2()
 {
     const token = localStorage.getItem('Token')
     const FA = localStorage.getItem('2FA')
@@ -54,28 +54,44 @@ export function VraimentIlSaoule2()
 
 }
 
-export function VraimentIlSaoule3(test : string)
+export function SetParamsToGetPost3(param : string)
 {
     const token = localStorage.getItem('Token')
     const FA = localStorage.getItem('2FA')
         
-    const config = 
-    {
-        headers: { Authorization: `${token}`,
-        TwoFAToken: `${FA}` }
-    };
+
     const config2 = 
     {
+        // responseType: 'blob', 
+
         headers: { Authorization: `${token}` ,
         TwoFAToken: `${FA}`},
         params : {
             channel:{ 
-                channelName: test}
+                channelName: param}
         },
     };
     
+    return config2
+}
 
-    
+export function SetParamsToGetPost4(param : number)
+{
+    const token = localStorage.getItem('Token')
+    const FA = localStorage.getItem('2FA')
+        
+ 
+    const config2 = 
+    {
+        responseType: 'blob', 
+
+        headers: { Authorization: `${token}` ,
+        TwoFAToken: `${FA}`},
+        params : {
+            user:{ 
+                id: param}
+        },
+    };  
     return config2
 
 }

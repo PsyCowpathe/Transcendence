@@ -10,7 +10,7 @@ import { TopBar } from './TopBar';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { urls } from "../global"
-import { VraimentIlSaoule2 } from '../Headers/VraimentIlEstCasseCouille';
+import { SetParamsToGetPost2 } from '../Headers/VraimentIlEstCasseCouille';
 import { PicGetRequest } from '../Api/PicGetRequest';
 import { GetUserInfo } from '../Api/GetUserInfo';
 import React from 'react';
@@ -24,7 +24,7 @@ import { GetFriendList } from '../Api/GetFriendList';
 import { AskFriend } from './AskFrindPage';
 import { GetInvitationList } from '../Api/GetInvitationList';
 import socketManager from '../MesSockets';
-import { VraimentIlSaoule } from '../Headers/VraimentIlEstCasseCouille';
+import { SetParamsToGetPost } from '../Headers/VraimentIlEstCasseCouille';
 import { GetBlockList } from '../Api/GetBlockedList';
 let test : boolean = false
 let socket: any
@@ -271,9 +271,9 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean })
 		console.log(socket )
 		if (socket == null)
 		{ 
-			if ( test === false && VraimentIlSaoule().headers.Authorization !== null)
+			if ( test === false && SetParamsToGetPost().headers.Authorization !== null)
 			{
-				socket = socketManager.initializeFriendRequestSocket(VraimentIlSaoule().headers.Authorization)
+				socket = socketManager.initializeFriendRequestSocket(SetParamsToGetPost().headers.Authorization)
 				console.log(socket )
 				test = true
 			}
