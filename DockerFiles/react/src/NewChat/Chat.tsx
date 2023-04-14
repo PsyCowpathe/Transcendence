@@ -11,6 +11,8 @@ import { GetUserInfo } from "../Api/GetUserInfo";
 import { GetChannelList } from "../Api/GetChannelList";
 import { GetFriendList } from "../Api/GetFriendList";
 import { GetPrivMsg } from "../Api/GetPrivateMsg";
+import { useNavigate } from "react-router-dom";
+import InviteModale from "../Modale/InviteModale";
 let test: boolean = false
 let socket: any
 
@@ -55,7 +57,7 @@ export function Chat() {
   const [Channame, setChanname] = useState<string>('');
   const [ChanMdp, setChanMdp] = useState<string>('');
   const [Chanlist, setChanlist] = useState<Chati[]>([]);
-  
+  const navigate = useNavigate(); 
   
   socket = socketManager.getChatSocket()
   
@@ -84,18 +86,14 @@ export function Chat() {
         console.log(Chanlist)
       })
       .catch((err) => {
-        
-      if(err.response.data.message == "Invalid user" || err.message.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-      {
-        console.log("coucou ?")
-        window.location.assign('/')
-      }
-      if ( err.message === "User not registered")// ==> redirection vers la page de register
-      {
-        console.log("ERROR")
-        console.log(err)
-        window.location.assign('/Change')
-     }
+        if (err.message !== "Request aborted") {
+          if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+          navigate('/')
+          else if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+          navigate('/Change')
+          else if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+          navigate('/Send2FA')
+        }
         console.log(err)
       }
       )
@@ -118,8 +116,18 @@ export function Chat() {
       })
       GetChannel()
       GetMsgChan()
+    }
+    const handleLeaveChannel = (response: any) => {
+      console.log("response")
+      toast.success(response, {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 2000,
+        progressClassName: "my-progress-bar"
+      })
+      setSelectedChannel('')
+      setMessages([])
+      GetChannel()
 
-      // setResponse("dont change");
     }
     const handleCreateChannels = (response: any) => {
       console.log(response)
@@ -129,18 +137,21 @@ export function Chat() {
         progressClassName: "my-progress-bar"
       })
       GetChannel()
-      setSelectedChannel('')
+      // setSelectedChannel('')
       GetMsgChan()
       // console.log("coucou jsuis sence rentrer")
-      // setResponse("change");
+
 
     }
+      socket.removeListener("leavechannel", handleLeaveChannel);
       socket.removeListener("createchannel", handleCreateChannel);
       socket.removeListener("ChatError", handleCreateChannels);
+    socket.on("leavechannel", handleLeaveChannel);
     socket.on("createchannel", handleCreateChannel);
     socket.on("ChatError", handleCreateChannels);
 
     return () => {
+      socket.off("leavechannel", handleLeaveChannel);
       socket.off("createchannel", handleCreateChannel);
       socket.off("ChatError", handleCreateChannels);
     }
@@ -159,7 +170,7 @@ export function Chat() {
       console.log(response.channel)
       setSelectedChannel(response.channel);
       // setUseChan(response.channel);
-      // setResponse("dont change");
+
     GetChannel()
 
     }
@@ -219,14 +230,7 @@ export function Chat() {
     setIsChecked(!isChecked);
   };
 
-  useEffect(() => {
-    if (responses !== "change") {
-      setChanlist([...Chanlist, { id: Date.now(), name: Channame }]);
-    }
-    setChanname('')
-    setChanMdp('')
-    setResponse("vide")
-  }, [responses])
+
 
 
   const [ChanTo, setChanTo] = useState<any>('');
@@ -316,7 +320,7 @@ export function Chat() {
       console.log(messages)
     }
     setNewMessage("");
-    scrollToBottom()
+    // scrollToBottom()
   };
 
   const renderMessages = () => {
@@ -324,7 +328,7 @@ export function Chat() {
 
     
     return messages.map((message) => {
-
+      console.log(message.id)
       let messageClass
       if (message.user === UserName)
         messageClass = "sent-message"
@@ -340,7 +344,7 @@ export function Chat() {
       else if (message.isPriv == true && (message.user !== UserTo && message.user !== UserName))
         return      
       return (
-        <div>
+        <div key={message.id}>
           <div className={`message ${userClass}`} onClick={() => handleUserClick({ name: message.user, uid: message.userUID })}>
             {message.user}
           </div>
@@ -378,7 +382,7 @@ export function Chat() {
       const newMessages = response.data.map((message: any, index: any) => {
         const isSent = message.username === UserName;
         return {
-          id:  Date.now(),
+          id:   index,
           channel: selectedChannel,
           uid: message.id,
           user: message.username,
@@ -391,17 +395,14 @@ export function Chat() {
     }
     })
     .catch((err) => {
-      if(err.response.data.message == "Invalid user" || err.message.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-      {
-        console.log("coucou ?")
-        window.location.assign('/')
+      if (err.message !== "Request aborted") {
+        if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+          navigate('/')
+        else if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+        navigate('/Change')
+        else if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+          navigate('/Send2FA')
       }
-      if ( err.message === "User not registered")// ==> redirection vers la page de register
-      {
-        console.log("ERROR")
-        console.log(err)
-        window.location.assign('/Change')
-     }
       console.log(err)
     })
 
@@ -427,7 +428,7 @@ export function Chat() {
           const newMessages = response.data.map((message: any, index:number) => {
             const isSent = message.username === UserName;
             return {
-              id:  Date.now() + index,
+              id:  index,
               channel: ChanUse,
               user: message.username,
               userUID: message.id,
@@ -435,7 +436,7 @@ export function Chat() {
               isSent: isSent
             };
           });
-
+          console.log(newMessages)
           setMessages(newMessages);
         }
         })
@@ -444,13 +445,13 @@ export function Chat() {
           if(err.response.data.message == "Invalid user" || err.message.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
           {
             console.log("coucou ?")
-            window.location.assign('/')
+              navigate('/')
           }
           if ( err.message === "User not registered")// ==> redirection vers la page de register
           {
             console.log("ERROR")
             console.log(err)
-            window.location.assign('/Change')
+            navigate('/Change')
          }
         })
     }
@@ -505,13 +506,13 @@ export function Chat() {
           if(err == "Invalid user" || err.message.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
           {
             console.log("coucou ?")
-            window.location.assign('/')
+              navigate('/')
           }
           if ( err.message === "User not registered")// ==> redirection vers la page de register
           {
             console.log("ERROR")
             console.log(err)
-            window.location.assign('/Change')
+            navigate('/Change')
          }/////////////////addd 2faa
           console.log(err)
         }
@@ -536,6 +537,20 @@ export function Chat() {
     setAdminOn(!AdminOn)
     
   }
+  const [AdminToDel, setAdminToDel] = useState<any>('');
+  const FormDelAdmin = () => {
+    setAdminOn(!AdminOn)
+  }
+
+  const DelAdmin = (e : any) => {
+    e.preventDefault();
+    console.log(AdminToDel)
+    console.log(selectedChannel)
+    socket.emit("removedmin", { name: AdminToDel, channelname: selectedChannel })
+    setAdminToDel('')
+    setAdminOn(!AdminOn)
+    
+  }
 
 // -leavechannel (nom du channel a leave)
 // -deletechannel (nom du channel a delete)
@@ -544,6 +559,7 @@ export function Chat() {
   const LeaveChan = (chan : string) => {
     socket.emit("leavechannel", { channelname: chan })
     GetChannel()
+ 
     setChanToLeave('')
   
   }
@@ -552,9 +568,38 @@ export function Chat() {
   const DeleteChan = (chan : string) => {
     socket.emit("deletechannel", { channelname: chan })
     console.log("delete")
-    GetChannel()
     console.log(Chanlist)
+    GetChannel()
+    setMessages([])
     setChanToDelete('')
+  }
+  const [menuOpen, setMenuOpen] = useState(false);
+  const openMenu = () => {
+    setMenuOpen(!menuOpen)
+  }
+
+
+  const [SanctionManger, setSanctionManger] = useState(false);
+  const [UserToUnBan, setUserToUnBan] = useState<any>('');
+  const Sanction = () => {
+    setSanctionManger(!SanctionManger)
+  }
+
+  const Unban = (e : any) => {
+    e.preventDefault();
+    socket.emit("unbanuser", { name: UserToUnBan, channelname: selectedChannel })
+    setUserToUnBan('')
+    // setSanctionManger(!SanctionManger)
+  }
+
+  const [UserToUnMute, setUserToUnMute] = useState<any>('');
+
+
+  const UnMute = (e : any) => {
+    e.preventDefault();
+    socket.emit("unmuteuser", { name: UserToUnBan, channelname: selectedChannel })
+    setUserToUnBan('')
+    // setSanctionManger(!SanctionManger)
   }
 
 
@@ -595,7 +640,7 @@ export function Chat() {
                 private channel
               </label>
               <form onSubmit={JoinChannelMdp} >
-                <input type="text" placeholder="New chan" value={ChanTo} onChange={(e) => setChanTo(e.target.value)} />
+                <input type="text" placeholder="channel name" value={ChanTo} onChange={(e) => setChanTo(e.target.value)} />
                 <input type="password" placeholder="Mot de passe" value={ChanMdpTo} onChange={(e) => setChanMdpTo(e.target.value)} />
                 <button type="submit" className="other" >Join Channel</button>
               </form>
@@ -605,20 +650,42 @@ export function Chat() {
         <div className="chat-app__main">
           <div className="channel-header">
             <h2>{selectedChannel || 'General'}</h2>
-            {selectedChannel && <button className="add-message-button" onClick={FormAdmin}>Add admin</button>}
+            {selectedChannel && <button className="add-message-button" onClick={FormAdmin}>Manage admin</button>}
             {AdminOn && <form onSubmit={AddAdmin} >
               <input type="text" placeholder="New admin" value={AdminName} onChange={(e) => setAdminName(e.target.value)} />
               <button type="submit" className="other" >Add admin</button>
+            </form> 
+            }
+            {AdminOn && <form onSubmit={DelAdmin} >
+              <input type="text" placeholder="del admin" value={AdminToDel} onChange={(e) => setAdminToDel(e.target.value)} />
+              <button type="submit" className="other" >Del admin</button>
             </form>
-            } 
+            }
+
+            {selectedChannel && <button className="add-message-button" onClick={Sanction}>Manage Sanction</button>}
+            {SanctionManger && <form onSubmit={Unban} >
+              <input type="text" placeholder="Unban user" value={UserToUnBan} onChange={(e) => setUserToUnBan(e.target.value)} />
+              <button type="submit" className="other" >Unban</button>
+            </form>
+            }
+            {SanctionManger && <form onSubmit={UnMute} >
+              <input type="text" placeholder="Unmute user" value={UserToUnMute} onChange={(e) => setUserToUnMute(e.target.value)} />
+              <button type="submit" className="other" >Unmute</button>
+            </form>
+            }
+
+
+
             {selectedChannel && <button className="add-message-button" onClick={() => DeleteChan(selectedChannel)}>delete</button> 
             }
             {selectedChannel &&<button className="add-message-button" onClick={() => LeaveChan(selectedChannel)}>Leave</button> }
+            {selectedChannel &&<button className="add-message-button" onClick={() => openMenu()}>invitation menu</button> }
+            {menuOpen && <InviteModale onClose={openMenu} channel={selectedChannel}/>}
           </div>
 
           <div className="message-list">
 
-            <div id="tamere" className="chat-list">
+            <div  className="chat-list">
               {renderMessages()}
             </div>
             {selectedUser && (

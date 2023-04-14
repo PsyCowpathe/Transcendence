@@ -23,6 +23,7 @@ interface chiant {
 }
 	const HomePage : React.FC<chiant> =  ({tokenForm, setToken, onLogin}) =>
 {
+
 	const [Mybool, setMybool] = useState<boolean>(false)
 	const [Registered, setReg] = useState<boolean>(false)
 	const [FirstCo, setFirstCo] = useState<boolean>(false)
@@ -36,6 +37,7 @@ interface chiant {
 		try
 		{
 			const { data } = await redirectTo42API()
+			// alert(data)
 			window.location.assign(data)
 		}
 		catch (e)
@@ -137,15 +139,21 @@ interface chiant {
 	
 	useEffect(() =>
 	{
+		// console.log("wtf")
 		if (Registered !== false)
 		{
+			console.log("wtf")
+
 			setReg(false)
 			socketManager.initializeChatSocket(SetParamsToGetPost().headers.Authorization)
 			socketManager.initializeFriendRequestSocket(SetParamsToGetPost().headers.Authorization)
 			socketManager.initializePongSocket(SetParamsToGetPost().headers.Authorization)
+			socketManager.initializeStatusSocket(SetParamsToGetPost().headers.Authorization)
 		
 			onLogin()
 			navigate('/affUser')
+			console.log("wtf")
+
 		}		
 	}, [Registered])
 	

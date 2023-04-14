@@ -34,6 +34,10 @@ let tt : boolean = true
 
 export function AffMyUserPage({ ShowBar }: { ShowBar: boolean })
 {
+  // window.onload = function() {
+  //   console.log("La page a été chargée entièrement.");
+  // }
+  
   interface friend
   {
     id: number
@@ -44,14 +48,14 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean })
   const [invit, setInvit] = useState<friend[]>([])
   const [blockedList, setBlockedList] = useState<friend[]>([])
   
-  const MAJFriendList = () =>
+  const MAJFriendList = async() =>
   {
-    GetFriendList()
+    await GetFriendList()
     .then((res) =>
     {
-      console.log("iiiii")
+      console.log("Friendlist")
       console.log(res)
-      setFriend([])
+      // setFriend([])
       setFriend(res.data.map((name:any) => {
         return { id:  name.id, name: name.name}
       }
@@ -61,22 +65,22 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean })
     {
       if (err.message !== "Request aborted") {
         if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-        window.location.assign('/')
-        if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
-        window.location.assign('/Change')
-        if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
-          window.location.assign('/Send2FA')////////////////////////////////////////////////////////////////////////////////////
+          navigate('/')
+        else if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+        navigate('/Change')
+        else if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+          navigate('/Send2FA')////////////////////////////////////////////////////////////////////////////////////
       }
     })
   }
-  const MAJBlockList = () =>
+  const MAJBlockList = async () =>
   {
-    GetBlockList()
+    await GetBlockList()
     .then((res) =>
     {
-      console.log("iiiii")
+      console.log("Blocklist")
       console.log(res)
-      setBlockedList([])
+      // setBlockedList([])
       setBlockedList(res.data.map((name:any) => {
         return { id:  name.id, name: name.name}
       }
@@ -86,22 +90,22 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean })
     {
       if (err.message !== "Request aborted") {
         if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-        window.location.assign('/')
-        if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
-        window.location.assign('/Change')
-        if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
-          window.location.assign('/Send2FA')////////////////////////////////////////////////////////////////////////////////////
+          navigate('/')
+        else if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+        navigate('/Change')
+        else if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+          navigate('/Send2FA')////////////////////////////////////////////////////////////////////////////////////
       }
     })
   }
   
 
-  const MAJinvitationList = () =>
+  const MAJinvitationList = async() =>
   {
-    GetInvitationList()
+    await GetInvitationList()
     .then((res) =>
     {
-      console.log("ssss")
+      console.log("Invitation list")
       console.log(res)
       setInvit(res.data.map((name:any) => {
         return { id:  name.id, name: name.name}
@@ -113,20 +117,20 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean })
     {
       if (err.message !== "Request aborted") {
         if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-        window.location.assign('/')
-        if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
-        window.location.assign('/Change')
-        if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
-          window.location.assign('/Send2FA')
+          navigate('/')
+        else if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+        navigate('/Change')
+        else if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+          navigate('/Send2FA')
       }
     })
   }
   
-  const MAJList = () =>
+  const MAJList = async() =>
   {
-    MAJFriendList()
-    MAJinvitationList()
-    MAJBlockList()
+    await MAJFriendList()
+    await MAJinvitationList()
+    await MAJBlockList()
   }
 
   useEffect(() =>
@@ -170,24 +174,11 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean })
         })
         if (err.message !== "Request aborted") {
           if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-          {
-            console.log("coucou ?")
-            window.location.assign('/')
-            console.log("t s sence te barrer fdp")
-          }
-          if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
-          {
-            console.log("ERROR")
-            console.log(err)
-            window.location.assign('/Change')
-          }
-          if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
-          {
-            console.log("ERROR")
-            console.log(err)
-            window.location.assign('/Send2FA')////////////////////////////////////////////////////////////////////////////////////
-            
-          }
+            navigate('/')
+          else if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+          navigate('/Change')
+          else if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+            navigate('/Send2FA')
         }
       })
   }, [Click])
@@ -207,23 +198,13 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean })
           autoClose: 2000,
           progressClassName: "my-progress-bar"
         })
-        if (err.message !== "Request aborted")
-        {
-          if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")
-          {
-            console.log("coucou ?")
-            setRedirected(true) // mettre redirected à true après la redirection
-            window.location.assign('/')
-            console.log("t s sence te barrer fdp")
-          }
-          else if (err.response.data.message === "User not registered")
-          {
-            console.log("ERROR")
-            console.log(err)
-            setRedirected(true) // mettre redirected à true après la redirection
-            window.location.assign('/Change')
-          }
-  //    //if(err.message === "Invalid 2FA token") erreur de 2FA ==> redirection vers la page de 2FA
+        if (err.message !== "Request aborted") {
+          if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+            navigate('/')
+          else if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+          navigate('/Change')
+          else if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+            navigate('/Send2FA')
         }
       })
   }, [redirected])
@@ -554,7 +535,7 @@ const MyCustomToast = ({response, Acceptnow, Refusednow, closeToast} : any) => {
       <h3>Friends</h3>
       <ul>
         {  friends.map((friend) => (
-          <li key={friend.id}>{friend.name} <button className="test" onClick={() => deleteU(friend.id) }>delete</button> <button onClick={() => block(friend.id)}>block</button></li> ////chabge css button is horrible
+          <li key={friend.id}>{friend.name} <button className="reject-btn" onClick={() => deleteU(friend.id) }>delete</button> <button className="reject-btn" onClick={() => block(friend.id)}>block</button></li> ////chabge css button is horrible
           ))}
       </ul>
     </div>
@@ -562,7 +543,7 @@ const MyCustomToast = ({response, Acceptnow, Refusednow, closeToast} : any) => {
       <h3>Invitation</h3>
       <ul>
         {  invit.map((invite) => (
-          <li key={invite.id}>{invite.name} <button onClick={() => Refused(invite.id)}>refuse</button> <button onClick={() => Accept(invite.id)}>Accept</button> </li>
+          <li key={invite.id}>{invite.name} <button className="reject-btn" onClick={() => Refused(invite.id)}>refuse</button> <button className="accept-btn" onClick={() => Accept(invite.id)}>Accept</button> </li>
           ))}
       </ul>
     </div>
@@ -570,10 +551,11 @@ const MyCustomToast = ({response, Acceptnow, Refusednow, closeToast} : any) => {
       <h3>Blocked Friend</h3>
       <ul>
         {  blockedList.map((Block) => (
-          <li key={Block.id}>{Block.name} <button onClick={() => unblock(Block.id)}>Blocked</button></li>
+          <li key={Block.id}>{Block.name} <button onClick={() => unblock(Block.id)}>unblock</button></li>
           ))}
       </ul>
     </div>
+    <ToastContainer />
     </div>
   );
 }

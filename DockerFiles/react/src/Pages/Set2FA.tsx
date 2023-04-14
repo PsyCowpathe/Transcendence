@@ -10,6 +10,8 @@ import { urls } from '../global';
 import { TopBar } from './TopBar';
 import { Send2FA } from '../Api/send2FA';
 import { socketManager } from './HomePage';
+import { useNavigate } from "react-router-dom";
+  
 interface MyComponentState {
   image: string | null;
   error: Error | null;
@@ -21,6 +23,7 @@ interface code {
 }
 export function Set2FA ()
 {
+  const navigate = useNavigate(); 
   const [Code2FA , setCode2FA] = useState<code>({code : 0})
   const HandleCode = (e : any) =>
   {
@@ -44,36 +47,36 @@ export function Set2FA ()
         if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
         { 
           console.log("BBBBBBIIIITTTTEEEEEEEEE-----------------------------------------------")
-          window.location.assign('/')
+            navigate('/')
         }
           else if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
-          window.location.assign('/Change')
-        else if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
-          window.location.assign('/Send2FA')
-      }
-      console.log(err)
-    })
-    console.log("pour aurel")
+          navigate('/Change')
+          else if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+          navigate('/Send2FA')
+        }
+        console.log(err)
+      })
+      console.log("pour aurel")
 
      setCode2FA({code : 0})
   }
 
-
+  
   return(
       <div>
         <TopBar />
     <MyComponent/>
 
  <form style={{display:"flex", margin:"20vh", justifyContent:"center", alignItems: "center"}} onSubmit={HandleCode}>
-    <input type="texte" placeholder="0" value={Code2FA.code} onChange={(e) => setCode2FA({code : parseInt(e.target.value)})} />
+ <input type="number"  placeholder="0" value={Code2FA.code} onChange={(e) => setCode2FA({code : parseInt(e.target.value)})} />
     <button>Send 2FA</button>
     </form>
     </div>
   )
 }
+
 export class MyComponent extends Component <{}, MyComponentState>
 {
-
   constructor(props : any) 
   {
     super(props);
@@ -85,21 +88,22 @@ export class MyComponent extends Component <{}, MyComponentState>
     this.PutainLeFdp = this.PutainLeFdp.bind(this);
   }
 
-
   
-
+  
+  
   // const [verif, setVerif] = useState(false)
-
+  
   handleClick() {
     this.PutainLeFdp();
   }
   PutainLeFdp = () =>
   {
+    const navigate = useNavigate(); 
     console.log("----------------------------------------------------------------------------------")
  
     Get2FA()
-  .then((res) =>
-  {
+    .then((res) =>
+    {
     console.log("SSSSSSSSSSSSSSSSS----------------------------------------------------------------------------------")
     console.log(res.data)
     let uri = new OTPAuth.URI()
@@ -115,12 +119,12 @@ export class MyComponent extends Component <{}, MyComponentState>
       if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
       { 
         console.log("BBBBBBIIIITTTTEEEEEEEEE-----------------------------------------------")
-        window.location.assign('/')
+          navigate('/')
       }
         else if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
-        window.location.assign('/Change')
+        navigate('/Change')
       else if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
-        window.location.assign('/Send2FA')
+        navigate('/Send2FA')
     }
   })
   }

@@ -80,19 +80,13 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
         })
         if (err.message !== "Request aborted")
         {
-          if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")
-          {
-            console.log("coucou ?")
-            setRedirected(true) // mettre redirected à true après la redirection
-            window.location.assign('/')
-            console.log("t s sence te barrer fdp")
-          }
-          else if (err.response.data.message === "User not registered")
-          {
-            console.log("ERROR")
-            console.log(err)
-            setRedirected(true) // mettre redirected à true après la redirection
-            window.location.assign('/Change')
+          if (err.message !== "Request aborted") {
+            if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+              navigate('/')
+            if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+            navigate('/Change')
+            if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+              navigate('/Send2FA')
           }
         }
       })
@@ -136,25 +130,15 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
           progressClassName: "my-progress-bar"
       })
 
-      if (err.message !== "Request aborted")
-      {
-        if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")
-        {
-          console.log("coucou ?")
-          setRedirected(true) // mettre redirected à true après la redirection
-          window.location.assign('/')
-          console.log("t s sence te barrer fdp")
-        }
-        else if (err.response.data.message === "User not registered")
-        {
-          console.log("ERROR")
-          console.log(err)
-          setRedirected(true) // mettre redirected à true après la redirection
-          window.location.assign('/Change')
-        }
-         //    //if(err.message === "Invalid 2FA token") erreur de 2FA ==> redirection vers la page de 2FA
 
-      }
+        if (err.message !== "Request aborted") {
+          if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+            navigate('/')
+          if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+          navigate('/Change')
+          if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+            navigate('/Send2FA')
+        }
       })
     }, [redirectedd])
   
@@ -238,8 +222,8 @@ return(
       <div>
 
       <form  onSubmit={Ban}>
-      <input type="text" placeholder="reason" value={reason} onChange={(e) => {setReason(e.target.value)}} />
-      <input type="texte" placeholder="0" value={timer} onChange={(e) => {setTimer(parseInt(e.target.value))}} />
+      <input type="texte" placeholder="reason" value={reason} onChange={(e) => {setReason(e.target.value)}} />
+      <input type="number" placeholder="0" value={timer} onChange={(e) => {setTimer(parseInt(e.target.value))}} />
       <button className="add-message-button" >Ban</button>
       </form>
     </div>
@@ -249,7 +233,7 @@ return(
       <div>
       <form  onSubmit={Mute}>
       <input type="text" placeholder="reason" value={reason} onChange={(e) => {setReason(e.target.value)}} />
-      <input type="texte" placeholder="0" value={timer} onChange={(e) => {setTimer(parseInt(e.target.value))}} />
+      <input type="number" placeholder="0" value={timer} onChange={(e) => {setTimer(parseInt(e.target.value))}} />
       <button className="add-message-button">Mute</button>
       </form>
     </div>

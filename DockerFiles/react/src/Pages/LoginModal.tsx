@@ -1,16 +1,11 @@
 import React from "react";
 import {useState, useEffect} from 'react'
 import { RequestChangeLogin } from "../Api/ChangeLogRequest";
-import { TopBar } from "./TopBar";
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
-export function ChangeLogin()
+export function ChangeLoginMod()
 {
     const navigate = useNavigate(); 
-    window.onload = function() {
-        console.log("La page a été chargée entièrement.");
-      }
-      
     const [login, setLogin] = useState("")
 	interface user
 	{
@@ -29,15 +24,20 @@ export function ChangeLogin()
         .then(response => 
         {
             setOk(true)
+            toast.success("login change succesfully", {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 2000,
+                progressClassName: "my-progress-bar"
+            })
             console.log("JE SEND UN LOGIN")
 			localStorage.setItem('name', response.data.name);
             localStorage.setItem('UID', response.data.id); 
-            navigate('/AffUser')
-            console.log(response.data) 
+            console.log(response) 
             
         })
         .catch(err =>
         {
+            // console.log("ici ")
             toast.error(err.response.data.message, {
                 position: toast.POSITION.TOP_RIGHT,
                 autoClose: 2000,

@@ -33,6 +33,7 @@ RUN cd && cd frontend && yarn add @mui/material @emotion/react @emotion/styled &
 
 RUN cd && cd frontend && yarn add qrcode.react
 RUN cd && cd frontend && yarn add otpauth && yarn install
+RUN cd && cd frontend && yarn add react-router-dom && yarn install
 RUN rm -rf ~/frontend/src
 
 RUN mkdir ~/frontend/src/

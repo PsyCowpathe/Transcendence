@@ -94,7 +94,7 @@
 }
 .Blocked-list {
   position:fixed;
-  margin-right: 200px;
+  margin-right: 250px;
   margin-top: 50vh;
   top: 0;
   right: 0;
@@ -108,7 +108,7 @@
 }
 
 
-/* Bouton d'acceptation */
+                            /************************************************************************* Bouton d'acceptation */
 .accept-btn {
   background-color: #2ecc71;
   color: #fff;
