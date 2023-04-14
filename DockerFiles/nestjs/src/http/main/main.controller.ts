@@ -125,9 +125,15 @@ export class MainController
 	async getFriends(@Req() req: Request, @Res() res: Response)
 	{
 		console.log("get friend list");
+		let tmp = await this.userService.findOneByToken(req.headers.authorization);
+		if (tmp)
+		console.log(tmp.name);
+
+
 		let ret = await this.mainService.getFriends(req.headers.authorization);
 		if (ret === -1)
 			return (sendError(res, 401, errorMessages.NOTLOGGED));
+		console.log(ret);
 		return (sendSuccess(res, 200, ret));
 	}
 

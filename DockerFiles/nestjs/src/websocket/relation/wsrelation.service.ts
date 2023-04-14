@@ -51,7 +51,7 @@ export class WsRelationService
 			return (-5);
 		if (ret === "++" || ret == "+-")
 			return (-6);
-		this.relationService.createRequest(askMan, requestedUser);
+		await this.relationService.createRequest(askMan, requestedUser);
 		let clientToNotify = this.sockets.get(requestedUser.id);
 		if (clientToNotify !== undefined)
 		{
@@ -77,7 +77,7 @@ export class WsRelationService
 			return (-2);
 		if (ret === "-+" || ret === "++")
 		{
-			this.relationService.acceptRequest(yesMan, askMan);
+			await this.relationService.acceptRequest(yesMan, askMan);
 			let clientToNotify = this.sockets.get(askMan.id);
 			if (clientToNotify !== undefined)
 				clientToNotify.emit("acceptfriendrequest", `${yesMan.name} accepted your friend request !`);
@@ -95,7 +95,7 @@ export class WsRelationService
 		let ret = await this.relationService.getRelationStatus(noMan, askMan);
 		if (ret === "++"|| ret === "-+")
 		{
-			this.relationService.refuseRequest(noMan, askMan);
+			await this.relationService.refuseRequest(noMan, askMan);
 			let clientToNotify = this.sockets.get(askMan.id);
 			if (clientToNotify !== undefined)
 				clientToNotify.emit("refusefriendrequest", `${noMan.name} refused your friend request !`);
@@ -113,7 +113,7 @@ export class WsRelationService
 		let ret = await this.relationService.getRelationStatus(deletor, victim);
 		if (ret === "ally")
 		{
-			this.relationService.deleteFriend(deletor, victim);
+			await this.relationService.deleteFriend(deletor, victim);
 			let clientToNotify = this.sockets.get(victim.id);
 			if (clientToNotify !== undefined)
 				clientToNotify.emit("deletefriend", `You are no longer friend with ${deletor.name} !`);
@@ -134,7 +134,7 @@ export class WsRelationService
 		if (ret === "XV" || ret === "enemy")
 			return (-3);
 
-		this.relationService.Ignore(angryMan, annoyingMan);
+		await this.relationService.Ignore(angryMan, annoyingMan);
 		let clientToNotify = this.sockets.get(annoyingMan.id);
 		if (clientToNotify !== undefined)
 			clientToNotify.emit("blockuser", `You can no longer interact with ${angryMan.name} !`);
@@ -150,7 +150,7 @@ export class WsRelationService
 		let ret = await this.relationService.getRelationStatus(forgivingMan, forgivedMan);
 		if (ret !== "XV" && ret !== "enemy") 
 			return (-2);
-		this.relationService.unIgnore(forgivingMan, forgivedMan);
+		await this.relationService.unIgnore(forgivingMan, forgivedMan);
 		let clientToNotify = this.sockets.get(forgivedMan.id);
 		if (clientToNotify !== undefined)
 			clientToNotify.emit("blockuser", `You can now interact with ${forgivingMan.name} !`);

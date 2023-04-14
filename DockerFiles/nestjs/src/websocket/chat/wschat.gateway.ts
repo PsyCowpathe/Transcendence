@@ -1,6 +1,6 @@
 import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnection} from '@nestjs/websockets';
 import { UsePipes, ValidationPipe, UseGuards, UseFilters } from '@nestjs/common';
-import { Server, Socket } from 'socket.io';
+import { Socket } from 'socket.io';
 
 import { SocketGuard } from '../guard/socket.guard';
 
@@ -8,7 +8,7 @@ import { sendError, sendSuccess } from '../../common/response';
 import { errorMessages } from '../../common/global';
 
 import { WsChatService }  from './wschat.service';
-import { createChannelDto, channelOperationDto, userOperationDto, sanctionOperationDto, messageDto, kickDto } from './wschat.entity';
+import { createChannelDto, channelOperationDto, userOperationDto, sanctionOperationDto, messageDto, kickDto, directDto, invitationOperationDto  } from './wschat.entity';
 
 import { WsExceptionFilter } from '../guard/ws.filter'; 
 
@@ -64,7 +64,7 @@ export class WsChatGateway implements OnGatewayConnection
 		if (ret === -1)
 			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
 		if (ret === -2)
-			return (client.emit("ChatError", errorMessages.INVALIDNAME));
+			return (client.emit("ChatError", errorMessages.INVALIDUSER));
 		if (ret === -3)
 			return (client.emit("ChatError", errorMessages.NOTTHEOWNER));
 		let response =
@@ -90,7 +90,7 @@ export class WsChatGateway implements OnGatewayConnection
 		if (ret === -1)
 			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
 		if (ret === -2)
-			return (client.emit("ChatError", errorMessages.INVALIDNAME));
+			return (client.emit("ChatError", errorMessages.INVALIDUSER));
 		if (ret === -3)
 			return (client.emit("ChatError", errorMessages.ALREADYINCHANNEL));
 		if (ret === -4)
@@ -121,7 +121,7 @@ export class WsChatGateway implements OnGatewayConnection
 		if (ret === -1)
 			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
 		if (ret === -2)
-			return (client.emit("ChatError", errorMessages.INVALIDNAME));
+			return (client.emit("ChatError", errorMessages.INVALIDUSER));
 		if (ret === -3)
 			return (client.emit("ChatError", errorMessages.NOTJOINED));
 		if (ret === -4)
@@ -150,11 +150,31 @@ export class WsChatGateway implements OnGatewayConnection
 		if (ret === -1)
 			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
 		if (ret === -2)
-			return (client.emit("ChatError", errorMessages.INVALIDNAME));
+			return (client.emit("ChatError", errorMessages.INVALIDUSER));
 		if (ret === -3)
 			return (client.emit("ChatError", errorMessages.NOTJOINED));
 		if (ret === -4)
 			return (client.emit("ChatError", errorMessages.YOUAREMUTE));
+	}
+
+	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
+	@SubscribeMessage('changepassword')
+	async changePassword(client: Socket, changeForm: channelOperationDto)
+	{
+		console.log("Change password");
+		let sender : number | undefined;
+		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
+			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
+		let ret = await this.wsChatService.changePassword(sender, changeForm);
+		if (ret === -1)
+			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
+		if (ret === -2)
+			return (client.emit("ChatError", errorMessages.INVALIDUSER));
+		if (ret === -3)
+			return (client.emit("ChatError", errorMessages.NOTTHEOWNER));
+		if (ret === -4)
+			return (client.emit("ChatError", errorMessages.INCORRECTVISIBILITY));
 	}
 
 
@@ -175,14 +195,16 @@ export class WsChatGateway implements OnGatewayConnection
 		if (ret === -1)
 			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
 		if (ret === -2)
-			return (client.emit("ChatError", errorMessages.NOTTHEOWNER));
+			return (client.emit("ChatError", errorMessages.INVALIDUSER));
 		if (ret === -3)
-			return (client.emit("ChatError", errorMessages.INVALIDNAME));
+			return (client.emit("ChatError", errorMessages.NOTTHEOWNER));
 		if (ret === -4)
-			return (client.emit("ChatError", errorMessages.NOTINTHISCHANNEL));
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
 		if (ret === -5)
+			return (client.emit("ChatError", errorMessages.NOTINTHISCHANNEL));
+		if (ret === -6)
 			return (client.emit("ChatError", errorMessages.ALREADYADMIN));
-		client.emit("addadmin", `User ${adminForm.id} successfully promoted to administrator !`);
+		client.emit("addadmin", `User ${ret} successfully promoted to administrator !`);
 	}
 
 	@UseGuards(SocketGuard)
@@ -199,31 +221,33 @@ export class WsChatGateway implements OnGatewayConnection
 		if (ret === -1)
 			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
 		if (ret === -2)
-			return (client.emit("ChatError", errorMessages.NOTTHEOWNER));
+			return (client.emit("ChatError", errorMessages.INVALIDUSER));
 		if (ret === -3)
-			return (client.emit("ChatError", errorMessages.INVALIDNAME));
+			return (client.emit("ChatError", errorMessages.NOTTHEOWNER));
 		if (ret === -4)
-			return (client.emit("ChatError", errorMessages.NOTINTHISCHANNEL));
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
 		if (ret === -5)
+			return (client.emit("ChatError", errorMessages.NOTINTHISCHANNEL));
+		if (ret === -6)
 			return (client.emit("ChatError", errorMessages.NOTANADMINISTRATOR));
-		client.emit("removeadmin", `User ${adminForm.id} successfully demoted from administrator !`);
+		client.emit("removeadmin", `User ${ret} successfully demoted from administrator !`);
 	}
 
 	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('createinvitation')
-	async createInvitation(client: Socket, invitationForm: userOperationDto)
+	async createInvitation(client: Socket, invitationForm: invitationOperationDto)
 	{
 		console.log("Create invitation !");
-		console.log(invitationForm.id + " for " + invitationForm.channelname);
+		console.log(invitationForm.name + " for " + invitationForm.channelname);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
 		let ret = await this.wsChatService.createInvitation(sender, invitationForm);
 		if (ret === -1)
 			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
-		if (ret === -2)//may be useless
-			return (client.emit("ChatError", errorMessages.INVALIDNAME));//may be useless
+		if (ret === -2)
+			return (client.emit("ChatError", errorMessages.INVALIDUSER));
 		if (ret === -3)
 			return (client.emit("ChatError", errorMessages.INVALIDNAME));
 		if (ret === -4)
@@ -233,29 +257,7 @@ export class WsChatGateway implements OnGatewayConnection
 		if (ret === -6)
 			return (client.emit("ChatError", errorMessages.NOTOP));
 		client.emit("createinvitation",
-			`User ${invitationForm.id} has been successfully invited to channel ${invitationForm.channelname}!`);
-	}
-
-	@UseGuards(SocketGuard)
-	@UsePipes(new ValidationPipe())
-	@SubscribeMessage('usermessage')
-	async sendUserMessage(client: Socket, messageForm: messageDto)
-	{
-		console.log("User message :");
-		console.log(messageForm.message + " to " + messageForm.destination);
-		let sender : number | undefined;
-		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
-			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
-		let ret = await this.wsChatService.userMessage(sender, messageForm);
-		if (ret === -1)
-			return (client.emit("ChatError", errorMessages.INVALIDNAME));
-		if (ret === -2)
-			return (client.emit("ChatError", errorMessages.INVALIDNAME));
-		if (ret === -3)
-			return (client.emit("ChatError", errorMessages.YOUAREIGNORED));
-		if (ret === -4)
-			return (client.emit("ChatError", errorMessages.MESSAGETOIGNORE));
-		//client.emit("usermessage", `You successfully send a message to ${messageForm.destination} !`);
+			`User ${invitationForm.name} has been successfully invited to channel ${invitationForm.channelname}!`);
 	}
 
 	@UseGuards(SocketGuard)
@@ -277,10 +279,32 @@ export class WsChatGateway implements OnGatewayConnection
 			return (client.emit("ChatError", errorMessages.INVALIDNAME));
 		if (ret === -4)
 			return (client.emit("ChatError", errorMessages.NOTINVITED));
-		client.emit("deleteinvitation", `You successfully deleted the invitation of ${invitationForm.id} for channel ${invitationForm.channelname} !`);
+		client.emit("deleteinvitation", `You successfully deleted the invitation of ${ret} for channel ${invitationForm.channelname} !`);
 	}
 
+	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
+	@SubscribeMessage('usermessage')
+	async sendUserMessage(client: Socket, messageForm: directDto)
+	{
+		console.log("User message :");
+		console.log(messageForm.message + " to " + messageForm.destination);
+		let sender : number | undefined;
+		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
+			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
+		let ret = await this.wsChatService.userMessage(sender, messageForm);
+		if (ret === -1)
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
+		if (ret === -2)
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
+		if (ret === -3)
+			return (client.emit("ChatError", errorMessages.YOUAREIGNORED));
+		if (ret === -4)
+			return (client.emit("ChatError", errorMessages.MESSAGETOIGNORE));
+		//client.emit("usermessage", `You successfully send a message to ${ret} !`);
+	}
 
+	
 	//=======				 Sanction					=======
 
 	
@@ -290,7 +314,7 @@ export class WsChatGateway implements OnGatewayConnection
 	async kickUser(client: Socket, kickForm: kickDto)
 	{
 		console.log("Kick user ");
-		console.log(kickForm.name);
+		console.log(kickForm.id);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
@@ -311,8 +335,9 @@ export class WsChatGateway implements OnGatewayConnection
 			return (client.emit("ChatError", errorMessages.NOTINTHISCHANNEL));
 		let response =
 		{
-			message : `You successfully kicked user ${kickForm.name} !`,
-			user : kickForm.name,
+			message : `You successfully kicked user ${ret} !`,
+			user : ret,
+			userId : kickForm.id,
 		}
 		client.emit("kickuser", response);
 	}
@@ -346,8 +371,9 @@ export class WsChatGateway implements OnGatewayConnection
 			return (client.emit("ChatError", errorMessages.ALREADYBAN));
 		let response =
 		{
-			message : `You successfully banned user ${banForm.id} !`,
-			user : banForm.id,
+			message : `You successfully banned user ${ret} !`,
+			user : ret,
+			userId : banForm.id,
 		}
 		client.emit("banuser", response);
 	}
@@ -375,8 +401,9 @@ export class WsChatGateway implements OnGatewayConnection
 			return (client.emit("ChatError", errorMessages.NOTBAN));
 		let response =
 		{
-			message : `You successfully unbanned user ${unbanForm.id} !`,
-			user : unbanForm.id,
+			message : `You successfully unbanned user ${ret} !`,
+			user : ret,
+			userId : unbanForm.id,
 		}
 		client.emit("unbanuser", response);
 	}
@@ -411,8 +438,9 @@ export class WsChatGateway implements OnGatewayConnection
 
 		let response =
 		{
-			message : `You successfully muted user ${muteForm.id} !`,
-			user : muteForm.id,
+			message : `You successfully muted user ${ret} !`,
+			user : ret,
+			userId : muteForm.id,
 		}
 		client.emit("muteuser", response);
 	}
@@ -440,8 +468,9 @@ export class WsChatGateway implements OnGatewayConnection
 			return (client.emit("ChatError", errorMessages.NOTMUTE));
 		let response =
 		{
-			message : `You successfully unmuted user ${unmuteForm.id} !`,
-			user : unmuteForm.id,
+			message : `You successfully unmuted user ${ret} !`,
+			user : ret,
+			userId : unmuteForm.id,
 		}
 		client.emit("unmuteuser", response);
 	}

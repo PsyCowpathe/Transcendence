@@ -1,4 +1,4 @@
-import { Controller, Get, Redirect, Header, Req, Post, Body, Res, UseGuards, UsePipes, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, StreamableFile, Param } from '@nestjs/common';
+import { Controller, Get, Redirect, Header, Req, Post, Body, Res, UseGuards, UsePipes, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, StreamableFile, Param, ValidationPipe } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express'; 
 import { createReadStream } from 'fs';
 import { join } from 'path';
@@ -48,6 +48,7 @@ export class AuthController
 	}
 
 	@Post('register')
+	@UsePipes(new ValidationPipe())
 	async Register(@Body() tokenForm: AuthDto, @Res() res: Response)
 	{
 		console.log('Register received');
@@ -82,6 +83,7 @@ export class AuthController
 	}
 
 	@Post('loginchange')
+	@UsePipes(new ValidationPipe())
 	@UseGuards(AuthGuard)
 	async firstConnect(@Body() registerForm: ChangeLoginDto, @Res() res: Response, @Req() req: Request)
 	{
@@ -108,6 +110,7 @@ export class AuthController
 	}
 
 	@Post('2FAlogin')
+	@UsePipes(new ValidationPipe())
 	@UseGuards(AuthGuard)
 	async TwoFALogin(@Req() req: Request, @Res() res: Response, @Body() TwoFAForm: TwoFADto)
 	{
