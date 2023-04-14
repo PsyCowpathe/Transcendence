@@ -1,12 +1,11 @@
-import react from 'react'
+
 import axios from 'axios'
 import { urls } from "../global"
 import { SetParamsToGetPost } from '../Headers/VraimentIlEstCasseCouille';
 
-
-export async function GetChannelList()
+export async function GetBlockList()
 {
     const config : any = SetParamsToGetPost()
-    let ret = await axios.get(`${urls.SERVER}/main/channellist`, config);
+    let ret = await axios.get(`${urls.SERVER}/main/getblocked`, config);
     return(ret);
 }

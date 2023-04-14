@@ -1,6 +1,5 @@
 import react from 'react';
 import io from 'socket.io-client';
-import { VraimentIlSaoule } from './aurelcassecouilles/VraimentIlEstCasseCouille';
 import { socketManager } from './Pages/HomePage';
   
 import * as React from 'react';
@@ -13,7 +12,7 @@ import { TopBar } from './Pages/TopBar';
 // export function TestButton() {
   
 //   const Delete = () => {
-//     const test = socketManager.initializeChatSocket(VraimentIlSaoule().headers.Authorization)
+//     const test = socketManager.initializeChatSocket(SetParamsToGetPost().headers.Authorization)
 //     test.emit("chat message", "test")
 //     test.on("chat message", (msg: string) => {
 //         console.log("la rep :")

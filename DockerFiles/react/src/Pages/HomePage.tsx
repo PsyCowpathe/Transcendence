@@ -7,7 +7,7 @@ import { SendTokenRequest } from "../Api/SendToken";
 import '../css/App.css'
 import { useNavigate } from 'react-router-dom'
 import socketManager from "../MesSockets";
-import { VraimentIlSaoule } from "../aurelcassecouilles/VraimentIlEstCasseCouille";
+import { SetParamsToGetPost } from "../Headers/VraimentIlEstCasseCouille";
 import { TopBar } from "./TopBar";
 // https://mui.com/material-ui/getting-started/installation/ 
 // let Mysocks : any = new SocketManager
@@ -64,7 +64,8 @@ interface chiant {
 				// {
 					console.log(`voila la data de la reponse ${response.data}`)
 					localStorage.setItem('Token', response.data.newtoken);
-					 localStorage.setItem('name', response.data.name);
+					localStorage.setItem('name', response.data.name);
+					localStorage.setItem('UID', response.data.id);
 					const date : any = localStorage.getItem('Token')
 
 					console.log("----------------------------------------------------------------------------------------------")
@@ -129,7 +130,7 @@ interface chiant {
 		if (Mybool !== false)
 		{
 			onLogin()
-			navigate('/change')
+			navigate('/log')
 			setMybool(false)
 		}
 	}, [Mybool])
@@ -139,8 +140,9 @@ interface chiant {
 		if (Registered !== false)
 		{
 			setReg(false)
-			socketManager.initializeChatSocket(VraimentIlSaoule().headers.Authorization)
-			socketManager.initializeFriendRequestSocket(VraimentIlSaoule().headers.Authorization)
+			socketManager.initializeChatSocket(SetParamsToGetPost().headers.Authorization)
+			socketManager.initializeFriendRequestSocket(SetParamsToGetPost().headers.Authorization)
+			socketManager.initializePongSocket(SetParamsToGetPost().headers.Authorization)
 		
 			onLogin()
 			navigate('/affUser')

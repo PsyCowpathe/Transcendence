@@ -3,18 +3,19 @@ import {useEffect } from 'react';
 import { AffMyUserPage } from "../Pages/UserPage";
 import '../NewChat/truc.css'
 import { AffTheUser } from "../Pages/UserModalPage";
+import ProfilePictureUploader from "../Pages/NewProfilPic";
+import { ChangeLogin } from "../Pages/LoginPage";
+import { Set2FA } from "../Pages/Set2FA";
 interface User {
   name: string;
-  uid : number
 }
 
 interface Props {
-  user: User;
-  Channel : string | null;
+
   onClose: () => void;
 }
 
-const UserInfoModal: React.FC<Props> = ({ user, Channel, onClose }) => {
+const ModalSet2FA: React.FC<Props> = ({ onClose }) => {
   const [showModal, setShowModal] = useState(false);
 
 useEffect(() => {
@@ -34,12 +35,12 @@ useEffect(() => {
         <div className="modal-overlay">
           <div className="modal">
             <div className="modal-header">
-              <h2>User Information</h2>
+              <h2>2FA</h2>
               <button onClick={handleCloseModal}>Close</button>
             </div>
             <div className="modal-body">
              <div className="test">
-              <AffTheUser User={user} Channel={Channel}/>
+              <Set2FA/>
               </div>
               <div/>
             </div>
@@ -50,4 +51,4 @@ useEffect(() => {
   );
 };
 
-export default UserInfoModal;
+export default ModalSet2FA;

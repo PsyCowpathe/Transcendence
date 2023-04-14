@@ -6,10 +6,6 @@ import { VraimentIlSaoule } from "../aurelcassecouilles/VraimentIlEstCasseCouill
 import { TopBar } from "../Pages/TopBar";
 import { ToastContainer, toast } from 'react-toastify';
 import UserInfoModal from '../Modale/UserModal'
-import { GetChannelInfo } from "../Api/GetChanMessage";
-import { GetUserInfo } from "../Api/GetUserInfo";
-import { GetChannelList } from "../Api/GetChannelList";
-import { GetFriendList } from "../Api/GetFriendList";
 let test: boolean = false
 let socket: any
 
@@ -25,59 +21,23 @@ interface Chati {
 }
 
 interface Message {
-  id: number;
-  channel : string;
+  id : number;
   user: string;
   text: string;
   isSent: boolean;
 }
 
+
 export function Chat() {
   ////////////////////////////////////////////////////////////////////// chan manager //////////////////////////////////////////////////////////////////
-  const UserName: any = localStorage.getItem('name')
-  const [UseChan, setUseChan] = useState<string>('');
+  const UserName : any= localStorage.getItem('name')
   const [responses, setResponse] = useState<string>("vide");
+  const [Chanlist, setChanlist] = useState<Chati[]>([]);
   const [Channame, setChanname] = useState<string>('');
   const [ChanMdp, setChanMdp] = useState<string>('');
-  const [Chanlist, setChanlist] = useState<Chati[]>([]);
-  function GetChannel() 
-  {
-    setChanlist([])
-    GetChannelList()
-      .then((response) => {
-        console.log("ssss")
-        console.log(response)
-        setChanlist(response.data.map((chan:any, index : any) => {
-          return { id: index, name: chan}
-        }
-        ))
-        console.log("xxxs")
-  
-        console.log(Chanlist)
-      })
-      .catch((err) => {
-        
-      if(err.response.data.message == "Invalid user" || err.message.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-      {
-        console.log("coucou ?")
-        window.location.assign('/')
-      }
-      if ( err.message === "User not registered")// ==> redirection vers la page de register
-      {
-        console.log("ERROR")
-        console.log(err)
-        window.location.assign('/Change')
-     }
-        console.log(err)
-  
-      }
-      )
-    }
+  const [newMessage, setNewMessage] = useState<string>('');
+  const [messages, setMessages] = useState<Message[]>([]);
 
-  
-  useEffect(() => {
-  GetChannel()
-  }, [])
 
   socket = socketManager.getChatSocket()
 
@@ -98,8 +58,7 @@ export function Chat() {
         autoClose: 2000,
         progressClassName: "my-progress-bar"
       })
-      GetChannel()
-      // setResponse("dont change");
+      setResponse("dont change");
     }
     const handleCreateChannels = (response: any) => {
       console.log(response)
@@ -109,8 +68,7 @@ export function Chat() {
         progressClassName: "my-progress-bar"
       })
       // console.log("coucou jsuis sence rentrer")
-      // setResponse("change");
-
+      setResponse("change");
     }
 
     socket.on("createchannel", handleCreateChannel);
@@ -121,36 +79,8 @@ export function Chat() {
       socket.off("ChatError", handleCreateChannels);
     }
   }, [])
-
-  useEffect(() => {
-    const handleCreateChannel = (response: any) => {
-      console.log("response")
-      console.log(response)
-
-      toast.success(response.message, {
-        position: toast.POSITION.TOP_RIGHT,
-        autoClose: 2000,
-        progressClassName: "my-progress-bar"
-      })
-      console.log(response.channel)
-      setChanname(response.channel);
-      setUseChan(response.channel);
-      // setResponse("dont change");
-  GetChannel()
-
-    }
-
-
-    socket.on("joinchannel", handleCreateChannel);
-
-    return () => {
-      socket.off("joinchannel", handleCreateChannel);
-    }
-  }, [])
-
   const Channels = (e: any) => {
-    //case cocher    
-    console.log("test sans  mdp")
+    //case cocher
 
     e.preventDefault();
     if (Channame === '') {
@@ -166,7 +96,7 @@ export function Chat() {
 
   const ChannelsMdp = async (e: any) => {
     //case non cocher
-    console.log("test avec mdp")
+    console.log("test")
     e.preventDefault();
 
     if (Channame === '') {
@@ -177,16 +107,8 @@ export function Chat() {
       });
       return
     }
-    console.log("LE NOM DU CHANNEL")
-    console.log(ChanMdp)
-    if (ChanMdp === '') 
-      socket.emit("createchannel", { channelname: Channame, visibility: "public", password: undefined })
-    else
-      socket.emit("createchannel", { channelname: Channame, visibility: "public", password: ChanMdp })
-    setChanMdp('')
-    setChanname('')
-      
-    }
+    socket.emit("createchannel", { channelname: Channame, visibility: "public", password: ChanMdp })
+  }
   const [isChecked, setIsChecked] = useState(false);
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
@@ -195,9 +117,8 @@ export function Chat() {
   useEffect(() => {
     if (responses !== "change") {
       console.log("je use effect")
-      setChanlist([...Chanlist, { id: Chanlist.length + Date.now(), name: Channame }]);
+      setChanlist([...Chanlist, { id: Chanlist.length + 1, name: Channame }]);
     }
-    setUseChan(Channame)
     setChanname('')
     setChanMdp('')
     setResponse("vide")
@@ -206,263 +127,181 @@ export function Chat() {
 
   /////////////////////////////////////////////////////////////////////////message manager///////////////////////////////////////////
 
-  const [newMessage, setNewMessage] = useState<string>('');
-  const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
     const handlelistenMsg = (response: any) => {
       console.log("djj sjjdj")
-      toast.success("New message on " + response.channel, {
+      toast.success(response, {
         position: toast.POSITION.TOP_RIGHT,
         autoClose: 2000,
         progressClassName: "my-progress-bar"
       })
-      console.log("LE USER FRR------------------------------------------------------------")
-      console.log(response)
-      const newMessageObj = { id: (messages.length + Date.now()), channel:response.channel, user: response.user, text: response.message, isSent: false };
-
+      console.log("ejbey")
+      const newMessageObj = { id: (messages.length + Date.now()), user: response.user, text: response.texte, isSent: false };
+    
       setMessages(prevMessages => [...prevMessages, newMessageObj]);
     }
-    socket.removeListener("channelmsg");
+
     socket.on("channelmsg", handlelistenMsg);
 
     return () => {
       socket.off("channelmsg", handlelistenMsg);
     }
   }, [])
+  
+  
+  
+  // const HandleNewMessage = (e: any) => {
+  //   e.preventDefault();
+  //   setMessages([...messages, {id:1, user: "Me", text: newMessage, isSent: true }]);
+  //   socket.emit("chatmsg", { text: newMessage }) //envoie le message
+    
+  // const updatedMessages = [...messages, { id: messages.length + 1, user: "Me", text: newMessage, isSent: true }];
+  // setMessages(updatedMessages);
+  // setNewMessage("");
+  //   setNewMessage('')
+  //   testiii()
+  //   setMessages([...messages, {id:2, user: "l autre", text: "baleck  frere", isSent: false }]);
+  //   console.log(messages)
 
-  interface User {
-    name: string;
-    ///////// interface a modifer pour avoir toute les info des user puis initialiser un User  avec toute ses info quand on recoit le token
-  }
-
-
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [selectedChannel, setSelectedChannel] = useState('');
-
-  const [User, setUser] = useState<User | null>(null);
-
-  const handleUserClick = (user: User | null) => {
-    setSelectedUser(user);
-    console.log("je suis la")
-    console.log(user)
-  };
-
-  const handleCloseModal = () => {
-    setSelectedUser(null);
-  };
+  // }
+  
+ interface User {
+   name: string;
+   ///////// interface a modifer pour avoir toute les info des user puis initialiser un User  avec toute ses info quand on recoit le token
+ }
+ 
+ interface Props {
+   user: User;
+ }
+ 
+ const [selectedUser, setSelectedUser] = useState<User | null>(null);
+ const [User , setUser] = useState<User | null>(null);
+   
+     const handleUserClick = (user: User | null) => {
+       setSelectedUser(user);
+       console.log("je suis la")
+       console.log(user)
+     };
+   
+     const handleCloseModal = () => {
+       setSelectedUser(null);
+     };
 
 
   const HandleNewMessage = (e: any) => {
     e.preventDefault();
-    console.log("je suis la")
-    console.log(selectedChannel)
-    socket.emit("channelmsg", { destination: selectedChannel, message: newMessage })
-    const newMessageObj = { id: (messages.length + Date.now()), channel:selectedChannel, user: UserName, text: newMessage, isSent: true };
-
+    socket.emit("channelmsg", { message: newMessage, destination: "meillu" }) 
+    const newMessageObj = { id: (messages.length + Date.now()), user: UserName, text: newMessage, isSent: true };
+    
     setMessages(prevMessages => [...prevMessages, newMessageObj]);
     setNewMessage("");
     scrollToBottom()
   };
 
   const renderMessages = () => {
-
-    //setMessages([...messages, {}]); //ajoute les message recup a la liste des message
     return messages.map((message) => {
-
-      let messageClass
-      if (message.user === UserName)
-        messageClass = "sent-message"
-      else
-        messageClass = "received-message";
-      let userClass
-      if (message.user === UserName)
-        userClass = "sent-user"
-      else
-        userClass = "received-user";
-      if (message.channel !== selectedChannel)
-      {
-        console.log("USe")
-        console.log(selectedChannel)
-        console.log("message.channel")
-        console.log(message.channel)
-        console.log("C PAS LE BON CHAN FDP")
-        return
-      }
+      const messageClass = message.isSent ? "sent-message" : "received-message";
+      const userClass = message.isSent ? "sent-user" : "received-user";
+     
       return (
-        <div>
-          <div className={`message ${userClass}`} onClick={() => handleUserClick({ name: message.user })}>
-            {message.user}
-          </div>
-          <div className="message-container">
-            <div key={message.id} className={`message ${messageClass}`}>
-              <span>{message.text}</span>
-            </div>
-          </div>
+          <div>
+
+      <div className={`message ${userClass}`} onClick={() => handleUserClick({name: message.user})}>
+          {message.user}
         </div>
+        <div className="message-container">
+                  <div key={message.id} className={`message ${messageClass}`}>
+          <span>{message.text}</span>
+        </div>
+          </div>
+          </div>
       );
     });
   };
 
-  const messageContainer: any = document.getElementById('tamere');
+  const messageContainer : any = document.getElementById('tamere');
 
   function scrollToBottom() {
     messageContainer.scrollTop = messageContainer.scrollHeight;
   }
 
   /////////////////////////////////////TEST //////////////////////////////////////////
-  const [ChanTo, setChanTo] = useState<any>('');
-  const [ChanMdpTo, setChanMdpTo] = useState<any>('');
+  
+  
+  const Gotochan = () => {
+    console.log("je suis dans la fonction")
 
-  const JoinChannelMdp = (e: any) => {
-    e.preventDefault();
-    socket.emit("joinchannel", { channelname: ChanTo, visibility: "private", password: ChanMdpTo })
-    //channel nane + password
-    setChanMdpTo('')
-    setChanTo('')
+  
   }
-  /////////////////////////////////////TEST //////////////////////////////////////////
+  
 
-
-  const OpenChannel = (ChanUse: any) => {
-
-    console.log(ChanUse)
-    setSelectedChannel(ChanUse)
-    console.log(ChanUse)
-    setMessages([])
-    if (ChanUse !== null) {
-      GetChannelInfo(ChanUse)    //recupere les message du channel
-        .then((response) => {
-          console.log(response)
-          console.log("lol")
-          // if (response.data !== undefined)
-          // {
-          const newMessages = response.data.map((message: any, index: any) => {
-            const isSent = message.username === UserName;
-            return {
-              id: messages.length + Date.now(),
-              channel: ChanUse,
-              user: message.username,
-              text: message.message,
-              isSent: isSent
-            };
-          });
-          setMessages(newMessages);
-        })
-        .catch((err) => {
-          if(err.response.data.message == "Invalid user" || err.message.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-          {
-            console.log("coucou ?")
-            window.location.assign('/')
-          }
-          if ( err.message === "User not registered")// ==> redirection vers la page de register
-          {
-            console.log("ERROR")
-            console.log(err)
-            window.location.assign('/Change')
-         }
-          console.log(err)
-        })
-    }
-  }
-
-
-  // interface IMessage {
-  //   id: number;
-  //   text: string;
-  // }
-
-  // interface IChannel {
-  //   id: number;
-  //   name: string;
-  //   messages: IMessage[];
-  // }
-
-  // interface IProps {
-  //   channels: IChannel[];
-  // }
-
-  // const MessageDisplay: React.FC<IProps> = ({ channels }) => {
-  //   const [selectedChannelId, setSelectedChannelId] = useState<number>(
-  //     channels[0].id
-  //   );
-  //   const [selectedChannelMessages, setSelectedChannelMessages] = useState<
-  //     IMessage[]
-  //   >(channels[0].messages);
-
-  //   const handleChannelClick = (channelId: number) => {
-  //     setSelectedChannelId(channelId);
-  //     setSelectedChannelMessages(
-  //       channels.find((channel) => channel.id === channelId)?.messages || []
-  //     );
-  //   };
-
-  //   return (
-  //     <div>
-  //       <div>
-  //         {channels.map((channel) => (
-  //           <button key={channel.id} onClick={() => handleChannelClick(channel.id)}>
-  //             {channel.name}
-  //           </button>
-  //         ))}
-  //       </div>
-  //       <div>
-  //         {selectedChannelMessages.map((message) => (
-  //           <div key={message.id}> fdcd{message.text}</div>
-  //         ))}
-  //       </div>
-  //     </div>
-  //   );
-  // };
-  interface IUser {
-    id: number;
-    username: string;
-  }
-  const [UserList, setUserList] = useState<IUser[]>([]);
-  const OpenUser = (UserUse: any) => {
-    GetFriendList()
-      .then((response) => {
-        setUserList(response.data.map((chan:any, index : any) => {
-          return { id: index, name: chan}
-        }
-        ))
-        console.log(response)
+  useEffect(() => {
+    const handlellistenban = (response: any) => {
+      console.log("djj sjjdj")
+      toast.success(response, {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 2000,
+        progressClassName: "my-progress-bar"
       })
-      .catch((err) => {
-        console.log(err)
+      socket.on("banuser", handlellistenban);
+
+      return () => {
+        socket.off("banuser", handlellistenban);
       }
-      )
+    }
+  }, [])
+
+      
+  const [UserToBan, setUserToBan] = useState('')
+  const [reason , setReason] = useState('')
+  const [timer , setTimer] = useState<number>(0)
+  const BanUser = (e: any) => {
+    e.preventDefault();
+    socket.emit("banuser", { name: UserToBan, channelname: "coucou", time: timer, reason: reason })
+  
   }
 
+  /////////////////////////////////////TEST //////////////////////////////////////////
 
   return (
     <div>
       <TopBar />
-
-      <div className="chat-app">
+              {/* <div>
+              <form onSubmit={BanUser} >
+              <input type="text" placeholder="who i ban ?" value={UserToBan} onChange={(i) => setUserToBan(i.target.value)} />
+              <input type="text" placeholder="why?" value={reason} onChange={(i) => setReason(i.target.value)} />
+              <input type="number" placeholder="12" value={timer} onChange={(i) => setTimer(parseInt(i.target.value))} />
+              <button className="add-message-button" >Ban</button>
+            </form>
+              </div> */}
+      <div className="chat-app" style={{ height: "100vh" }}>
         <div className="chat-app__sidebar">
           <div className="channel-list">
             <h2>Channels</h2>
             <ul className="containers" >
-              {/* // onClick={Gotochan} > */}
+            {/* // onClick={Gotochan} > */}
               {Chanlist.map((chanName) => (
-                <li className="active" key={chanName.id} onClick={() => OpenChannel(chanName.name)} >
-                  {chanName.name}
-                </li>
+                <li className="active" key={chanName.id} >
+                  {chanName.name} </li>
               ))}
             </ul>
-            <div >
-            {isChecked && <form onSubmit={Channels} >
+            {selectedUser && (
+              <UserInfoModal user={selectedUser} onClose= {handleCloseModal} />
+            )}
+            <form onSubmit={Channels} >
               <input type="text" placeholder="New chan" value={Channame} onChange={(e) => setChanname(e.target.value)} />
-              {isChecked && <button  className="add-channel-button" >Add Channel</button>}
-            </form>}
+
+              {isChecked && <button className="add-channel-button" >Add Channel</button>}
+            </form>
+            <div>
               {!isChecked && (
                 <form onSubmit={ChannelsMdp} >
-                  <input type="text" placeholder="New chan" value={Channame} onChange={(e) => setChanname(e.target.value)} />
                   <input type="password" placeholder="Mot de passe" value={ChanMdp} onChange={(e) => setChanMdp(e.target.value)} />
-                  <button type="submit" className="other" >Add Channel</button>
+                  {!isChecked && <button className="other" >Add Channel</button>}
                 </form>
               )}
+      
               <label>
                 <input
                   type="checkbox"
@@ -471,54 +310,42 @@ export function Chat() {
                 />
                 private channel
               </label>
-              <form onSubmit={JoinChannelMdp} >
-                <input type="text" placeholder="New chan" value={ChanTo} onChange={(e) => setChanTo(e.target.value)} />
-                <input type="password" placeholder="Mot de passe" value={ChanMdpTo} onChange={(e) => setChanMdpTo(e.target.value)} />
-                <button type="submit" className="other" >Join Channel</button>
-              </form>
             </div>
           </div>
         </div>
+
+
         <div className="chat-app__main">
           <div className="channel-header">
-            <h2>{selectedChannel || 'General'}</h2>
+            <h2>General</h2>
             <button className="add-message-button">New Message</button>
           </div>
 
-          <div className="message-list">
+              {/* {/* <div className="message-sender">{messages.user}</div>
+              <div className="message-text">{messages.text}</div> */}
+             {/* <div className="message-input">
+            <div className="message-item received">
+              <div className="message-sender">My user</div>
+              <div className="message-text">{newMessage}</div>
+            </div> */}
 
-            <div id="tamere" className="chat-list">
-              {renderMessages()}
-            </div>
-            {selectedUser && (
-              <UserInfoModal user={selectedUser} Channel={selectedChannel} onClose={handleCloseModal} />
-            )}
+
+
+          <div className="message-list">
+          
+           <div id="tamere" className="chat-list">
+             {renderMessages()}
+           </div>
             <div className="message-item sent">
-              <form className="message-input" onSubmit={HandleNewMessage} >
-                <input
-                  type="text"
-                  placeholder="New message"
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)} />
-                <button className="add-message-button" >Add Message</button>
-              </form>
-            </div>
+                <form className="message-input" onSubmit={HandleNewMessage} >
+                  <input type="text" placeholder="New message" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} />
+                  <button className="add-message-button" >Add Message</button>
+                </form>
+              </div>
+            {/* </div> */}
 
           </div>
         </div>
-        {/* <div className="friend-app__main"> */}
-          <div className="friend-app__sidebar">
-            <h1>Friend List</h1>
-              <ul className="container">
-
-                {UserList.map((user) => (
-                  <li className="active" key={user.id} onClick={() => OpenUser(user.username)} >
-                    {user.username}
-                  </li>
-                ))}
-              </ul>
-              </div>
-        {/* </div> */}
       </div><ToastContainer />
     </div>
   );
