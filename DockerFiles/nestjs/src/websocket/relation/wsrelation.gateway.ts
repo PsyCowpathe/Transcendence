@@ -1,5 +1,5 @@
-import { SubscribeMessage, WebSocketGateway, WebSocketServer  } from '@nestjs/websockets';
-import { UseGuards, UseFilters } from '@nestjs/common';
+import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnection } from '@nestjs/websockets';
+import { UseGuards, UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 
 import { SocketGuard } from '../guard/socket.guard';
@@ -7,42 +7,42 @@ import { SocketGuard } from '../guard/socket.guard';
 import { sendError, sendSuccess } from '../../common/response';
 import { errorMessages } from '../../common/global'; 
 
+import { relationDto, requestDto } from './wsrelation.entity';
+
 import { WsRelationService } from './wsrelation.service';
 import { WsExceptionFilter } from '../guard/ws.filter'; 
 
 @UseFilters(WsExceptionFilter)
-@WebSocketGateway(3631, {cors: true}) //userspace relation
-export class WsRelationGateway
+@WebSocketGateway(3631, {cors: true})
+export class WsRelationGateway implements OnGatewayConnection
 {
 	constructor(private readonly wsRelationService: WsRelationService)
 	{
 
 	}
 
+	async handleConnection(client: Socket)
+    {
+        console.log("RELATION CONNECTED");
+		let clientToken = client.handshake.auth.token;
+		await this.wsRelationService.saveRelationSocket(client, clientToken);
+    }
+
 	@WebSocketServer()
 	server: Server;
 
 	@UseGuards(SocketGuard)
-	@SubscribeMessage('newlink')
-	createLink(client: Socket)
-	{
-		console.log("Newlink requested !");
-		let clientToken = client.handshake.auth.token;
-		this.wsRelationService.saveRelationSocket(client, clientToken);
-	}
-
-	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('sendfriendrequest')
-	async sendFriendRequest(client: Socket, data: any)
+	async sendFriendRequest(client: Socket, data: requestDto)
 	{
 		console.log("New request to user : ");
 		console.log(data.user);
-		if (data.user === undefined)
-			return (client.emit("RelationError", errorMessages.MISSINGNAME));
 		let sender : number | undefined;
 		if ((sender = this.wsRelationService.isRegistered(client)) === undefined)
 			return (client.emit("RelationError", errorMessages.NOTREGISTERED));
 		let ret = await this.wsRelationService.sendFriendRequest(sender, data.user);
+		console.log("ret = " + ret);
 		if (ret === -1)
 			return (client.emit("RelationError", errorMessages.INVALIDNAME));
 		if (ret === -2)
@@ -60,8 +60,9 @@ export class WsRelationGateway
 	}
 
 	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('acceptfriendrequest')
-	async acceptFriendRequest(client: Socket, data: any)
+	async acceptFriendRequest(client: Socket, data: relationDto)
 	{
 		console.log("Try to accept request from : ");
 		console.log(data.user);
@@ -81,8 +82,9 @@ export class WsRelationGateway
 	}
 
 	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('refusefriendrequest')
-	async refuseFriendRequest(client: Socket, data: any)
+	async refuseFriendRequest(client: Socket, data: relationDto)
 	{
 		console.log("Try to refuse friend request from : ");
 		console.log(data.user);
@@ -100,8 +102,9 @@ export class WsRelationGateway
 	}
 
 	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('deletefriend')
-	async deleteFriend(client: Socket, data: any)
+	async deleteFriend(client: Socket, data: relationDto)
 	{
 		console.log("Try to delete friend : ");
 		console.log(data.user);
@@ -119,8 +122,9 @@ export class WsRelationGateway
 	}
 
 	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('blockuser')
-	async blockUser(client: Socket, data: any)
+	async blockUser(client: Socket, data: relationDto)
 	{
 		console.log("Block user : ");
 		console.log(data.user);
@@ -140,8 +144,9 @@ export class WsRelationGateway
 	}
 
 	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('unblockuser')
-	async unBlockUser(client: Socket, data: any)
+	async unBlockUser(client: Socket, data: relationDto)
 	{
 		console.log("Try to unblock user : ");
 		console.log(data.user);

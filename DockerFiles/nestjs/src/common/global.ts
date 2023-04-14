@@ -17,6 +17,9 @@ export enum errorMessages
 	CREATEFAIL = "Failed to create user, please try again !",
 	DBFAIL = "Failed to get database object, please try again !",
 	NOTLOGGED = "You are not logged !",
+	ALREADYMM = "You already join the queue !",
+	INGAME = "You can\'t join the queue when you are in game !",
+	NOTAPLAYER = "You are not a player of this game stop lying !",
 
 //=====				Relation			=====
 
@@ -59,12 +62,13 @@ export enum errorMessages
 	YOUAREMUTE = "You are mute in this channel !",
 	ALREADYBAN = "This user is already ban from this channel !",
 	ALREADYMUTE = "This user is already mute from this channel !",
+	INCORRECTVISIBILITY = "You can\'t set a password in a private channel",
 }
 
 export enum urls
 {
 	TOKEN = "https://api.intra.42.fr/oauth/token",
-	URI = "http://localhost:3000",
+	URI = "http://10.13.4.3:3000",
 	ORIGIN = "http://localhost:3000",
 	ME = "https://api.intra.42.fr/v2/me",
 }

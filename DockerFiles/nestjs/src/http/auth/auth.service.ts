@@ -105,6 +105,7 @@ export class AuthService
 		{
 			data =
 			{
+				id : user.id,
 				name : user.name,
 				registered : user.registered,
 				newtoken : user.token,
@@ -120,6 +121,7 @@ export class AuthService
 		{
 			data =
 			{
+				id : user.id,
 				name : user.name,
 				registered : user.registered,
 				newtoken : undefined,

@@ -1,4 +1,4 @@
-import { User } from '../db/user/user.entity'
+import { User } from '../../../db/user/user.entity'
 
 export default class Player
 {

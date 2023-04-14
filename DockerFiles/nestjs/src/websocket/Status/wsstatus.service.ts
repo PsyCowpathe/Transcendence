@@ -20,6 +20,7 @@ export class WsStatusService
 		let user = await this.userService.findOneByToken(token);
 		if (user !== null)
 		{
+			console.log(user.name);
 			await this.sockets.set(user.id, client);
 			console.log("New socket saved : " + user.name);
 		}

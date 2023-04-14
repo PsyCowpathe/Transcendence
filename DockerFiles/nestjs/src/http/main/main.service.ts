@@ -91,21 +91,31 @@ export class MainService
 			while (annoyingList && annoyingList[j] && annoyingList[j].user2.name !== messageList[i].sender.name)
 				j++;
 			if (messageList[i].sender.name !== user.name && annoyingList && annoyingList[j])
-				data.push({ username: messageList[i].sender.name, message: "Blocked message" });
+				data.push
+				({ 
+					id: messageList[i].sender.id,
+					username: messageList[i].sender.name,
+					message: "Blocked message",
+				});
 			else
-				data.push({ username: messageList[i].sender.name, message: messageList[i].message });
+				data.push
+				({
+					id: messageList[i].sender.id,
+					username: messageList[i].sender.name,
+					message: messageList[i].message
+				});
 			i++;
 		}
 		data.reverse();
 		return (data);
 	}
 
-	async resumeprivate(token: string | undefined, username: string) : Promise <number | any>
+	async resumeprivate(token: string | undefined, userId: number) : Promise <number | any>
 	{
 		const receiver = await this.userService.findOneByToken(token);
 		if (receiver === null)
 			return (-1);
-		const sender = await this.userService.findOneByName(username);
+		const sender = await this.userService.findOneById(userId);
 		if (sender === null)
 			return (-2);
 		const messageList = await this.privateService.findOneByPrivate(receiver, sender);
@@ -141,7 +151,7 @@ export class MainService
 		return (data);
 	}
 
-	async getFriends(token: string | undefined) : Promise <number | String[]>
+	async getFriends(token: string | undefined) : Promise <number | any[]>
 	{
 		const askMan = await this.userService.findOneByToken(token);
 		if (askMan === null)
@@ -151,13 +161,18 @@ export class MainService
 		let data = [];
 		while (friendList && friendList[i])
 		{
-			data.push(friendList[i].user2.name);
+			let tmp =
+			{
+				id: friendList[i].user2.id,
+				name: friendList[i].user2.name,
+			}
+			data.push(tmp);
 			i++;
 		}
 		return (data);
 	}
 
-	async getFriendRequest(token: string | undefined) : Promise <number | String[]>
+	async getFriendRequest(token: string | undefined) : Promise <number | any[]>
 	{
 		const askMan = await this.userService.findOneByToken(token);
 		if (askMan === null)
@@ -167,13 +182,19 @@ export class MainService
 		let data = [];
 		while (requestList && requestList[i])
 		{
-			data.push(requestList[i].user1.name);
+			let tmp =
+			{
+				id: requestList[i].user1.id,
+				name: requestList[i].user1.name,
+			}
+
+			data.push(tmp);
 			i++;
 		}
 		return (data);
 	}
 
-	async getBlocked(token: string | undefined) : Promise <number | String[]>
+	async getBlocked(token: string | undefined) : Promise <number | any[]>
 	{
 		const askMan = await this.userService.findOneByToken(token);
 		if (askMan === null)
@@ -183,7 +204,12 @@ export class MainService
 		let data = [];
 		while (blockedList && blockedList[i])
 		{
-			data.push(blockedList[i].user2.name);
+			let tmp =
+			{
+				id: blockedList[i].user2.id,
+				name: blockedList[i].user2.name,
+			}
+			data.push(tmp);
 			i++;
 		}
 		return (data);

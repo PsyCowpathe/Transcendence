@@ -19,7 +19,8 @@ export class ChangeLoginDto
 
 export class TwoFADto
 {
-	@IsDivisibleBy(1, {message: `The code must be a integer !`})
+	@IsDivisibleBy(1, {message: `The code must be an integer !`})
+	@IsPositive({message: 'The code must be greater than 0 !'})
 	@IsNotEmpty({message: 'The code can\'t be empty !'})
 	code: number;
 }

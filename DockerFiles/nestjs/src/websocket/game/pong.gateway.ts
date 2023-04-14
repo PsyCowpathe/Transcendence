@@ -1,22 +1,29 @@
 import { WebSocketServer, WebSocketGateway, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage } from '@nestjs/websockets';
+import { UseFilters, UsePipes, UseGuards, ValidationPipe } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
-import { User } from './../db/user/user.entity'
-import { UserService } from '../db/user/user.service'
-import Game from './Game';
-import Player from './Player'
+import { User } from '../../db/user/user.entity'
+import { UserService } from '../../db/user/user.service'
+import Game from '../../http/pong/class/Game';
+import Player from '../../http/pong/class/Player'
+import { WsExceptionFilter } from '../guard/ws.filter';
+import { SocketGuard } from '../guard/socket.guard';
+import { errorMessages } from '../../common/global';
+import { mouseDto, numberDto } from './pong.entity'
 
+@UseFilters(WsExceptionFilter)
 @WebSocketGateway()
-export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
-	
+export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit
+{
 	@WebSocketServer()
 	server: Server;
+
 	clients = new Map<User, Socket>();
 	queue = new Map<User, Socket>();
 	games = new Array<{ spectators: Array<Socket>, game: Game }>();
 
 	constructor(private readonly userService: UserService)
 	{
-    		setInterval(() =>
+    	setInterval(() =>
 		{
 			for (const current of this.games)
 			{
@@ -27,13 +34,13 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					const s2 = this.clients.get(game.p2.user);
 					if (s1 && s2)
 					{
-      						game.update(Date.now());
+      					game.update(Date.now());
 						const gameState = game.getGameState();
 						s1.emit('update', gameState);
 						s2.emit('update', gameState);
 						for (const spec of current.spectators)
 							spec.emit('update', gameState);
-      						if (game.GOAL)
+      					if (game.GOAL)
 						{
 							if (game.ball.pos.x > 50)
 							{
@@ -53,7 +60,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					}
 				}
 			}
-    		}, 30);
+    	}, 30);
 	}
 
 	afterInit()
@@ -70,23 +77,27 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		if (user)
 			this.clients.set(user, socket);
 		else
+			{
+			socket.emit("GameError", errorMessages.INVALIDUSER)
 			console.log("no corresponding user in db");
+			}
 		console.log(`Client connected: $(username) identified as ${socket.id}`);
 	}
 
-	getClientUID(socket: Socket)
+	getUser(socket: Socket) : User | undefined
     	{
         	for (const [key, current] of this.clients.entries())
         	{
             		if (current === socket)
                   		return (key);
           	}
+			return (undefined);
     	}
 
 	handleDisconnect(socket: Socket)
 	{
 		console.log(`Client disconnected: $(clients[socket]) identified as ${socket.id}`);
-		const leaver = this.getClientUID(socket);
+		const leaver = this.getUser(socket);
 		if (leaver)
 		{
 			for (const current of this.games)
@@ -113,61 +124,48 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		}
 	}
 
+	@UseGuards(SocketGuard)
 	@SubscribeMessage('joinQueue')
-	joinQueue(uid: number)
+	joinQueue(client: Socket)
 	{
 		let user: User | undefined;
-		let socket: Socket | undefined;
 		let cli: User[];
 
-		for (const usr of this.clients.keys())
-		{
-			if (usr.uid == uid)
-			{
-				user = usr;
-				break;
-			}
-		}
+		user = this.getUser(client);
+		if (user === undefined)
+			client.emit("GameError", errorMessages.INVALIDUSER)
 		if (user && this.clients.size % 2 == 0)
 		{
 			cli = Array.from(this.clients.keys());
 			this.addGame(cli[cli.length - 1], user);
 			this.queue.delete(cli[cli.length - 1]);
 		}
-		else if (user)
-		{
-			socket = this.clients.get(user);
-			if (socket)
-				this.queue.set(user, socket);
-		}
+		if (user)
+			this.queue.set(user, client);
 	}
 
+	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('joinSpectators')
-	joinSpectators(uid: number, gameToSpec: number)
+	joinSpectators(client: Socket, gameToSpec: numberDto)
 	{
-		const tag = gameToSpec;
-		let socket: Socket | undefined;
-		for (const usr of this.clients.keys())
-		{
-			if (usr.uid == uid)
-			{
-				socket = this.clients.get(usr)
-				if (socket)
-					this.games[tag].spectators.push(socket);
-				break;
-			}
-		}
-		if (socket)
-			socket.emit('youreASpectatorPeasant', 3, this.games[tag].game.p1.name, this.games[tag].game.p2.name);
+		const tag = gameToSpec.input;
+
+		let user: User | undefined = this.getUser(client);
+		if (user === undefined)
+			client.emit("GameError", errorMessages.INVALIDUSER)
+		else
+			this.games[tag].spectators.push(client);
+		client.emit('youreASpectatorPeasant', 3, this.games[tag].game.p1.name, this.games[tag].game.p2.name);
 	}
 
+	@UseGuards(SocketGuard)
 	@SubscribeMessage('getGames')
 	getGames()
 	{
 		return (Array.from(this.games.values()));
 	}
 
-	@SubscribeMessage('addGame')
 	addGame(p1: User, p2: User)
 	{
 		let s1 = this.clients.get(p1);
@@ -185,28 +183,45 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		}
 	}
 
+	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('playerReady')
-	onPlayerReady(player_id: number, gametag: number)
+	onPlayerReady(client: Socket, gametag: numberDto)
 	{
-		const s1 = this.clients.get(this.games[gametag].game.p1.user);
-		const s2 = this.clients.get(this.games[gametag].game.p2.user);
+		const s1 = this.clients.get(this.games[gametag.input].game.p1.user);
+		const s2 = this.clients.get(this.games[gametag.input].game.p2.user);
+		let player_id: number = 0;
+	
+		const user = this.getUser(client);
+		if (user)
+		{
+			if (user.uid == this.games[gametag.input].game.p1.user.uid)
+				player_id = 1;
+			else if (user.uid == this.games[gametag.input].game.p2.user.uid)
+				player_id = 2;
+			else
+				client.emit('GameError', errorMessages.NOTAPLAYER);
+		}
+
 		if (s2 && player_id == 1)
 			s2.emit("opponentReady");
 		else if (s1)
 			s1.emit("opponentReady");
-		if (this.games[gametag].game.p1_ready && this.games[gametag].game.p1_ready)
+		if (this.games[gametag.input].game.p1_ready && this.games[gametag.input].game.p1_ready)
 		{
 			setTimeout(function () {}, 2000);
-			this.games[gametag].game.playing = true;
+			this.games[gametag.input].game.playing = true;
 		}
 	}
 
+	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('movePaddle')
-	onMovePaddle(player_id: number, gametag: number, position: number)
+	onMovePaddle(player_id: numberDto, gametag: numberDto, position: mouseDto)
 	{
-		if (player_id == 1)
-    			this.games[gametag].game.p1_paddle.setPosition(position);
+		if (player_id.input == 1)
+    			this.games[gametag.input].game.p1_paddle.setPosition(position.input);
 		else
-    			this.games[gametag].game.p2_paddle.setPosition(position);
+    			this.games[gametag.input].game.p2_paddle.setPosition(position.input);
   	}
 }

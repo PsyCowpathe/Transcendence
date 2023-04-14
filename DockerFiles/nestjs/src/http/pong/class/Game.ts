@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core' 
 import { IoAdapter } from '@nestjs/platform-socket.io'
-import { AppModule } from './../app.module'
+import { AppModule } from './../../../app.module'
 
 import Player from "./Player"
 import Ball from "./Ball";
