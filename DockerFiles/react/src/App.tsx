@@ -21,6 +21,9 @@ import NotFound from './Pages/404NotFound';
 import { Set2FA } from './Pages/Set2FA';
 import { TestLog } from './Pages/ForceLog';  
 import { Resend2FA } from './Pages/Resend2FA';
+import Pong from './pong/Pong' 
+import PongMenu from './pong/PongMenu' 
+
 function App() 
 {
  const AuthContext = createContext(false);
@@ -55,6 +58,9 @@ function App()
 			<Route path='/TopBar' element={<TopBar />}/> 
 			<Route path='/Send2FA' element={<Resend2FA />}/>
 			<Route path='/*' element={<NotFound />}/> 
+			<Route path='/pong/game' element={<Pong />}/> 
+			<Route path='/pong/spectate' element={<Pong />}/> 
+
 			</Routes> 
 	</BrowserRouter>
 		);
