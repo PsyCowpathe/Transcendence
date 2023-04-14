@@ -82,11 +82,11 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
         {
           if (err.message !== "Request aborted") {
             if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-              navigate('/')
+              window.location.assign('/')
             if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
-            navigate('/Change')
+            window.location.assign('/Change')
             if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
-              navigate('/Send2FA')
+              window.location.assign('/Send2FA')
           }
         }
       })
@@ -133,11 +133,11 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
 
         if (err.message !== "Request aborted") {
           if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-            navigate('/')
+            window.location.assign('/')
           if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
-          navigate('/Change')
+          window.location.assign('/Change')
           if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
-            navigate('/Send2FA')
+            window.location.assign('/Send2FA')
         }
       })
     }, [redirectedd])
@@ -222,7 +222,7 @@ return(
       <div>
 
       <form  onSubmit={Ban}>
-      <input type="texte" placeholder="reason" value={reason} onChange={(e) => {setReason(e.target.value)}} />
+      <input type="text" placeholder="reason" value={reason} onChange={(e) => {setReason(e.target.value)}} />
       <input type="number" placeholder="0" value={timer} onChange={(e) => {setTimer(parseInt(e.target.value))}} />
       <button className="add-message-button" >Ban</button>
       </form>

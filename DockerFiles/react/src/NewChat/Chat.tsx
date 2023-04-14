@@ -52,8 +52,6 @@ export function Chat() {
   ////////////////////////////////////////////////////////////////////// chan manager //////////////////////////////////////////////////////////////////
   const UserName: any = localStorage.getItem('name')
   const UserUID: any = localStorage.getItem('UID')
-  // const [UseChan, setUseChan] = useState<string>('');
-  const [responses, setResponse] = useState<string>("vide");
   const [Channame, setChanname] = useState<string>('');
   const [ChanMdp, setChanMdp] = useState<string>('');
   const [Chanlist, setChanlist] = useState<Chati[]>([]);
@@ -68,7 +66,35 @@ export function Chat() {
       test = true
     }
   }
-  
+  const [UserList, setUserList] = useState<User[]>([]);
+  function GetFriend()
+  {
+    setUserList([])
+         GetFriendList()
+          .then((response) => {
+            console.log("FRIENDLIST:")
+            console.log(response)
+            
+            setUserList(response.data.map((user:any, index : any) => {
+              return { uid:  user.id, name: user.name}
+            }))
+            console.log("UserLIST:")
+            console.log(UserList)
+          })
+          .catch((err) => {
+            if (err.message !== "Request aborted") {
+              if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+              navigate('/')
+              else if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+              navigate('/Change')
+              else if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+              navigate('/Send2FA')
+            }
+            console.log(err)
+          })
+}
+
+
   function GetChannel() 
   {
     setChanlist([])
@@ -98,6 +124,12 @@ export function Chat() {
       }
       )
     }
+    
+    
+      useEffect(() => {
+         /// get la friend list
+        GetFriend()
+      }, [])
 
   useEffect(() => {
   GetChannel()
@@ -129,31 +161,58 @@ export function Chat() {
       GetChannel()
 
     }
-    const handleCreateChannels = (response: any) => {
+    const handleChatError = (response: any) => {
       console.log(response)
       toast.error(response, {
         position: toast.POSITION.TOP_RIGHT,
         autoClose: 2000,
         progressClassName: "my-progress-bar"
       })
-      GetChannel()
+      // GetChannel()
       // setSelectedChannel('')
-      GetMsgChan()
+      // GetMsgChan()
       // console.log("coucou jsuis sence rentrer")
-
-
     }
-      socket.removeListener("leavechannel", handleLeaveChannel);
+    const handleMuteUser = (response: any) => {
+      console.log(response)
+      toast.success(response, {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 2000,
+        progressClassName: "my-progress-bar"
+      })
+    }
+    const handleDeleteUser = (response: any) => {
+      console.log(response)
+      GetChannel()
+      setMessages([])
+      setSelectedChannel('')
+      setChanToDelete('')
+      toast.success(response, {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 2000,
+        progressClassName: "my-progress-bar"
+      })
+    }
+    
+    
+    socket.removeListener("leavechannel", handleLeaveChannel);
+    socket.removeListener("muteuser", handleMuteUser);//
+    socket.removeListener("deletechannel", handleDeleteUser);//
       socket.removeListener("createchannel", handleCreateChannel);
-      socket.removeListener("ChatError", handleCreateChannels);
-    socket.on("leavechannel", handleLeaveChannel);
-    socket.on("createchannel", handleCreateChannel);
-    socket.on("ChatError", handleCreateChannels);
-
-    return () => {
+      socket.removeListener("ChatError", handleChatError);
+      
+      socket.on("deletechannel", handleDeleteUser);//
+      socket.on("leavechannel", handleLeaveChannel);
+      socket.on("muteuser", handleMuteUser);
+      socket.on("createchannel", handleCreateChannel);
+      socket.on("ChatError", handleChatError);
+      
+      return () => {
+      socket.off("deletechannel", handleDeleteUser);//
+      socket.off("muteuser", handleMuteUser);
       socket.off("leavechannel", handleLeaveChannel);
       socket.off("createchannel", handleCreateChannel);
-      socket.off("ChatError", handleCreateChannels);
+      socket.off("ChatError", handleChatError);
     }
   }, [])
 
@@ -217,7 +276,7 @@ export function Chat() {
     console.log("LE NOM DU CHANNEL")
     console.log(ChanMdp)
     if (ChanMdp === '') 
-      socket.emit("createchannel", { channelname: Channame, visibility: "public", password: undefined })
+    socket.emit("createchannel", { channelname: Channame, visibility: "public", password: undefined })
     else
       socket.emit("createchannel", { channelname: Channame, visibility: "public", password: ChanMdp })
       setSelectedChannel(Channame)
@@ -225,7 +284,7 @@ export function Chat() {
     setChanname('')
       
     }
-  const [isChecked, setIsChecked] = useState(false);
+    const [isChecked, setIsChecked] = useState(false);
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
   };
@@ -271,8 +330,42 @@ export function Chat() {
 
   useEffect(() => {
     const handlelistenMsg = (response: any) => {
-      const newMessageObj = { id:  Date.now(), channel:'', user: response.first_data, userUID:response.id , text: response.message, isSent: false, isPriv: true };
+      console.log("recieved")
+      console.log(response)
+      const newMessageObj = { id:  Date.now(), channel:'', user: response.first_data.name, userUID:response.first_data.id , text: response.message, isSent: false, isPriv: true };
       setMessages(prevMessages => [...prevMessages, newMessageObj]);
+      setMessages([])
+      console.log(response.first_data.id)
+      GetPrivMsg(response.first_data.id)
+      .then((response) => {
+        console.log(response)
+        if (response.data !== null)
+         {const newMessages = response.data.map((message: any, index: any) => {
+              const isSent = message.username === UserName;
+              return {
+                id: index + Date.now(),
+                channel: null,
+                userUID: message.id,
+                user: message.username,
+                text: message.message,
+                isSent: isSent
+              };
+            });
+            setMessages(newMessages);
+          }
+          })
+          .catch((err) => {
+            console.log(err)
+            if (err.message !== "Request aborted") {
+              if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+                navigate('/')
+              else if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+              navigate('/Change')
+              else if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+                navigate('/Send2FA')
+            }
+          });
+      
     }
     socket.removeListener("usermessage");
     socket.on("usermessage", handlelistenMsg);
@@ -304,16 +397,22 @@ export function Chat() {
 
   const HandleNewMessage = (e: any) => {
     e.preventDefault();
-    console.log(selectedChannel)
-    if (selectedChannel !== '') {
+    console.log("-----------------------------------selectedChannel---------------------------------")
 
-    socket.emit("channelmsg", { destination: selectedChannel, message: newMessage })
+    console.log(selectedChannel)
+    console.log("-----------------------------------selectedChannel---------------------------------")
+
+    if (selectedChannel) {
+      console.log("-----------------------------------selectedChannel---------------------------------")
+
+      socket.emit("channelmsg", { destination: selectedChannel, message: newMessage })
     const newMessageObj = { id: Date.now(), channel:selectedChannel, user: UserName, userUID: UserUID,  text: newMessage, isSent: true, isPriv: false };
     setMessages(prevMessages => [...prevMessages, newMessageObj]);
     }
-    else if (UserTo !== '')
+    else if (UserTo)
     {
-
+      console.log("-----------------------------------selectedUser---------------------------------")
+      console.log(UserTo)
       socket.emit("usermessage", { destination: UserTo, message: newMessage })
       const newMessageObj = { id: Date.now(), channel:'', user: UserName, userUID:UserUID, text: newMessage, isSent: true, isPriv: true };
       setMessages(prevMessages => [...prevMessages, newMessageObj]);
@@ -373,6 +472,8 @@ export function Chat() {
   {
     console.log("selectedChannel")
     console.log(selectedChannel)
+    if (selectedChannel)
+    {
     GetChannelInfo(selectedChannel)    //recupere les message du channel
     .then((response) => {
       console.log(response)
@@ -405,13 +506,15 @@ export function Chat() {
       }
       console.log(err)
     })
+  }
 
     
   }
 
 
   const OpenChannel = (ChanUse: any) => {
-
+    console.log("--------------------------------------")
+    console.log(UserList)
     console.log("heuuuuuuuuu")
     console.log(ChanUse)
     setSelectedChannel(ChanUse)
@@ -458,31 +561,14 @@ export function Chat() {
   }
   
 
-    const [UserList, setUserList] = useState<User[]>([]);
-
-  useEffect(() => { /// get la friend list
-    GetFriendList()
-      .then((response) => {
-        console.log("FRIENDLIST:")
-        console.log(response)
-        setUserList(response.data.map((user:any, index : any) => {
-          return { uid:  user.id, username: user.name}
-        }
-        ))
-        console.log("UserLIST:")
-        console.log(UserList)
-      })
-      .catch((err) => {
-        console.log(err)
-      }
-      )
-  }, [])
   
 
   const [UserTo, setUserTo] = useState<any>('');
   const OpenUser = (UserUse: any) => {
+    setUserTo("UserUse")
     setUserTo(UserUse)
     setSelectedChannel('')
+    setMessages([])
     GetPrivMsg(UserUse)
     .then((response) => {
       console.log(response)
@@ -490,7 +576,7 @@ export function Chat() {
        {const newMessages = response.data.map((message: any, index: any) => {
             const isSent = message.username === UserName;
             return {
-              id: messages.length + Date.now(),
+              id: index + Date.now(),
               channel: null,
               userUID: message.id,
               user: message.username,
@@ -569,9 +655,8 @@ export function Chat() {
     socket.emit("deletechannel", { channelname: chan })
     console.log("delete")
     console.log(Chanlist)
-    GetChannel()
-    setMessages([])
-    setChanToDelete('')
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   }
   const [menuOpen, setMenuOpen] = useState(false);
   const openMenu = () => {
@@ -709,8 +794,8 @@ export function Chat() {
             <h1>Friend List</h1>
               <ul className="containers">
 
-                {UserList.map((user) => (
-                  <li className="active" key={user.uid} onClick={() => OpenUser(user.name)} >
+                { UserList.map((user) => (
+                  <li className="active" key={user.uid} onClick={() => OpenUser(user.uid)} >
                     {user.name}
                   </li>
                 ))}
