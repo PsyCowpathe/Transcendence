@@ -1,6 +1,6 @@
 import './styles.css'
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
 import socketManager from '../Pages/HomePage'
@@ -11,16 +11,17 @@ export default function PongMenu ()
 	const gameList = document.getElementById('gameList');
 	let games = new Array<String>;
 	let gameToSpec: number;
+	const navigate = useNavigate();
 
 	if (gameList)
 		gameList.style.display = "none";
 
 	async function onClickPlayClassic()
 	{	
-		const response = await axios.post('/joinQueue', {
+		const response = await axios.post('/pong/joinQueue', {
 					uid: window.localStorage.getItem("UID")
 					});
-		window.location.assign('/pong/play');
+		navigate('/pong/play');
 	}
 	
 	async function onClickPlayVariant()
@@ -33,7 +34,7 @@ export default function PongMenu ()
 	
 	async function onClickSpectate()
 	{	
-		const response = await axios.post('/getGames');
+		const response = await axios.post('/pong/getGames');
 		games = response.data;
 		if (gameList)
 			gameList.style.display = "flex";
@@ -45,7 +46,7 @@ export default function PongMenu ()
 					uid: window.localStorage.getItem("UID"),
 					gameToSpec: index
 					});
-		window.location.assign('/pong/spectate');
+		navigate('/pong/spectate');
 	}
 
 	return (
