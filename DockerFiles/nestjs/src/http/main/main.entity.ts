@@ -1,11 +1,11 @@
-import { IsPositive, IsNotEmpty, Length, IsString, IsDivisibleBy, IsAlphanumeric } from 'class-validator';
+import { IsNotEmpty, Length, IsString, IsNumberString, IsAlphanumeric, NotContains } from 'class-validator';
 
 
 export class numberParameterDto
 {
-	//@IsDivisibleBy(1, {message: `The id must be a integer !`})
-//	@IsPositive({message: 'The id entered must be greater than 0'})
-//	@IsNotEmpty({message: 'The id can\'t be empty !'})
+	@IsNumberString(undefined, {message : 'The id must be a number !'})
+	@NotContains("-+,.", {message : 'The id must an integer greater than 0 !'})
+	@IsNotEmpty({message: 'The id can\'t be empty !'})
 	id: number;
 }
 

@@ -35,11 +35,6 @@ export class ChannelService
 			.execute();
 	}
 
-	changeChannelName(chanId: number, newName: string)
-	{
-		return (this.channelRepository.update(chanId, {name: newName}));
-	}
-
 	changePassword(chanId: number, newPassword: string)
 	{
 		return (this.channelRepository.update(chanId, {password: newPassword}));
