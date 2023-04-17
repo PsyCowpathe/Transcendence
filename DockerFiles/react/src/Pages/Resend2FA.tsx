@@ -7,7 +7,7 @@ import { Send2FA } from "../Api/send2FA";
 import { ChangeLogin } from "./LoginPage";
 import { useState } from "react";
 import '../css/Force.css'
-import { SetParamsToGetPost } from "../Headers/VraimentIlEstCasseCouille";
+import { SetParamsToGetPost } from "../Headers/HeaderManager";
 import { socketManager } from "./HomePage";
 import { useNavigate } from "react-router-dom";
 interface code {
@@ -31,17 +31,20 @@ function Resend()
             navigate('/AffUser')
         })
         .catch((err) => {
+          if(err.response)
+          {
+          if (err.message !== "Request aborted")
+          {
             if (err.message !== "Request aborted") {
-                if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-                { 
-                  console.log("BBBBBBIIIITTTTEEEEEEEEE-----------------------------------------------")
-                    navigate('/')
-                }
-                  else if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
-                  navigate('/Change')
-                else if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
-                  navigate('/Send2FA')
-              }
+              if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+                navigate('/')
+              if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+              navigate('/Change')
+              if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+                navigate('/Send2FA')
+            }
+          }
+        }
             console.log(err)
         }
         )

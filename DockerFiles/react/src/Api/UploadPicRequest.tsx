@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { urls } from "../global";
-import { SetParamsToGetPost } from '../Headers/VraimentIlEstCasseCouille';
+import { SetParamsToGetPost } from '../Headers/HeaderManager';
 
 export async function UploadPicRequest(file : any)
 {

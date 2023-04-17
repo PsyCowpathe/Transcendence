@@ -1,7 +1,7 @@
 import react from 'react'
 import axios from 'axios'
 import { urls } from "../global"
-import { SetParamsToGetPost3 } from '../Headers/VraimentIlEstCasseCouille';
+import { SetParamsToGetPost3 } from '../Headers/HeaderManager';
 
 
 export async function GetChannelInfo(Channel : string)

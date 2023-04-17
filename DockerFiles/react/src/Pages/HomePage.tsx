@@ -7,7 +7,7 @@ import { SendTokenRequest } from "../Api/SendToken";
 import '../css/App.css'
 import { useNavigate } from 'react-router-dom'
 import socketManager from "../MesSockets";
-import { SetParamsToGetPost } from "../Headers/VraimentIlEstCasseCouille";
+import { SetParamsToGetPost } from "../Headers/HeaderManager";
 import { TopBar } from "./TopBar";
 // https://mui.com/material-ui/getting-started/installation/ 
 // let Mysocks : any = new SocketManager
@@ -38,7 +38,7 @@ interface chiant {
 		{
 			const { data } = await redirectTo42API()
 			// alert(data)
-			window.location.assign(data)
+			navigate(data)
 		}
 		catch (e)
 		{  

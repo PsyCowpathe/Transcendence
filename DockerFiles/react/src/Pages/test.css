@@ -1,111 +1,4 @@
 
-.friends-list h3 {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  
-  .friends-list ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .friends-list li {
-    padding: 5px 10px;
-    border-bottom: 1px solid #ccc;
-  }
-  
-  .friends-list li:last-child {
-    border-bottom: none;
-  }
-  .friends-list {
-    position: fixed;
-    top: 0;
-    margin-bottom: 50.60vh;
-    right: 0;
-    bottom: 0;
-    width: 200px;
-    background-color: #f0f0f0;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-
-
-.Invitation-list h3 {
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.Invitation-list ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.Invitation-list li {
-  padding: 5px 10px;
-  border-bottom: 1px solid #ccc;
-}
-
-.Invitation-list li:last-child {
-  border-bottom: none;
-}
-.Invitation-list {
-  position:fixed;
-  /* margin-right: 200px; */
-  margin-top: 50vh;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 200px;
-  background-color: #f0f0f0;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-
-
-.Blocked-list h3 {
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.Blocked-list ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.Blocked-list li {
-  padding: 5px 10px;
-  border-bottom: 1px solid #ccc;
-}
-
-.Blocked-list li:last-child {
-  border-bottom: none;
-}
-.Blocked-list {
-  position:fixed;
-  margin-right: 250px;
-  margin-top: 50vh;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 200px;
-  background-color: #f0f0f0;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
 
 
                             /************************************************************************* Bouton d'acceptation */
@@ -176,4 +69,62 @@ form > * {
   form > :last-child {
     margin-right: 0;
   }
+}
+
+
+
+/*/////////////////////////////////USER CSS//////////////////////////////////////////*/
+.person-stats {
+  background-color: #0e0541;
+  border: 1px solid #000000;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.matches-played {
+  font-weight: bold;
+}
+
+.matches-won {
+  color: green;
+}
+
+.matches-lost {
+  color: red;
+}
+
+
+
+.person-stats-mod {
+  background-color: #e8e8eb;
+  border: 1px solid #000000;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+
+
+/***********************************************************************connected user*/
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.status-indicator div {
+  flex-direction: column-reverse;
+  align-items: center;
+  display: flex;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.green-dot {
+  background-color: green;
+}
+
+.red-dot {
+  background-color: red;
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { SetParamsToGetPost } from '../Headers/VraimentIlEstCasseCouille'
+import { SetParamsToGetPost } from '../Headers/HeaderManager'
 import '../css/Buttons.css'
 import { socketManager } from '../Pages/HomePage'
 import { ToastContainer, toast, ToastOptions } from 'react-toastify';
@@ -76,7 +76,7 @@ const MyCustomToast = ({response, Acceptnow, Refusednow, closeToast} : any) => {
 		}
 
 		const handleFriendRequestSpe = (response: any) => {
-			console.log("NKJBDKSVBKJSHBDLKDBLKHSBHNSKJBHLKHDBLKHDBDLKHDHNDKJ")
+
 			if (response.message === `${response.user} send you a friend request !`) {
 				console.log("dddd")
 				toast.success(<MyCustomToast response={response} Acceptnow={Acceptnow} Refusednow={Refusednow} usera={userAc} closeToast={toast.dismiss} />,

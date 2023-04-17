@@ -7,7 +7,7 @@ import { WsStatusService }  from './wsstatus.service';
 import { SocketGuard } from '../guard/socket.guard';
 
 @UseFilters(WsExceptionFilter)
-@WebSocketGateway(3633, {cors: true})
+@WebSocketGateway(3634, {cors: true})
 export class WsStatusGateway implements OnGatewayConnection, OnGatewayDisconnect
 {
     constructor(private readonly wsStatusService: WsStatusService)
@@ -15,27 +15,17 @@ export class WsStatusGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 	}
 
-    @WebSocketServer()
-	server: Server;
-
-    @UseGuards(SocketGuard)
-	@SubscribeMessage('newlink')
-	createLink(client: Socket)
-	{
-		console.log("Newlink requested !");
-		let clientToken = client.handshake.auth.token;
-		this.wsStatusService.saveStatusSocket(client, clientToken);
-	}
-
-    handleConnection(client: Socket)
+    async handleConnection(client: Socket)
     {
-        console.log("CONNECTED");
-        this.wsStatusService.connection(client);
+        console.log("STATUS CONNECTED");
+		let clientToken = client.handshake.auth.token;
+        await this.wsStatusService.connection(client);
+		await this.wsStatusService.saveStatusSocket(client, clientToken);
     }
 
     handleDisconnect(client: Socket)
     {
-        console.log("DISCONNECTED");
+        console.log("STATUS DISCONNECTED");
         this.wsStatusService.deconnection(client);
     }
 

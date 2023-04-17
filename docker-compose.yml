@@ -29,7 +29,12 @@ services:
                 container_name: nest
                 image: nest
                 build: ./DockerFiles/nestjs/
-                restart: on-failure
+                deploy:
+                  restart_policy:
+                    condition: on-failure
+                    delay: 10s
+                    max_attempts: 20
+                    window: 10s
                 depends_on:
                             - postgres
                 env_file:

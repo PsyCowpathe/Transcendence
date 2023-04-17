@@ -6,34 +6,27 @@ RUN apt-get upgrade -y \
 && apt-get install -y zsh
 
 RUN apt-get install -y curl
-#RUN apt-get install -y xdg-utils
 
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && apt-get install -y nodejs
 
 RUN npm install -g npm@latest
-#RUN npm install -g @vue/cli
-
 
 RUN apt-get install -y git
 
 RUN npm install --global yarn@latest
 
-
-
 RUN cd  && \
-echo 'y' | echo | yarn create react-app frontend --template=typescript 
+echo 'y' | echo | yarn create react-app frontend --template=typescript
 
-RUN cd && cd frontend && yarn add mini.css@3.0.1 && yarn add axios && yarn add react-cookie@latest 
+COPY ./config/package.json /root/frontend/ 
 
-RUN cd && cd frontend && yarn add @types/react-icons@latest && yarn upgrade @types/react-icons@latest && yarn add react-router-dom@latest @types/react-router-dom@latest && yarn upgrade react-router-dom@latest &&  yarn upgrade @types/react-router-dom@latest && yarn upgrade react-scripts && yarn add react-toastify
+COPY ./config/tsconfig.json /root/frontend/ 
 
-RUN cd && cd frontend &&  yarn add @types/socket.io-client && yarn add @types/react-dropzone 
+COPY ./config/yarn.lock /root/frontend/ 
 
-RUN cd && cd frontend && yarn add @mui/material @emotion/react @emotion/styled && yarn add @mui/material @mui/styled-engine-sc styled-components && yarn add @mui/icons-material 
+RUN cd ~/frontend/ \
+&& yarn install
 
-RUN cd && cd frontend && yarn add qrcode.react
-RUN cd && cd frontend && yarn add otpauth && yarn install
-RUN cd && cd frontend && yarn add react-router-dom && yarn install
 RUN rm -rf ~/frontend/src
 
 RUN mkdir ~/frontend/src/

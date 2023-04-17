@@ -1,7 +1,5 @@
 FROM debian:buster
 
-
-
 RUN apt-get upgrade -y \
 && apt-get update -y \
 && apt-get install -y vim \
@@ -27,15 +25,14 @@ RUN cd \
 && nest new --strict backend -p yarn
 
 RUN rm -rf ~/backend/src \
-&&	rm -rf ~/backend/tsconfig.build.json
-
-#RUN mkdir ~/backend/secret \
-#&& cd ~/backend/secret \
-#&& openssl req -x509 -nodes -days 365 -subj "/C=FR/ST=France/L=Lyon/O=42/OU=42/CN=agirona" -newkey rsa:4096 -keyout ./cert.key -out ./cert.crt
+&&	rm -rf ~/backend/tsconfig.build.json \
+&& rm -rf ~/backend/package.json \
+&& rm -rf ~/backend/yarn.lock \
+&& rm -rf ~/backend/nest-cli.json \
+&& rm -rf ~/backend/tsconfig.json
 
 RUN mkdir ~/backend/src/ \
-&& mkdir ~/backend/avatars/ \
-&& mkdir ~/backend/QRCODE/
+&& mkdir ~/backend/avatars/
 
 COPY ./src/* /root/backend/src/
 
@@ -47,29 +44,18 @@ COPY ./config/vimrc.local /etc/vim/
 
 COPY ./config/default.png /root/backend/avatars
 
+COPY ./config/package.json /root/backend/
+
+COPY ./config/yarn.lock /root/backend/
+
+COPY ./config/nest-cli.json /root/backend/
+
+COPY ./config/tsconfig.json /root/backend/
+
+RUN cd ~/backend \
+&& yarn install
+
 RUN chmod +x init.sh
-
-RUN cd \
-&& cd backend \
-&& yarn add dotenv \
-&& yarn add axios \
-&& yarn add @nestjs/axios \
-&& yarn add @nestjs/typeorm typeorm pg \
-&& yarn add cookie-parser \
-&& yarn add @types/cookie-parser \
-&& yarn add bcrypt \
-&& yarn add @types/bcrypt \
-&& yarn add @nestjs/websockets @nestjs/platform-socket.io \
-&& yarn add class-validator \
-&& yarn add class-transformer \
-&& yarn add @types/multer \
-&& yarn add otplib \
-&& yarn add qrcode \
-&& yarn add @types/qrcode \
-&& yarn add randomstring \
-&& yarn add express-session \
-&& yarn add @types/express-session
-
 
 EXPOSE 3630 3631 3632
 

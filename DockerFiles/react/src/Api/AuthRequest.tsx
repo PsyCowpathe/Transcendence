@@ -1,7 +1,7 @@
 import { urls } from "../global";
 import axios from 'axios';
 
-import { SetParamsToGetPost } from '../Headers/VraimentIlEstCasseCouille';
+import { SetParamsToGetPost } from '../Headers/HeaderManager';
 
 
 

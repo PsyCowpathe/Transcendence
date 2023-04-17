@@ -1,6 +1,6 @@
 import io from 'socket.io-client';
 import { urls } from './global';
-import { SetParamsToGetPost } from './Headers/VraimentIlEstCasseCouille';
+import { SetParamsToGetPost } from './Headers/HeaderManager';
 class SocketManager {
   private chatSocket: any;
   private FriendRequestSocket: any;
