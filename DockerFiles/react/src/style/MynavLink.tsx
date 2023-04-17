@@ -13,7 +13,6 @@ const MyNavLink = ({ to, label, ...rest }: MyNavLinkProps) => {
       to={to}
 
       className="nav-link"
-      activeClassName="active"
       {...rest}
     >
       {label}

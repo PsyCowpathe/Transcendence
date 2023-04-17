@@ -9,14 +9,15 @@ import { useState } from "react";
 import '../css/Force.css'
 import { SetParamsToGetPost } from "../Headers/VraimentIlEstCasseCouille";
 import { socketManager } from "./HomePage";
-
+import { useNavigate } from "react-router-dom";
 interface code {
-    code : number
-  }
+  code : number
+}
 
 function Resend() 
 {
-    
+  
+  const navigate = useNavigate(); 
     const [Code, setCode] = useState<code>({code : 0})
 
     const send = (e : any) => {
@@ -27,19 +28,19 @@ function Resend()
             localStorage.setItem('2FA', res.data.newFA)
             socketManager.initializeChatSocket(SetParamsToGetPost().headers.Authorization)
 			socketManager.initializeFriendRequestSocket(SetParamsToGetPost().headers.Authorization)
-            window.location.assign('/AffUser')
+            navigate('/AffUser')
         })
         .catch((err) => {
             if (err.message !== "Request aborted") {
                 if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
                 { 
                   console.log("BBBBBBIIIITTTTEEEEEEEEE-----------------------------------------------")
-                  window.location.assign('/')
+                    navigate('/')
                 }
                   else if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
-                  window.location.assign('/Change')
+                  navigate('/Change')
                 else if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
-                  window.location.assign('/Send2FA')
+                  navigate('/Send2FA')
               }
             console.log(err)
         }

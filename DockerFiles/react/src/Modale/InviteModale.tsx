@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {useEffect } from 'react';
 import '../NewChat/truc.css'
 import { ChangeLoginMod } from "../Pages/LoginModal";
+import { Invite } from "../Pages/Invite";
 interface User {
   name: string;
 }
@@ -9,9 +10,10 @@ interface User {
 interface Props {
 
   onClose: () => void;
+  channel : string | null
 }
 
-const LoginModal: React.FC<Props> = ({ onClose }) => {
+const InviteModale: React.FC<Props> = ({ onClose, channel }) => {
   const [showModal, setShowModal] = useState(false);
 
 useEffect(() => {
@@ -36,7 +38,7 @@ useEffect(() => {
             </div>
             <div className="modal-body">
              <div className="test">
-              <ChangeLoginMod/>
+              <Invite channel={channel} />
               </div>
               <div/>
             </div>
@@ -47,4 +49,4 @@ useEffect(() => {
   );
 };
 
-export default LoginModal;
+export default InviteModale;

@@ -381,3 +381,34 @@
   font-size: 16px;
   cursor: pointer;
 }
+
+/***/
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Utilisation d'une grille CSS pour aligner les champs du formulaire */
+form > * {
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+/* Utilisation de media queries pour modifier la grille en fonction de la taille de l'écran */
+@media screen and (min-width: 768px) {
+  form {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  form > * {
+    margin-right: 10px;
+    margin-bottom: 0;
+    width: auto;
+  }
+  form > :last-child {
+    margin-right: 0;
+  }
+}
