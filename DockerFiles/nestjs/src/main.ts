@@ -16,13 +16,18 @@ async function bootstrap()
 
 	app.use(cookieParser());
 
-	app.use(session({
-		    secret: "secret",
-		    cookie: {
-		        httpOnly: true,
-		        secure: true
-		    }
-		}))
+	app.use
+	(
+		session
+		({
+			secret: "secret",
+			cookie:
+			{
+				httpOnly: true,
+				secure: true
+			}
+		})
+	)
 	
 	app.enableCors
 	({
