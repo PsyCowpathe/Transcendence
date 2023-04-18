@@ -1,0 +1,14 @@
+.navlink {
+    color: #333; /* Couleur du texte */
+    text-decoration: none; /* Supprime le soulignement du lien */
+    padding: 100px; /* Ajoutez de la marge intérieure pour plus de confort */
+  }
+  
+  .navlink:hover {
+    color: #666; /* Changement de couleur au survol du lien */
+  }
+  
+  .active-navlink {
+    color: #fff; /* Couleur du texte pour le lien actif */
+    background-color: #333; /* Couleur de fond pour le lien actif */
+  }

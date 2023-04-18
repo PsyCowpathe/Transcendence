@@ -1,0 +1,117 @@
+
+.friends-list h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .friends-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .friends-list li {
+    padding: 5px 10px;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .friends-list li:last-child {
+    border-bottom: none;
+  }
+  .friends-list {
+  border: 2px solid #6c1f1f;
+
+    position: fixed;
+    top: 0;
+    margin-bottom: 50vh;
+    right: 0;
+    bottom: 0;
+    width: 200px;
+    background-color: #b1b4db;
+
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+
+
+.Invitation-list h3 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.Invitation-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.Invitation-list li {
+  padding: 5px 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.Invitation-list li:last-child {
+  border-bottom: none;
+}
+.Invitation-list {
+  position:fixed;
+  border: 2px solid #6c1f1f;
+
+
+  /* margin-right: 200px; */
+  margin-top: 50vh;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 200px;
+  background-color: #b1b4db;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+
+.Blocked-list h3 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.Blocked-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.Blocked-list li {
+  padding: 5px 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.Blocked-list li:last-child {
+  border-bottom: none;
+}
+.Blocked-list {
+  border: 2px solid #6c1f1f;
+
+  position:fixed;
+  margin-right: 240px;
+  margin-top: 50vh;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 200px;
+  background-color: #b1b4db;
+
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

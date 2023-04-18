@@ -1,0 +1,99 @@
+.App {
+  text-align: center;
+}
+
+
+div{
+  min-height: "100vh";
+  height: auto;
+}
+
+
+.h1t {
+  font-family:  Comic Sans MS, Comic Sans, cursive;
+  font-size: 24px;
+  font-weight: bold;
+  color: #64ce44;
+  /* Ajoutez d'autres propriétés CSS selon vos besoins */
+}
+h1, h2, p, ul{
+  font-family: Arial ;
+  color: rgb(30, 157, 51);
+
+}
+a{
+  font-family: Arial ;
+  color: rgb(26, 137, 50);
+  
+}
+
+
+li {
+  /* height: max-content; */
+
+  font-family: Arial ;
+  margin-left: 10px;
+  color: rgb(192, 21, 21);
+
+}
+/* ul.header {
+  display: inline;
+  list-style-type: none;
+  margin: 0;
+  
+}
+ul.header {
+  background-color: #5e0303;
+  padding: 0;
+}
+ul.header  a {
+  color: #FFF;
+  font-weight: bold;
+  text-decoration: none;
+  padding: 20px;
+  display: inline-block;
+  
+}
+ */
+/* .content  {
+  margin-bottom: 10px;
+
+} */
+.App-header {
+  background-color: #37002a;
+  min-height: max-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* font-size: calc(10px + 2vmin); */
+  color: rgb(48, 223, 176);
+}
+/* .content h2 
+{
+    padding: 0;
+    margin: 0;
+} */
+
+.App-link {
+  color: #8b230c;
+}
+body
+{
+  /* margin: 0; */
+  /* background-size:cover; */
+  /* background : #64ce44; */
+  /* overflow-x: hidden; */
+   background-image: url('../imgs/background.jpg');
+   /* background: linear-gradient(to bottom, #87CEEB, #FFFFFF);  */
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: fit-content;
+    min-height: 100vh;
+} 
+.Routes{
+  height: auto;
+}
+.main-content {
+  margin-left: 200px; /* la largeur de votre nav bar */
+}
