@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { VraimentIlSaoule } from '../aurelcassecouilles/VraimentIlEstCasseCouille'
+import { SetParamsToGetPost } from '../Headers/VraimentIlEstCasseCouille'
 import '../css/Buttons.css'
 import { socketManager } from '../Pages/HomePage'
 import { ToastContainer, toast, ToastOptions } from 'react-toastify';
@@ -23,10 +23,9 @@ export  function AskFriend()
 		console.log(socket )
 		if (socket == null)
 		{ 
-			if ( test === false && VraimentIlSaoule().headers.Authorization !== null)
+			if ( test === false && SetParamsToGetPost().headers.Authorization !== null)
 			{
-				console.log("je sui null3")
-				socket = socketManager.initializeFriendRequestSocket(VraimentIlSaoule().headers.Authorization)
+				socket = socketManager.initializeFriendRequestSocket(SetParamsToGetPost().headers.Authorization)
 				console.log(socket )
 				test = true
 			}
@@ -77,7 +76,7 @@ const MyCustomToast = ({response, Acceptnow, Refusednow, closeToast} : any) => {
 		}
 
 		const handleFriendRequestSpe = (response: any) => {
-			console.log(response)
+			console.log("NKJBDKSVBKJSHBDLKDBLKHSBHNSKJBHLKHDBLKHDBDLKHDHNDKJ")
 			if (response.message === `${response.user} send you a friend request !`) {
 				console.log("dddd")
 				toast.success(<MyCustomToast response={response} Acceptnow={Acceptnow} Refusednow={Refusednow} usera={userAc} closeToast={toast.dismiss} />,
@@ -134,8 +133,10 @@ const MyCustomToast = ({response, Acceptnow, Refusednow, closeToast} : any) => {
 	{         
 		event.preventDefault()
 		//emit  
-		// console.log(user.user)
+		console.log("xljdslhnvklzfdn--------------------")
 		await socket.emit("sendfriendrequest", userAsk);
+		console.log("xljdslhnvklzfdn--------------------")
+
 		setUserAsk({user:''})
 	}
 	const ChangeAsk = ((event : any) =>

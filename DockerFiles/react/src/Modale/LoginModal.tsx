@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import {useEffect } from 'react';
-import { AffMyUserPage } from "../Pages/UserPage";
 import '../NewChat/truc.css'
-import { AffTheUser } from "../Pages/UserModalPage";
-import ProfilePictureUploader from "../Pages/NewProfilPic";
-import { ChangeLogin } from "../Pages/LoginPage";
+import { ChangeLoginMod } from "../Pages/LoginModal";
 interface User {
   name: string;
 }
@@ -34,12 +31,12 @@ useEffect(() => {
         <div className="modal-overlay">
           <div className="modal">
             <div className="modal-header">
-              <h2>New Pic</h2>
+              <h2>New Login</h2>
               <button onClick={handleCloseModal}>Close</button>
             </div>
             <div className="modal-body">
              <div className="test">
-              <ChangeLogin/>
+              <ChangeLoginMod/>
               </div>
               <div/>
             </div>

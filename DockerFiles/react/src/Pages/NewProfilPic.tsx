@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { TopBar } from "./TopBar";
-import { VraimentIlSaoule } from '../aurelcassecouilles/VraimentIlEstCasseCouille';
+import { SetParamsToGetPost } from '../Headers/VraimentIlEstCasseCouille';
 import { UploadPicRequest } from "../Api/UploadPicRequest";
 import { ToastContainer, toast, ToastOptions } from 'react-toastify';
 
@@ -40,7 +40,7 @@ function ProfilePictureUploader() {
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     console.log("drop")
     event.preventDefault();
-    let config = VraimentIlSaoule()
+    let config = SetParamsToGetPost()
     const files = event.dataTransfer.files;
     const data = new FormData();
     data.append("file", files[0]);

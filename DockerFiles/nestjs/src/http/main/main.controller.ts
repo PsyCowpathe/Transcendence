@@ -76,7 +76,6 @@ export class MainController
 		return (res.status(200).sendFile("/root/backend/avatars/" + user.uid));
 	}
 
-
 	@Get('resumechannel')
 	@UseGuards(AuthGuard)
 	@UsePipes(new ValidationPipe())
@@ -117,6 +116,7 @@ export class MainController
 		let ret = await this.mainService.getChannelList(req.headers.authorization);
 		if (ret === -1)
 			return (sendError(res, 401, errorMessages.NOTLOGGED));
+		console.log(ret);
 		return (sendSuccess(res, 200, ret));
 	}
 

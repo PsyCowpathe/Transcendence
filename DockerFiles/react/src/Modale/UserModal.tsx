@@ -5,6 +5,7 @@ import '../NewChat/truc.css'
 import { AffTheUser } from "../Pages/UserModalPage";
 interface User {
   name: string;
+  uid : number
 }
 
 interface Props {

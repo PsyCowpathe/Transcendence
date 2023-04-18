@@ -1,14 +1,17 @@
 import io from 'socket.io-client';
 import { urls } from './global';
+import { SetParamsToGetPost } from './Headers/VraimentIlEstCasseCouille';
 class SocketManager {
   private chatSocket: any;
   private FriendRequestSocket: any;
   private PongSocket: any;
+  private StatusSocket: any;
 
   constructor() {
     this.chatSocket = null;
     this.FriendRequestSocket = null;
     this.PongSocket = null;
+    this.StatusSocket = null;
   }
 
   initializeChatSocket(token: string) {
@@ -45,10 +48,22 @@ class SocketManager {
       });
     }
   }
-
+  initializeStatusSocket(token: string) {
+    if (this.StatusSocket === null) {
+      this.StatusSocket = io(`${urls.SOCKETGAME}`, {
+        auth: {
+          token: token,
+          twoFAToken: localStorage.getItem('2FA')
+        }
+      });
+    }
+  }
 
   getChatSocket(): any {
     return this.chatSocket;
+  }
+  getStatusSocket(): any {
+    return this.StatusSocket;
   }
 
   getFriendRequestSocket(): any {
