@@ -1,7 +1,7 @@
 import React from "react";
 import "../css/NotFound.css";
 import { useNavigate } from "react-router-dom";
-import { TopBar } from "./TopBar";
+import { TopBar } from "./NavBar";
 import IMGS from '../imgs/404.gif';
 
 const NotFound: React.FC = () => {

@@ -30,12 +30,13 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
   console.log("Channel name")
   console.log(Channel)
   const [user, setUser] = useState<user>({name: "?", victory: "0", defeate: "0", gameplayed: "0", isConnect: false})
-  
+    const [status , setStatus] = useState<boolean>(false)
     const [ShowBan, setShowBan] = useState<boolean>(false)
     const [timer , setTimer] = useState<number>(0)
     const [reason, setReason] = useState<string>("")
     
     const socket = socketManager.getChatSocket();
+    const socketCo = socketManager.getStatusSocket();
   useEffect(() => {
 
     const handleBanUser = (data : any) => {
@@ -53,9 +54,21 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
         progressClassName: "my-progress-bar"
     })
     }
+    const handleDeco = (data : any) => {
+      if (data.user === User.name && data.status === "disconnected")
+        setStatus(false)
+      if (data.user === User.name && data.status === "connected")
+        setStatus(true)
+    }
+    socket.removelistener("banuser", handleBanUser);
+    socket.removelistener("ChatError", handleBanUsererror);
+    socketCo.removelistener("status", handleDeco)
+    socketCo.on("status", handleDeco)
     socket.on("banuser", handleBanUser);
     socket.on("ChatError", handleBanUsererror);
     return () => {
+      socketCo.off("status", handleDeco)
+
       socket.off("banuser", handleBanUser);
       socket.off("ChatError", handleBanUsererror);
     };
@@ -73,7 +86,7 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
     GetUserInfo(User.uid)
       .then((res) => {
         setUser({name: res.data.name, victory: res.data.Victory, defeate: res.data.Defeat, gameplayed: res.data.Match, isConnect: res.data.isConnect})
-
+        setStatus(res.data.isConnect)
         console.log(res)
       })
       .catch((err) => {
@@ -245,8 +258,8 @@ return(
  <div className="person-stats-mod">
       <h2>{user.name}</h2>
       <div className="status-indicator">
-      <div className={user.isConnect ? 'green-dot' : 'red-dot'}></div>
-      <span>{user.isConnect ? 'Connecté' : 'Déconnecté'}</span>
+      <div className={status ? 'green-dot' : 'red-dot'}></div>
+      <span>{status ? 'Connecté' : 'Déconnecté'}</span>
     </div>
       <p className="matches-played">Matches played: {user.gameplayed}</p>
       <p className="matches-won">Matches won: {user.victory}</p>

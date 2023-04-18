@@ -1,7 +1,7 @@
 import React from "react";
 import {useState, useEffect} from 'react'
 import { RequestChangeLogin } from "../Api/ChangeLogRequest";
-import { TopBar } from "./TopBar";
+import { TopBar } from "./NavBar";
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 export function ChangeLogin()

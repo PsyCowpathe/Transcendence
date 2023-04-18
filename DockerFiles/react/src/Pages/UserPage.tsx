@@ -4,7 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { FaCog } from 'react-icons/fa';
 import '../css/Buttons.css';
 import { useNavigate } from 'react-router-dom'
-import { TopBar } from './TopBar';
+import { TopBar } from './NavBar';
 import { useEffect, useState } from 'react';
 import { PicGetRequest } from '../Api/PicGetRequest';
 import { GetUserInfo } from '../Api/GetUserInfo';
@@ -14,7 +14,7 @@ import LoginModal from '../Modale/LoginModal';
 import '../css/UserPage.css';
 import ModalSet2FA from '../Modale/Modal2FA';
 import '../css/sidebar_info.css'
-import './test.css'
+import '../css/styleUser.css'
 import { GetFriendList } from '../Api/GetFriendList';
 import { GetInvitationList } from '../Api/GetInvitationList';
 import socketManager from '../MesSockets';
@@ -27,9 +27,6 @@ let tt: boolean = true
 
 
 export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
-  // window.onload = function() {
-  //   console.log("La page a été chargée entièrement.");
-  // }
 
   interface User {
     name: string;
@@ -305,10 +302,8 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
     }
 
     const handleFriendRequestSpe = (response: any) => {
-      console.log("NKJBDKSVBKJSHBDLKDBLKHSBHNSKJBHLKHDBLKHDBDLKHDHNDKJ")
       MAJList()
       if (response.message === `${response.user} send you a friend request !`) {
-        console.log("dddd")
         toast.success(<MyCustomToast response={response} Acceptnow={Acceptnow} Refusednow={Refusednow} usera={userAc} closeToast={toast.dismiss} />,
           {
             position: toast.POSITION.TOP_RIGHT,

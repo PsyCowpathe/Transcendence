@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { SetParamsToGetPost } from '../Headers/HeaderManager';
 import axios from 'axios';
 import { urls } from '../global';
-import { TopBar } from './TopBar';
+import { TopBar } from './NavBar';
 import { Send2FA } from '../Api/send2FA';
 import { socketManager } from './HomePage';
 import { useNavigate } from "react-router-dom";

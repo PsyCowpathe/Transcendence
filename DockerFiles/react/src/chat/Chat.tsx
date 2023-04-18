@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
 import "../css/chat.css";
 import "../css/channel.css";
+import "../css/sidebar_info.css";
+import "../css/messages.css";
+import "../css/UserPage.css";
+import "../css/Force.css";
 import { socketManager } from "../Pages/HomePage";
 import { SetParamsToGetPost } from "../Headers/HeaderManager";
-import { TopBar } from "../Pages/TopBar";
+import { TopBar } from "../Pages/NavBar";
 import { ToastContainer, toast } from 'react-toastify';
 import UserInfoModal from '../Modale/UserModal'
 import { GetChannelInfo } from "../Api/GetChanMessage";

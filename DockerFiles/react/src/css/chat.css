@@ -37,7 +37,7 @@
     cursor: pointer;
   }
   .containers {
-    height: 70vh; /* Hauteur fixe de votre conteneur */
+    height: 60vh; /* Hauteur fixe de votre conteneur */
     overflow-x: auto; /* Ajoute une barre de défilement verticale*/
    }
   
@@ -102,7 +102,7 @@
   background-color: #fff;
   border-right: 1px solid #ddd;
   padding: 20px;
-  min-height: 50vh;
+  min-height: 100vh;
   height: fit-content;
 }
 
@@ -136,7 +136,7 @@ form > * {
   form > * {
     margin-right: 10px;
     margin-bottom: 0;
-    width: auto;
+  
   }
   form > :last-child {
     margin-right: 0;

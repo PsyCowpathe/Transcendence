@@ -9,9 +9,7 @@ export function TopBar(){
 	const [showMenu, setShowMenu] = React.useState(false);
 	return (     
 		<div className="menu">
-				  <button className="menu-toggle">
-				  <FaBars />
-				</button>
+
 		<li><MyNavLink to="/chat" label="chat"/></li>
 		<li><MyNavLink to="/affUser" label="My User page"/></li>
 		<li><MyNavLink to="/askFriend" label="demande d ami"/></li>

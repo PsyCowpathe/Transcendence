@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { TopBar } from "./TopBar";
+import { TopBar } from "./NavBar";
 import { SetParamsToGetPost } from '../Headers/HeaderManager';
 import { UploadPicRequest } from "../Api/UploadPicRequest";
 import { ToastContainer, toast, ToastOptions } from 'react-toastify';
