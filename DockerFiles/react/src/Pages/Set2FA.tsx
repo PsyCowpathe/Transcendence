@@ -4,10 +4,10 @@ import { Get2FA } from '../Api/Get2FA';
 import LoadingPage from './LoadingPage';
 import React, { Component } from 'react';
 import { useState } from 'react';
-import { SetParamsToGetPost } from '../Headers/VraimentIlEstCasseCouille';
+import { SetParamsToGetPost } from '../Headers/HeaderManager';
 import axios from 'axios';
 import { urls } from '../global';
-import { TopBar } from './TopBar';
+import { TopBar } from './NavBar';
 import { Send2FA } from '../Api/send2FA';
 import { socketManager } from './HomePage';
 import { useNavigate } from "react-router-dom";
@@ -43,19 +43,19 @@ export function Set2FA ()
     })
     .catch((err) =>
     {
-      if (err.message !== "Request aborted") {
-        if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-        { 
-          console.log("BBBBBBIIIITTTTEEEEEEEEE-----------------------------------------------")
-            navigate('/')
+              if(err.response)
+        {
+          if (err.message !== "Request aborted") {
+            if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+              navigate('/')
+            if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+            navigate('/Change')
+            if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+              navigate('/Send2FA')
+          }
         }
-          else if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
-          navigate('/Change')
-          else if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
-          navigate('/Send2FA')
-        }
-        console.log(err)
-      })
+      }
+    )
       console.log("pour aurel")
 
      setCode2FA({code : 0})
@@ -115,17 +115,17 @@ export class MyComponent extends Component <{}, MyComponentState>
   {
     this.setState({ image: null, error: err.response.data });
     console.log(err)
-    if (err.message !== "Request aborted") {
-      if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-      { 
-        console.log("BBBBBBIIIITTTTEEEEEEEEE-----------------------------------------------")
-          navigate('/')
-      }
-        else if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
-        navigate('/Change')
-      else if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
-        navigate('/Send2FA')
-    }
+            if(err.response)
+        {
+          if (err.message !== "Request aborted") {
+            if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+              navigate('/')
+            if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+            navigate('/Change')
+            if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+              navigate('/Send2FA')
+          }
+        }
   })
   }
 

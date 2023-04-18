@@ -1,7 +1,7 @@
 import react from 'react'
 import axios from 'axios'
 import { urls } from "../global"
-import { SetParamsToGetPost4 } from '../Headers/VraimentIlEstCasseCouille';
+import { SetParamsToGetPost4 } from '../Headers/HeaderManager';
 export async function GetUserInfo(UserName : number)
 {
     const config : any = SetParamsToGetPost4(UserName)

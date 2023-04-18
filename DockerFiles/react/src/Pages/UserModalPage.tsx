@@ -1,21 +1,11 @@
 
-import Profil from '../imgs/360_F_122719584_A863mvJEcEAnqmGQ4ky6RbXEhsHKw95x.jpg';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import MyNavLink from '../style/MynavLink';
-
 import React from 'react';
-import { FaCog } from 'react-icons/fa';
 import '../css/Buttons.css';
 import { useNavigate } from 'react-router-dom'
-import { TopBar } from './TopBar';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
-import {urls } from "../global"
-import { SetParamsToGetPost2 } from '../Headers/VraimentIlEstCasseCouille';
 import { PicGetRequest } from '../Api/PicGetRequest';
-import { SetParamsToGetPost } from '../Headers/VraimentIlEstCasseCouille';
-import Button from '../style/Button';
 import { GetUserInfo } from '../Api/GetUserInfo';
 import socketManager from '../MesSockets';
 
@@ -24,15 +14,29 @@ interface User {
   uid: number;
 }
 
+
+interface user
+{
+  isConnect : boolean;
+  name : string;
+  victory : string;
+  defeate : string;
+  gameplayed : string;
+}
+
+
 export function AffTheUser({User, Channel} : {User : User, Channel : string  | null}) 
 {
   console.log("Channel name")
   console.log(Channel)
+  const [user, setUser] = useState<user>({name: "?", victory: "0", defeate: "0", gameplayed: "0", isConnect: false})
+    const [status , setStatus] = useState<boolean>(false)
     const [ShowBan, setShowBan] = useState<boolean>(false)
     const [timer , setTimer] = useState<number>(0)
     const [reason, setReason] = useState<string>("")
     
     const socket = socketManager.getChatSocket();
+    const socketCo = socketManager.getStatusSocket();
   useEffect(() => {
 
     const handleBanUser = (data : any) => {
@@ -50,9 +54,21 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
         progressClassName: "my-progress-bar"
     })
     }
+    const handleDeco = (data : any) => {
+      if (data.user === User.name && data.status === "disconnected")
+        setStatus(false)
+      if (data.user === User.name && data.status === "connected")
+        setStatus(true)
+    }
+    socket.removelistener("banuser", handleBanUser);
+    socket.removelistener("ChatError", handleBanUsererror);
+    socketCo.removelistener("status", handleDeco)
+    socketCo.on("status", handleDeco)
     socket.on("banuser", handleBanUser);
     socket.on("ChatError", handleBanUsererror);
     return () => {
+      socketCo.off("status", handleDeco)
+
       socket.off("banuser", handleBanUser);
       socket.off("ChatError", handleBanUsererror);
     };
@@ -69,6 +85,8 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
 
     GetUserInfo(User.uid)
       .then((res) => {
+        setUser({name: res.data.name, victory: res.data.Victory, defeate: res.data.Defeat, gameplayed: res.data.Match, isConnect: res.data.isConnect})
+        setStatus(res.data.isConnect)
         console.log(res)
       })
       .catch((err) => {
@@ -78,17 +96,20 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
           autoClose: 2000,
           progressClassName: "my-progress-bar"
         })
+          if(err.response)
+        {
         if (err.message !== "Request aborted")
         {
           if (err.message !== "Request aborted") {
             if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-              window.location.assign('/')
+              navigate('/')
             if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
-            window.location.assign('/Change')
+            navigate('/Change')
             if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
-              window.location.assign('/Send2FA')
+              navigate('/Send2FA')
           }
         }
+      }
       })
   }, [redirected])
 
@@ -130,15 +151,18 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
           progressClassName: "my-progress-bar"
       })
 
-
+        if (err.response)
+        {
         if (err.message !== "Request aborted") {
           if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-            window.location.assign('/')
+            navigate('/')
           if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
-          window.location.assign('/Change')
+          navigate('/Change')
           if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
-            window.location.assign('/Send2FA')
+            navigate('/Send2FA')
         }
+      
+      }
       })
     }, [redirectedd])
   
@@ -164,6 +188,8 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
   const onClickTwo = (() =>
   {
     setShowBan(!ShowBan)
+      setShowKick(false)
+  setShowMute(false)
   })
 
 
@@ -184,6 +210,8 @@ const [ShowMute, setShowMute] = useState<boolean>(false)
 const onClickTree = (() =>
 {
   setShowMute(!ShowMute)
+  setShowBan(false)
+  setShowKick(false)
 })
 
 //////////////////////////////////////////////////////KICK
@@ -203,9 +231,23 @@ const [ShowKick, setShowKick] = useState<boolean>(false)
 const onClickfour = (() =>
 {
   setShowKick(!ShowKick)
+  setShowMute(false)
+  setShowBan(false)
 })
 
 const navigate = useNavigate();
+/***************************************************************************POUR LEO LE DUEL PONG ********************************/
+const DuelManager = () =>
+{
+  // => User.uid
+  //socket.emit("TAROUTE", { id(ou name jsp comme tu l aura appeller dansle back): User.uid )
+
+  alert("Duel Manager")
+
+
+
+}
+/***************************************************************************POUR LEO LE DUeK PONG ********************************/
 
 
 
@@ -213,8 +255,16 @@ return(
     <div className="App">
 
  <img src={Pic} alt="Profile" style={{ borderRadius: "50%", width: "200px", height: "200px", objectFit: "cover", boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)" }} />
-  <h1 style={{ fontSize: "2.5em", margin: "1em 0 0.5em" }}>{User.name}</h1>
-  <p style={{ fontSize: "1.2em", marginBottom: "1em",  }}>Age | Ville</p>
+ <div className="person-stats-mod">
+      <h2>{user.name}</h2>
+      <div className="status-indicator">
+      <div className={status ? 'green-dot' : 'red-dot'}></div>
+      <span>{status ? 'Connecté' : 'Déconnecté'}</span>
+    </div>
+      <p className="matches-played">Matches played: {user.gameplayed}</p>
+      <p className="matches-won">Matches won: {user.victory}</p>
+      <p className="matches-lost">Matches lost: {user.defeate}</p>
+    </div>
   <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
     <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"><button style={{ fontSize: "1.2em", padding: "0.5em 2em", borderRadius: "5px", backgroundColor: "#4285F4", color: "#FFFFFF", border: "none", boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)", cursor: "pointer" }}>Visiter mon site web</button></a>
   {!ShowBan && <button className="add-message-button" onClick={onClickTwo}>Ban</button>}
@@ -247,6 +297,7 @@ return(
       </form>
     </div>
       } 
+      <button  className="add-message-button"onClick={DuelManager}>DUEL</button>
 
 
   </div><ToastContainer/>

@@ -44,17 +44,20 @@ export function ChangeLoginMod()
                 progressClassName: "my-progress-bar"
             })
 
-            if(err.response.data.message == "Invalid user" || err.message.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+            if(err.response)
             {
-              console.log("coucou ?")
-                navigate('/')
+            if (err.message !== "Request aborted")
+            {
+              if (err.message !== "Request aborted") {
+                if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+                  navigate('/')
+                if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+                navigate('/Change')
+                if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+                  navigate('/Send2FA')
+              }
             }
-            if ( err.message === "User not registered")// ==> redirection vers la page de register
-            {
-              console.log("ERROR")
-              console.log(err)
-              navigate('/Change')
-           }
+          }
            // if(err.message === "Invalid 2FA token") erreur de 2FA ==> redirection vers la page de 2FA
             console.log("ERROR AVEC  UN LOGIN")
             console.log(err.response.data.message[0])

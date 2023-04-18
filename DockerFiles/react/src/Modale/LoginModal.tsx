@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {useEffect } from 'react';
-import '../NewChat/truc.css'
+import '../css/modal.css'
+
 import { ChangeLoginMod } from "../Pages/LoginModal";
 interface User {
   name: string;
