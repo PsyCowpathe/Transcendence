@@ -1,38 +1,33 @@
-FROM debian:buster
+FROM alpine:latest
 
-RUN apt-get upgrade -y \
-&& apt-get update -y \
-&& apt-get install -y vim \
-&& apt-get install -y zsh
+RUN apk upgrade \
+&& apk update \
+&& apk add vim \
+&& apk add zsh \
+&& apk add bash
 
-RUN apt-get install -y curl
-#RUN apt-get install -y xdg-utils
+RUN apk add curl
 
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && apt-get install -y nodejs
+RUN  apk add nodejs npm
 
-RUN npm install -g npm@latest
-#RUN npm install -g @vue/cli
-
-
-RUN apt-get install -y git
+RUN apk add git
 
 RUN npm install --global yarn@latest
-
-
 
 RUN cd  && \
 echo 'y' | echo | yarn create react-app frontend --template=typescript 
 
-RUN cd && cd frontend && yarn add mini.css@3.0.1 && yarn add axios && yarn add react-cookie@latest 
+#RUN cd && cd frontend && yarn add mini.css@3.0.1 && yarn add axios && yarn add react-cookie@latest 
 
-RUN cd && cd frontend && yarn add @types/react-icons@latest && yarn upgrade @types/react-icons@latest && yarn add react-router-dom@latest @types/react-router-dom@latest && yarn upgrade react-router-dom@latest &&  yarn upgrade @types/react-router-dom@latest && yarn upgrade react-scripts && yarn add react-toastify
+#RUN cd && cd frontend && yarn add @types/react-icons@latest && yarn upgrade @types/react-icons@latest && yarn add react-router-dom@latest @types/react-router-dom@latest && yarn upgrade react-router-dom@latest &&  yarn upgrade @types/react-router-dom@latest && yarn upgrade react-scripts && yarn add react-toastify
 
-RUN cd && cd frontend &&  yarn add @types/socket.io-client && yarn add @types/react-dropzone 
+#RUN cd && cd frontend &&  yarn add @types/socket.io-client && yarn add @types/react-dropzone 
 
-RUN cd && cd frontend && yarn add @mui/material @emotion/react @emotion/styled && yarn add @mui/material @mui/styled-engine-sc styled-components && yarn add @mui/icons-material 
+#RUN cd && cd frontend && yarn add @mui/material @emotion/react @emotion/styled && yarn add @mui/material @mui/styled-engine-sc styled-components && yarn add @mui/icons-material 
 
-RUN cd && cd frontend && yarn add qrcode.react
-RUN cd && cd frontend && yarn add otpauth && yarn install
+#RUN cd && cd frontend && yarn add qrcode.react
+#RUN cd && cd frontend && yarn add otpauth && yarn install
+
 RUN rm -rf ~/frontend/src
 
 RUN mkdir ~/frontend/src/
@@ -41,9 +36,16 @@ COPY ./src/* /root/frontend/src/
 
 COPY ./tools/init.sh ./
 
+COPY ./config/package.json /root/frontend/
+
+COPY ./config/tsconfig.json /root/frontend/
+
+COPY ./config/yarn.lock /root/frontend/
+
+RUN cd /root/frontend/ \
+&& yarn install
+
 RUN chmod +x init.sh
-
-
 
 EXPOSE 3000
 

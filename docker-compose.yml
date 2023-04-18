@@ -30,8 +30,12 @@ services:
                 image: nest
                 build: ./DockerFiles/nestjs/
                 restart: on-failure
-                depends_on:
-                            - postgres
+                deploy:
+                    restart_policy:
+                        condition: on-failure
+                        delay: 10s
+                        max_attempts: 20
+                        window: 10s
                 env_file:
                         - .nest_env
                 ports:
@@ -48,8 +52,6 @@ services:
                 image: react
                 build: ./DockerFiles/react/
                 restart: on-failure
-                depends_on:
-                            - postgres
                 env_file:
                         - .react_env
                 ports:
