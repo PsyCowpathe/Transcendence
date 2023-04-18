@@ -1,0 +1,10 @@
+.my-list {
+    list-style-type:circle; /* Style de puce */
+    color: #333; /* Couleur du texte */
+    font-size: 16px; /* Taille de police */
+    /* Ajoutez d'autres styles CSS ici */
+  }
+  
+  .my-list li {
+    padding: 5px 10px; /* Ajoutez un padding à chaque élément <li> */
+  }
