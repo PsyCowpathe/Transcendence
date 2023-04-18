@@ -50,7 +50,7 @@ class SocketManager {
   }
   initializeStatusSocket(token: string) {
     if (this.StatusSocket === null) {
-      this.StatusSocket = io(`${urls.SOCKETSTATUS}`, {
+      this.StatusSocket = io(`${urls.SOCKETSTATUS}`, { 
         auth: {
           token: token,
           twoFAToken: localStorage.getItem('2FA')

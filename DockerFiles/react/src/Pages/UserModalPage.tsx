@@ -8,7 +8,8 @@ import { useEffect, useState } from 'react';
 import { PicGetRequest } from '../Api/PicGetRequest';
 import { GetUserInfo } from '../Api/GetUserInfo';
 import socketManager from '../MesSockets';
-
+import { SetParamsToGetPost } from '../Headers/HeaderManager';
+let test : boolean = false;
 interface User {
   name: string;
   uid: number;
@@ -17,7 +18,7 @@ interface User {
 
 interface user
 {
-  isConnect : boolean;
+  isConnect : string;
   name : string;
   victory : string;
   defeate : string;
@@ -28,15 +29,28 @@ interface user
 export function AffTheUser({User, Channel} : {User : User, Channel : string  | null}) 
 {
   console.log("Channel name")
-  console.log(Channel)
-  const [user, setUser] = useState<user>({name: "?", victory: "0", defeate: "0", gameplayed: "0", isConnect: false})
-    const [status , setStatus] = useState<boolean>(false)
+  // console.log(User)
+  console.log(User)
+  const [user, setUser] = useState<user>({name: "?", victory: "0", defeate: "0", gameplayed: "0", isConnect: "Offline"})
+    const [status , setStatus] = useState<string>("Online")
     const [ShowBan, setShowBan] = useState<boolean>(false)
     const [timer , setTimer] = useState<number>(0)
     const [reason, setReason] = useState<string>("")
     
     const socket = socketManager.getChatSocket();
-    const socketCo = socketManager.getStatusSocket();
+    let socketCo = socketManager.getStatusSocket();
+
+    console.log("socket")
+    if (socketCo == null) {
+    console.log(socketCo)
+
+    if (test === false && SetParamsToGetPost().headers.Authorization !== null) {
+      socketCo = socketManager.initializeStatusSocket(SetParamsToGetPost().headers.Authorization)
+      console.log("socket")
+      console.log(socketCo)
+      test = true
+    }
+  }
   useEffect(() => {
 
     const handleBanUser = (data : any) => {
@@ -55,14 +69,14 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
     })
     }
     const handleDeco = (data : any) => {
-      if (data.user === User.name && data.status === "disconnected")
-        setStatus(false)
-      if (data.user === User.name && data.status === "connected")
-        setStatus(true)
+      if (data.user === User.name && data.status === "Offline")
+        setStatus("Offline")
+      if (data.user === User.name && data.status === "Online")
+        setStatus("Online")
     }
-    socket.removelistener("banuser", handleBanUser);
-    socket.removelistener("ChatError", handleBanUsererror);
-    socketCo.removelistener("status", handleDeco)
+    socket.removeListener("banuser", handleBanUser);
+    socket.removeListener("ChatError", handleBanUsererror);
+    socketCo.removeListener("status", handleDeco)
     socketCo.on("status", handleDeco)
     socket.on("banuser", handleBanUser);
     socket.on("ChatError", handleBanUsererror);
@@ -85,8 +99,10 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
 
     GetUserInfo(User.uid)
       .then((res) => {
-        setUser({name: res.data.name, victory: res.data.Victory, defeate: res.data.Defeat, gameplayed: res.data.Match, isConnect: res.data.isConnect})
-        setStatus(res.data.isConnect)
+        setUser({name: res.data.name, victory: res.data.Victory, defeate: res.data.Defeat, gameplayed: res.data.Match, isConnect: res.data.Status})
+        setStatus(res.data.Status)
+        console.log("coucoucBITE")
+        console.log(res.data.Status)
         console.log(res)
       })
       .catch((err) => {
@@ -249,8 +265,10 @@ const DuelManager = () =>
 }
 /***************************************************************************POUR LEO LE DUeK PONG ********************************/
 
+console.log("----------------------------------fdsnbhyfjakbkujfbasd--------------")
 
-
+console.log(status)
+console.log("-----dsadasdas-----------------------------fdsnbhyfjakbkujfbasd--------------")
 return(
     <div className="App">
 
@@ -258,8 +276,8 @@ return(
  <div className="person-stats-mod">
       <h2>{user.name}</h2>
       <div className="status-indicator">
-      <div className={status ? 'green-dot' : 'red-dot'}></div>
-      <span>{status ? 'Connecté' : 'Déconnecté'}</span>
+      <div className={status === "Online"? 'green-dot' : 'red-dot'}></div>
+      <span>{status =="Online" ? 'Connecté' : 'Déconnecté'}</span>
     </div>
       <p className="matches-played">Matches played: {user.gameplayed}</p>
       <p className="matches-won">Matches won: {user.victory}</p>

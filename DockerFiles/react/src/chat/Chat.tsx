@@ -53,6 +53,7 @@ interface Message {
 }
 
 export function Chat() {
+  const [GeneralName, setGeneralName] = useState<string>('');
   ////////////////////////////////////////////////////////////////////// chan manager //////////////////////////////////////////////////////////////////
   const UserName: any = localStorage.getItem('name')
   const UserUID: any = localStorage.getItem('UID')
@@ -262,6 +263,10 @@ export function Chat() {
     }
     socket.emit("createchannel", { channelname: Channame, visibility: "private", password: undefined })
     setSelectedChannel(Channame)
+    setGeneralName(Channame)
+    setMessages([])
+    setChanMdp('')
+    setChanname('')
 
   }
 
@@ -285,6 +290,9 @@ export function Chat() {
     else
       socket.emit("createchannel", { channelname: Channame, visibility: "public", password: ChanMdp })
     setSelectedChannel(Channame)
+    setGeneralName(Channame)
+    setMessages([])
+
     setChanMdp('')
     setChanname('')
 
@@ -295,8 +303,6 @@ export function Chat() {
   };
 
 
-
-
   const [ChanTo, setChanTo] = useState<any>('');
   const [ChanMdpTo, setChanMdpTo] = useState<any>('');
 
@@ -304,6 +310,10 @@ export function Chat() {
     e.preventDefault();
     socket.emit("joinchannel", { channelname: ChanTo, visibility: "private", password: ChanMdpTo })
     //channel nane + password
+    setSelectedChannel(Channame)
+    setGeneralName(Channame)
+    setMessages([])
+
     setChanMdpTo('')
     setChanTo('')
   }
@@ -396,9 +406,10 @@ export function Chat() {
 
   const handleUserClick = (useri: User | null) => {
     console.log("USERUIDDDDDD")
-    if (useri !== null)
-      console.log(useri)
+
     setSelectedUser(useri);
+    if (useri !== null)
+    setGeneralName(useri.name)
   };
 
   const handleCloseModal = () => {
@@ -423,6 +434,7 @@ export function Chat() {
     else if (UserTo) {
       console.log("-----------------------------------selectedUser---------------------------------")
       console.log(UserTo)
+      setGeneralName(UserTo)
       socket.emit("usermessage", { destination: UserTo, message: newMessage })
       const newMessageObj = { id: Date.now(), channel: '', user: UserName, userUID: UserUID, text: newMessage, isSent: true, isPriv: true };
       setMessages(prevMessages => [...prevMessages, newMessageObj]);
@@ -529,6 +541,7 @@ export function Chat() {
     console.log("heuuuuuuuuu")
     console.log(ChanUse)
     setSelectedChannel(ChanUse)
+    setGeneralName(ChanUse)
     console.log(ChanUse)
     setMessages([])
     if (ChanUse !== null) {
@@ -574,16 +587,19 @@ export function Chat() {
 
 
   const [UserTo, setUserTo] = useState<any>('');
-  const OpenUser = (UserUse: any) => {
+  const OpenUser = (UserUse: any, username : string) => {
     setUserTo("UserUse")
     setUserTo(UserUse)
+   setGeneralName(username)
     setSelectedChannel('')
     setMessages([])
     GetPrivMsg(UserUse)
       .then((response) => {
         console.log(response)
         if (response.data !== null) {
+          console.log("TTTTTTTTTTEEEEEEEEEEEEEEEEESSSSSSSSSSSSSSSSSSTTTTTTTTTTTTTTT")
           const newMessages = response.data.map((message: any, index: any) => {
+            console.log(message.id)
             const isSent = message.username === UserName;
             return {
               id: index + Date.now(),
@@ -594,6 +610,7 @@ export function Chat() {
               isSent: isSent
             };
           });
+
           setMessages(newMessages);
         }
       })
@@ -743,7 +760,7 @@ export function Chat() {
         </div>
         <div className="chat-app__main">
           <div className="channel-header">
-            <h2>{selectedChannel || 'General'}</h2>
+            <h2>{GeneralName || 'General'}</h2>
             {selectedChannel && <button className="add-message-button" onClick={FormAdmin}>Manage admin</button>}
             {AdminOn && <form onSubmit={AddAdmin} >
               <input type="text" placeholder="New admin" value={AdminName} onChange={(e) => setAdminName(e.target.value)} />
@@ -804,7 +821,7 @@ export function Chat() {
           <ul className="containers">
 
             {UserList.map((user) => (
-              <li className="active" key={user.uid} onClick={() => OpenUser(user.uid)} >
+              <li className="active" key={user.uid} onClick={() => OpenUser(user.uid, user.name)} >
                 {user.name}
               </li>
             ))}
