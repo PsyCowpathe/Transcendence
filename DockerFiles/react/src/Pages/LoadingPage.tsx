@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import '../css/index.css'
 import Logo from '../imgs/chargement.png'
 import { TopBar } from "./TopBar";
-
+import { useNavigate } from "react-router-dom";
 function LoadingPage() {
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     // Simule une requête asynchrone qui dure 2 secondes

@@ -15,12 +15,15 @@ import { AskFriend } from "./Pages/AskFrindPage";
 import IconLabelButtons from './PageTest';
 import { TopBar } from './Pages/TopBar';
 // import { Chat } from './chat/ChatComp';
-import { Chat } from './NewChat/CreateChan';
+import { Chat } from './NewChat/Chat';
 import  ProfilePictureUploader  from './Pages/NewProfilPic';
 import NotFound from './Pages/404NotFound';
 import { Set2FA } from './Pages/Set2FA';
+import { TestLog } from './Pages/ForceLog';  
+import { Resend2FA } from './Pages/Resend2FA';
+import Pong from './pong/Pong' 
+import PongMenu from './pong/PongMenu' 
 
-  
 function App() 
 {
  const AuthContext = createContext(false);
@@ -43,7 +46,8 @@ function App()
 			<Routes>
 		 {/* <Route path='/' element={<HomePage  tokenForm={tokenForm} setToken={setToken} onLogin={() => setIsLoggedIn(true)}/>}/>   */}
 			<Route path='/change' element={<ChangeLogin/>}/> 
-			<Route path='/test2FA' element={<Set2FA/>}/> 
+			<Route path='/log' element={<TestLog/>}/>
+			{/* <Route path='/test2FA' element={<Set2FA/>}/>  */}
 			<Route path='/' element={<HomePage tokenForm={tokenForm} setToken={setToken} onLogin={() => setIsLoggedIn(true)}/>}/> 
 			<Route path='/chat' element={<Chat/>}/>
 			{/* <Route path="/chatoune" element ={<Chat username={"Alice"} />} /> */}
@@ -51,9 +55,12 @@ function App()
 			<Route path='/LoadingPage' element={<LoadingPage/>}/>
 			<Route path='/changepic' element={<ProfilePictureUploader />}/>
 			<Route  path='/askFriend' element={<AskFriend />}/>
-			<Route path='/test' element={<IconLabelButtons />}/> 
 			<Route path='/TopBar' element={<TopBar />}/> 
+			<Route path='/Send2FA' element={<Resend2FA />}/>
 			<Route path='/*' element={<NotFound />}/> 
+			<Route path='/pong/game' element={<Pong />}/> 
+			<Route path='/pong/spectate' element={<Pong />}/> 
+
 			</Routes> 
 	</BrowserRouter>
 		);

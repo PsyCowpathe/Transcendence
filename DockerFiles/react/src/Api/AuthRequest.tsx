@@ -1,12 +1,12 @@
 import { urls } from "../global";
 import axios from 'axios';
 
-import { VraimentIlSaoule } from '../aurelcassecouilles/VraimentIlEstCasseCouille';
+import { SetParamsToGetPost } from '../Headers/VraimentIlEstCasseCouille';
 
 
 
 export async function redirectTo42API()
 {
-    const config = VraimentIlSaoule()
+    const config = SetParamsToGetPost()
     return await axios.get(`${urls.SERVER}/auth/redirect`,config)
 }  

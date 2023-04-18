@@ -7,7 +7,7 @@ import { SendTokenRequest } from "../Api/SendToken";
 import '../css/App.css'
 import { useNavigate } from 'react-router-dom'
 import socketManager from "../MesSockets";
-import { VraimentIlSaoule } from "../aurelcassecouilles/VraimentIlEstCasseCouille";
+import { SetParamsToGetPost } from "../Headers/VraimentIlEstCasseCouille";
 import { TopBar } from "./TopBar";
 // https://mui.com/material-ui/getting-started/installation/ 
 // let Mysocks : any = new SocketManager
@@ -23,6 +23,7 @@ interface chiant {
 }
 	const HomePage : React.FC<chiant> =  ({tokenForm, setToken, onLogin}) =>
 {
+
 	const [Mybool, setMybool] = useState<boolean>(false)
 	const [Registered, setReg] = useState<boolean>(false)
 	const [FirstCo, setFirstCo] = useState<boolean>(false)
@@ -36,6 +37,7 @@ interface chiant {
 		try
 		{
 			const { data } = await redirectTo42API()
+			// alert(data)
 			window.location.assign(data)
 		}
 		catch (e)
@@ -64,7 +66,8 @@ interface chiant {
 				// {
 					console.log(`voila la data de la reponse ${response.data}`)
 					localStorage.setItem('Token', response.data.newtoken);
-					 localStorage.setItem('name', response.data.name);
+					localStorage.setItem('name', response.data.name);
+					localStorage.setItem('UID', response.data.id);
 					const date : any = localStorage.getItem('Token')
 
 					console.log("----------------------------------------------------------------------------------------------")
@@ -129,21 +132,28 @@ interface chiant {
 		if (Mybool !== false)
 		{
 			onLogin()
-			navigate('/change')
+			navigate('/log')
 			setMybool(false)
 		}
 	}, [Mybool])
 	
 	useEffect(() =>
 	{
+		// console.log("wtf")
 		if (Registered !== false)
 		{
+			console.log("wtf")
+
 			setReg(false)
-			socketManager.initializeChatSocket(VraimentIlSaoule().headers.Authorization)
-			socketManager.initializeFriendRequestSocket(VraimentIlSaoule().headers.Authorization)
+			socketManager.initializeChatSocket(SetParamsToGetPost().headers.Authorization)
+			socketManager.initializeFriendRequestSocket(SetParamsToGetPost().headers.Authorization)
+			socketManager.initializePongSocket(SetParamsToGetPost().headers.Authorization)
+			socketManager.initializeStatusSocket(SetParamsToGetPost().headers.Authorization)
 		
 			onLogin()
 			navigate('/affUser')
+			console.log("wtf")
+
 		}		
 	}, [Registered])
 	
