@@ -56,11 +56,11 @@ function App()
 			<Route path='/changepic' element={<ProfilePictureUploader />}/>
 			<Route  path='/askFriend' element={<AskFriend />}/>
 			<Route path='/TopBar' element={<TopBar />}/> 
-			<Route path='/pong/menu' element={<PongMenu />}/> 
-			<Route path='/pong/game' element={<Pong />}/> 
-			<Route path='/pong/spectate' element={<Pong />}/> 
 			<Route path='/Send2FA' element={<Resend2FA />}/>
 			<Route path='/*' element={<NotFound />}/> 
+			<Route path='/pong/game' element={<Pong />}/> 
+			<Route path='/pong/spectate' element={<Pong />}/> 
+
 			</Routes> 
 	</BrowserRouter>
 		);

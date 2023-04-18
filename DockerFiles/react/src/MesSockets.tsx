@@ -58,6 +58,10 @@ class SocketManager {
       });
     }
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
 
   getChatSocket(): any {
     return this.chatSocket;

@@ -51,94 +51,6 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean })
   const MAJFriendList = async() =>
   {
     await GetFriendList()
-    .then((res) =>
-    {
-      console.log("Friendlist")
-      console.log(res)
-      // setFriend([])
-      setFriend(res.data.map((name:any) => {
-        return { id:  name.id, name: name.name}
-      }
-      ))
-    })
-    .catch((err) =>
-    {
-      if (err.message !== "Request aborted") {
-        if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-          navigate('/')
-        else if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
-        navigate('/Change')
-        else if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
-          navigate('/Send2FA')////////////////////////////////////////////////////////////////////////////////////
-      }
-    })
-  }
-  const MAJBlockList = async () =>
-  {
-    await GetBlockList()
-    .then((res) =>
-    {
-      console.log("Blocklist")
-      console.log(res)
-      // setBlockedList([])
-      setBlockedList(res.data.map((name:any) => {
-        return { id:  name.id, name: name.name}
-      }
-      ))
-    })
-    .catch((err) =>
-    {
-      if (err.message !== "Request aborted") {
-        if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-          navigate('/')
-        else if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
-        navigate('/Change')
-        else if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
-          navigate('/Send2FA')////////////////////////////////////////////////////////////////////////////////////
-      }
-    })
-  }
-  
-
-  const MAJinvitationList = async() =>
-  {
-    await GetInvitationList()
-    .then((res) =>
-    {
-      console.log("Invitation list")
-      console.log(res)
-      setInvit(res.data.map((name:any) => {
-        return { id:  name.id, name: name.name}
-      }
-      ))
-      console.log(invit)
-    })
-    .catch((err) =>
-    {
-      if (err.message !== "Request aborted") {
-        if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-          navigate('/')
-        else if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
-        navigate('/Change')
-        else if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
-          navigate('/Send2FA')
-      }
-    })
-  }
-  
-  const MAJList = async() =>
-  {
-    await MAJFriendList()
-    await MAJinvitationList()
-    await MAJBlockList()
-  }
-
-  useEffect(() =>
-  {
-    MAJList()
-  }, [])
-
-  
   
     const UserName: any = localStorage.getItem('name')
     const UserID: any = localStorage.getItem('UID')
@@ -154,57 +66,6 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean })
   // setPicUrl(localStorage.getItem('ProfilPic') || "Profil")
   useEffect(() => {
     console.log("Use effect de la photo")
-//<<<<<<< HEAD
-/*    PicGetRequest()
-    .then((res) =>
-    {
-      console.log("|")
-      console.log(res)
-      console.log("|")
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      localStorage.setItem('ProfilPic', url)
-      setPicUrl(url)
-      console.log(Pic)
-      setPic("oui")
-    })
-    .catch((err) =>
-    {
-      console.log("ERROR")
-      toast.error(err, {
-        position: toast.POSITION.TOP_RIGHT,
-        autoClose: 2000,
-        progressClassName: "my-progress-bar"
-    })
-
-    })
-  }, [])
-  
-  
-  const UserName : any= localStorage.getItem('name')
-  // console.log(UserName)
-  useEffect(() =>
-  {
-  GetUserInfo(UserName) //je recupere toute les info sur mon user 
-  .then((res) =>
-  {
-    console.log(res)
-  })
-  .catch((err) =>
-  {
-    toast.error(err, {
-      position: toast.POSITION.TOP_RIGHT,
-      autoClose: 2000,
-      progressClassName: "my-progress-bar"
-  })
-
-      if(err.response.data.message === "Invalid user" || err.message.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-      {
-        console.log("coucou ?")
-        window.location.assign('/')
-      }
-      if ( err.message === "User not registered")// ==> redirection vers la page de register
-      {*/
-//=======
     PicGetRequest(UserID)
       .then((res) => {
         console.log("|")
@@ -217,7 +78,6 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean })
         setPic("oui")
       })
       .catch((err) => {
-//>>>>>>> master
         console.log("ERROR")
         toast.error(err, {
           position: toast.POSITION.TOP_RIGHT,
@@ -458,11 +318,6 @@ const MyCustomToast = ({response, Acceptnow, Refusednow, closeToast} : any) => {
 	
 	///////////////////////////////////////////////////////////////////////// request refused      ///////////////////////////////////////////////////////
 
-
-
-                                                                                                                                                                /*FAIT*/
-	
-	
 	const Refused = async(user : number) =>
 	{
     console.log("USER REFUSE ?")
