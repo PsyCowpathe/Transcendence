@@ -127,9 +127,9 @@ export class MainService
 		while (messageList[i])
 		{
 			if (ret === "XV" || ret === "enemy")
-				data.push({ username: messageList[i].user1.name, message: "Blocked message" });
+				data.push({ id: messageList[i].user1.id, username: messageList[i].user1.name, message: "Blocked message" });
 			else
-				data.push({ username: messageList[i].user1.name, message: messageList[i].message });
+				data.push({ id: messageList[i].user1.id, username: messageList[i].user1.name, message: messageList[i].message });
 			i++;
 		}
 		return (data);
