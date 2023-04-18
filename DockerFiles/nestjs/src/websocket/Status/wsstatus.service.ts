@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Socket } from 'socket.io';
+import { Socket, Server } from 'socket.io';
 
 import { UserService } from '../../db/user/user.service';
 import { RelationService } from '../../db/relation/relation.service';
@@ -53,7 +53,7 @@ export class WsStatusService
                 toNotify.join("friendconnected");
             i++
         }
-        client.to("friendconnected").emit(`${user.name} is connected !`, user.name);
+        client.broadcast.emit("status", {name: user.name, status: "connected"});
     }
 
     async deconnection(client: Socket)
@@ -74,6 +74,6 @@ export class WsStatusService
                 toNotify.join("frienddisconnected");
             i++
         }
-        client.to("friendconnected").emit(`${user.name} disconnected !`, user.name);
+        client.broadcast.emit("status", {name: user.name, status: "disconnected"});
     }
 }

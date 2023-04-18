@@ -34,7 +34,7 @@ export class AuthController
 		if (ret === true)
 		{
 			console.log('Token valide');
-			return (`/`);
+			return (`/affUser`);
 		}
 		else
 		{
