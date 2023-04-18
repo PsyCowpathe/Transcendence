@@ -15,6 +15,9 @@ export class WsStatusGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 	}
 
+	@WebSocketServer()
+	server: Server;
+
     async handleConnection(client: Socket)
     {
         console.log("STATUS CONNECTED");

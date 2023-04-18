@@ -56,7 +56,7 @@ RUN cd /root/backend \
 
 RUN chmod +x init.sh
 
-EXPOSE 3630 3631 3632
+EXPOSE 3630 3631 3632 3633 3634
 
 RUN zsh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" || true
 
