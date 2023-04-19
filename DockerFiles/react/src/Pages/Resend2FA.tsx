@@ -4,7 +4,6 @@
 
 import React from "react";
 import { Send2FA } from "../Api/send2FA";
-import { ChangeLogin } from "./LoginPage";
 import { useState } from "react";
 import '../css/Force.css'
 import { SetParamsToGetPost } from "../Headers/HeaderManager";

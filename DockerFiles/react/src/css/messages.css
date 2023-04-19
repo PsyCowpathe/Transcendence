@@ -3,7 +3,7 @@
      background-color: #f8f8f8;
      overflow-y: scroll;
      padding: 20px;
-         min-height: 100vh;
+         /* min-height: 100vh; */
     height: fit-content;
     }
     

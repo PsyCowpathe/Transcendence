@@ -23,7 +23,7 @@
     background-color: #fff;
     height: 100%;
     padding: 20px;
-    overflow-y: auto;
+    /* overflow-y: auto; */
   }
   
   .add-message-button {
@@ -76,7 +76,7 @@
   font-size: 10px;
   color: #0087F7;
   cursor: pointer;
-  transition: all 0.2s ease-in-out; 
+      transition: all 0.2s ease-in-out; 
 }   
 .sent-user {
   display: flex;
@@ -104,9 +104,34 @@
   padding: 20px;
   min-height: 100vh;
   height: fit-content;
+  /* margin-bottom: 50vh; */
 }
 
 .friend-app__sidebar li {
+  margin-bottom: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+
+.Invitation-list__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.Invitation-list__sidebar {
+  width: 15%;
+  background-color: #fff;
+  border-right: 1px solid #ddd;
+  padding: 20px;
+  min-height: 100vh;
+  height: fit-content;
+  /* margin-top: 50vh; */
+}
+
+.Invitation-list__sidebar li {
   margin-bottom: 10px;
   font-size: 16px;
   cursor: pointer;

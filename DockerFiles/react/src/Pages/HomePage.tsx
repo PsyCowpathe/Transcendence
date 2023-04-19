@@ -8,9 +8,6 @@ import '../css/App.css'
 import { useNavigate } from 'react-router-dom'
 import socketManager from "../MesSockets";
 import { SetParamsToGetPost } from "../Headers/HeaderManager";
-import { TopBar } from "./NavBar";
-// https://mui.com/material-ui/getting-started/installation/ 
-// let Mysocks : any = new SocketManager
 const info = {
 	name : 'name'
 }

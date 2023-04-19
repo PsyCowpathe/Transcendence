@@ -18,12 +18,13 @@ import Pong from './pong/Pong'
 
 function App() 
 {
- const AuthContext = createContext(false);
-
-
 	  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-	  
+	if ( isLoggedIn)
+	{
+		setIsLoggedIn(false);
+	}
+	
 	interface TokenForm
 	{
 		code : string | null;

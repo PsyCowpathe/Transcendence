@@ -32,11 +32,7 @@ export function SetParamsToGetPost2()
     const token = localStorage.getItem('Token')
     const FA = localStorage.getItem('2FA')
         
-    const config = 
-    {
-        headers: { Authorization: `${token}`,
-        TwoFAToken: `${FA}` }
-    };
+
     const config2 = 
     {
         responseType: 'blob', 
@@ -45,10 +41,7 @@ export function SetParamsToGetPost2()
     };
     
     
-    const bodyParameters = 
-    {
-    key: token
-    };
+ 
     
     return config2
 
@@ -83,7 +76,6 @@ export function SetParamsToGetPost4(param : number)
  
     const config2 = 
     {
-        // responseType: 'blob', 
 
         headers: { Authorization: `${token}` ,
         TwoFAToken: `${FA}`},

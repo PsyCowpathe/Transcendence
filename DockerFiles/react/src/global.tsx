@@ -1,10 +1,10 @@
 export enum urls
 {
-SERVER="http://10.12.3.7:3630",
-SOCKETFRIENDSHIP="http://10.12.3.7:3631",
-SOCKETCHAT="http://10.12.3.7:3632",
-SOCKETGAME="http://10.12.3.7:3633",
-SOCKETSTATUS="http://10.12.3.7:3634",
+SERVER="http://10.12.7.6:3630",
+SOCKETFRIENDSHIP="http://10.12.7.6:3631",
+SOCKETCHAT="http://10.12.7.6:3632",
+SOCKETGAME="http://10.12.7.6:3633",
+SOCKETSTATUS="http://10.12.7.6:3634",
 }
 
 // export enum urls

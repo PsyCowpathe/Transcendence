@@ -1,4 +1,3 @@
-import react from 'react'
 import axios from 'axios'
 import { urls } from "../global"
 import { SetParamsToGetPost4 } from '../Headers/HeaderManager';

@@ -132,7 +132,6 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
 
 
 
-  const UserName: any = localStorage.getItem('name')
   const UserID: any = localStorage.getItem('UID')
   const [redirected, setRedirected] = useState(false)
 
@@ -179,9 +178,11 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
   }, [Click])
 
   useEffect(() => {
-    if (redirected) {
-      return
-    }
+      console.log("coucou1")
+    // if (redirected) {
+    //   return
+    // }
+    console.log("coucou2")
 
     GetUserInfo(UserID)
       .then((res) => {
@@ -210,8 +211,10 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
   }, [redirected])
 
   const navigate = useNavigate();
+
   const onClick = (() => {
     console.log("ass")
+    setRedirected(!redirected)
     setClickLog(!ClickLog)
 
   })

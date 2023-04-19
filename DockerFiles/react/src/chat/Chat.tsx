@@ -16,6 +16,7 @@ import { GetFriendList } from "../Api/GetFriendList";
 import { GetPrivMsg } from "../Api/GetPrivateMsg";
 import { useNavigate } from "react-router-dom";
 import InviteModale from "../Modale/InviteModale";
+import { GetChannelInvite } from "../Api/GetChannelInvite";
 
 let test: boolean = false
 let socket: any
@@ -38,6 +39,11 @@ interface ChanEmit {
   password: string | undefined;
 }
 interface Chati {
+  id: number;
+  name: string;
+}
+
+interface chan {
   id: number;
   name: string;
 }
@@ -99,6 +105,34 @@ export function Chat() {
         console.log(err)
       })
   }
+  const [ChanInvite, setChanInvite] = useState<chan[]>([]);
+  function GetInvite() {
+    setChanInvite([])
+    GetChannelInvite()
+      .then((response) => {
+        console.log("CHANINVITE:")
+        console.log(response)
+
+        setChanInvite(response.data.map((chan: any, index: any) => {
+          return { id: index + Date.now(), name: chan }
+        }))
+        console.log("ChanInvite:")
+        console.log(ChanInvite)
+      })
+      .catch((err) => {
+        if (err.response) {
+            if (err.message !== "Request aborted") {
+              if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+                navigate('/')
+              if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+                navigate('/Change')
+              if (err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+                navigate('/Send2FA')
+          }
+        }
+        console.log(err)
+      })
+  }
 
 
   function GetChannel() {
@@ -135,6 +169,10 @@ export function Chat() {
 
   useEffect(() => {
     /// get la friend list
+    GetInvite()
+  }, [])
+  useEffect(() => {
+    /// get la friend list
     GetFriend()
   }, [])
 
@@ -155,6 +193,8 @@ export function Chat() {
       })
       GetChannel()
       GetMsgChan()
+      GetInvite()
+
     }
     const handleLeaveChannel = (response: any) => {
       console.log("response")
@@ -178,7 +218,6 @@ export function Chat() {
       // GetChannel()
       // setSelectedChannel('')
       // GetMsgChan()
-      // console.log("coucou jsuis sence rentrer")
     }
     const handleMuteUser = (response: any) => {
       console.log(response)
@@ -191,6 +230,8 @@ export function Chat() {
     const handleDeleteUser = (response: any) => {
       console.log(response)
       GetChannel()
+      GetInvite()
+
       setMessages([])
       setSelectedChannel('')
       setChanToDelete('')
@@ -200,20 +241,45 @@ export function Chat() {
         progressClassName: "my-progress-bar"
       })
     }
-
+    const handleInvite = (response: any) => {
+      GetInvite()
+      console.log("--------------------------INVITE-----------------")
+      console.log(response)
+      console.log("--------------------------INVITE-----------------")
+     
+    }
+    const handleKickuser = (response: any) => {
+      console.log(response)
+      GetChannel()
+      setMessages([])
+      setSelectedChannel('')
+      setGeneralName('')
+      setChanToDelete('')
+      toast.success(response.message, {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 2000,
+        progressClassName: "my-progress-bar"
+      })
+    }
     socket.removeListener("leavechannel", handleLeaveChannel);
     socket.removeListener("muteuser", handleMuteUser);//
     socket.removeListener("deletechannel", handleDeleteUser);//
     socket.removeListener("createchannel", handleCreateChannel);
     socket.removeListener("ChatError", handleChatError);
+    socket.removeListener("createinvitation", handleInvite);
+    socket.removeListener("kickuser", handleKickuser);
 
     socket.on("deletechannel", handleDeleteUser);//
+    socket.on("createinvitation", handleInvite);//
     socket.on("leavechannel", handleLeaveChannel);
     socket.on("muteuser", handleMuteUser);
     socket.on("createchannel", handleCreateChannel);
     socket.on("ChatError", handleChatError);
-
+    socket.on("kickuser", handleKickuser);
+    
     return () => {
+      socket.off("kickuser", handleKickuser);
+      socket.off("createinvitation", handleInvite);//
       socket.off("deletechannel", handleDeleteUser);//
       socket.off("muteuser", handleMuteUser);
       socket.off("leavechannel", handleLeaveChannel);
@@ -235,8 +301,10 @@ export function Chat() {
       console.log(response.channel)
       setSelectedChannel(response.channel);
       // setUseChan(response.channel);
-
+      GetMsgChan()
       GetChannel()
+      GetInvite()
+
 
     }
 
@@ -310,8 +378,8 @@ export function Chat() {
     e.preventDefault();
     socket.emit("joinchannel", { channelname: ChanTo, visibility: "private", password: ChanMdpTo })
     //channel nane + password
-    setSelectedChannel(Channame)
-    setGeneralName(Channame)
+    setSelectedChannel(ChanTo)
+    setGeneralName(ChanTo)
     setMessages([])
 
     setChanMdpTo('')
@@ -397,11 +465,12 @@ export function Chat() {
   }, [])
 
 
-
+  
+  
 
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [selectedChannel, setSelectedChannel] = useState('');
-
+  
   const [User, setUser] = useState<User | null>(null);
 
   const handleUserClick = (useri: User | null) => {
@@ -420,15 +489,17 @@ export function Chat() {
   const HandleNewMessage = (e: any) => {
     e.preventDefault();
     console.log("-----------------------------------selectedChannel---------------------------------")
-
+    
     console.log(selectedChannel)
     console.log("-----------------------------------selectedChannel---------------------------------")
 
-    if (selectedChannel) {
-      console.log("-----------------------------------selectedChannel---------------------------------")
+    if (newMessage !== '')
+    {
+      if (selectedChannel) {
+        console.log("-----------------------------------selectedChannel---------------------------------")
 
-      socket.emit("channelmsg", { destination: selectedChannel, message: newMessage })
-      const newMessageObj = { id: Date.now(), channel: selectedChannel, user: UserName, userUID: UserUID, text: newMessage, isSent: true, isPriv: false };
+        socket.emit("channelmsg", { destination: selectedChannel, message: newMessage })
+        const newMessageObj = { id: Date.now(), channel: selectedChannel, user: UserName, userUID: UserUID, text: newMessage, isSent: true, isPriv: false };
       setMessages(prevMessages => [...prevMessages, newMessageObj]);
     }
     else if (UserTo) {
@@ -440,32 +511,33 @@ export function Chat() {
       setMessages(prevMessages => [...prevMessages, newMessageObj]);
       console.log(messages)
     }
-    setNewMessage("");
-    // scrollToBottom()
-  };
+  }
+  setNewMessage("");
+  // scrollToBottom()
+};
 
   const renderMessages = () => {
     console.log("ID-----------------------------------------------------------------------------------------------------------")
-
-
+    
+    
     return messages.map((message) => {
       console.log(message.id)
       let messageClass
       if (message.user === UserName)
         messageClass = "sent-message"
-      else
+        else
         messageClass = "received-message";
-      let userClass
-      if (message.user === UserName)
+        let userClass
+        if (message.user === UserName)
         userClass = "sent-user"
-      else
+        else
         userClass = "received-user";
-      if (message.isPriv == false && message.channel !== selectedChannel)
+        if (message.isPriv == false && message.channel !== selectedChannel)
         return
-      else if (message.isPriv == true && (message.user !== UserTo && message.user !== UserName))
+        else if (message.isPriv == true && (message.user !== UserTo && message.user !== UserName))
         return
-      return (
-        <div key={message.id}>
+        return (
+          <div key={message.id}>
           <div className={`message ${userClass}`} onClick={() => handleUserClick({ name: message.user, uid: message.userUID })}>
             {message.user}
           </div>
@@ -480,24 +552,24 @@ export function Chat() {
   };
 
   const messageContainer: any = document.getElementById('tamere');
-
+  
   function scrollToBottom() {
     messageContainer.scrollTop = messageContainer.scrollHeight;
   }
-
+  
   /////////////////////////////////////TEST //////////////////////////////////////////
   /////////////////////////////////////TEST //////////////////////////////////////////
-
-
-
+  
+  
+  
   const GetMsgChan = () => {
     console.log("selectedChannel")
     console.log(selectedChannel)
     if (selectedChannel) {
       GetChannelInfo(selectedChannel)    //recupere les message du channel
-        .then((response) => {
-          console.log(response)
-          console.log("lol")
+      .then((response) => {
+        console.log(response)
+        console.log("lol")
           if (response.data !== null) {
             const newMessages = response.data.map((message: any, index: any) => {
               const isSent = message.username === UserName;
@@ -519,22 +591,22 @@ export function Chat() {
             if (err.message !== "Request aborted") {
               if (err.message !== "Request aborted") {
                 if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-                  navigate('/')
+                navigate('/')
                 if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
-                  navigate('/Change')
+                navigate('/Change')
                 if (err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
-                  navigate('/Send2FA')
+                navigate('/Send2FA')
               }
             }
           }
           console.log(err)
         })
     }
-
-
+    
+    
   }
 
-
+  
   const OpenChannel = (ChanUse: any) => {
     console.log("--------------------------------------")
     console.log(UserList)
@@ -546,16 +618,16 @@ export function Chat() {
     setMessages([])
     if (ChanUse !== null) {
       GetChannelInfo(ChanUse)    //recupere les message du channel
-        .then((response) => {
-          console.log(response)
-          console.log("lol")
-          if (response.data !== null) {
-
-            const newMessages = response.data.map((message: any, index: number) => {
-              const isSent = message.username === UserName;
-              return {
-                id: index,
-                channel: ChanUse,
+      .then((response) => {
+        console.log(response)
+        console.log("lol")
+        if (response.data !== null) {
+          
+          const newMessages = response.data.map((message: any, index: number) => {
+            const isSent = message.username === UserName;
+            return {
+              id: index,
+              channel: ChanUse,
                 user: message.username,
                 userUID: message.id,
                 text: message.message,
@@ -571,46 +643,46 @@ export function Chat() {
             if (err.message !== "Request aborted") {
               if (err.message !== "Request aborted") {
                 if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-                  navigate('/')
+                navigate('/')
                 if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
-                  navigate('/Change')
+                navigate('/Change')
                 if (err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
-                  navigate('/Send2FA')
+                navigate('/Send2FA')
               }
             }
           }
         })
+      }
     }
-  }
 
-
-
-
+    
+    
+    
   const [UserTo, setUserTo] = useState<any>('');
   const OpenUser = (UserUse: any, username : string) => {
     setUserTo("UserUse")
     setUserTo(UserUse)
-   setGeneralName(username)
+    setGeneralName(username)
     setSelectedChannel('')
     setMessages([])
     GetPrivMsg(UserUse)
-      .then((response) => {
-        console.log(response)
-        if (response.data !== null) {
-          console.log("TTTTTTTTTTEEEEEEEEEEEEEEEEESSSSSSSSSSSSSSSSSSTTTTTTTTTTTTTTT")
-          const newMessages = response.data.map((message: any, index: any) => {
-            console.log(message.id)
-            const isSent = message.username === UserName;
-            return {
-              id: index + Date.now(),
-              channel: null,
-              userUID: message.id,
+    .then((response) => {
+      console.log(response)
+      if (response.data !== null) {
+        console.log("TTTTTTTTTTEEEEEEEEEEEEEEEEESSSSSSSSSSSSSSSSSSTTTTTTTTTTTTTTT")
+        const newMessages = response.data.map((message: any, index: any) => {
+          console.log(message.id)
+          const isSent = message.username === UserName;
+          return {
+            id: index + Date.now(),
+            channel: null,
+            userUID: message.id,
               user: message.username,
               text: message.message,
               isSent: isSent
             };
           });
-
+          
           setMessages(newMessages);
         }
       })
@@ -620,47 +692,50 @@ export function Chat() {
           if (err.message !== "Request aborted") {
             if (err.message !== "Request aborted") {
               if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-                navigate('/')
+              navigate('/')
               if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
                 navigate('/Change')
               if (err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
                 navigate('/Send2FA')
+              }
             }
           }
-        }
-      })
-  }
+        })
+      }
 
-  // -addadmin (nom de l’user a promote, nom du channel)
-  const [AdminOn, setAdminOn] = useState<any>('');
-  const [AdminName, setAdminName] = useState<any>('');
-  const FormAdmin = () => {
-    setAdminOn(!AdminOn)
-  }
+      // -addadmin (nom de l’user a promote, nom du channel)
+      const [AdminOn, setAdminOn] = useState<any>('');
+      const [AdminName, setAdminName] = useState<any>('');
+      const FormAdmin = () => {
+        setSanctionManger(false)
+        setOpenNewMdp(false)
+        setAdminOn(!AdminOn)
+      }
 
-  const AddAdmin = (e: any) => {
-    e.preventDefault();
+      const AddAdmin = (e: any) => {
+        e.preventDefault();
     console.log(AdminName)
     console.log(selectedChannel)
     socket.emit("addadmin", { name: AdminName, channelname: selectedChannel })
     setAdminName('')
     setAdminOn(!AdminOn)
-
+    
   }
   const [AdminToDel, setAdminToDel] = useState<any>('');
   const FormDelAdmin = () => {
     setAdminOn(!AdminOn)
     setSanctionManger(false)
+    setOpenNewMdp(false)
   }
 
   const DelAdmin = (e: any) => {
     e.preventDefault();
     console.log(AdminToDel)
     console.log(selectedChannel)
-    socket.emit("removedmin", { name: AdminToDel, channelname: selectedChannel })
+    socket.emit("removeadmin", { name: AdminToDel, channelname: selectedChannel })
     setAdminToDel('')
     setAdminOn(!AdminOn)
-
+    
   }
 
   // -leavechannel (nom du channel a leave)
@@ -670,18 +745,20 @@ export function Chat() {
   const LeaveChan = (chan: string) => {
     socket.emit("leavechannel", { channelname: chan })
     GetChannel()
+    setSelectedChannel('')
+    setGeneralName('')
 
     setChanToLeave('')
-
+    
   }
-
+  
   const [ChanToDelete, setChanToDelete] = useState<any>('');
   const DeleteChan = (chan: string) => {
     socket.emit("deletechannel", { channelname: chan })
     console.log("delete")
     console.log(Chanlist)
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+    
   }
   const [menuOpen, setMenuOpen] = useState(false);
   const openMenu = () => {
@@ -694,8 +771,9 @@ export function Chat() {
   const Sanction = () => {
     setSanctionManger(!SanctionManger)
     setAdminOn(false)
+    setOpenNewMdp(false)
   }
-
+  
   const Unban = (e: any) => {
     e.preventDefault();
     socket.emit("unbanuser", { name: UserToUnBan, channelname: selectedChannel })
@@ -704,16 +782,36 @@ export function Chat() {
   }
 
   const [UserToUnMute, setUserToUnMute] = useState<any>('');
-
-
+  
+  
   const UnMute = (e: any) => {
     e.preventDefault();
-    socket.emit("unmuteuser", { name: UserToUnBan, channelname: selectedChannel })
-    setUserToUnBan('')
+    socket.emit("unmuteuser", { name: UserToUnMute, channelname: selectedChannel })
+    setUserToUnMute('')
+
     // setSanctionManger(!SanctionManger)
   }
+  
+    
+  const [newMdp, setNewMdp] = useState<string>('');
+  const [openNewMdp, setOpenNewMdp] = useState(false);
 
+  const OpenNewMdp = () => {
+    setOpenNewMdp(!openNewMdp)
+    setAdminOn(false)
+    setSanctionManger(false)
+  }
+  const ChangePassword = (e: any) => {
+    e.preventDefault();
+    if (newMdp === '') 
+      socket.emit("changepassword", {channelname:selectedChannel, password:undefined})
+    else 
+      socket.emit("changepassword", {channelname:selectedChannel, password:  newMdp})
+    setOpenNewMdp(!openNewMdp)
+    setNewMdp('')
+  }
 
+  
   return (
     <div>
       <TopBar />
@@ -784,14 +882,20 @@ export function Chat() {
               <button className="add-message-button" type="submit"  >Unmute</button>
             </form>
             }
-
-
+            {selectedChannel && <button className="add-message-button" onClick={OpenNewMdp}>Change password</button>}
+          {openNewMdp && <form onSubmit={ChangePassword} >
+            <input type="password" placeholder="New password" value={newMdp} onChange={(e) => setNewMdp(e.target.value)} />
+            <button className="add-message-button"  type="submit"  >OK</button>
+          </form>
+          }
+    
 
             {selectedChannel && <button className="add-message-button" onClick={() => DeleteChan(selectedChannel)}>delete</button>
             }
             {selectedChannel && <button className="add-message-button" onClick={() => LeaveChan(selectedChannel)}>Leave</button>}
             {selectedChannel && <button className="add-message-button" onClick={() => openMenu()}>invitation menu</button>}
             {menuOpen && <InviteModale onClose={openMenu} channel={selectedChannel} />}
+
           </div>
 
           <div className="message-list">
@@ -824,6 +928,17 @@ export function Chat() {
               <li className="active" key={user.uid} onClick={() => OpenUser(user.uid, user.name)} >
                 {user.name}
               </li>
+            ))}
+          </ul>
+        </div>
+        <div className="Invitation-list__sidebar">
+          <h1>Channel invite</h1>
+          <ul className="containers">
+
+            {ChanInvite.map((user) => (
+              <li className="active" key={user.id}  >
+                 {user.name}
+               </li>
             ))}
           </ul>
         </div>

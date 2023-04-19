@@ -1,12 +1,9 @@
 import QRCode from 'qrcode.react';
 import * as OTPAuth  from 'otpauth';
 import { Get2FA } from '../Api/Get2FA';
-import LoadingPage from './LoadingPage';
 import React, { Component } from 'react';
 import { useState } from 'react';
 import { SetParamsToGetPost } from '../Headers/HeaderManager';
-import axios from 'axios';
-import { urls } from '../global';
 import { TopBar } from './NavBar';
 import { Send2FA } from '../Api/send2FA';
 import { socketManager } from './HomePage';

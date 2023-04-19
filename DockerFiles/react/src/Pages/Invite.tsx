@@ -8,25 +8,26 @@ import socketManager from "../MesSockets";
 
 
 
-
 export function Invite({channel} : {channel : string | null})
 {
     const socket = socketManager.getChatSocket();
     const [SendInvite, setSendInvite] = useState<string>("")
     const [DeleteInvite, setDeleteInvite] = useState<string>("")
-
+    // console.log(channel)
     const inviteFriend = (e : any) => {
         e.preventDefault()
         console.log("invite friend")
         console.log(SendInvite)
-        socket.emit("createinvitation", SendInvite, channel)
+        socket.emit("createinvitation", {name : SendInvite, channelname: channel})
         setSendInvite("" )
     }
 
-    const deleteInvite = () => {
+    const deleteInvite = (e : any) => {
+        e.preventDefault()
+
         console.log("delete invite")
         console.log(DeleteInvite)
-        socket.emit("deleteinvitation", DeleteInvite, channel)
+        socket.emit("deleteinvitation", {name : DeleteInvite, channelname: channel})
         setDeleteInvite("")
     }
 
