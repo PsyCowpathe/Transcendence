@@ -1,0 +1,48 @@
+
+.menu {
+  position: fixed;
+  top: 0;
+  left: -200px;
+  bottom: 0;
+  width: 200px;
+  background-color: #3e3e3e;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.2rem;
+  padding: 1rem;
+  z-index: 9999;
+  transition: all 0.2s ease-in-out;
+}
+
+.menu:hover {
+  left: 0;
+}
+
+.menu a {
+  color: #fff;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  display: block;
+  transition: all 0.2s ease-in-out;
+}
+
+.menu a:hover {
+  background-color: #4a4a4a;
+}
+
+.menu .active {
+  background-color: #4a4a4a;
+  font-weight: bold;
+}
+
+.nav-link {
+  color: #6c757d;
+}
+
+.nav-link:hover {
+  color: #007bff;
+}
+
+.nav-link.active {
+  color: #007bff;
+}

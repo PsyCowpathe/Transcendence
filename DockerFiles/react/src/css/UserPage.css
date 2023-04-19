@@ -1,0 +1,96 @@
+.user-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 2em;
+  }
+  
+  .user-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2em;
+  }
+  
+  .profile-pic-container {
+    position: relative;
+  }
+  
+  .profile-pic {
+    border-radius: 50%;
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+
+}
+  
+  .profile-pic-button {
+    position: absolute;
+    bottom: -3em;
+    right: 0;
+    padding: 0.5em;
+    border: none;
+    background-color: #113061;
+    color: #ffffff;
+    font-size: 1em;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+
+  }
+  
+  .user-details {
+    margin-left: 2em;
+  }
+  
+  .user-name {
+    font-size: 2.5em;
+    margin: 0.5em 0;
+  }
+  .user-age-ville {
+    font-size: 1.2em;
+    margin-bottom: 1em;
+  }
+  
+  .settings-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5em 1em;
+    border-radius: 5px;
+    background-color: #113061;
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    font-size: 1.2em;
+    margin-top: 1em;
+  }
+  
+  .settings-button-icon {
+    margin-right: 0.5em;
+  }
+  
+  .user-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 2em;
+  }
+  
+  .user-button {
+    display: inline-block;
+    padding: 0.5em 2em;
+    border-radius: 5px;
+    background-color: #113061;
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    font-size: 1.2em;
+    margin-right: 1em;
+    text-decoration: none;
+  }
+  
+  .user-button:last-child {
+    margin-right: 0;
+  }
