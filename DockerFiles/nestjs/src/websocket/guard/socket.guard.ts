@@ -15,7 +15,7 @@ export class SocketGuard implements CanActivate
 	async canActivate(context: any) : Promise<boolean>
 	{
 		//console.log(context.args[0].handshake);
-		//console.log(context.args[0].handshake.auth.token);
+		console.log(context.args[0].handshake.auth.token);
 		console.log("SocketGuard");
 		const tokenBearer = context.args[0].handshake.auth.token;
 		const twoFAToken = context.args[0].handshake.auth.twoFAToken;
@@ -34,4 +34,3 @@ export class SocketGuard implements CanActivate
 		return (false);
 	}
 }
-

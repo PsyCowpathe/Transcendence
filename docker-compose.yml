@@ -42,6 +42,8 @@ services:
                         - 3630:3630
                         - 3631:3631
                         - 3632:3632
+                        - 3633:3633
+                        - 3634:3634
                 networks:
                         - transcendence-network
                 volumes:

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+
 import { Socket, Server } from 'socket.io';
 
 import { UserService } from '../../db/user/user.service';
@@ -43,7 +44,7 @@ export class WsStatusService
         let user = await this.userService.findOneByUid(uid);
         if (user === null)
             return;
-        this.userService.updateStatus("Online", user);
+        await this.userService.updateStatus("Online", user);
         let friendList : any = await this.relationService.getFriendUser(user);
         let i = 0;
         while (friendList[i])
@@ -64,7 +65,7 @@ export class WsStatusService
         let user = await this.userService.findOneByUid(uid);
         if (user === null)
             return;
-        this.userService.updateStatus("Offline", user);
+        await this.userService.updateStatus("Offline", user);
         let friendList : any = await this.relationService.getFriendUser(user);
         let i = 0;
         while (friendList[i])

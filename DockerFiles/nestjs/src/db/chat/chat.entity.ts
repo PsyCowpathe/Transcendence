@@ -28,7 +28,7 @@ export class Admins
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@ManyToOne(() => Channel, { eager: true, onDelete: 'CASCADE' })
+	@ManyToOne(() => Channel, { onDelete: 'CASCADE' })
 	channel: Channel
 
 	@ManyToOne(() => User, { onDelete: 'CASCADE' })
@@ -41,7 +41,7 @@ export class Bans
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@ManyToOne(() => Channel, { onDelete: 'CASCADE' })
+	@ManyToOne(() => Channel, { onDelete: 'CASCADE'})
 	channel: Channel
 
 	@ManyToOne(() => User, { onDelete: 'CASCADE' })
@@ -92,7 +92,7 @@ export class InviteList
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@ManyToOne(() => Channel, { onDelete: 'CASCADE' })
+	@ManyToOne(() => Channel, { onDelete: 'CASCADE', eager: true })
 	channel: Channel
 
 	@ManyToOne(() => User, { onDelete: 'CASCADE' })

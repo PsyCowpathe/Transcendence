@@ -12,6 +12,8 @@ import { RelationModule } from './db/relation/relation.module';
 
 import { WsRelationModule } from './websocket/relation/wsrelation.module'; 
 
+import { WsStatusModule } from './websocket/status/wsstatus.module'; 
+
 import { ChatModule } from './db/chat/chat.module'; 
 
 import { WsChatModule } from './websocket/chat/wschat.module';
@@ -23,7 +25,7 @@ import { PongModule } from './websocket/game/pong.module';
 	imports:
 	[
 		DbModule, UserModule, RelationModule, AuthModule, MainModule,
-		WsRelationModule, ChatModule, WsChatModule, PongModule
+		WsRelationModule, ChatModule, WsChatModule, PongModule, WsStatusModule
 	],
 })
 export class AppModule

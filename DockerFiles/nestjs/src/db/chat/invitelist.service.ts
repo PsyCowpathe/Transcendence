@@ -55,10 +55,9 @@ export class InviteListService
 
 	async remove(user: User, chanId: Channel)
 	{
-		let ret = await this.inviteListRepository.createQueryBuilder()
+		let ret = await this.inviteListRepository.createQueryBuilder("invite_list")
 			.delete()
-			.from(InviteList)
-			.where("channel = :var1 AND user = :var2", {var1: chanId, var2: user.id})
+			.where("channel = :var1 AND user = :var2", {var1: chanId.id, var2: user.id})
 			.execute();
 	}
 

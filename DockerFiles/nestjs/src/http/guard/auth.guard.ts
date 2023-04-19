@@ -17,9 +17,9 @@ export class AuthGuard implements CanActivate
 		console.log("AuthGuard");
 		const request = context.switchToHttp().getRequest();
 		let ret = await this.authStrategy.checkRequest(request);
+		console.log("ret =" + ret);
 		if (ret === 1)
 			return (true);
-		console.log("ret =" + ret);
 		if (ret === -1 || ret === -5)
 			throw new UnauthorizedException("Invalid user");
 		if (ret === -2)

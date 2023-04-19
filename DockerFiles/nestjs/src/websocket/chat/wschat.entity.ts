@@ -28,12 +28,25 @@ export class userOperationDto
 	channelname: string;
 }
 
-export class invitationOperationDto
+export class usernameOperationDto
 {
+	@IsString({message: `The username must be a string !`})
+	@IsAlphanumeric(undefined, {message: 'The username must be an alphanumeric string !'})
+	@Length(3, 20, {message: 'The username must contain between 3 and 20 caracters !'})
+	name: string;
 
 	@IsString({message: `The channel name must be a string !`})
 	@IsAlphanumeric(undefined, {message: 'The channel name must be an alphanumeric string !'})
 	@Length(3, 20, {message: 'The channel name must contain between 3 and 20 caracters !'})
+	channelname: string;
+}
+
+export class invitationOperationDto
+{
+
+	@IsString({message: `The username must be a string !`})
+	@IsAlphanumeric(undefined, {message: 'The username must be an alphanumeric string !'})
+	@Length(3, 20, {message: 'The username must contain between 3 and 20 caracters !'})
 	name: string;
 
 	@IsString({message: `The channel name must be a string !`})
@@ -78,6 +91,8 @@ export class sanctionOperationDto
 	reason: string;
 }
 
+
+
 export class kickDto
 {
 	@IsDivisibleBy(1, {message: `The id must be a integer !`})
@@ -104,7 +119,7 @@ export class messageDto
 	destination: string;
 
 	@IsString({message: `The message must be a string !`})
-	@Length(1, 135, {message: 'The message must contain between 1 and 135 caracters !'})
+	@Length(0, 135, {message: 'The message must contain between 1 and 135 caracters !'})
 	message: string
 }
 

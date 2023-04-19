@@ -36,23 +36,14 @@ export class BansService
 	updateBanEnd(user: User, channel: Channel, end: string)
 	{
 		return this.bansRepository.createQueryBuilder()
-		.update(Bans)
+		.update("bans")
+		.where("channel = :channel AND user = :user", {channel: channel.id, user: user.id})
 		.set({end: end})
-		.where("channel = :channel AND user = user", {channel: channel, user: user})
 		.execute();
 	}
 
 	create(newBan: Bans)
 	{
 		return (this.bansRepository.save(newBan));
-	}
-
-	async remove(user: User, chanId: Channel)
-	{
-		let ret = await this.bansRepository.createQueryBuilder()
-			.delete()
-			.from(Bans)
-			.where("channel = :id1 AND user = :id2", {id1: chanId, id2: user.id})
-			.execute();
 	}
 }
