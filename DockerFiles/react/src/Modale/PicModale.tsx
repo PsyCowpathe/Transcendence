@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import {useEffect } from 'react';
 import { AffMyUserPage } from "../Pages/UserPage";
-import '../NewChat/truc.css'
+import '../css/modal.css'
+
 import { AffTheUser } from "../Pages/UserModalPage";
 import ProfilePictureUploader from "../Pages/NewProfilPic";
 interface User {

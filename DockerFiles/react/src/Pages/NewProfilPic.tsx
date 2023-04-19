@@ -1,13 +1,14 @@
 import React from "react";
 import { useState } from "react";
-import { TopBar } from "./TopBar";
-import { SetParamsToGetPost } from '../Headers/VraimentIlEstCasseCouille';
+import { TopBar } from "./NavBar";
+import { SetParamsToGetPost } from '../Headers/HeaderManager';
 import { UploadPicRequest } from "../Api/UploadPicRequest";
 import { ToastContainer, toast, ToastOptions } from 'react-toastify';
+import { useNavigate } from 'react-router-dom'
 
 function ProfilePictureUploader() {
   const [image, setImage] = useState<string | null>(null);
-
+  const navigate = useNavigate()
 
   const SendToBack = (data : any) => {
     UploadPicRequest(data)
@@ -23,15 +24,29 @@ function ProfilePictureUploader() {
         console.log("CA SEND")
         console.log(response)
       })
-      .catch(error => {
+      .catch(err => {
         console.log("ERROR")
-        toast.error(error.response.data.message, {
+        toast.error(err.response.data.message, {
           position: toast.POSITION.TOP_RIGHT,
           autoClose: 2000,
           progressClassName: "my-progress-bar"
         })
+        if(err.response)
+        {
+        if (err.message !== "Request aborted")
+        {
+          if (err.message !== "Request aborted") {
+            if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+              navigate('/')
+            if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+            navigate('/Change')
+            if(err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+              navigate('/Send2FA')
+          }
+        }
+      }
 
-        console.log(error.response.data.message)
+        console.log(err.response.data.message)
       })
   }
 

@@ -1,6 +1,6 @@
 import io from 'socket.io-client';
 import { urls } from './global';
-import { SetParamsToGetPost } from './Headers/VraimentIlEstCasseCouille';
+import { SetParamsToGetPost } from './Headers/HeaderManager';
 class SocketManager {
   private chatSocket: any;
   private FriendRequestSocket: any;
@@ -50,7 +50,7 @@ class SocketManager {
   }
   initializeStatusSocket(token: string) {
     if (this.StatusSocket === null) {
-      this.StatusSocket = io(`${urls.SOCKETGAME}`, {
+      this.StatusSocket = io(`${urls.SOCKETSTATUS}`, { 
         auth: {
           token: token,
           twoFAToken: localStorage.getItem('2FA')

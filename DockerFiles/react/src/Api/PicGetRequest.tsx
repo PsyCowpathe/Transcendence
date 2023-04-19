@@ -1,7 +1,7 @@
 import react from 'react'
 import axios from 'axios'
 import { urls } from "../global"
-import { SetParamsToGetPost5 } from '../Headers/VraimentIlEstCasseCouille';
+import { SetParamsToGetPost5 } from '../Headers/HeaderManager';
 
 export async function PicGetRequest(id : number)
 {

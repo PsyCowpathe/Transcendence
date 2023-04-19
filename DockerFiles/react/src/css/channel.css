@@ -1,0 +1,63 @@
+.channel-list {
+     
+  margin-bottom: 20px;
+}
+
+.channel-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.chat-list
+{
+  height: 70vh; /* Hauteur fixe de votre conteneur */
+  overflow-x:scroll; /* Ajoute une barre de défilement verticale*/
+  scroll-behavior: smooth;
+}
+.channel-list li {
+  margin-bottom: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.channel-list li.active {
+  color: #007bff;
+  /* overflow-x: auto; */
+  /* height: 300px; */
+  
+}
+.channel-list_size {
+max-height: calc(70vh - 120px); /* ajustez la hauteur en fonction de la hauteur de votre barre latérale */
+overflow-y: auto;
+height: 70vh; /* Hauteur fixe de votre conteneur */
+overflow-x: auto; /* Ajoute une barre de défilement verticale*/
+scroll-behavior: smooth;
+}
+.add-channel-button {
+  display: block;
+  width: 100%;
+  margin-top: 20px;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  cursor: pointer;
+}
+
+.channel-header {
+  background-color: #fff;
+  padding: 20px;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.channel-header h2 {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+}
