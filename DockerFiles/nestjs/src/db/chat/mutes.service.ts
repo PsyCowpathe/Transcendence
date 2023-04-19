@@ -36,23 +36,14 @@ export class MutesService
 	updateMuteEnd(user: User, channel: Channel, end: string)
 	{
 		return this.mutesRepository.createQueryBuilder()
-		.update(Mutes)
+		.update("mutes")
+		.where("channel = :channel AND user = :user", {channel: channel.id, user: user.id})
 		.set({end: end})
-		.where("channel = :channel AND user = user", {channel: channel, user: user})
 		.execute();
 	}
 
 	create(newMute: Mutes)
 	{
 		return (this.mutesRepository.save(newMute));
-	}
-
-	async remove(user: User, chanId: Channel)
-	{
-		let ret = await this.mutesRepository.createQueryBuilder()
-			.delete()
-			.from(Mutes)
-			.where("channel = :id1 AND user = :id2", {id1: chanId, id2: user.id})
-			.execute();
 	}
 }

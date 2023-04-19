@@ -37,6 +37,7 @@ export class ChannelService
 
 	changePassword(chanId: number, newPassword: string)
 	{
+		console.log(newPassword)
 		return (this.channelRepository.update(chanId, {password: newPassword}));
 	}
 }

@@ -223,6 +223,7 @@ export class MainService
 		let inviteList = await this.inviteListService.getInvite(askMan);
 		let i = 0;
 		let data = [];
+		console.log(inviteList);
 		while (inviteList && inviteList[i])
 		{
 			data.push(inviteList[i].channel.name);
