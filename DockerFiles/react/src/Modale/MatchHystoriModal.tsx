@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import {useEffect } from 'react';
 import '../css/modal.css';
-import { Invite } from "../Pages/Invite";
+import { MatchHist } from "../Pages/MatchHistory";
 interface User {
-  name: string;
-}
+    name: string;
+    uid : number
+  }
+  
+  interface Props {
+    User: User;
+    onClose: () => void;
+  }
 
-interface Props {
-
-  onClose: () => void;
-  channel : string | null
-}
-
-const InviteModale: React.FC<Props> = ({ onClose, channel }) => {
+const InviteModale: React.FC<Props> = ({ onClose, User }) => {
   const [showModal, setShowModal] = useState(false);
 
 useEffect(() => {
@@ -32,12 +32,12 @@ useEffect(() => {
         <div className="modal-overlay">
           <div className="modal">
             <div className="modal-header">
-              <h2>Invite</h2>
+              <h2>Match History</h2>
               <button onClick={handleCloseModal}>Close</button>
             </div>
             <div className="modal-body">
              <div className="test">
-              <Invite channel={channel} />
+              <MatchHist User={User} />
               </div>
               <div/>
             </div>

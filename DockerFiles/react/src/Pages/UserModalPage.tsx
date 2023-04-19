@@ -1,6 +1,7 @@
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 import React from 'react';
 import '../css/Buttons.css';
 import { useNavigate } from 'react-router-dom'
@@ -46,6 +47,8 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
 
     if (test === false && SetParamsToGetPost().headers.Authorization !== null) {
       socketCo = socketManager.initializeStatusSocket(SetParamsToGetPost().headers.Authorization)
+      socketCo = socketManager.getStatusSocket();
+      
       console.log("socket")
       console.log(socketCo)
       test = true
@@ -58,16 +61,16 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
         position: toast.POSITION.TOP_RIGHT,
         autoClose: 2000,
         progressClassName: "my-progress-bar"
-    })
+      })
     }
-
-    const handleBanUsererror = (data : any) => {
-      toast.error(data, {
-        position: toast.POSITION.TOP_RIGHT,
-        autoClose: 2000,
-        progressClassName: "my-progress-bar"
-    })
-    }
+    
+    // const handleBanUsererror = (data : any) => {
+    //   toast.error(data, {
+    //     position: toast.POSITION.TOP_RIGHT,
+    //     autoClose: 2000,
+    //     progressClassName: "my-progress-bar"
+    // })
+    // }
     const handleDeco = (data : any) => {
       if (data.user === User.name && data.status === "Offline")
         setStatus("Offline")
@@ -75,16 +78,16 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
         setStatus("Online")
     }
     socket.removeListener("banuser", handleBanUser);
-    socket.removeListener("ChatError", handleBanUsererror);
+    // socket.removeListener("ChatError", handleBanUsererror);
     socketCo.removeListener("status", handleDeco)
     socketCo.on("status", handleDeco)
     socket.on("banuser", handleBanUser);
-    socket.on("ChatError", handleBanUsererror);
+    // socket.on("ChatError", handleBanUsererror);
     return () => {
       socketCo.off("status", handleDeco)
 
       socket.off("banuser", handleBanUser);
-      socket.off("ChatError", handleBanUsererror);
+      // socket.off("ChatError", handleBanUsererror);
     };
 
     }, [])
@@ -277,7 +280,7 @@ return(
       <h2>{user.name}</h2>
       <div className="status-indicator">
       <div className={status === "Online"? 'green-dot' : 'red-dot'}></div>
-      <span>{status =="Online" ? 'Connecté' : 'Déconnecté'}</span>
+      <span>{status =="Online" ? 'Online' : 'Offline'}</span>
     </div>
       <p className="matches-played">Matches played: {user.gameplayed}</p>
       <p className="matches-won">Matches won: {user.victory}</p>

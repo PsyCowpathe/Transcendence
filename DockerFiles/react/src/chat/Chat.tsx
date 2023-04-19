@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import 'react-toastify/dist/ReactToastify.css';
+
 import "../css/chat.css";
 import "../css/channel.css";
 import "../css/sidebar_info.css";
@@ -292,6 +294,8 @@ export function Chat() {
     const handleCreateChannel = (response: any) => {
       console.log("response")
       console.log(response)
+      console.log("----------------------asasas-asas-----------------")
+
 
       toast.success(response.message, {
         position: toast.POSITION.TOP_RIGHT,
@@ -300,9 +304,47 @@ export function Chat() {
       })
       console.log(response.channel)
       setSelectedChannel(response.channel);
+      console.log("----------------------asasas-asas-----------------")
       // setUseChan(response.channel);
-      GetMsgChan()
+      // GetMsgChan()
+
+      setChanlist([])
       GetChannel()
+
+      GetChannelInfo(response.channel)    //recupere les message du channel
+      .then((response) => {
+        console.log(response)
+        console.log("lol")
+          if (response.data !== null) {
+            const newMessages = response.data.map((message: any, index: any) => {
+              const isSent = message.username === UserName;
+              return {
+                id: index,
+                channel: selectedChannel,
+                uid: message.id,
+                user: message.username,
+                text: message.message,
+                isSent: isSent
+              };
+            });
+
+            setMessages(newMessages);
+          }
+        })
+        .catch((err) => {
+          if (err.response) {
+              if (err.message !== "Request aborted") {
+                if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+                navigate('/')
+                if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+                navigate('/Change')
+                if (err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+                navigate('/Send2FA')
+            }
+          }
+          console.log(err)
+        })
+    
       GetInvite()
 
 
@@ -439,9 +481,7 @@ export function Chat() {
         })
         .catch((err) => {
           console.log(err)
-          if (err.response) {
             if (err.response) {
-              if (err.message !== "Request aborted") {
                 if (err.message !== "Request aborted") {
                   if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
                     navigate('/')
@@ -450,8 +490,6 @@ export function Chat() {
                   if (err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
                     navigate('/Send2FA')
                 }
-              }
-            }
           }
         });
 
@@ -589,7 +627,6 @@ export function Chat() {
         .catch((err) => {
           if (err.response) {
             if (err.message !== "Request aborted") {
-              if (err.message !== "Request aborted") {
                 if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
                 navigate('/')
                 if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
@@ -597,7 +634,6 @@ export function Chat() {
                 if (err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
                 navigate('/Send2FA')
               }
-            }
           }
           console.log(err)
         })
@@ -641,14 +677,12 @@ export function Chat() {
         .catch((err) => {
           if (err.response) {
             if (err.message !== "Request aborted") {
-              if (err.message !== "Request aborted") {
                 if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
                 navigate('/')
                 if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
                 navigate('/Change')
                 if (err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
                 navigate('/Send2FA')
-              }
             }
           }
         })
@@ -689,16 +723,14 @@ export function Chat() {
       .catch((err) => {
         console.log(err)
         if (err.response) {
-          if (err.message !== "Request aborted") {
             if (err.message !== "Request aborted") {
               if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-              navigate('/')
+                navigate('/')
               if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
                 navigate('/Change')
               if (err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
                 navigate('/Send2FA')
               }
-            }
           }
         })
       }
@@ -778,7 +810,7 @@ export function Chat() {
     e.preventDefault();
     socket.emit("unbanuser", { name: UserToUnBan, channelname: selectedChannel })
     setUserToUnBan('')
-    // setSanctionManger(!SanctionManger)
+    setSanctionManger(!SanctionManger)
   }
 
   const [UserToUnMute, setUserToUnMute] = useState<any>('');
@@ -789,7 +821,7 @@ export function Chat() {
     socket.emit("unmuteuser", { name: UserToUnMute, channelname: selectedChannel })
     setUserToUnMute('')
 
-    // setSanctionManger(!SanctionManger)
+    setSanctionManger(!SanctionManger)
   }
   
     
