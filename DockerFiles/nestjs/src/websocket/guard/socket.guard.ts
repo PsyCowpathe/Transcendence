@@ -12,13 +12,11 @@ export class SocketGuard implements CanActivate
 
 	}
 
-	async canActivate(context: any) : Promise<boolean>
+	async canActivate(context: ExecutionContext) : Promise<boolean>
 	{
-		//console.log(context.args[0].handshake);
-		console.log(context.args[0].handshake.auth.token);
 		console.log("SocketGuard");
-		const tokenBearer = context.args[0].handshake.auth.token;
-		const twoFAToken = context.args[0].handshake.auth.twoFAToken;
+		const tokenBearer = context.getArgs()[0].handshake.auth.token;
+		const twoFAToken = context.getArgs()[0].handshake.auth.twoFAToken;
 		let ret = await this.socketStrategy.checkRequest(tokenBearer, twoFAToken);
 		console.log("ret = " + ret);
 		if (ret === 1)

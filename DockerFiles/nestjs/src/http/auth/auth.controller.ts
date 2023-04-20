@@ -103,7 +103,7 @@ export class AuthController
 		console.log("Try to activate 2FA")
 		let ret = await this.authService.generate2FA(req.headers.authorization);
 		if (ret === -1)
-			return (sendError(res, 401, errorMessages.NOTLOGGED));
+			return (sendError(res, 401, errorMessages.INVALIDUSER));
 		if (ret === -2)
 			return (sendError(res, 400, errorMessages.ALREADYACTIVATE));
 		return (sendSuccess(res, 200, ret));
@@ -118,7 +118,7 @@ export class AuthController
 		console.log(TwoFAForm);
 		let ret = await this.authService.twoFALogin(req.headers.authorization, TwoFAForm);
 		if (ret === -1)
-			return (sendError(res, 401, errorMessages.NOTLOGGED));
+			return (sendError(res, 401, errorMessages.INVALIDUSER));
 		if (ret === -2)
 			return (sendError(res, 400, errorMessages.INVALIDCODE));
 		let user = await this.userService.findOneByToken(req.headers.authorization);

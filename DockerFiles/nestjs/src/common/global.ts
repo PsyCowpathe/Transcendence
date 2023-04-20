@@ -16,7 +16,6 @@ export enum errorMessages
 	APIFAIL = "Request to 42 API failed, please try again !",
 	CREATEFAIL = "Failed to create user, please try again !",
 	DBFAIL = "Failed to get database object, please try again !",
-	NOTLOGGED = "You are not logged !",
 	ALREADYMM = "You already join the queue !",
 	INGAME = "You can\'t join the queue when you are in game !",
 	NOTAPLAYER = "You are not a player of this game stop lying !",

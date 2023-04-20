@@ -11,4 +11,4 @@ import { MatchHistory, MatchMaking } from './game.entity'
 	providers: [GameService],
 	exports: [GameService],
 })
-export class RelationModule {}
+export class GameModule {}
