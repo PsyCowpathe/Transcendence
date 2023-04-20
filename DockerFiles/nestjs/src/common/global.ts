@@ -71,7 +71,8 @@ export enum errorMessages
 export enum urls
 {
 	TOKEN = "https://api.intra.42.fr/oauth/token",
-	URI = "http://10.12.7.4:3000",
+	URI = "http://10.13.7.3:3000",
 	ORIGIN = "http://localhost:3000",
 	ME = "https://api.intra.42.fr/v2/me",
 }
+
