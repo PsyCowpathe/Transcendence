@@ -34,7 +34,7 @@ useEffect(() => {
 
       {showModal && (
         <div className="modal-overlay">
-          <div className="modal">
+          <div className="modaltwo">
             <div className="modal-header">
               <h2>2FA</h2>
               <button onClick={handleCloseModal}>Close</button>

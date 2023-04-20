@@ -514,9 +514,10 @@ export function Chat() {
   const handleUserClick = (useri: User | null) => {
     console.log("USERUIDDDDDD")
 
-    setSelectedUser(useri);
     if (useri !== null)
-    setGeneralName(useri.name)
+      setSelectedUser(useri);
+      
+    // setGeneralName(useri.name)
   };
 
   const handleCloseModal = () => {
@@ -543,7 +544,7 @@ export function Chat() {
     else if (UserTo) {
       console.log("-----------------------------------selectedUser---------------------------------")
       console.log(UserTo)
-      setGeneralName(UserTo)
+      // setGeneralName(UserTo)
       socket.emit("usermessage", { destination: UserTo, message: newMessage })
       const newMessageObj = { id: Date.now(), channel: '', user: UserName, userUID: UserUID, text: newMessage, isSent: true, isPriv: true };
       setMessages(prevMessages => [...prevMessages, newMessageObj]);

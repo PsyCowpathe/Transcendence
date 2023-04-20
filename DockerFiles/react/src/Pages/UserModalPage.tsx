@@ -10,7 +10,10 @@ import { PicGetRequest } from '../Api/PicGetRequest';
 import { GetUserInfo } from '../Api/GetUserInfo';
 import socketManager from '../MesSockets';
 import { SetParamsToGetPost } from '../Headers/HeaderManager';
+import MatchHistMod from '../Modale/MatchHystoriModal';
 let test : boolean = false;
+let tt : boolean = true;
+let test2 : boolean = false;
 interface User {
   name: string;
   uid: number;
@@ -37,7 +40,7 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
     const [ShowBan, setShowBan] = useState<boolean>(false)
     const [timer , setTimer] = useState<number>(0)
     const [reason, setReason] = useState<string>("")
-    
+    let socketFr = socketManager.getFriendRequestSocket();
     const socket = socketManager.getChatSocket();
     let socketCo = socketManager.getStatusSocket();
 
@@ -54,6 +57,25 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
       test = true
     }
   }
+
+  if (tt === true && socketFr && socketFr.connected !== false) {
+    tt = false;
+  }
+  if (tt === true) {
+    socketFr = socketManager.getFriendRequestSocket()
+    console.log(socketFr)
+    if (socketFr == null) {
+      if (test2 === false && SetParamsToGetPost().headers.Authorization !== null) {
+        socketFr = socketManager.initializeFriendRequestSocket(SetParamsToGetPost().headers.Authorization)
+        console.log(socketFr)
+        test2 = true
+      }
+    }
+    if (socketFr && socketFr.connected !== false) {
+      tt = false;
+    }
+    console.log(socketFr)
+  }
   useEffect(() => {
 
     const handleBanUser = (data : any) => {
@@ -63,31 +85,33 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
         progressClassName: "my-progress-bar"
       })
     }
-    
-    // const handleBanUsererror = (data : any) => {
-    //   toast.error(data, {
-    //     position: toast.POSITION.TOP_RIGHT,
-    //     autoClose: 2000,
-    //     progressClassName: "my-progress-bar"
-    // })
-    // }
+
     const handleDeco = (data : any) => {
       if (data.user === User.name && data.status === "Offline")
         setStatus("Offline")
       if (data.user === User.name && data.status === "Online")
         setStatus("Online")
     }
+    const handleFriendRequest = (response: any) => {
+      console.log("response----------------------------------------------------------")
+      toast.success(response, {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 2000,
+        progressClassName: "my-progress-bar"
+      })
+    }
     socket.removeListener("banuser", handleBanUser);
-    // socket.removeListener("ChatError", handleBanUsererror);
+    socketFr.removeListener('blockuser');
     socketCo.removeListener("status", handleDeco)
     socketCo.on("status", handleDeco)
+    socketFr.on("blockuser", handleFriendRequest);
+
     socket.on("banuser", handleBanUser);
-    // socket.on("ChatError", handleBanUsererror);
     return () => {
       socketCo.off("status", handleDeco)
+      socket.off("blockuser");
 
-      socket.off("banuser", handleBanUser);
-      // socket.off("ChatError", handleBanUsererror);
+      socketFr.off("banuser", handleBanUser);
     };
 
     }, [])
@@ -211,7 +235,16 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
   setShowMute(false)
   })
 
+/////////////////////////////////////////////////////BLOCK
 
+
+
+const block = async () => {
+  console.log("BLOCK :")
+  const num : number = User.uid
+  console.log("WTF" + num)
+  await socketFr.emit("blockuser", { user : num } );
+}
 //////////////////////////////////////////////////////MUTE
 const Mute =  (e : React.FormEvent<HTMLFormElement>) =>
 {
@@ -245,6 +278,10 @@ const Kick =  (e : React.FormEvent<HTMLFormElement>) =>
   setShowKick(!ShowKick)
 
 }
+const DuelManager = () =>
+{
+  alert("WoW")
+}
 
 const [ShowKick, setShowKick] = useState<boolean>(false)
 const onClickfour = (() =>
@@ -255,23 +292,18 @@ const onClickfour = (() =>
 })
 
 const navigate = useNavigate();
-/***************************************************************************POUR LEO LE DUEL PONG ********************************/
-const DuelManager = () =>
+const [activeHist, setActiveHist] = useState<boolean>(false)
+
+const ActiveHist = () =>
 {
-  // => User.uid
-  //socket.emit("TAROUTE", { id(ou name jsp comme tu l aura appeller dansle back): User.uid )
-
-  alert("Duel Manager")
-
-
-
+  setActiveHist(!activeHist)
 }
-/***************************************************************************POUR LEO LE DUeK PONG ********************************/
 
-console.log("----------------------------------fdsnbhyfjakbkujfbasd--------------")
 
-console.log(status)
-console.log("-----dsadasdas-----------------------------fdsnbhyfjakbkujfbasd--------------")
+
+
+
+
 return(
     <div className="App">
 
@@ -285,6 +317,8 @@ return(
       <p className="matches-played">Matches played: {user.gameplayed}</p>
       <p className="matches-won">Matches won: {user.victory}</p>
       <p className="matches-lost">Matches lost: {user.defeate}</p>
+       <button className="add-message-button" onClick={ActiveHist}>Match History</button> 
+      {activeHist && <MatchHistMod onClose={ActiveHist} User={User} />}
     </div>
   <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
     <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"><button style={{ fontSize: "1.2em", padding: "0.5em 2em", borderRadius: "5px", backgroundColor: "#4285F4", color: "#FFFFFF", border: "none", boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)", cursor: "pointer" }}>Visiter mon site web</button></a>
@@ -309,6 +343,7 @@ return(
       </form>
     </div>
       } 
+      <button className= "add-message-button"onClick={block}>Block</button>
       {!ShowKick && <button className="add-message-button" onClick={onClickfour}>Kick</button>}
      {ShowKick && 
       <div>

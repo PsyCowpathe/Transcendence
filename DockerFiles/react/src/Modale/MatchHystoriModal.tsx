@@ -12,7 +12,7 @@ interface User {
     onClose: () => void;
   }
 
-const InviteModale: React.FC<Props> = ({ onClose, User }) => {
+const MatchHistMod: React.FC<Props> = ({ onClose, User }) => {
   const [showModal, setShowModal] = useState(false);
 
 useEffect(() => {
@@ -48,4 +48,4 @@ useEffect(() => {
   );
 };
 
-export default InviteModale;
+export default MatchHistMod;

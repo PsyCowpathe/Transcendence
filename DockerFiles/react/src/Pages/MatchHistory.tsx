@@ -1,5 +1,5 @@
-import react from 'react';
-import { useEffect } from 'react';
+import React from 'react';
+import { useEffect, useState } from 'react';
 import { GetMatchHistory } from '../Api/GetMatchHistory';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,18 +8,33 @@ interface User {
     uid : number
   }
   
+interface Match {
+  scoreP1 : number;
+  scoreP2 : number;
+  nameP1  : string;
+  nameP2  : string;
+}
+
   interface Props {
     user: User;
   }
 export function MatchHist({User} : {User : User})
 {
     const navigate = useNavigate()
-    const [History , setHistory] = react.useState<any>([])
+    const [History , setHistory] = useState<Match[]>([])
 
     useEffect(() => {
         GetMatchHistory(User.uid)
         .then((res) => {
-            setHistory(res.data)
+          setHistory(res.data.map((match : any) => {
+            return ({
+              scoreP1 : match.scoreP1,
+              scoreP2 : match.scoreP2,
+              nameP1  : match.nameP1,
+              nameP2  : match.nameP2
+            })
+          })
+          )
         }
         )
         .catch ((err) => {
@@ -40,6 +55,15 @@ export function MatchHist({User} : {User : User})
 return(
     <div>
         <h1>Match History</h1>
+        <div>
+            {History.map((match) => {
+                return (
+                    <div>
+                        <p>{match.nameP1} {match.scoreP1} - {match.scoreP2} {match.nameP2}</p>
+                    </div>)
+            })}
+        </div>
     </div>
+
 )
 }

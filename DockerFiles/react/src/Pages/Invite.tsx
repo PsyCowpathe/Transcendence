@@ -16,8 +16,6 @@ export function Invite({channel} : {channel : string | null})
     // console.log(channel)
     const inviteFriend = (e : any) => {
         e.preventDefault()
-        console.log("invite friend")
-        console.log(SendInvite)
         socket.emit("createinvitation", {name : SendInvite, channelname: channel})
         setSendInvite("" )
     }
@@ -25,8 +23,6 @@ export function Invite({channel} : {channel : string | null})
     const deleteInvite = (e : any) => {
         e.preventDefault()
 
-        console.log("delete invite")
-        console.log(DeleteInvite)
         socket.emit("deleteinvitation", {name : DeleteInvite, channelname: channel})
         setDeleteInvite("")
     }

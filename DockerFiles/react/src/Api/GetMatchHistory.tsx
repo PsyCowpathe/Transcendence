@@ -6,6 +6,6 @@ import { SetParamsToGetPost4 } from '../Headers/HeaderManager';
 export async function GetMatchHistory(user : number)
 {
     const config : any = SetParamsToGetPost4(user)
-    let ret = await axios.get(`${urls.SERVER}/main/resumematch`, config);
+    let ret = await axios.get(`${urls.SERVER}/main/matchresume`, config);
     return(ret);
 }

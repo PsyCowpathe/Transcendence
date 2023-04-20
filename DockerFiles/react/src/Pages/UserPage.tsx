@@ -541,7 +541,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
         <h3>Blocked Friend</h3>
         <ul>
           {blockedList.map((Block) => (
-            <li key={Block.id}>{Block.name} <button onClick={() => unblock(Block.id)}>unblock</button></li>
+            <li key={Block.id}>{Block.name} <button className={"add-message-button"}onClick={() => unblock(Block.id)}>unblock</button></li>
           ))}
         </ul>
       </div>
