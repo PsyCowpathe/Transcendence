@@ -85,7 +85,7 @@ export class MainController
 		console.log(channel.channelName);
 		let ret = await this.mainService.resumeChannel(req.headers.authorization, channel.channelName);
 		if (ret === -1)
-			return (sendError(res, 401, errorMessages.NOTLOGGED));
+			return (sendError(res, 401, errorMessages.INVALIDUSER));
 		if (ret === -2)
 			return (sendError(res, 400, errorMessages.CHANNELDONTEXIST));
 		if (ret === -3)
@@ -102,7 +102,7 @@ export class MainController
 		console.log(userId);
 		let ret = await this.mainService.resumeprivate(req.headers.authorization, userId.id);
 		if (ret === -1)
-			return (sendError(res, 401, errorMessages.NOTLOGGED));
+			return (sendError(res, 401, errorMessages.INVALIDUSER));
 		if (ret === -2)
 			return (sendError(res, 400, errorMessages.INVALIDNAME));
 		return (sendSuccess(res, 200, ret));
@@ -115,7 +115,7 @@ export class MainController
 		console.log("get channel list");
 		let ret = await this.mainService.getChannelList(req.headers.authorization);
 		if (ret === -1)
-			return (sendError(res, 401, errorMessages.NOTLOGGED));
+			return (sendError(res, 401, errorMessages.INVALIDUSER));
 		console.log(ret);
 		return (sendSuccess(res, 200, ret));
 	}
@@ -125,14 +125,9 @@ export class MainController
 	async getFriends(@Req() req: Request, @Res() res: Response)
 	{
 		console.log("get friend list");
-		let tmp = await this.userService.findOneByToken(req.headers.authorization);
-		if (tmp)
-		console.log(tmp.name);
-
-
 		let ret = await this.mainService.getFriends(req.headers.authorization);
 		if (ret === -1)
-			return (sendError(res, 401, errorMessages.NOTLOGGED));
+			return (sendError(res, 401, errorMessages.INVALIDUSER));
 		console.log(ret);
 		return (sendSuccess(res, 200, ret));
 	}
@@ -144,7 +139,7 @@ export class MainController
 		console.log("get friend request list");
 		let ret = await this.mainService.getFriendRequest(req.headers.authorization);
 		if (ret === -1)
-			return (sendError(res, 401, errorMessages.NOTLOGGED));
+			return (sendError(res, 401, errorMessages.INVALIDUSER));
 		return (sendSuccess(res, 200, ret));
 	}
 
@@ -155,7 +150,7 @@ export class MainController
 		console.log("get blocked list");
 		let ret = await this.mainService.getBlocked(req.headers.authorization);
 		if (ret === -1)
-			return (sendError(res, 401, errorMessages.NOTLOGGED));
+			return (sendError(res, 401, errorMessages.INVALIDUSER));
 		return (sendSuccess(res, 200, ret));
 	}
 
@@ -166,8 +161,19 @@ export class MainController
 		console.log("get channel invitation");
 		let ret = await this.mainService.getChannelInvite(req.headers.authorization);
 		if (ret === -1)
-			return (sendError(res, 401, errorMessages.NOTLOGGED));
+			return (sendError(res, 401, errorMessages.INVALIDUSER));
 		return (sendSuccess(res, 200, ret));
 
+	}
+
+	@Get('matchresume')
+	@UseGuards(AuthGuard)
+	async getHistory(@Req() req: Request, @Res() res: Response)
+	{
+		console.log("get match history");
+		let ret = await this.mainService.getHistory(req.headers.authorization);
+		if (ret === -1)
+			return (sendError(res, 401, errorMessages.INVALIDUSER));
+		return (sendSuccess(res, 200, ret));
 	}
 }

@@ -66,7 +66,7 @@ export class WsRelationService
 	}
 
 
-	async acceptFriendRequest(sender: number, target: number) : Promise<number>
+	async acceptFriendRequest(sender: number, target: number) : Promise<number | string>
 	{
 		let yesMan = await this.userService.findOneById(sender);
 		let askMan = await this.userService.findOneById(target);
@@ -81,12 +81,12 @@ export class WsRelationService
 			let clientToNotify = this.sockets.get(askMan.id);
 			if (clientToNotify !== undefined)
 				clientToNotify.emit("acceptfriendrequest", `${yesMan.name} accepted your friend request !`);
-			return (1);
+			return (yesMan.name);
 		}
 		return (-3);
 	}
 
-	async refuseFriendRequest(sender: number, target: number) : Promise<number>
+	async refuseFriendRequest(sender: number, target: number) : Promise<number | string>
 	{
 		let noMan = await this.userService.findOneById(sender);
 		let askMan = await this.userService.findOneById(target);
@@ -99,7 +99,7 @@ export class WsRelationService
 			let clientToNotify = this.sockets.get(askMan.id);
 			if (clientToNotify !== undefined)
 				clientToNotify.emit("refusefriendrequest", `${noMan.name} refused your friend request !`);
-			return (1);
+			return (noMan.name);
 		}
 		return (-2);
 	}
@@ -117,7 +117,7 @@ export class WsRelationService
 			let clientToNotify = this.sockets.get(victim.id);
 			if (clientToNotify !== undefined)
 				clientToNotify.emit("deletefriend", `You are no longer friend with ${deletor.name} !`);
-			return (1);
+			return (victim.name);
 		}
 		return (-2);
 	}
@@ -138,7 +138,7 @@ export class WsRelationService
 		let clientToNotify = this.sockets.get(annoyingMan.id);
 		if (clientToNotify !== undefined)
 			clientToNotify.emit("blockuser", `You can no longer interact with ${angryMan.name} !`);
-		return (1);
+		return (annoyingMan.name);
 	}
 
 	async unBlockUser(sender: number, target: number)
@@ -154,6 +154,6 @@ export class WsRelationService
 		let clientToNotify = this.sockets.get(forgivedMan.id);
 		if (clientToNotify !== undefined)
 			clientToNotify.emit("blockuser", `You can now interact with ${forgivingMan.name} !`);
-		return (1);
+		return (forgivedMan.name);
 	}
 }

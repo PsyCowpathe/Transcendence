@@ -7,6 +7,7 @@ import { PrivateService } from '../../db/chat/private.service';
 import { JoinChannelService } from '../../db/chat/joinchannel.service';
 import { RelationService } from '../../db/relation/relation.service';
 import { InviteListService } from '../../db/chat/invitelist.service';
+import { GameService } from '../../db/game/game.service';
 import { User } from '../../db/user/user.entity';
 
 import * as fs from 'fs';
@@ -20,7 +21,9 @@ export class MainService
 				private readonly joinChannelService : JoinChannelService,
 				private readonly relationService : RelationService,
 				private readonly privateService : PrivateService,
-				private readonly inviteListService :InviteListService)
+				private readonly inviteListService : InviteListService,
+				private readonly gameService : GameService,
+			   )
 	{
 
 	}
@@ -69,7 +72,7 @@ export class MainService
 		return (1);
 	}
 
-	async resumeChannel(token: string | undefined, channelName: string) : Promise <number | any>
+	async resumeChannel(token: string | undefined, channelName: string) : Promise<number | any>
 	{
 		const user = await this.userService.findOneByToken(token);
 		if (user === null)
@@ -110,7 +113,7 @@ export class MainService
 		return (data);
 	}
 
-	async resumeprivate(token: string | undefined, userId: number) : Promise <number | any>
+	async resumeprivate(token: string | undefined, userId: number) : Promise<number | any>
 	{
 		const receiver = await this.userService.findOneByToken(token);
 		if (receiver === null)
@@ -135,7 +138,7 @@ export class MainService
 		return (data);
 	}
 
-	async getChannelList(token: string | undefined) : Promise <number | String[]>
+	async getChannelList(token: string | undefined) : Promise<number | String[]>
 	{
 		const askMan = await this.userService.findOneByToken(token);
 		if (askMan === null)
@@ -151,7 +154,7 @@ export class MainService
 		return (data);
 	}
 
-	async getFriends(token: string | undefined) : Promise <number | any[]>
+	async getFriends(token: string | undefined) : Promise<number | any[]>
 	{
 		const askMan = await this.userService.findOneByToken(token);
 		if (askMan === null)
@@ -172,7 +175,7 @@ export class MainService
 		return (data);
 	}
 
-	async getFriendRequest(token: string | undefined) : Promise <number | any[]>
+	async getFriendRequest(token: string | undefined) : Promise<number | any[]>
 	{
 		const askMan = await this.userService.findOneByToken(token);
 		if (askMan === null)
@@ -194,7 +197,7 @@ export class MainService
 		return (data);
 	}
 
-	async getBlocked(token: string | undefined) : Promise <number | any[]>
+	async getBlocked(token: string | undefined) : Promise<number | any[]>
 	{
 		const askMan = await this.userService.findOneByToken(token);
 		if (askMan === null)
@@ -215,7 +218,7 @@ export class MainService
 		return (data);
 	}
 
-	async getChannelInvite(token: string | undefined) : Promise <number | String[]>
+	async getChannelInvite(token: string | undefined) : Promise<number | String[]>
 	{
 		const askMan = await this.userService.findOneByToken(token);
 		if (askMan === null)
@@ -223,11 +226,32 @@ export class MainService
 		let inviteList = await this.inviteListService.getInvite(askMan);
 		let i = 0;
 		let data = [];
-		console.log(inviteList);
 		while (inviteList && inviteList[i])
 		{
 			data.push(inviteList[i].channel.name);
 			i++;
+		}
+		return (data);
+	}
+
+	async getHistory(token: string | undefined) : Promise<number | any[]>
+	{
+		const askMan = await this.userService.findOneByToken(token);
+		if (askMan === null)
+			return (-1);
+		let matchHistory = await this.gameService.getMatchHistory(askMan);
+		let i = 0;
+		let data = [];
+		while (matchHistory && matchHistory[i])
+		{
+			let tmp =
+			{
+				scoreP1 : matchHistory[i].score1,
+				scoreP2 : matchHistory[i].score2,
+				P1 : matchHistory[i].user1.name,
+				P2 : matchHistory[i].user2.name,
+			}
+			data.push(tmp);
 		}
 		return (data);
 	}

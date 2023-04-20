@@ -77,7 +77,6 @@ export class JoinChannelService
 	{
 		let ret = await this.joinChannelRepository.createQueryBuilder("join_channel")
 			.delete()
-			//.from("join_channel")
 			.where("channel = :id1 AND user = :id2", {id1: chanId.id, id2: user.id})
 			.execute();
 	}

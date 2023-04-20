@@ -16,10 +16,10 @@ export enum errorMessages
 	APIFAIL = "Request to 42 API failed, please try again !",
 	CREATEFAIL = "Failed to create user, please try again !",
 	DBFAIL = "Failed to get database object, please try again !",
-	NOTLOGGED = "You are not logged !",
 	ALREADYMM = "You already join the queue !",
 	INGAME = "You can\'t join the queue when you are in game !",
 	NOTAPLAYER = "You are not a player of this game stop lying !",
+	MISSINGURI = "No URI specified in env please contatc a server administrator !",
 
 //=====				Relation			=====
 
@@ -71,8 +71,6 @@ export enum errorMessages
 export enum urls
 {
 	TOKEN = "https://api.intra.42.fr/oauth/token",
-	URI = "http://10.13.7.3:3000",
-	ORIGIN = "http://localhost:3000",
 	ME = "https://api.intra.42.fr/v2/me",
 }
 

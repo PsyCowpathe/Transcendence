@@ -43,7 +43,6 @@ export class usernameOperationDto
 
 export class invitationOperationDto
 {
-
 	@IsString({message: `The username must be a string !`})
 	@IsAlphanumeric(undefined, {message: 'The username must be an alphanumeric string !'})
 	@Length(3, 20, {message: 'The username must contain between 3 and 20 caracters !'})
@@ -69,7 +68,6 @@ export class channelOperationDto
 
 export class sanctionOperationDto
 {
-
 	@IsDivisibleBy(1, {message: `The id must be a integer !`})
 	@IsPositive({message: 'The id entered must be greater than 0'})
 	@IsNotEmpty({message: 'The id can\'t be empty !'})
@@ -90,8 +88,6 @@ export class sanctionOperationDto
 	@Length(3, 60, {message: 'The reason must contain between 3 and 60 caracters !'})
 	reason: string;
 }
-
-
 
 export class kickDto
 {

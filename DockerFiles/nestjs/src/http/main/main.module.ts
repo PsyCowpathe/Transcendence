@@ -7,11 +7,12 @@ import { AuthStrategy } from '../guard/auth.strategy';
 import { UserModule } from '../../db/user/user.module';
 import { ChatModule } from '../../db/chat/chat.module';
 import { RelationModule } from '../../db/relation/relation.module';
+import { GameModule } from '../../db/game/game.module';
 import { AuthModule } from '../auth/auth.module';
 
 @Module
 ({
-	imports: [UserModule, ChatModule, RelationModule, AuthModule],
+	imports: [UserModule, ChatModule, RelationModule, AuthModule, GameModule],
 	controllers: [MainController],
 	providers: [MainService, AuthStrategy],
 })

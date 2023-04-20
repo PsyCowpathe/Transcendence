@@ -78,7 +78,7 @@ export class WsRelationGateway implements OnGatewayConnection
 			return (client.emit("RelationError", errorMessages.ALREADYFRIEND));
 		if (ret === -3)
 			return (client.emit("RelationError", errorMessages.NOREQUEST));
-		client.emit("acceptfriendrequest", `You and ${data.user} are now friends !`);
+		client.emit("acceptfriendrequest", `You and ${ret} are now friends !`);
 	}
 
 	@UseGuards(SocketGuard)
@@ -98,7 +98,7 @@ export class WsRelationGateway implements OnGatewayConnection
 			return (client.emit("RelationError", errorMessages.INVALIDNAME));
 		if (ret === -2)
 			return (client.emit("RelationError", errorMessages.NOREQUEST));
-		client.emit("refusefriendrequest", `You denied ${data.user} friend's request !`);
+		client.emit("refusefriendrequest", `You denied ${ret} friend's request !`);
 	}
 
 	@UseGuards(SocketGuard)
@@ -118,7 +118,7 @@ export class WsRelationGateway implements OnGatewayConnection
 			return (client.emit("RelationError", errorMessages.INVALIDNAME));
 		if (ret === -2)
 			return (client.emit("RelationError", errorMessages.NOTFRIEND));
-		client.emit("deletefriend", `You and ${data.user} are no longer friend !`);
+		client.emit("deletefriend", `You and ${ret} are no longer friend !`);
 	}
 
 	@UseGuards(SocketGuard)
@@ -140,7 +140,7 @@ export class WsRelationGateway implements OnGatewayConnection
 			return (client.emit("RelationError", errorMessages.YOUARECRINGE));
 		if (ret === -3)
 			return (client.emit("RelationError", errorMessages.ALREADYIGNORED));
-				client.emit("blockuser", `You now ignore ${data.user} !`);
+		client.emit("blockuser", `You now ignore ${ret} !`);
 	}
 
 	@UseGuards(SocketGuard)
@@ -160,6 +160,6 @@ export class WsRelationGateway implements OnGatewayConnection
 			return (client.emit("RelationError", errorMessages.INVALIDNAME));
 		if (ret === -2)
 			return (client.emit("RelationError", errorMessages.NOTIGNORED));
-		client.emit("unblockuser", `You no longer ignore ${data.user} !`);
+		client.emit("unblockuser", `You no longer ignore ${ret} !`);
 	}
 }

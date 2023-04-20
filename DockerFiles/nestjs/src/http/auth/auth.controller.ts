@@ -27,23 +27,27 @@ export class AuthController
 	}
 
 	@Get('redirect')
-	async Redirect(@Req() req: Request)
+	async Redirect(@Req() req: Request, @Res() res: Response)
 	{
 		console.log("Redirection");
 		let ret = await this.authService.isTokenValid(req.headers.authorization);
 		if (ret === true)
 		{
 			console.log('Token valide');
-			return (`/affUser`);
+			return (sendSuccess(res, 201, "/affUser"));
 		}
 		else
 		{
 			console.log('Token invalide');
-			let CLIENT_ID = process.env.UID
+			let URI = process.env.URI;
+			if (URI === undefined)
+				return (sendError(res, 500, errorMessages.MISSINGURI));
+			let CLIENT_ID = process.env.UID;
 			random = crypto.randomBytes(20).toString('hex');
-			return (`https://api.intra.42.fr/oauth/authorize?client_id=${CLIENT_ID}
-			&redirect_uri=${encodeURIComponent(urls.URI)}&response_type=code&scope=public
-			&state=${random}`);
+			let link = `https://api.intra.42.fr/oauth/authorize?client_id=${CLIENT_ID}
+			&redirect_uri=${encodeURIComponent(URI)}&response_type=code&scope=public
+			&state=${random};`
+			return (sendSuccess(res, 201, link));
 		}
 	}
 
@@ -103,7 +107,7 @@ export class AuthController
 		console.log("Try to activate 2FA")
 		let ret = await this.authService.generate2FA(req.headers.authorization);
 		if (ret === -1)
-			return (sendError(res, 401, errorMessages.NOTLOGGED));
+			return (sendError(res, 401, errorMessages.INVALIDUSER));
 		if (ret === -2)
 			return (sendError(res, 400, errorMessages.ALREADYACTIVATE));
 		return (sendSuccess(res, 200, ret));
@@ -118,7 +122,7 @@ export class AuthController
 		console.log(TwoFAForm);
 		let ret = await this.authService.twoFALogin(req.headers.authorization, TwoFAForm);
 		if (ret === -1)
-			return (sendError(res, 401, errorMessages.NOTLOGGED));
+			return (sendError(res, 401, errorMessages.INVALIDUSER));
 		if (ret === -2)
 			return (sendError(res, 400, errorMessages.INVALIDCODE));
 		let user = await this.userService.findOneByToken(req.headers.authorization);
