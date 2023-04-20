@@ -27,23 +27,27 @@ export class AuthController
 	}
 
 	@Get('redirect')
-	async Redirect(@Req() req: Request)
+	async Redirect(@Req() req: Request, @Res() res: Response)
 	{
 		console.log("Redirection");
 		let ret = await this.authService.isTokenValid(req.headers.authorization);
 		if (ret === true)
 		{
 			console.log('Token valide');
-			return (`/affUser`);
+			return (sendSuccess(res, 201, "/affUser"));
 		}
 		else
 		{
 			console.log('Token invalide');
-			let CLIENT_ID = process.env.UID
+			let URI = process.env.URI;
+			if (URI === undefined)
+				return (sendError(res, 500, errorMessages.MISSINGURI));
+			let CLIENT_ID = process.env.UID;
 			random = crypto.randomBytes(20).toString('hex');
-			return (`https://api.intra.42.fr/oauth/authorize?client_id=${CLIENT_ID}
-			&redirect_uri=${encodeURIComponent(urls.URI)}&response_type=code&scope=public
-			&state=${random}`);
+			let link = `https://api.intra.42.fr/oauth/authorize?client_id=${CLIENT_ID}
+			&redirect_uri=${encodeURIComponent(URI)}&response_type=code&scope=public
+			&state=${random};`
+			return (sendSuccess(res, 201, link));
 		}
 	}
 

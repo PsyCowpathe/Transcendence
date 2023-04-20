@@ -37,7 +37,7 @@ export class AuthService
 			client_id: process.env.UID, 
 			client_secret: process.env.SECRET,
 			code: token.code,
-			redirect_uri : urls.URI,
+			redirect_uri : process.env.URI,
 			state: token.state,
 		}
 		const response = await axios.post(urls.TOKEN, user)

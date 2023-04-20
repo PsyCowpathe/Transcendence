@@ -19,6 +19,7 @@ export enum errorMessages
 	ALREADYMM = "You already join the queue !",
 	INGAME = "You can\'t join the queue when you are in game !",
 	NOTAPLAYER = "You are not a player of this game stop lying !",
+	MISSINGURI = "No URI specified in env please contatc a server administrator !",
 
 //=====				Relation			=====
 
@@ -70,7 +71,5 @@ export enum errorMessages
 export enum urls
 {
 	TOKEN = "https://api.intra.42.fr/oauth/token",
-	URI = "http://10.12.7.4:3000",
-	ORIGIN = "http://localhost:3000",
 	ME = "https://api.intra.42.fr/v2/me",
 }
