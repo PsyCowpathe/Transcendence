@@ -29,21 +29,43 @@ interface chiant {
 	const localStorage = window.localStorage;
 	async function onClick ()
 	{
-
-		try
+		console.log("WTF ??/")
+		redirectTo42API()
+		.then(response =>
 		{
-			const { data } = await redirectTo42API()
-			window.location.assign(data)
-		}
-		catch (e)
-		{  
-			console.error(e)
-		}
+			console.log(response.data)
+			console.log("data-------------------------------------------------------------")
+			console.log(response.data)
+			window.location.assign(response.data)
+		})
+		.catch(error =>
+		{
+			console.log("WTF?")
+			console.log(error.response)
+		});
+	// }
+	// 	console.log("coucou je commece")
+	// 	try
+	// 	{
+	// 	console.log("coucou je try")
+
+	// 	const { data } = await redirectTo42API()
+	// 	console.log(data.data)
+
+	// 		window.location.assign(data)
+	// 	}
+	// 	catch (e)
+	// 	{  
+	// 	console.log("coucou je catch")
+	// 			console.log(e)
+	// 		console.error(e)
+	// 	}
 	}
 
 
 	async  function  handleToken()
 	{
+		console.log("FDOP")
 		const localStorage = window.localStorage;
 	
 		if (tokenForm.code != null)

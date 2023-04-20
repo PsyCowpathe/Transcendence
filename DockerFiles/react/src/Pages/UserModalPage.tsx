@@ -79,6 +79,7 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
   useEffect(() => {
 
     const handleBanUser = (data : any) => {
+      console.log("COUCOUUUUUUUUUUUUUUUUUUUUUU U A UN BANNNNNN")
       toast.success(data, {
         position: toast.POSITION.TOP_RIGHT,
         autoClose: 2000,
@@ -271,8 +272,10 @@ const onClickTree = (() =>
 const Kick =  (e : React.FormEvent<HTMLFormElement>) =>
 {
   e.preventDefault()
+  const uii : number =  User.uid.valueOf()
+  console.log(uii)
   if (Channel !== '')
-    socket.emit("kickuser", { id: User.uid, channelname: Channel, reason: reason })
+    socket.emit("kickuser", { id: uii, channelname: Channel, reason: reason })
 
   setReason("")
   setShowKick(!ShowKick)
@@ -359,4 +362,8 @@ return(
   </div><ToastContainer/>
 </div>
 );
+}
+
+function isnum(uid: number) {
+  throw new Error('Function not implemented.');
 }

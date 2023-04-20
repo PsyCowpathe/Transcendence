@@ -252,11 +252,15 @@ export function Chat() {
     }
     const handleKickuser = (response: any) => {
       console.log(response)
+      console.log(`You successfully kicked user ${response.user} !`)
+      if (response.message !== `You successfully kicked user ${response.user} !`) {
+        console.log("NOOOOOOOOOOOOON")
       GetChannel()
       setMessages([])
       setSelectedChannel('')
       setGeneralName('')
       setChanToDelete('')
+      }
       toast.success(response.message, {
         position: toast.POSITION.TOP_RIGHT,
         autoClose: 2000,

@@ -365,9 +365,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
   const AskRequest = async (event: any) => {
     event.preventDefault()
     //emit  
-    console.log("xljdslhnvklzfdn--------------------")
     await socket.emit("sendfriendrequest", userAsk);
-    console.log("xljdslhnvklzfdn--------------------")
     setUserAsk({ user: '' })
 
   }
@@ -383,14 +381,11 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
   /*FAIT*/
 
   const Accept = async (user: number) => {
-    console.log("ACCEPT :")
-    console.log(user)
     setUserAccept({ user: user })
     await socket.emit("acceptfriendrequest", { user });
   }
 
   const Acceptnow = async (userAs: user) => {
-    console.log(userAs)
     await socket.emit("acceptfriendrequest", userAs);
   }
 
@@ -402,14 +397,11 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
 
 
   const Refused = async (user: number) => {
-    console.log("USER REFUSE ?")
-    console.log(user)
     await socket.emit("refusefriendrequest", { user });
   }
 
 
   const Refusednow = async (userRef: user) => {
-    console.log(userRef)
     await socket.emit("refusefriendrequest", userRef);
   }
 
@@ -419,9 +411,6 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
 
 
   const block = async (user: number) => {
-    console.log("BLOCK :")
-    console.log(user)
-    console.log("WTF" + user)
     await socket.emit("blockuser", { user });
   }
 
@@ -538,7 +527,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
         </ul>
       </div>
       <div className="Blocked-list">
-        <h3>Blocked Friend</h3>
+        <h3>Blocked Users</h3>
         <ul>
           {blockedList.map((Block) => (
             <li key={Block.id}>{Block.name} <button className={"add-message-button"}onClick={() => unblock(Block.id)}>unblock</button></li>
