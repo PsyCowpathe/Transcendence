@@ -29,13 +29,9 @@ interface chiant {
 	const localStorage = window.localStorage;
 	async function onClick ()
 	{
-		console.log("WTF ??/")
 		redirectTo42API()
 		.then(response =>
 		{
-			console.log(response.data)
-			console.log("data-------------------------------------------------------------")
-			console.log(response.data)
 			window.location.assign(response.data)
 		})
 		.catch(error =>
@@ -65,7 +61,6 @@ interface chiant {
 
 	async  function  handleToken()
 	{
-		console.log("FDOP")
 		const localStorage = window.localStorage;
 	
 		if (tokenForm.code != null)

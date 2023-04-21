@@ -30,7 +30,7 @@ export function Set2FA ()
     e.preventDefault()
     let config = SetParamsToGetPost()
     Send2FA(Code2FA)
-    .then((res) =>
+    .then(async (res) =>
     {
       toast.success("2FA login method succesfully activaded" , {
         position: toast.POSITION.TOP_RIGHT,
@@ -40,8 +40,10 @@ export function Set2FA ()
     setOpen(false)
     console.log(res.data.newFA)
     localStorage.setItem('2FA', res.data.newFA)
-    socketManager.initializeChatSocket(SetParamsToGetPost().headers.Authorization)
-			socketManager.initializeFriendRequestSocket(SetParamsToGetPost().headers.Authorization)
+    await socketManager.initializeChatSocket(SetParamsToGetPost().headers.Authorization)
+    await socketManager.initializeFriendRequestSocket(SetParamsToGetPost().headers.Authorization)
+    await socketManager.initializePongSocket(SetParamsToGetPost().headers.Authorization)
+    await socketManager.initializeStatusSocket(SetParamsToGetPost().headers.Authorization)
     })
     .catch((err) =>
     {

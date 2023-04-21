@@ -13,9 +13,8 @@ class SocketManager {
     this.PongSocket = null;
     this.StatusSocket = null;
   }
-
+ 
   initializeChatSocket(token: string) {
-    if (this.chatSocket === null) {
       this.chatSocket = io(`${urls.SOCKETCHAT}/`, {
         auth: {
           token: token,
@@ -24,39 +23,32 @@ class SocketManager {
         }
       });
 
-    }
 
   }
   initializeFriendRequestSocket(token: string) {
-    if (this.FriendRequestSocket === null) {
       this.FriendRequestSocket = io(`${urls.SOCKETFRIENDSHIP}`, {
         auth: {
           token: token,
           twoFAToken: localStorage.getItem('2FA')
         }
       });
-    }
   }
 
   initializePongSocket(token: string) {
-    if (this.PongSocket === null) {
       this.PongSocket = io(`${urls.SOCKETGAME}`, {
         auth: {
           token: token,
           twoFAToken: localStorage.getItem('2FA')
         }
       });
-    }
   }
   initializeStatusSocket(token: string) {
-    if (this.StatusSocket === null) {
       this.StatusSocket = io(`${urls.SOCKETSTATUS}`, { 
         auth: {
           token: token,
           twoFAToken: localStorage.getItem('2FA')
         }
       });
-    }
   }
 
 

@@ -193,6 +193,7 @@ export function Chat() {
         autoClose: 2000,
         progressClassName: "my-progress-bar"
       })
+     
       GetChannel()
       GetMsgChan()
       GetInvite()
@@ -211,12 +212,39 @@ export function Chat() {
 
     }
     const handleChatError = (response: any) => {
-      console.log(response)
-      toast.error(response, {
-        position: toast.POSITION.TOP_RIGHT,
-        autoClose: 2000,
-        progressClassName: "my-progress-bar"
-      })
+      if (typeof response === 'string') {
+        console.log(response)
+        toast.error(response, {
+          position: toast.POSITION.TOP_RIGHT,
+          autoClose: 2000,
+          progressClassName: "my-progress-bar"
+        })
+        if (response === "This channel name is already used !" || response === "The channel specified dont exist !")
+          {
+            
+            GetChannel()
+            setSelectedChannel('')
+            setGeneralName('')
+            GetMsgChan()
+          }
+      }
+      console.log(typeof response)
+      if (typeof response  == 'object') {
+        console.log(response[0])
+        toast.error(response[0], {
+          position: toast.POSITION.TOP_RIGHT,
+          autoClose: 2000,
+          progressClassName: "my-progress-bar"
+        })
+        if (response[0] === "The channel name must contain between 3 and 20 caracters !")
+        {
+          GetChannel()
+          setSelectedChannel('')
+          setGeneralName('')
+          GetMsgChan()
+        }
+      }
+      
       // GetChannel()
       // setSelectedChannel('')
       // GetMsgChan()
@@ -376,6 +404,8 @@ export function Chat() {
       return
     }
     socket.emit("createchannel", { channelname: Channame, visibility: "private", password: undefined })
+    
+      console.log("NNNNNNNNNNNNNNNNNNNNNNNNNNNOOOOOOOOOOOOOOOOOONNNNNNNNNNNNNNNNNNNN" + Channame.length)
     setSelectedChannel(Channame)
     setGeneralName(Channame)
     setMessages([])
@@ -383,7 +413,8 @@ export function Chat() {
     setChanname('')
 
   }
-
+//This channel name is already used !
+//The channel name must contain between 3 and 20 caracters !
   const ChannelsMdp = async (e: any) => {
     //case non cocher
     console.log("test avec mdp")
@@ -403,10 +434,10 @@ export function Chat() {
       socket.emit("createchannel", { channelname: Channame, visibility: "public", password: undefined })
     else
       socket.emit("createchannel", { channelname: Channame, visibility: "public", password: ChanMdp })
-    setSelectedChannel(Channame)
+
+      setSelectedChannel(Channame)
     setGeneralName(Channame)
     setMessages([])
-
     setChanMdp('')
     setChanname('')
 

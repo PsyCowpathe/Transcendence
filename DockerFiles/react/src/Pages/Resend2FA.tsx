@@ -21,15 +21,21 @@ function Resend()
 
     const send = (e : any) => {
         e.preventDefault();
+
         console.log(Code);
         Send2FA(Code)
-        .then((res) => {
-            localStorage.setItem('2FA', res.data.newFA)
-            socketManager.initializeChatSocket(SetParamsToGetPost().headers.Authorization)
-			socketManager.initializeFriendRequestSocket(SetParamsToGetPost().headers.Authorization)
+        .then(async (res) => {
+          console.log("--------------------------------------------------------JERESEND--------------------------------------")
+          localStorage.setItem('2FA', res.data.newFA)
+          await socketManager.initializeChatSocket(SetParamsToGetPost().headers.Authorization)
+          await socketManager.initializeFriendRequestSocket(SetParamsToGetPost().headers.Authorization)
+          await socketManager.initializePongSocket(SetParamsToGetPost().headers.Authorization)
+          await socketManager.initializeStatusSocket(SetParamsToGetPost().headers.Authorization)
             navigate('/AffUser')
         })
         .catch((err) => {
+          console.log("--------------------------------------------------------PAASSSSS--------------------------------------")
+
           if(err.response)
           {
           if (err.message !== "Request aborted")
