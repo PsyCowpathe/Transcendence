@@ -267,7 +267,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
       const token = SetParamsToGetPost().headers.Authorization;
       if (token !== null)
             {
-          socketManager.initializeStatusSocket(tokenn);
+          socketManager.initializeStatusSocket(token);
           socketStatus = socketManager.getStatusSocket();
       }
   }
