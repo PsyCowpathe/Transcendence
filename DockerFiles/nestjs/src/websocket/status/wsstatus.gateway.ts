@@ -20,16 +20,18 @@ export class WsStatusGateway implements OnGatewayConnection, OnGatewayDisconnect
 
     async handleConnection(client: Socket)
     {
+		console.log("============================================")
         console.log("STATUS CONNECTED");
 		let clientToken = client.handshake.auth.token;
-        await this.wsStatusService.connection(client);
 		await this.wsStatusService.saveStatusSocket(client, clientToken);
+        await this.wsStatusService.connection(client);
     }
 
-    handleDisconnect(client: Socket)
+    async handleDisconnect(client: Socket)
     {
         console.log("STATUS DISCONNECTED");
-        this.wsStatusService.deconnection(client);
+		console.log("============================================")
+        await this.wsStatusService.deconnection(client);
+		console.log("done============================================")
     }
-
 }

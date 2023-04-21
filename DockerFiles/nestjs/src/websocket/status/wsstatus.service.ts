@@ -39,42 +39,52 @@ export class WsStatusService
     async connection(client: Socket)
     {
         let uid = await this.isRegistered(client);
+		console.log("test5");
         if (uid === undefined)
             return;
-        let user = await this.userService.findOneByUid(uid);
+		console.log("test6");
+        let user = await this.userService.findOneById(uid);
         if (user === null)
             return;
+		console.log("test7");
         await this.userService.updateStatus("Online", user);
         let friendList : any = await this.relationService.getFriendUser(user);
         let i = 0;
-        while (friendList[i])
+        /*while (friendList[i])
         {
             let toNotify = await this.sockets.get(friendList[i].user2.id);
             if (toNotify)
                 toNotify.join("friendconnected");
             i++
-        }
-        client.broadcast.emit("status", {name: user.name, status: "connected"});
+        }*/
+        client.broadcast.emit("status", {id: user.id, status: "Online"});
+		console.log("test8");
     }
 
     async deconnection(client: Socket)
     {
         let uid = await this.isRegistered(client);
+		console.log("test");
         if (uid === undefined)
             return;
-        let user = await this.userService.findOneByUid(uid);
+		console.log(uid);
+		console.log("test1");
+        let user = await this.userService.findOneById(uid);
         if (user === null)
             return;
+		console.log("test2");
         await this.userService.updateStatus("Offline", user);
         let friendList : any = await this.relationService.getFriendUser(user);
         let i = 0;
-        while (friendList[i])
+		console.log("test3");
+        /*while (friendList && friendList[i])
         {
             let toNotify = await this.sockets.get(friendList[i].user2.id);
             if (toNotify)
                 toNotify.join("frienddisconnected");
             i++
-        }
-        client.broadcast.emit("status", {name: user.name, status: "disconnected"});
+        }*/
+        client.broadcast.emit("status", {id: user.id, status: "Offline"});
+		console.log("test4");
     }
 }

@@ -65,7 +65,6 @@ export class WsRelationService
 		return (1);
 	}
 
-
 	async acceptFriendRequest(sender: number, target: number) : Promise<number | string>
 	{
 		let yesMan = await this.userService.findOneById(sender);
@@ -75,6 +74,8 @@ export class WsRelationService
 		let ret = await this.relationService.getRelationStatus(yesMan, askMan);
 		if (ret === "ally")
 			return (-2);
+		if (ret === "XV")
+			return (-3);
 		if (ret === "-+" || ret === "++")
 		{
 			await this.relationService.acceptRequest(yesMan, askMan);
@@ -83,7 +84,7 @@ export class WsRelationService
 				clientToNotify.emit("acceptfriendrequest", `${yesMan.name} accepted your friend request !`);
 			return (yesMan.name);
 		}
-		return (-3);
+		return (-4);
 	}
 
 	async refuseFriendRequest(sender: number, target: number) : Promise<number | string>
@@ -93,7 +94,7 @@ export class WsRelationService
 		if (askMan === null || noMan === null)
 			return (-1);
 		let ret = await this.relationService.getRelationStatus(noMan, askMan);
-		if (ret === "++"|| ret === "-+")
+		if (ret === "++"|| ret === "-+" || ret === "XV")
 		{
 			await this.relationService.refuseRequest(noMan, askMan);
 			let clientToNotify = this.sockets.get(askMan.id);

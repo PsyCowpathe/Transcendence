@@ -306,6 +306,7 @@ export class WsChatService
 			i++;
 		}
 		userSocket.to(messageForm.destination).except("exclusionList").emit("channelmsg", {channel: channel.name, id: askMan.id, user: askMan.name, message : messageForm.message});
+		userSocket.to("exclusionList").emit("channelmsg", {channel: channel.name, id: askMan.id, user: askMan.name, message: "Blocked message"})
 		userSocket.in("exclusionList").socketsLeave("exclusionList");
 		return (1);
 	}

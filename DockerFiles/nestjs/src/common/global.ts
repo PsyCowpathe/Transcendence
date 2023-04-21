@@ -32,6 +32,7 @@ export enum errorMessages
 	NOTIGNORED = "You dont ignore this user !",
 	REQUESTTOIGNORE = "You cant send a friend request to an user you blocked !",
 	MESSAGETOIGNORE = "You cant send a message to an user you blocked !",
+	ACCEPTTOIGNORE = "You cant accept friend request from blocked user !",
 	ALREADYREQUESTED = "You already sent a friend request to this user !",
 	YOUARECRINGE = "Stop that, you are cringe :/",
 	SOSFRIEND = "You can contact S.O.S Amitié at this phone number : 09.72.39.40.50 :)",

@@ -66,7 +66,10 @@ export class UserService
 
 	updateStatus(newStatus: string, user: User)
 	{
-		return this.usersRepository.update(user.id, {Status: newStatus});
+		console.log("Updating status");
+		let ret = this.usersRepository.update(user.id, {Status: newStatus});
+		console.log(ret);
+		return (ret);
 	}
 
 	async addMatch(newStatus: string, user: User)

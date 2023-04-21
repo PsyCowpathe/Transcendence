@@ -77,6 +77,8 @@ export class WsRelationGateway implements OnGatewayConnection
 		if (ret === -2)
 			return (client.emit("RelationError", errorMessages.ALREADYFRIEND));
 		if (ret === -3)
+			return (client.emit("RelationError", errorMessages.ACCEPTTOIGNORE));
+		if (ret === -4)
 			return (client.emit("RelationError", errorMessages.NOREQUEST));
 		client.emit("acceptfriendrequest", `You and ${ret} are now friends !`);
 	}
