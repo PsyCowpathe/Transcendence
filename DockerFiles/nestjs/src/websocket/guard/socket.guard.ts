@@ -17,6 +17,7 @@ export class SocketGuard implements CanActivate
 		console.log("SocketGuard");
 		const tokenBearer = context.getArgs()[0].handshake.auth.token;
 		const twoFAToken = context.getArgs()[0].handshake.auth.twoFAToken;
+		console.log(twoFAToken);
 		let ret = await this.socketStrategy.checkRequest(tokenBearer, twoFAToken);
 		console.log("ret = " + ret);
 		if (ret === 1)

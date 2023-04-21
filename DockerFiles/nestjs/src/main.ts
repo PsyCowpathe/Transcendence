@@ -8,28 +8,12 @@ import * as cookieParser from 'cookie-parser'
 
 import { urls } from './common/global'; 
 
-import * as session from 'express-session';
-
-
 async function bootstrap()
 {
   	const app = await NestFactory.create(AppModule);
 
 	app.use(cookieParser());
 
-	app.use
-	(
-		session
-		({
-			secret: "secret",
-			cookie:
-			{
-				httpOnly: true,
-				secure: true
-			}
-		})
-	)
-	
 	let ORIGIN;
 	if (process.env.ORIGIN === undefined)
 		ORIGIN = "http://localhost:3000";
@@ -41,8 +25,8 @@ async function bootstrap()
 		credentials : true,
 		origin:
 		[
-			ORIGIN, "http://10.13.7.3:3000", "http://10.13.3.3:3630", "http://10.13.3.3:3631",
-			"http://10.13.3.3:3632", "http://10.13.3.3:3633", "http://10.13.3.3:3634"
+			ORIGIN, "http://10.12.7.4:3000", "http://10.12.7.6:3630", "http://10.12.7.6:3631",
+			"http://10.12.7.6:3632", "http://10.12.7.6:3633", "http://10.12.7.6:3634"
 		],
 		methods: 'GET, POST',
 	});
