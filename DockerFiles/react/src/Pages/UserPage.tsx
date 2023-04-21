@@ -270,43 +270,24 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
     console.log(socket)
   }
 
-
-  if (ttstat === true && socketStatus && socketStatus.connected !== false) {
-    ttstat = false;
-  }
-  if (ttstat === true) {
-    socketStatus = socketManager.getStatusSocket()
-    console.log(socketStatus)
-    if (socketStatus == null) {
-      if (test === false && SetParamsToGetPost().headers.Authorization !== null) {
-        socketStatus = socketManager.initializeStatusSocket(SetParamsToGetPost().headers.Authorization)
-        console.log(socketStatus)
-        test = true
+  if (!socketStatus)
+  {
+      const token = SetParamsToGetPost().headers.Authorization;
+      if (token !== null)
+            {
+          socketManager.initializeStatusSocket(token);
+          socketStatus = socketManager.getStatusSocket();
       }
-    }
-    if (socketStatus && socketStatus.connected !== false) {
-      ttstat = false;
-    }
-    console.log(socket)
   }
-
-  if (ttchat === true && socketChat && socketChat.connected !== false) {
-    ttchat = false;
-  }
-  if (ttstat === true) {
-    socketChat = socketManager.getChatSocket()
-    console.log(socketChat)
-    if (socketChat == null) {
-      if (test === false && SetParamsToGetPost().headers.Authorization !== null) {
-        socketChat = socketManager.initializeChatSocket(SetParamsToGetPost().headers.Authorization)
-        console.log(socketChat)
-        test = true
+  
+  if (!socketChat)
+  {
+      const tokenn = SetParamsToGetPost().headers.Authorization;
+      if (tokenn !== null)
+            {
+          socketManager.initializeChatSocket(tokenn);
+          socketChat = socketManager.getChatSocket();
       }
-    }
-    if (socketChat && socketChat.connected !== false) {
-      ttchat = false;
-    }
-    console.log(socket)
   }
   interface user {
     user: number;
