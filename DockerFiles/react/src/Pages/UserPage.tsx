@@ -22,8 +22,14 @@ import socketManager from '../MesSockets';
 import { SetParamsToGetPost } from '../Headers/HeaderManager';
 import { GetBlockList } from '../Api/GetBlockedList';
 let test: boolean = false
+let teststat: boolean = false
+let testchat: boolean = false
 let socket: any
+let socketStatus: any
+let socketChat: any
 let tt: boolean = true
+let ttstat: boolean = true
+let ttchat: boolean = true
 
 
 
@@ -264,6 +270,44 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
     console.log(socket)
   }
 
+
+  if (ttstat === true && socketStatus && socketStatus.connected !== false) {
+    ttstat = false;
+  }
+  if (ttstat === true) {
+    socketStatus = socketManager.getFriendRequestSocket()
+    console.log(socketStatus)
+    if (socketStatus == null) {
+      if (test === false && SetParamsToGetPost().headers.Authorization !== null) {
+        socketStatus = socketManager.initializeChatSocket(SetParamsToGetPost().headers.Authorization)
+        console.log(socketStatus)
+        test = true
+      }
+    }
+    if (socketStatus && socketStatus.connected !== false) {
+      ttstat = false;
+    }
+    console.log(socket)
+  }
+
+  if (ttchat === true && socketChat && socketStatus.connected !== false) {
+    ttchat = false;
+  }ttchat
+  if (ttstat === true) {
+    socketChat = socketManager.getFriendRequestSocket()
+    console.log(socketChat)
+    if (socketChat == null) {
+      if (test === false && SetParamsToGetPost().headers.Authorization !== null) {
+        socketChat = socketManager.initializeStatusSocket(SetParamsToGetPost().headers.Authorization)
+        console.log(socketChat)
+        test = true
+      }
+    }
+    if (socketChat && socketChat.connected !== false) {
+      ttchat = false;
+    }
+    console.log(socket)
+  }
   interface user {
     user: number;
   }
