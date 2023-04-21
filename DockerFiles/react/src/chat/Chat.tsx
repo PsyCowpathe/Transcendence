@@ -313,7 +313,7 @@ export function Chat() {
       console.log("response")
       GetFriend()
     }
-    
+
     socket.removeListener("leavechannel", handleLeaveChannel);
     socket.removeListener("muteuser", handleMuteUser);//
     socket.removeListener("deletechannel", handleDeleteUser);//
@@ -321,10 +321,10 @@ export function Chat() {
     socket.removeListener("ChatError", handleChatError);
     socket.removeListener("createinvitation", handleInvite);
     socket.removeListener("kickuser", handleKickuser);
-    socketFriend.removeListener("sendfriendrequest", handleFriend);
+    socketFriend.removeListener("acceptfriendrequest", handleFriend);
     
     socket.on("deletechannel", handleDeleteUser);//
-    socketFriend.on("sendfriendrequest", handleFriend);//
+    socketFriend.on("acceptfriendrequest", handleFriend);//
     socket.on("createinvitation", handleInvite);//
     socket.on("leavechannel", handleLeaveChannel);
     socket.on("muteuser", handleMuteUser);
@@ -333,7 +333,7 @@ export function Chat() {
     socket.on("kickuser", handleKickuser);
     
     return () => {
-    socketFriend.off("sendfriendrequest", handleFriend);//
+    socketFriend.off("acceptfriendrequest", handleFriend);//
 
       socket.off("kickuser", handleKickuser);
       socket.off("createinvitation", handleInvite);//
