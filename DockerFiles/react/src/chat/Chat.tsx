@@ -72,17 +72,17 @@ export function Chat() {
   const navigate = useNavigate();
 
   socket = socketManager.getChatSocket()
+  socketFriend = socketManager.getFriendRequestSocket()
 
-
-  // if (!socketFriend)
-  // {
-  //     const token = SetParamsToGetPost().headers.Authorization;
-  //     if (token !== null)
-  //           {
-  //         socketManager.initializeFriendRequestSocket(token);
-  //         socketFriend = socketManager.getFriendRequestSocket();
-  //     }
-  // }
+  if (!socketFriend)
+  {
+      const token = SetParamsToGetPost().headers.Authorization;
+      if (token !== null)
+            {
+          socketManager.initializeFriendRequestSocket(token);
+          socketFriend = socketManager.getFriendRequestSocket();
+      }
+  }
 
 
   if (socket == null) {
