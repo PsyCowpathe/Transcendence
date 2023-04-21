@@ -39,23 +39,6 @@ interface chiant {
 			console.log("WTF?")
 			console.log(error.response)
 		});
-	// }
-	// 	console.log("coucou je commece")
-	// 	try
-	// 	{
-	// 	console.log("coucou je try")
-
-	// 	const { data } = await redirectTo42API()
-	// 	console.log(data.data)
-
-	// 		window.location.assign(data)
-	// 	}
-	// 	catch (e)
-	// 	{  
-	// 	console.log("coucou je catch")
-	// 			console.log(e)
-	// 		console.error(e)
-	// 	}
 	}
 
 
@@ -74,6 +57,10 @@ interface chiant {
 					localStorage.setItem('name', response.data.name);
 					localStorage.setItem('UID', response.data.id);
 					const date : any = localStorage.getItem('Token')
+					socketManager.initializeChatSocket(SetParamsToGetPost().headers.Authorization)
+					socketManager.initializeFriendRequestSocket(SetParamsToGetPost().headers.Authorization)
+					socketManager.initializePongSocket(SetParamsToGetPost().headers.Authorization)
+					socketManager.initializeStatusSocket(SetParamsToGetPost().headers.Authorization)
 
 					onLogin()
 					let reg : boolean = response.data.registered
@@ -131,10 +118,7 @@ interface chiant {
 			console.log("wtf")
 
 			setReg(false)
-			socketManager.initializeChatSocket(SetParamsToGetPost().headers.Authorization)
-			socketManager.initializeFriendRequestSocket(SetParamsToGetPost().headers.Authorization)
-			socketManager.initializePongSocket(SetParamsToGetPost().headers.Authorization)
-			socketManager.initializeStatusSocket(SetParamsToGetPost().headers.Authorization)
+			
 		
 			onLogin()
 			navigate('/affUser')
