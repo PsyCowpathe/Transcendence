@@ -251,23 +251,15 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
   /*************************************************************************************************/
 
 
-  if (tt === true && socket && socket.connected !== false) {
-    tt = false;
-  }
-  if (tt === true) {
-    socket = socketManager.getFriendRequestSocket()
-    console.log(socket)
-    if (socket == null) {
-      if (test === false && SetParamsToGetPost().headers.Authorization !== null) {
-        socket = socketManager.initializeFriendRequestSocket(SetParamsToGetPost().headers.Authorization)
-        console.log(socket)
-        test = true
+
+  if (!socket)
+  {
+      const tokennn = SetParamsToGetPost().headers.Authorization;
+      if (tokennn !== null)
+            {
+          socketManager.initializeFriendRequestSocket(tokennn);
+          socket = socketManager.getFriendRequestSocket();
       }
-    }
-    if (socket && socket.connected !== false) {
-      tt = false;
-    }
-    console.log(socket)
   }
 
   if (!socketStatus)
@@ -275,7 +267,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
       const token = SetParamsToGetPost().headers.Authorization;
       if (token !== null)
             {
-          socketManager.initializeStatusSocket(token);
+          socketManager.initializeStatusSocket(tokenn);
           socketStatus = socketManager.getStatusSocket();
       }
   }
