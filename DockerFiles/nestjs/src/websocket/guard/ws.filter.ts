@@ -22,8 +22,8 @@ export class WsExceptionFilter
 			}
 			else
 			{
-				client.emit("ChatError", error.message[0]);
-				return (error.message[0]);
+				client.emit("ChatError", error.message);
+				return (error.message);
 			}
 		}
 	}
