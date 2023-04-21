@@ -14,11 +14,8 @@ export class AuthGuard implements CanActivate
 
 	async canActivate(context: ExecutionContext) : Promise<boolean>
 	{
-		console.log("AuthGuard");
-		//console.log(context.switchToHttp().getRequest());
 		const request = context.switchToHttp().getRequest();
 		let ret = await this.authStrategy.checkRequest(request);
-		console.log("ret =" + ret);
 		if (ret === 1)
 			return (true);
 		if (ret === -1 || ret === -5)

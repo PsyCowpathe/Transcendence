@@ -32,8 +32,6 @@ export class MainController
 	@UseInterceptors(FileInterceptor('file'))
 	async setAvatar(@UploadedFile() file: Express.Multer.File, @Req() req: Request, @Res() res: Response)
 	{
-		console.log("changement d'avatar");
-		console.log(file);
 		if (file === undefined)
 			return (sendError(res, 400, errorMessages.INVALIDIMAGE));
 		let ret = await this.mainService.changeAvatar(req.headers.authorization, file);
@@ -51,7 +49,6 @@ export class MainController
 	@UsePipes(new ValidationPipe())
 	async getUserInfos(@Req() req: Request, @Res() res: Response, @Query('user') userId: numberParameterDto)
 	{
-		console.log("demande d'user info");
 		let toFind = await this.userService.findOneById(userId.id);
 		if (toFind === null)
 			return (sendError(res, 400, errorMessages.INVALIDNAME));
@@ -64,15 +61,11 @@ export class MainController
 	@UsePipes(new ValidationPipe())
 	async getAvatar(@Req() req: Request, @Res() res: Response, @Query('user') userId: numberParameterDto)
 	{
-		console.log("demande d'avatar");
-		console.log(userId);
-		//console.log(req);
 		const user = await this.userService.findOneById(userId.id);
 		if (user === null)
 			return (sendError(res, 400, errorMessages.INVALIDNAME));
 		if (!fs.existsSync("/root/backend/avatars/" + user.uid))
 			return (res.status(200).sendFile("/root/backend/avatars/default.png"));
-		console.log("avatar send");
 		return (res.status(200).sendFile("/root/backend/avatars/" + user.uid));
 	}
 
@@ -81,8 +74,6 @@ export class MainController
 	@UsePipes(new ValidationPipe())
 	async resumeChannel(@Req() req: Request, @Res() res: Response, @Query('channel') channel: stringParameterDto)
 	{
-		console.log("resume channel");
-		console.log(channel.channelName);
 		let ret = await this.mainService.resumeChannel(req.headers.authorization, channel.channelName);
 		if (ret === -1)
 			return (sendError(res, 401, errorMessages.INVALIDUSER));
@@ -98,8 +89,6 @@ export class MainController
 	@UsePipes(new ValidationPipe())
 	async resumePrivate(@Req() req: Request, @Res() res: Response, @Query('user') userId: numberParameterDto)
 	{
-		console.log("resume private message with ");
-		console.log(userId);
 		let ret = await this.mainService.resumeprivate(req.headers.authorization, userId.id);
 		if (ret === -1)
 			return (sendError(res, 401, errorMessages.INVALIDUSER));
@@ -112,11 +101,9 @@ export class MainController
 	@UseGuards(AuthGuard)
 	async getChannelList(@Req() req: Request, @Res() res: Response)
 	{
-		console.log("get channel list");
 		let ret = await this.mainService.getChannelList(req.headers.authorization);
 		if (ret === -1)
 			return (sendError(res, 401, errorMessages.INVALIDUSER));
-		console.log(ret);
 		return (sendSuccess(res, 200, ret));
 	}
 
@@ -124,11 +111,9 @@ export class MainController
 	@UseGuards(AuthGuard)
 	async getFriends(@Req() req: Request, @Res() res: Response)
 	{
-		console.log("get friend list");
 		let ret = await this.mainService.getFriends(req.headers.authorization);
 		if (ret === -1)
 			return (sendError(res, 401, errorMessages.INVALIDUSER));
-		console.log(ret);
 		return (sendSuccess(res, 200, ret));
 	}
 
@@ -136,7 +121,6 @@ export class MainController
 	@UseGuards(AuthGuard)
 	async getFriendRequest(@Req() req: Request, @Res() res: Response)
 	{
-		console.log("get friend request list");
 		let ret = await this.mainService.getFriendRequest(req.headers.authorization);
 		if (ret === -1)
 			return (sendError(res, 401, errorMessages.INVALIDUSER));
@@ -147,7 +131,6 @@ export class MainController
 	@UseGuards(AuthGuard)
 	async getBlocked(@Req() req: Request, @Res() res: Response)
 	{
-		console.log("get blocked list");
 		let ret = await this.mainService.getBlocked(req.headers.authorization);
 		if (ret === -1)
 			return (sendError(res, 401, errorMessages.INVALIDUSER));
@@ -158,7 +141,6 @@ export class MainController
 	@UseGuards(AuthGuard)
 	async getChannelInvite(@Req() req: Request, @Res() res: Response)
 	{
-		console.log("get channel invitation");
 		let ret = await this.mainService.getChannelInvite(req.headers.authorization);
 		if (ret === -1)
 			return (sendError(res, 401, errorMessages.INVALIDUSER));
@@ -170,7 +152,6 @@ export class MainController
 	@UseGuards(AuthGuard)
 	async getHistory(@Req() req: Request, @Res() res: Response)
 	{
-		console.log("get match history");
 		let ret = await this.mainService.getHistory(req.headers.authorization);
 		if (ret === -1)
 			return (sendError(res, 401, errorMessages.INVALIDUSER));

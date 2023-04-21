@@ -23,7 +23,6 @@ export class WsRelationGateway implements OnGatewayConnection
 
 	async handleConnection(client: Socket)
     {
-        console.log("RELATION CONNECTED");
 		let clientToken = client.handshake.auth.token;
 		await this.wsRelationService.saveRelationSocket(client, clientToken);
     }
@@ -36,13 +35,10 @@ export class WsRelationGateway implements OnGatewayConnection
 	@SubscribeMessage('sendfriendrequest')
 	async sendFriendRequest(client: Socket, data: requestDto)
 	{
-		console.log("New request to user : ");
-		console.log(data.user);
 		let sender : number | undefined;
 		if ((sender = this.wsRelationService.isRegistered(client)) === undefined)
 			return (client.emit("RelationError", errorMessages.NOTREGISTERED));
 		let ret = await this.wsRelationService.sendFriendRequest(sender, data.user);
-		console.log("ret = " + ret);
 		if (ret === -1)
 			return (client.emit("RelationError", errorMessages.INVALIDNAME));
 		if (ret === -2)
@@ -64,8 +60,6 @@ export class WsRelationGateway implements OnGatewayConnection
 	@SubscribeMessage('acceptfriendrequest')
 	async acceptFriendRequest(client: Socket, data: relationDto)
 	{
-		console.log("Try to accept request from : ");
-		console.log(data.user);
 		if (data.user === undefined)
 			return (client.emit("RelationError", errorMessages.MISSINGNAME));
 		let sender : number | undefined;
@@ -88,8 +82,6 @@ export class WsRelationGateway implements OnGatewayConnection
 	@SubscribeMessage('refusefriendrequest')
 	async refuseFriendRequest(client: Socket, data: relationDto)
 	{
-		console.log("Try to refuse friend request from : ");
-		console.log(data.user);
 		if (data.user === undefined)
 			return (client.emit("RelationError", errorMessages.MISSINGNAME));
 		let sender : number | undefined;
@@ -108,8 +100,6 @@ export class WsRelationGateway implements OnGatewayConnection
 	@SubscribeMessage('deletefriend')
 	async deleteFriend(client: Socket, data: relationDto)
 	{
-		console.log("Try to delete friend : ");
-		console.log(data.user);
 		if (data.user === undefined)
 			return (client.emit("RelationError", errorMessages.MISSINGNAME));
 		let sender : number | undefined;
@@ -128,8 +118,6 @@ export class WsRelationGateway implements OnGatewayConnection
 	@SubscribeMessage('blockuser')
 	async blockUser(client: Socket, data: relationDto)
 	{
-		console.log("Block user : ");
-		console.log(data.user);
 		if (data.user === undefined)
 			return (client.emit("RelationError", errorMessages.MISSINGNAME));
 		let sender : number | undefined;
@@ -150,8 +138,6 @@ export class WsRelationGateway implements OnGatewayConnection
 	@SubscribeMessage('unblockuser')
 	async unBlockUser(client: Socket, data: relationDto)
 	{
-		console.log("Try to unblock user : ");
-		console.log(data.user);
 		if (data.user === undefined)
 			return (client.emit("RelationError", errorMessages.MISSINGNAME));
 		let sender : number | undefined;

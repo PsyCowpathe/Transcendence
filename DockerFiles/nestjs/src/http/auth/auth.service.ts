@@ -27,10 +27,6 @@ export class AuthService
 
 	async getUserToken(token : AuthDto) : Promise<string | undefined>
 	{
-		console.log("state = ");
-		console.log(token.state);
-		console.log("code = ");
-		console.log(token.code);
 		let user =
 		{
 			grant_type: 'authorization_code',
@@ -84,14 +80,12 @@ export class AuthService
 			newUser.Defeat = 0;
 			this.userService.create(newUser);
 			data = await this.createProfile(true, newUser);
-			console.log('User successfully added to the database !');
 		}
 		else 
 		{
 			await this.userService.updateToken(hashedToken, user);
 			let updatedUser = await this.userService.findOneByUid(response.data.id);
 			data = await this.createProfile(true, updatedUser);
-			console.log('User already exist, updating token in db !');
 		}
 		return (data);
 	}

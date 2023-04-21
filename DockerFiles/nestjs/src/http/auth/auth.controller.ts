@@ -29,16 +29,11 @@ export class AuthController
 	@Get('redirect')
 	async Redirect(@Req() req: Request, @Res() res: Response)
 	{
-		console.log("Redirection");
 		let ret = await this.authService.isTokenValid(req.headers.authorization);
 		if (ret === true)
-		{
-			console.log('Token valide');
 			return (sendSuccess(res, 201, "/affUser"));
-		}
 		else
 		{
-			console.log('Token invalide');
 			let URI = process.env.URI;
 			if (URI === undefined)
 				return (sendError(res, 500, errorMessages.MISSINGURI));
@@ -55,23 +50,15 @@ export class AuthController
 	@UsePipes(new ValidationPipe())
 	async Register(@Body() tokenForm: AuthDto, @Res() res: Response)
 	{
-		console.log('Register received');
 		if (tokenForm.state === undefined || tokenForm.code === undefined)
-		{
-			console.log('ERROR 1');
 			return (sendError(res, 400, errorMessages.MISSING));
-		}
 		else if (tokenForm.state !== random)
-		{
-			console.log('ERROR 2');
 			return (sendError(res, 400, errorMessages.DIFFERENT));
-		}
 		else
 		{
 			const apiToken = await this.authService.getUserToken(tokenForm);
 			if (apiToken === undefined)
 				return (sendError(res, 400, errorMessages.INVALIDCODE));
-			console.log('User token obtained !');
 			await new Promise(r => setTimeout(r, 500));
 			const hashedToken = await this.authService.hashMyToken(apiToken);
 			if (hashedToken === undefined)
@@ -81,7 +68,6 @@ export class AuthController
 				return (sendError(res, 500, errorMessages.APIFAIL));
 			if (data === null)
 				return (sendError(res, 500, errorMessages.CREATEFAIL));
-			console.log('Sending token to client !');
 			return (sendSuccess(res, 201, data));
 		}
 	}
@@ -91,7 +77,6 @@ export class AuthController
 	@UseGuards(AuthGuard)
 	async firstConnect(@Body() registerForm: ChangeLoginDto, @Res() res: Response, @Req() req: Request)
 	{
-		console.log("changement de login = " + registerForm.name);
 		let ret = await this.authService.defineName(registerForm.name, req.headers.authorization);
 		if (ret === -1)
 			return (sendError(res, 400, errorMessages.ALREADYTAKEN));
@@ -104,7 +89,6 @@ export class AuthController
 	@UseGuards(AuthGuard)
 	async set2FA(@Req() req: Request, @Res() res: Response)
 	{
-		console.log("Try to activate 2FA")
 		let ret = await this.authService.generate2FA(req.headers.authorization);
 		if (ret === -1)
 			return (sendError(res, 401, errorMessages.INVALIDUSER));
@@ -118,8 +102,6 @@ export class AuthController
 	@UseGuards(AuthGuard)
 	async TwoFALogin(@Req() req: Request, @Res() res: Response, @Body() TwoFAForm: TwoFADto)
 	{
-		console.log("login with 2fa");
-		console.log(TwoFAForm);
 		let ret = await this.authService.twoFALogin(req.headers.authorization, TwoFAForm);
 		if (ret === -1)
 			return (sendError(res, 401, errorMessages.INVALIDUSER));
