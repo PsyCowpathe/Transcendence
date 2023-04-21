@@ -545,6 +545,7 @@ export function Chat() {
         return
       else if (message.isPriv == true && (message.user !== UserTo && message.user !== UserName))
         return
+      const messageText = message.text;
       return (
         <div key={message.id}>
           <div className={`message ${userClass}`} onClick={() => handleUserClick({ name: message.user, uid: message.userUID })}>
@@ -552,7 +553,7 @@ export function Chat() {
           </div>
           <div className="message-container">
             <div key={message.id} className={`message ${messageClass}`}>
-              {message.text && message.text.match(/.{1,50}/g).map((line, index) => (
+              {messageText && messageText.match(/.{1,50}/g).map((line, index) => (
                 <span key={index}>
                   {line}
                   <br />
