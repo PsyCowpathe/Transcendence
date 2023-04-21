@@ -403,7 +403,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
   /*                                                                                               */
   /*                                                                                               */
   /*************************************************************************************************/
-  s
+  
   return (
     <div className="user-page">
       <TopBar />
