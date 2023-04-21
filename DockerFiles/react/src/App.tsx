@@ -14,8 +14,9 @@ import  ProfilePictureUploader  from './Pages/NewProfilPic';
 import NotFound from './Pages/404NotFound';
 import { TestLog } from './Pages/ForceLog';  
 import { Resend2FA } from './Pages/Resend2FA';
-import Pong from './pong/Pong' 
+import PongGame from './pong/Pong' 
 import PongMenu from './pong/PongMenu' 
+import EndScreen from './pong/EndScreen' 
 
 function App() 
 {
@@ -46,9 +47,9 @@ function App()
 			<Route path='/changepic' element={<ProfilePictureUploader />}/>
 			<Route path='/Send2FA' element={<Resend2FA />}/>
 			<Route path='/*' element={<NotFound />}/> 
-			<Route path='/pong/menu' element={<PongMenu />}/> 
-			<Route path='/pong/play' element={<Pong />}/> 
-			<Route path='/pong/spectate' element={<Pong />}/> 
+			<Route path='/pong/menu' element={<PongMenu/>}/> 
+			<Route path='/pong/play' element={<PongGame/>}/> 
+			<Route path='/pong/endscreen' element={<EndScreen/>}/> 
 
 			</Routes> 
 	</BrowserRouter>

@@ -11,25 +11,21 @@ import Player from "./Player"
 import Ball from "./Ball"
 import Paddle from "./Paddle"
 
-let socket = socketManager.getPongSocket();
-
 export default function PongGame ()
 {
-	if (!socket)
-	{
-		const token = SetParamsToGetPost().headers.Authorization;
-		if (token !== null)
-      		{
-			socketManager.initializePongSocket(token);
-			socket = socketManager.getPongSocket();
-		}
-	}
-	if (socket)
-		socket.emit('joinQueue', window.localStorage.getItem("name"));
+	const VICTORY: string = '/pong/endscreen?result=victory';
+	const VICTORY_FORFEIT: string = '/pong/endscreen?result=victory&forfeit=true';
+	const DEFEAT: string = '/pong/endscreen?result=defeat';
+	
+	let socket = socketManager.getPongSocket();
 	
 	const navigate = useNavigate();
+	let [leavingPage, setLeavingPage] = useState("");
 	
+	let waiting: HTMLElement | null;
+	let scores: HTMLElement | null;
 	let buttonReady: HTMLElement | null;
+	let buttonJoinQueue: HTMLElement | null;
 	let p_score: HTMLElement | null;
 	let o_score: HTMLElement | null;
 	let p_name: HTMLElement | null;
@@ -44,7 +40,7 @@ export default function PongGame ()
 	let p_paddle!: Paddle;
 	let o_paddle!: Paddle;
 	let player: Player = new Player(window.localStorage.getItem("name"));
-	let opponent: Player = new Player("waiting for other player...");
+	let opponent: Player = new Player("name");
 	
 	let input: number; 
 	let GOAL:boolean = false;
@@ -64,95 +60,210 @@ export default function PongGame ()
 			p_score.textContent = player.score.toString();
 			o_score.textContent = opponent.score.toString();
 		}
+		buttonJoinQueue = document.getElementById("joinQueue");	
+		waiting = document.getElementById("waiting");
+		scores = document.getElementById("scores");
 		buttonReady = document.getElementById("player_ready");
 		if (buttonReady)
 			buttonReady.style.display = "none";
+		if (waiting)
+			waiting.style.display = "none";
+		if (scores)
+			scores.style.display = "none";
 	}, []);
 
-	socket.on('gameFound', (game_tag: number, player_name: string, opponent_name: string, player_tag: number) =>
+	function joinQueue()
 	{
-		player.name = player_name;
-		opponent.name = opponent_name;
-		if (o_name && p_name)
+		/*if (!socket)
 		{
-			p_name.textContent = player.name;
-			o_name.textContent = opponent.name;
+			const token = SetParamsToGetPost().headers.Authorization;
+			if (token !== null)
+      			{
+				socketManager.initializePongSocket(token);
+				socket = socketManager.getPongSocket();
+			}
+		}*/
+
+		if (socket)
+			socket.emit('joinQueue', window.localStorage.getItem("name"));
+		if (buttonJoinQueue)
+		{
+			buttonJoinQueue.style.display = "none";
+			if (waiting)
+				waiting.style.display = "flex";
 		}
-		game_id = game_tag;
-		player_id = player_tag;
-		if (buttonReady)
-			buttonReady.style.display = "flex";
-		ball = new Ball(document.getElementById("ball"));
-		p_paddle = new Paddle(document.getElementById("p_paddle"));
-		o_paddle = new Paddle(document.getElementById("o_paddle"));
-		document.addEventListener("mousemove", eMouseMoved);
-	});
-	
-	function eMouseMoved(e: any)
-	{
-		input = e.y - input;
-		p_paddle.setPosition(100 * e.y / window.innerHeight);
-		socket.emit('movePaddle', { input: player_id }, { input: game_id  + 1}, { input: p_paddle.pos } );
+		window.onpopstate = function(e: any)
+		{
+			e.preventDefault();
+			
+			if (player_id != 0)
+			{
+				socket.emit('leaveGame');
+				window.alert("You just lost the game.");
+			}
+			else
+				socket.emit('leaveQueue');
+		};
 	}
 
 	function playerReady()
 	{
 		if (buttonReady)
 		{
-			socket.emit('onPlayerReady', { input: game_id + 1 });
+			socket.emit('playerReady', { input: game_id + 1 });
 			buttonReady.style.display = "none";
 		}
 	}
 
-	socket.on('GOOOAAAAAAL', (strikerID: number) =>
+	
+	function eMouseMoved(e: any)
 	{
-		if (strikerID == player_id)
-		{
-			player.score++;
-			if (p_score)
-				p_score.textContent = player.score.toString();
-		}
-		else
-		{
-			opponent.score++;
-			if (o_score)
-				o_score.textContent = opponent.score.toString();
-		}
-	});
+		p_paddle.setPosition(100 * e.y / window.innerHeight);
+		socket.emit('movePaddle', { player_id: player_id, gametag: (game_id + 1), position: p_paddle.pos });
+	}		
+	
+	useEffect(() =>
+	{
+		if (leavingPage != "")
+			navigate(leavingPage);
+	}, [leavingPage]);
 
-	socket.on('update', (gameState: any) =>
+	useEffect(() =>
 	{
-		if (player_id == 1)
+		if (!socket)
 		{
-			o_paddle.setPosition(gameState.p2_paddlepos);
-			p_paddle.setPosition(gameState.p1_paddlepos);
-			ball.setPosition(gameState.ballpos);
-			console.log("player1 pos : " + gameState.p1_paddlepos);
+			const token = SetParamsToGetPost().headers.Authorization;
+			if (token !== null)
+      			{
+				socketManager.initializePongSocket(token);
+				socket = socketManager.getPongSocket();
+			}
 		}
-		else
+
+		socket.on('GameError', (response: any) =>
 		{
-			o_paddle.setPosition(gameState.p1_paddlepos);
-			p_paddle.setPosition(gameState.p2_paddlepos);
-			ball.setPosition({ x: (100 - gameState.ballpos.x),  y: gameState.ballpos.y });
-		}
-	});
+			console.log(response);
+		});
 
-	socket.on('opponentReady', () =>
-	{
-		console.log("opponent is ready");	
-	});
+		socket.on('gameFound', (game_tag: number, player_name: string, opponent_name: string, player_tag: number) =>
+		{
+			player.name = player_name;
+			opponent.name = opponent_name;
+			if (o_name && p_name)
+			{
+				p_name.textContent = player.name;
+				o_name.textContent = opponent.name;
+			}
+			game_id = game_tag;
+			player_id = player_tag;
+			if (buttonReady)
+				buttonReady.style.display = "flex";
+			if (waiting)
+				waiting.style.display = "none";
+			if (scores)
+				scores.style.display = "flex";
+			ball = new Ball(document.getElementById("ball"));
+			p_paddle = new Paddle(document.getElementById("p_paddle"));
+			o_paddle = new Paddle(document.getElementById("o_paddle"));
+			document.addEventListener("mousemove", eMouseMoved);
+		});
 
-	socket.on('opponentLeft', () =>
-	{
-		window.alert("Your opponent left the game. You win by forfeit");
-		navigate('/');
-	});
+		socket.on('startDuel', (game_tag: number, player_name: string, opponent_name: string, player_tag: number) =>
+		{
+			socket.off('joinQueue');
+			socket.off('gameFound');
+
+			if (waiting)
+				waiting.style.display = "none";
+			if (buttonJoinQueue)
+				buttonJoinQueue.style.display = "none";
+
+			window.onpopstate = function(e: any)
+			{
+				e.preventDefault();
+				
+				socket.emit('leaveGame');
+				window.alert("You just lost the game.");
+			};
+
+			player.name = player_name;
+			opponent.name = opponent_name;
+			if (o_name && p_name)
+			{
+				p_name.textContent = player.name;
+				o_name.textContent = opponent.name;
+			}
+			game_id = game_tag;
+			player_id = player_tag;
+			if (buttonReady)
+				buttonReady.style.display = "flex";
+			if (scores)
+				scores.style.display = "flex";
+			ball = new Ball(document.getElementById("ball"));
+			p_paddle = new Paddle(document.getElementById("p_paddle"));
+			o_paddle = new Paddle(document.getElementById("o_paddle"));
+			document.addEventListener("mousemove", eMouseMoved);
+		});
+	
+		socket.on('update', (gameState: any) =>
+		{
+			if (player_id == 1)
+			{
+				o_paddle.setPosition(gameState.p2_paddlepos);
+					p_paddle.setPosition(gameState.p1_paddlepos);
+				ball.setPosition(gameState.ballpos);
+			}
+			else
+			{
+				o_paddle.setPosition(gameState.p1_paddlepos);
+				p_paddle.setPosition(gameState.p2_paddlepos);
+				ball.setPosition({ x: (100 - gameState.ballpos.x),  y: gameState.ballpos.y });
+			}
+		});
+	
+		socket.on('GOOOAAAAAAL', (strikerID: number) =>
+		{
+			if (strikerID == player_id)
+			{
+				player.score++;
+				if (p_score)
+					p_score.textContent = player.score.toString();
+			}
+			else
+			{
+				opponent.score++;
+				if (o_score)
+					o_score.textContent = opponent.score.toString();
+			}
+		});
+	
+		socket.on('opponentReady', () =>
+		{
+			console.log("opponent is ready");
+		});
+
+	
+		socket.on('opponentLeft', () =>
+			{
+			setLeavingPage(VICTORY_FORFEIT);
+		});
+	
+		socket.on('theEnd', (winnerID: number) =>
+		{
+			if (winnerID = player_id)
+				setLeavingPage(VICTORY);
+			else
+				setLeavingPage(DEFEAT);
+		});
+	}, []);
 
 	return (
 			<div className="pong game">
 				<div className="text">
 					<h1 className="h1 nº1">PONG</h1>
-					<div className="scores">
+					<button className="joinQueue" id="joinQueue" onClick={joinQueue}>join queue</button>
+					<div className="waiting" id="waiting">waiting for an opponent...</div>
+					<div className="scores" id="scores">
 						<div className="name p1" id="p_name"></div>
 						<div className= "score p1" id="p_score"></div>
 						<div className= "score bar">|</div>

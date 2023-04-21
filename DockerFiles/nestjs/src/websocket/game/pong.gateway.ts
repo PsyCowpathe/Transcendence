@@ -8,7 +8,7 @@ import Player from '../../http/pong/class/Player'
 import { WsExceptionFilter } from '../guard/ws.filter';
 import { SocketGuard } from '../guard/socket.guard';
 import { errorMessages } from '../../common/global';
-import { mouseDto, numberDto } from './pong.entity'
+import { mouseDto, numberDto, posDto } from './pong.entity'
 
 @UseFilters(WsExceptionFilter)
 @WebSocketGateway(3633, {cors: true})
@@ -60,18 +60,12 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 	async handleConnection(socket: Socket)
 	{
-		console.log("GAME CONNECT");
 		let user: User | null = null;
 		const token = socket.handshake.auth.token;
 		if (token)
 			user = await this.userService.findOneByToken(token); 
 		if (user)
 		{
-			for (const usr of this.clients.keys())
-			{
-				if (usr.uid === user.uid)
-					this.clients.delete(user);
-			}
 			this.clients.set(user, socket);
 			console.log(`Client connected : ${user.name} identified as ${socket.id}`);
 		}
@@ -94,17 +88,65 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 	handleDisconnect(socket: Socket)
 	{
-		console.log(`Client disconnected (socket id : ${socket.id})`);
 		const leaver = this.getUser(socket);
-		let oppSock: Socket | undefined;
+		if (leaver)
+			console.log(`Client disconnected : ${leaver.name} identified as ${socket.id}`);
+		this.leaveQueue(socket);
+		this.leaveGame(socket);
+	}
+
+	@UseGuards(SocketGuard)
+	@SubscribeMessage('joinQueue')
+	joinQueue(socket: Socket, username: string)
+	{
+		let user: User | undefined;
+		let cli: User[];
+
+		user = this.getUser(socket);
+		if (user)
+		{
+			this.queue.set(user, socket);
+			console.log(`user ${username} identified as ${socket.id} joined the queue`);
+			if (this.queue.size % 2 == 0)
+			{
+				cli = Array.from(this.queue.keys());
+				this.addGame(cli[0], user);
+				this.queue.delete(user);
+				this.queue.delete(cli[0]);
+			}
+		}
+		else
+			socket.emit("GameError", errorMessages.INVALIDUSER)
+
+	}
+
+	@UseGuards(SocketGuard)
+	@SubscribeMessage('joinGame')
+	joinGame()
+	{
+		
+	}
+
+	@UseGuards(SocketGuard)
+	@SubscribeMessage('leaveQueue')
+	leaveQueue(socket: Socket)
+	{
+		let user: User | undefined;
+
+		user = this.getUser(socket);
+		if (user)
+			this.queue.delete(user);
+	}
+
+	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
+	@SubscribeMessage('leaveGame')
+	leaveGame(socket: Socket)
+	{
+		const leaver = this.getUser(socket);
 		if (leaver)
 		{
-			console.log("DISCONNECTED");
-			for (const cli of this.queue.keys())
-			{
-				if (cli.uid === leaver.uid)
-					this.queue.delete(leaver);
-			}
+			let oppSock: Socket | undefined;
 			for (const game of this.games)
 			{
 				if (game.p1.user.uid === leaver.uid)
@@ -118,33 +160,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					break;
 				}
 			}
-			this.clients.delete(leaver);
 		}
-	}
-
-	@UseGuards(SocketGuard)
-	@SubscribeMessage('joinQueue')
-	joinQueue(client: Socket, username: string)
-	{
-		let user: User | undefined;
-		let cli: User[];
-
-		user = this.getUser(client);
-		if (user)
-		{
-			this.queue.set(user, client);
-			console.log(`user ${username} identified as ${client.id} joined the queue`);
-			if (this.queue.size % 2 == 0)
-			{
-				cli = Array.from(this.queue.keys());
-				this.addGame(cli[0], user);
-				this.queue.delete(user);
-				this.queue.delete(cli[0]);
-			}
-		}
-		else
-			client.emit("GameError", errorMessages.INVALIDUSER)
-
 	}
 
 	addGame(p1: User, p2: User)
@@ -163,14 +179,13 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('playerReady')
-	playerReady(client: Socket, gametag: numberDto)
+	playerReady(socket: Socket, gametag: numberDto)
 	{
-		console.log("ready"); 
 		const s1 = this.clients.get(this.games[gametag.input - 1].p1.user);
 		const s2 = this.clients.get(this.games[gametag.input - 1].p2.user);
 		let player_id: number = 0;
 	
-		const user = this.getUser(client);
+		const user = this.getUser(socket);
 		if (user && this.games.length > gametag.input - 1)
 		{
 			if (user.uid === this.games[gametag.input - 1].p1.user.uid)
@@ -185,7 +200,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			}
 			else
 			{
-				client.emit('GameError', errorMessages.NOTAPLAYER);
+				socket.emit('GameError', errorMessages.NOTAPLAYER);
 				return;
 			}
 			if (s2 && player_id == 1)
@@ -204,12 +219,11 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('movePaddle')
-	movePaddle(player_id: numberDto, gametag: numberDto, position: mouseDto)
+	movePaddle(socket: Socket, data: posDto)
 	{
-		console.log("move"); 
-		if (player_id.input == 1)
-    			this.games[gametag.input - 1].p1_paddle.setPosition(position.input);
+		if (data.player_id == 1)
+    			this.games[data.gametag - 1].p1_paddle.setPosition(data.position);
 		else
-    			this.games[gametag.input - 1].p2_paddle.setPosition(position.input);
+    			this.games[data.gametag - 1].p2_paddle.setPosition(data.position);
   	}
 }

@@ -16,11 +16,11 @@ export class SocketGuard implements CanActivate
 	{
 		//console.log(context.args[0].handshake);
 		//console.log(context.args[0].handshake.auth.token);
-		console.log("SocketGuard");
+		//console.log("SocketGuard");
 		const tokenBearer = context.args[0].handshake.auth.token;
 		const twoFAToken = context.args[0].handshake.auth.twoFAToken;
 		let ret = await this.socketStrategy.checkRequest(tokenBearer, twoFAToken);
-		console.log("ret = " + ret);
+		//console.log("ret = " + ret);
 		if (ret === 1)
 			return (true);
 		if (ret === -1)
