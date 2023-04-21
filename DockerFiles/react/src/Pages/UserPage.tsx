@@ -21,17 +21,12 @@ import { GetInvitationList } from '../Api/GetInvitationList';
 import socketManager from '../MesSockets';
 import { SetParamsToGetPost } from '../Headers/HeaderManager';
 import { GetBlockList } from '../Api/GetBlockedList';
-let test: boolean = false
-let teststat: boolean = false
-let testchat: boolean = false
+
+
+
 let socket: any
 let socketStatus: any
 let socketChat: any
-let tt: boolean = true
-let ttstat: boolean = true
-let ttchat: boolean = true
-
-
 
 export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
 
@@ -55,8 +50,6 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
   const MAJFriendList = async () => {
     await GetFriendList()
       .then((res) => {
-        console.log("Friendlist")
-        console.log(res)
         // setFriend([])
         setFriend(res.data.map((name: any) => {
           return { id: name.id, name: name.name }
@@ -65,22 +58,20 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
       })
       .catch((err) => {
         if (err.response) {
-            if (err.message !== "Request aborted") {
-              if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-                navigate('/')
-              if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
-                navigate('/Change')
-              if (err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
-                navigate('/Send2FA')
-            }
+          if (err.message !== "Request aborted") {
+            if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+              navigate('/')
+            if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+              navigate('/Change')
+            if (err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+              navigate('/Send2FA')
+          }
         }
       })
   }
   const MAJBlockList = async () => {
     await GetBlockList()
       .then((res) => {
-        console.log("Blocklist")
-        console.log(res)
         // setBlockedList([])
         setBlockedList(res.data.map((name: any) => {
           return { id: name.id, name: name.name }
@@ -89,13 +80,13 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
       })
       .catch((err) => {
         if (err.response) {
-            if (err.message !== "Request aborted") {
-              if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-                navigate('/')
-              if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
-                navigate('/Change')
-              if (err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
-                navigate('/Send2FA')
+          if (err.message !== "Request aborted") {
+            if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+              navigate('/')
+            if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+              navigate('/Change')
+            if (err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+              navigate('/Send2FA')
           }
         }
       })
@@ -105,24 +96,21 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
   const MAJinvitationList = async () => {
     await GetInvitationList()
       .then((res) => {
-        console.log("Invitation list")
-        console.log(res)
         setInvit(res.data.map((name: any) => {
           return { id: name.id, name: name.name }
         }
         ))
-        console.log(invit)
       })
       .catch((err) => {
         if (err.response) {
-            if (err.message !== "Request aborted") {
-              if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-                navigate('/')
-              if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
-                navigate('/Change')
-              if (err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
-                navigate('/Send2FA')
-            }
+          if (err.message !== "Request aborted") {
+            if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+              navigate('/')
+            if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+              navigate('/Change')
+            if (err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+              navigate('/Send2FA')
+          }
         }
       })
   }
@@ -149,22 +137,15 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
   const [PicUp, setPic] = React.useState("non")
   const [Pic, setPicUrl] = useState(localStorage.getItem('ProfilPic') || "Profil")
 
-  // setPicUrl(localStorage.getItem('ProfilPic') || "Profil")
   useEffect(() => {
-    console.log("Use effect de la photo")
     PicGetRequest(UserID)
       .then((res) => {
-        console.log("|")
-        console.log(res)
-        console.log("|")
         const url = window.URL.createObjectURL(new Blob([res.data]));
         localStorage.setItem('ProfilPic', url)
         setPicUrl(url)
-        console.log(Pic)
         setPic("oui")
       })
       .catch((err) => {
-        console.log("ERROR")
         toast.error(err, {
           position: toast.POSITION.TOP_RIGHT,
           autoClose: 2000,
@@ -185,17 +166,9 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
   }, [Click])
 
   useEffect(() => {
-      console.log("coucou1")
-    // if (redirected) {
-    //   return
-    // }
-    console.log("coucou2")
-
     GetUserInfo(UserID)
       .then((res) => {
         setUser({ name: res.data.name, victory: res.data.Victory, defeate: res.data.Defeat, gameplayed: res.data.Match })
-        console.log("GetUserInfo ------------------------------------------------------------")
-        console.log(res)
       })
       .catch((err) => {
         toast.error(err.message, {
@@ -220,7 +193,6 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
   const navigate = useNavigate();
 
   const onClick = (() => {
-    console.log("ass")
     setRedirected(!redirected)
     setClickLog(!ClickLog)
 
@@ -228,9 +200,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
 
 
   const CloseMod = () => {
-    console.log("-------------------Q--------------------")
     setClick(!Click)
-    console.log(Click)
   };
 
   const [open2FA, setopen2FA] = useState<boolean>(false)
@@ -255,34 +225,28 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
 
 
 
-  if (!socket)
-  {
-      const tokennn = SetParamsToGetPost().headers.Authorization;
-      if (tokennn !== null)
-            {
-          socketManager.initializeFriendRequestSocket(tokennn);
-          socket = socketManager.getFriendRequestSocket();
-      }
+  if (!socket) {
+    const tokennn = SetParamsToGetPost().headers.Authorization;
+    if (tokennn !== null) {
+      socketManager.initializeFriendRequestSocket(tokennn);
+      socket = socketManager.getFriendRequestSocket();
+    }
   }
 
-  if (!socketStatus)
-  {
-      const token = SetParamsToGetPost().headers.Authorization;
-      if (token !== null)
-            {
-          socketManager.initializeStatusSocket(token);
-          socketStatus = socketManager.getStatusSocket();
-      }
+  if (!socketStatus) {
+    const token = SetParamsToGetPost().headers.Authorization;
+    if (token !== null) {
+      socketManager.initializeStatusSocket(token);
+      socketStatus = socketManager.getStatusSocket();
+    }
   }
-  
-  if (!socketChat)
-  {
-      const tokenn = SetParamsToGetPost().headers.Authorization;
-      if (tokenn !== null)
-            {
-          socketManager.initializeChatSocket(tokenn);
-          socketChat = socketManager.getChatSocket();
-      }
+
+  if (!socketChat) {
+    const tokenn = SetParamsToGetPost().headers.Authorization;
+    if (tokenn !== null) {
+      socketManager.initializeChatSocket(tokenn);
+      socketChat = socketManager.getChatSocket();
+    }
   }
   interface user {
     user: number;
@@ -294,9 +258,6 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
   useEffect(() => {
     const handleFriendRequest = (response: any) => {
       MAJList()
-
-
-      console.log("response")
       toast.success(response, {
         position: toast.POSITION.TOP_RIGHT,
         autoClose: 2000,
@@ -305,8 +266,6 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
     }
     const handleErrorRequest = (response: any) => {
       MAJList()
-
-      console.log(response)
       toast.error(response, {
         position: toast.POSITION.TOP_RIGHT,
         autoClose: 2000,
@@ -316,12 +275,12 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
 
     const handleFriendRequestSpe = (response: any) => {
       MAJList()
-      
-        toast.success(response, {
-          position: toast.POSITION.TOP_RIGHT,
-          autoClose: 2000,
-          progressClassName: "my-progress-bar"
-        })
+
+      toast.success(response, {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 2000,
+        progressClassName: "my-progress-bar"
+      })
 
     }
     socket.removeListener('sendfriendrequest');
@@ -350,14 +309,10 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
       socket.off("unblockuser", handleFriendRequest);
       socket.off("acceptfriendrequest", handleFriendRequest);
       socket.off("RelationError", handleErrorRequest);
-       socketStatus.off("status", handleErrorRequest);
+      socketStatus.off("status", handleErrorRequest);
 
     }
   }, [])
-
-
-
-
 
   ///////////////////////////////////////////////////////////////////////// request send      ///////////////////////////////////////////////////////
   interface user2 {
@@ -426,13 +381,8 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
   /*FAIT*/
 
   const deleteU = async (user: number) => {
-    console.log("DELETE :")
-    console.log(user)
     await socket.emit("deletefriend", { user });
   }
-  const Changedelete = ((event: any) => {
-    setUserdelete({ user: event.target.value })
-  })
 
   ///////////////////////////////////////////////////////////////////////// request unblock      ///////////////////////////////////////////////////////
 
@@ -442,12 +392,6 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
     await socket.emit("unblockuser", { user });
 
   }
-
-
-
-
-
-
 
   /*************************************************************************************************/
   /*                                                                                               */
@@ -459,9 +403,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
   /*                                                                                               */
   /*                                                                                               */
   /*************************************************************************************************/
-
-
-
+  s
   return (
     <div className="user-page">
       <TopBar />
@@ -508,7 +450,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
         <button className="settings-button-icon">send</button>
       </form>
 
-        
+
 
       <div>
         <button className="settings-button-icon" onClick={set2FA}>Set 2FA</button>
@@ -534,7 +476,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
         <h3>Blocked Users</h3>
         <ul>
           {blockedList.map((Block) => (
-            <li key={Block.id}>{Block.name} <button className={"add-message-button"}onClick={() => unblock(Block.id)}>unblock</button></li>
+            <li key={Block.id}>{Block.name} <button className={"add-message-button"} onClick={() => unblock(Block.id)}>unblock</button></li>
           ))}
         </ul>
       </div>

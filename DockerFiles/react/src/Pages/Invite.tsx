@@ -1,19 +1,11 @@
 import React, {useState} from "react";
 import socketManager from "../MesSockets";
 
-
-
-// -createinvite (nom de l’user a invite, nom du channel)
-// -deleteinvite (nom de l’user a deinviter, nom du channel)
-
-
-
 export function Invite({channel} : {channel : string | null})
 {
     const socket = socketManager.getChatSocket();
     const [SendInvite, setSendInvite] = useState<string>("")
     const [DeleteInvite, setDeleteInvite] = useState<string>("")
-    // console.log(channel)
     const inviteFriend = (e : any) => {
         e.preventDefault()
         socket.emit("createinvitation", {name : SendInvite, channelname: channel})
