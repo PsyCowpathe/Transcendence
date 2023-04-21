@@ -552,13 +552,21 @@ export function Chat() {
           </div>
           <div className="message-container">
             <div key={message.id} className={`message ${messageClass}`}>
-              <span>{message.text}</span>
+              {message.text.match(/.{1,50}/g).map((line, index) => (
+                <span key={index}>
+                  {line}
+                  <br />
+                </span>
+              ))}
+              {/* <span>{message.text}</span> */}
             </div>
           </div>
         </div>
       );
     });
   };
+
+
 
   const messageContainer: any = document.getElementById('tamere');
 
