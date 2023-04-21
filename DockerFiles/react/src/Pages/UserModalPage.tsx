@@ -88,9 +88,11 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
     }
 
     const handleDeco = (data : any) => {
-      if (data.user === User.name && data.status === "Offline")
+      console.log("-----------------------------------REGARDE ICI----------------------------")
+      console.log(data)
+      if (data.id === User.uid && data.status === "Offline")
         setStatus("Offline")
-      if (data.user === User.name && data.status === "Online")
+      if (data.id === User.uid && data.status === "Online")
         setStatus("Online")
     }
     const handleFriendRequest = (response: any) => {
