@@ -292,7 +292,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
 
   if (ttchat === true && socketChat && socketStatus.connected !== false) {
     ttchat = false;
-  }ttchat
+  }
   if (ttstat === true) {
     socketChat = socketManager.getFriendRequestSocket()
     console.log(socketChat)
