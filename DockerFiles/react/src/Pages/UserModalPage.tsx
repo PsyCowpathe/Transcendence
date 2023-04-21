@@ -94,6 +94,8 @@ export function AffTheUser({User, Channel} : {User : User, Channel : string  | n
         setStatus("Offline")
       if (data.id === User.uid && data.status === "Online")
         setStatus("Online")
+        if (data.id === User.uid && data.status === "InGame")
+        setStatus("InGame")
     }
     const handleFriendRequest = (response: any) => {
       console.log("response----------------------------------------------------------")
@@ -316,8 +318,8 @@ return(
  <div className="person-stats-mod">
       <h2>{user.name}</h2>
       <div className="status-indicator">
-      <div className={status === "Online"? 'green-dot' : 'red-dot'}></div>
-      <span>{status =="Online" ? 'Online' : 'Offline'}</span>
+      <div className={status === "Offline"? 'red-dot' : 'green-dot'}></div>
+      <span>{status}</span>
     </div>
       <p className="matches-played">Matches played: {user.gameplayed}</p>
       <p className="matches-won">Matches won: {user.victory}</p>
