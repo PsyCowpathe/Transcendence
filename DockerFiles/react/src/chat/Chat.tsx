@@ -545,7 +545,7 @@ export function Chat() {
         return
       else if (message.isPriv == true && (message.user !== UserTo && message.user !== UserName))
         return
-      const messageText = message.text;
+      const messageText = message.text || '';
       return (
         <div key={message.id}>
           <div className={`message ${userClass}`} onClick={() => handleUserClick({ name: message.user, uid: message.userUID })}>
