@@ -275,11 +275,11 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
     ttstat = false;
   }
   if (ttstat === true) {
-    socketStatus = socketManager.getChatSocket()
+    socketStatus = socketManager.getStatusSocket()
     console.log(socketStatus)
     if (socketStatus == null) {
       if (test === false && SetParamsToGetPost().headers.Authorization !== null) {
-        socketStatus = socketManager.initializeChatSocket(SetParamsToGetPost().headers.Authorization)
+        socketStatus = socketManager.initializeStatusSocket(SetParamsToGetPost().headers.Authorization)
         console.log(socketStatus)
         test = true
       }
@@ -290,15 +290,15 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
     console.log(socket)
   }
 
-  if (ttchat === true && socketChat && socketStatus.connected !== false) {
+  if (ttchat === true && socketChat && socketChat.connected !== false) {
     ttchat = false;
   }
   if (ttstat === true) {
-    socketChat = socketManager.getStatusSocket()
+    socketChat = socketManager.getChatSocket()
     console.log(socketChat)
     if (socketChat == null) {
       if (test === false && SetParamsToGetPost().headers.Authorization !== null) {
-        socketChat = socketManager.initializeStatusSocket(SetParamsToGetPost().headers.Authorization)
+        socketChat = socketManager.initializeChatSocket(SetParamsToGetPost().headers.Authorization)
         console.log(socketChat)
         test = true
       }
