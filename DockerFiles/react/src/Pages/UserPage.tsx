@@ -289,17 +289,6 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
   }
 
 
-  const MyCustomToast = ({ response, Acceptnow, Refusednow, closeToast }: any) => {
-    return (
-      <div>
-        <p> {response.message}</p>
-        <button onClick={() => { Acceptnow(response); closeToast() }}>Accept</button>
-        <button onClick={() => { Refusednow(response); closeToast() }}>Refuse</button>
-      </div>
-    );
-  };
-
-
 
 
   useEffect(() => {
@@ -327,22 +316,13 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
 
     const handleFriendRequestSpe = (response: any) => {
       MAJList()
-      if (response.message === `${response.user} send you a friend request !`) {
-        toast.success(<MyCustomToast response={response} Acceptnow={Acceptnow} Refusednow={Refusednow} usera={userAc} closeToast={toast.dismiss} />,
-          {
-            position: toast.POSITION.TOP_RIGHT,
-            autoClose: 2000,
-            progressClassName: "my-progress-bar"
-          })
-      }
-      else {
+      
         toast.success(response, {
           position: toast.POSITION.TOP_RIGHT,
           autoClose: 2000,
           progressClassName: "my-progress-bar"
         })
 
-      }
     }
     socket.removeListener('sendfriendrequest');
     socket.removeListener('acceptfriendrequest');
