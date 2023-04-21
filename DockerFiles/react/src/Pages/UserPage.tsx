@@ -375,6 +375,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
     socket.removeListener('deletefriend');
     socket.removeListener('unblockuser');
     socket.removeListener('RelationError');
+    socketStatus.removeListener('status');
 
     socket.on("sendfriendrequest", handleFriendRequestSpe);
     socket.on("refusefriendrequest", handleFriendRequest);
@@ -383,6 +384,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
     socket.on("unblockuser", handleFriendRequest);
     socket.on("acceptfriendrequest", handleFriendRequest);
     socket.on("RelationError", handleErrorRequest);
+    socketStatus.on("status", handleErrorRequest);
 
     return () => {
       socket.off("sendfriendrequest", handleFriendRequestSpe);
@@ -392,6 +394,8 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
       socket.off("unblockuser", handleFriendRequest);
       socket.off("acceptfriendrequest", handleFriendRequest);
       socket.off("RelationError", handleErrorRequest);
+       socketStatus.off("status", handleErrorRequest);
+
     }
   }, [])
 
