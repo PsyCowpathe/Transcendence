@@ -20,6 +20,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	clients = new Map<User, Socket>();
 	queue = new Map<User, Socket>();
 	games = new Array<Game>();
+	duelists = new Map<{uid1: number, uid2: number}, {here1: boolean, here2: boolean}>();
 
 	constructor(private readonly userService: UserService)
 	{
@@ -117,14 +118,55 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		}
 		else
 			socket.emit("GameError", errorMessages.INVALIDUSER)
-
 	}
 
 	@UseGuards(SocketGuard)
-	@SubscribeMessage('joinGame')
-	joinGame()
+	@UsePipes(new ValidationPipe())
+	@SubscribeMessage('duel')
+	async duel(s1: Socket, uid1: numberDto, uid2: numberDto)
 	{
+		let player1: User | null = await this.userService.findOneByUid(uid1.input); 
+		let player2: User | null = await this.userService.findOneByUid(uid2.input); 
+		let s2!: Socket | undefined;
 		
+		if (player1 && player2)
+		{
+			s2 = this.clients.get(player2);
+
+			if (s2)
+				s2.emit('duelInvitationAccepted');
+			else
+				s1.emit('GameError', errorMessages.INVALIDUSER);
+			this.addGame(player1, player2);	
+			this.duelists.set({uid1: player1.uid, uid2: player2.uid}, {here1: false, here2: false});
+		}
+		else
+			s1.emit('GameError', errorMessages.INVALIDUSER);
+	}
+
+
+	@UseGuards(SocketGuard)
+	@SubscribeMessage('bringItOn')
+	bringItOn(socket: Socket)
+	{
+		let player: User | undefined = this.getUser(socket); 
+
+		if (player)
+		{
+			for (const [players, status] of this.duelists.entries())
+			{
+				if (players.uid1 == player.uid)
+				{
+					socket.emit('startDuel');
+					if (!status.here2)
+						this.duelists.set(players, {here1: true, here2: false});
+					else
+						this.duelists.delete(players);
+				}
+			}
+		}
+		else
+			socket.emit('GameError', errorMessages.INVALIDUSER);
 	}
 
 	@UseGuards(SocketGuard)
@@ -162,6 +204,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			}
 		}
 	}
+
 
 	addGame(p1: User, p2: User)
 	{

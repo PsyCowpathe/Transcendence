@@ -18,7 +18,16 @@ export default function PongGame ()
 	const DEFEAT: string = '/pong/endscreen?result=defeat';
 	
 	let socket = socketManager.getPongSocket();
-	
+	if (!socket)
+	{
+		const token = SetParamsToGetPost().headers.Authorization;
+		if (token !== null)
+      		{
+			socketManager.initializePongSocket(token);
+			socket = socketManager.getPongSocket();
+		}
+	}
+
 	const navigate = useNavigate();
 	let [leavingPage, setLeavingPage] = useState("");
 	
@@ -70,19 +79,13 @@ export default function PongGame ()
 			waiting.style.display = "none";
 		if (scores)
 			scores.style.display = "none";
+		if (socket)
+			socket.emit('bringItOn');
 	}, []);
 
 	function joinQueue()
 	{
-		/*if (!socket)
-		{
-			const token = SetParamsToGetPost().headers.Authorization;
-			if (token !== null)
-      			{
-				socketManager.initializePongSocket(token);
-				socket = socketManager.getPongSocket();
-			}
-		}*/
+
 
 		if (socket)
 			socket.emit('joinQueue', window.localStorage.getItem("name"));
@@ -94,7 +97,7 @@ export default function PongGame ()
 		}
 		window.onpopstate = function(e: any)
 		{
-			e.preventDefault();
+			window.removeEventListener('mousemove', eMouseMoved);
 			
 			if (player_id != 0)
 			{
@@ -180,7 +183,7 @@ export default function PongGame ()
 
 			window.onpopstate = function(e: any)
 			{
-				e.preventDefault();
+				window.removeEventListener('mousemove', eMouseMoved);
 				
 				socket.emit('leaveGame');
 				window.alert("You just lost the game.");
