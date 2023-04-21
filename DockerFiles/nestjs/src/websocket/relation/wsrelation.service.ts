@@ -20,7 +20,6 @@ export class WsRelationService
 		let user = await this.userService.findOneByToken(token);
 		if (user !== null)
 		{
-			console.log(user.name);
 			this.sockets.set(user.id, client);
 		}
 	}

@@ -68,7 +68,6 @@ export class MainService
         		if (err)
 					return (-2);
       		});
-		console.log("avatar changer avec success");
 		return (1);
 	}
 

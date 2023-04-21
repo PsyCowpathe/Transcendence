@@ -66,9 +66,7 @@ export class UserService
 
 	updateStatus(newStatus: string, user: User)
 	{
-		console.log("Updating status");
 		let ret = this.usersRepository.update(user.id, {Status: newStatus});
-		console.log(ret);
 		return (ret);
 	}
 

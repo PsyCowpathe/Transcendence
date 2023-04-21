@@ -115,7 +115,7 @@ export class messageDto
 	destination: string;
 
 	@IsString({message: `The message must be a string !`})
-	@Length(0, 135, {message: 'The message must contain between 1 and 135 caracters !'})
+	@Length(1, 135, {message: 'The message must contain between 1 and 135 caracters !'})
 	message: string
 }
 

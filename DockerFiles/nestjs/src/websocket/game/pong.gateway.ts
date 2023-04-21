@@ -65,7 +65,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 	afterInit()
 	{
-		console.log("gateway initialized");
 	}
 
 	async handleConnection(socket: Socket)
@@ -79,9 +78,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		else
 			{
 			socket.emit("GameError", errorMessages.INVALIDUSER)
-			console.log("no corresponding user in db");
 			}
-		console.log(`Client connected: $(username) identified as ${socket.id}`);
 	}
 
 	getUser(socket: Socket) : User | undefined
@@ -96,7 +93,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 	handleDisconnect(socket: Socket)
 	{
-		console.log(`Client disconnected: $(clients[socket]) identified as ${socket.id}`);
 		const leaver = this.getUser(socket);
 		if (leaver)
 		{

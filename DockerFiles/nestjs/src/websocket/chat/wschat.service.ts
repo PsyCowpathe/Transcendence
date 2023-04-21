@@ -49,7 +49,6 @@ export class WsChatService
 		let user = await this.userService.findOneByToken(token);
 		if (user !== null)
 		{
-			console.log(user.name);
 			await this.sockets.set(user.id, client);
 			await this.updateRoom(user, client);
 		}

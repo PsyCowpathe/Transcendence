@@ -47,14 +47,14 @@ export class RelationService
 		else if (ret[0].type === -1)
 		{
 			if (ret[0].user1.id === id1.id)
-				return ("XV"); //user 1 a blocker user 2
-			return ("VX"); //user 2 a blocker user 1
+				return ("XV");
+			return ("VX");
 		}
 		else if (ret[1].type === -1)
 		{
 			if (ret[1].user1.id === id1.id)
-				return ("XV"); //user 1 a blocker user 2
-			return ("VX");//user 2 a blocker user 1
+				return ("XV");
+			return ("VX");
 		}
 		else if (ret[0].type === 2)
 			return ("ally");

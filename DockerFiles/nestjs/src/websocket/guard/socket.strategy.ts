@@ -21,7 +21,6 @@ export class SocketStrategy
 		{
 			if (user.TwoFA === true)
 			{
-				console.log(twoFAToken);
 				if (Date.now().toString() > user.TwoFAExpire)
 					return (-3);
 				if (twoFAToken === user.TwoFAToken)

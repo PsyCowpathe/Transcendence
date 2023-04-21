@@ -23,7 +23,6 @@ export class WsChatGateway implements OnGatewayConnection
 
 	async handleConnection(client: Socket)
     {
-        console.log("CHAT CONNECTED");
 		let clientToken = client.handshake.auth.token;
 		await this.wsChatService.saveChatSocket(client, clientToken);
     }
@@ -37,8 +36,6 @@ export class WsChatGateway implements OnGatewayConnection
 	@SubscribeMessage('createchannel')
 	async createChannel(client: Socket, channelForm: createChannelDto)
 	{
-		console.log("New channel created !");
-		console.log(channelForm);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
@@ -55,8 +52,6 @@ export class WsChatGateway implements OnGatewayConnection
 	@SubscribeMessage('deletechannel')
 	async deleteChannel(client: Socket, deleteForm: channelOperationDto)
 	{
-		console.log("Delete channel ");
-		console.log(deleteForm.channelname);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
@@ -81,8 +76,6 @@ export class WsChatGateway implements OnGatewayConnection
 	@SubscribeMessage('joinchannel')
 	async joinChannel(client: Socket, joinForm: channelOperationDto)
 	{
-		console.log("Join channel !");
-		console.log("for " + joinForm.channelname);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
@@ -112,8 +105,6 @@ export class WsChatGateway implements OnGatewayConnection
 	@SubscribeMessage('leavechannel')
 	async leaveChannel(client: Socket, leaveForm: channelOperationDto)
 	{
-		console.log("Leave channel !");
-		console.log(" for " + leaveForm.channelname);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
@@ -139,10 +130,6 @@ export class WsChatGateway implements OnGatewayConnection
 	@SubscribeMessage('channelmsg')
 	async sendChannelMessage(client: Socket, messageForm: messageDto)
 	{
-		console.log("New message :");
-		console.log(messageForm.message);
-		console.log(" to ");
-		console.log(messageForm.destination);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
@@ -162,7 +149,6 @@ export class WsChatGateway implements OnGatewayConnection
 	@SubscribeMessage('changepassword')
 	async changePassword(client: Socket, changeForm: channelOperationDto)
 	{
-		console.log("Change password");
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
@@ -186,8 +172,6 @@ export class WsChatGateway implements OnGatewayConnection
 	@SubscribeMessage('addadmin')
 	async addAdmin(client: Socket, adminForm: usernameOperationDto)
 	{
-		console.log("New admin !");
-		console.log(adminForm.name + " for " + adminForm.channelname);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
@@ -212,8 +196,6 @@ export class WsChatGateway implements OnGatewayConnection
 	@SubscribeMessage('removeadmin')
 	async removeAdmin(client: Socket, adminForm: usernameOperationDto)
 	{
-		console.log("Remove admin !");
-		console.log(adminForm.name + " for " + adminForm.channelname);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
@@ -240,8 +222,6 @@ export class WsChatGateway implements OnGatewayConnection
 	@SubscribeMessage('createinvitation')
 	async createInvitation(client: Socket, invitationForm: invitationOperationDto)
 	{
-		console.log("Create invitation !");
-		console.log(invitationForm.name + " for " + invitationForm.channelname);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
@@ -269,16 +249,14 @@ export class WsChatGateway implements OnGatewayConnection
 	@SubscribeMessage('deleteinvitation')
 	async deleteInvitation(client: Socket, invitationForm: invitationOperationDto)
 	{
-		console.log("Delete invitation !");
-		console.log(invitationForm.name + " for " + invitationForm.channelname);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
 		let ret = await this.wsChatService.deleteInvitation(sender, invitationForm);
 		if (ret === -1)
 			return (client.emit("ChatError", errorMessages.CHANNELDONTEXIST));
-		if (ret === -2)//may be useless
-			return (client.emit("ChatError", errorMessages.INVALIDNAME));//may be useless
+		if (ret === -2)
+			return (client.emit("ChatError", errorMessages.INVALIDNAME));
 		if (ret === -3)
 			return (client.emit("ChatError", errorMessages.INVALIDNAME));
 		if (ret === -4)
@@ -291,8 +269,6 @@ export class WsChatGateway implements OnGatewayConnection
 	@SubscribeMessage('usermessage')
 	async sendUserMessage(client: Socket, messageForm: directDto)
 	{
-		console.log("User message :");
-		console.log(messageForm.message + " to " + messageForm.destination);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
@@ -305,7 +281,6 @@ export class WsChatGateway implements OnGatewayConnection
 			return (client.emit("ChatError", errorMessages.YOUAREIGNORED));
 		if (ret === -4)
 			return (client.emit("ChatError", errorMessages.MESSAGETOIGNORE));
-		//client.emit("usermessage", `You successfully send a message to ${ret} !`);
 	}
 
 	
@@ -317,8 +292,6 @@ export class WsChatGateway implements OnGatewayConnection
 	@SubscribeMessage('kickuser')
 	async kickUser(client: Socket, kickForm: kickDto)
 	{
-		console.log("Kick user ");
-		console.log(kickForm.id);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
@@ -351,8 +324,6 @@ export class WsChatGateway implements OnGatewayConnection
 	@SubscribeMessage('banuser')
 	async banUser(client: Socket, banForm: sanctionOperationDto)
 	{
-		console.log("Ban user ");
-		console.log(banForm.id);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
@@ -385,8 +356,6 @@ export class WsChatGateway implements OnGatewayConnection
 	@SubscribeMessage('unbanuser')
 	async unbanUser(client: Socket, unbanForm: usernameOperationDto)
 	{
-		console.log("Unban user ");
-		console.log(unbanForm.name);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
@@ -414,8 +383,6 @@ export class WsChatGateway implements OnGatewayConnection
 	@SubscribeMessage('muteuser')
 	async muteUser(client: Socket, muteForm: sanctionOperationDto)
 	{
-		console.log("Mute user ");
-		console.log(muteForm.id);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
@@ -449,8 +416,6 @@ export class WsChatGateway implements OnGatewayConnection
 	@SubscribeMessage('unmuteuser')
 	async unmuteUser(client: Socket, unmuteForm: usernameOperationDto)
 	{
-		console.log("Unmute user ");
-		console.log(unmuteForm.name);
 		let sender : number | undefined;
 		if ((sender = this.wsChatService.isRegistered(client)) === undefined)
 			return (client.emit("ChatError", errorMessages.NOTREGISTERED));
