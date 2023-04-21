@@ -275,7 +275,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
     ttstat = false;
   }
   if (ttstat === true) {
-    socketStatus = socketManager.getFriendRequestSocket()
+    socketStatus = socketManager.getChatSocket()
     console.log(socketStatus)
     if (socketStatus == null) {
       if (test === false && SetParamsToGetPost().headers.Authorization !== null) {
@@ -294,7 +294,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
     ttchat = false;
   }
   if (ttstat === true) {
-    socketChat = socketManager.getFriendRequestSocket()
+    socketChat = socketManager.getStatusSocket()
     console.log(socketChat)
     if (socketChat == null) {
       if (test === false && SetParamsToGetPost().headers.Authorization !== null) {
