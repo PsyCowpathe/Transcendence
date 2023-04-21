@@ -249,6 +249,9 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
   /*                                                                                               */
   /*                                                                                               */
   /*************************************************************************************************/
+  socket = socketManager.getFriendRequestSocket();
+  socketStatus = socketManager.getStatusSocket();
+  socketChat = socketManager.getChatSocket();
 
 
 
