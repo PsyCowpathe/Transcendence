@@ -3,7 +3,7 @@ import { useState } from "react";
 import { TopBar } from "./NavBar";
 import { SetParamsToGetPost } from '../Headers/HeaderManager';
 import { UploadPicRequest } from "../Api/UploadPicRequest";
-import { ToastContainer, toast, ToastOptions } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom'
 
 function ProfilePictureUploader() {
@@ -21,11 +21,8 @@ function ProfilePictureUploader() {
         })
         const url = window.URL.createObjectURL(new Blob([data]));
         localStorage.setItem('ProfilPic', url)
-        console.log("CA SEND")
-        console.log(response)
       })
       .catch(err => {
-        console.log("ERROR")
         toast.error(err.response.data.message, {
           position: toast.POSITION.TOP_RIGHT,
           autoClose: 2000,
@@ -53,7 +50,6 @@ function ProfilePictureUploader() {
 
   // Fonction pour gérer le glisser-déposer
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
-    console.log("drop")
     event.preventDefault();
     let config = SetParamsToGetPost()
     const files = event.dataTransfer.files;
@@ -105,11 +101,6 @@ function ProfilePictureUploader() {
         onDrop={handleDrop}
         onDragOver={handleDragOver}
       >drag and drop your image here
-        {/* {image ? (
-          <img src={image} alt="profile" />
-          ) : (
-            <p className="textcol">Drag and drop your image here</p>
-          )} */}
       </div>
       <div>
         <form onSubmit={handleSubmit}>

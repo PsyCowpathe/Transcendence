@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 export function ChangeLoginMod()
 {
     const navigate = useNavigate(); 
-    const [login, setLogin] = useState("")
 	interface user
 	{
 		name : string;
@@ -18,7 +17,6 @@ export function ChangeLoginMod()
     const replaceLog = (event : any) =>
     {         
         event.preventDefault()
-        console.log(`le nouveau login : ${wait.name}`)
         RequestChangeLogin(wait)
         
         .then(response => 
@@ -29,15 +27,12 @@ export function ChangeLoginMod()
                 autoClose: 2000,
                 progressClassName: "my-progress-bar"
             })
-            console.log("JE SEND UN LOGIN")
 			localStorage.setItem('name', response.data.name);
             localStorage.setItem('UID', response.data.id); 
-            console.log(response) 
             
         })
         .catch(err =>
         {
-            // console.log("ici ")
             toast.error(err.response.data.message, {
                 position: toast.POSITION.TOP_RIGHT,
                 autoClose: 2000,
@@ -58,17 +53,10 @@ export function ChangeLoginMod()
               }
             }
           }
-           // if(err.message === "Invalid 2FA token") erreur de 2FA ==> redirection vers la page de 2FA
-            console.log("ERROR AVEC  UN LOGIN")
             console.log(err.response.data.message[0])
         })
         setwait({name:''})
     }
-
-    // const Change = ((event : any) =>
-    // {
-    //     setwait({name : event.target.value})
-    // })
 
     return(
         <div>

@@ -8,9 +8,7 @@ import '../css/App.css'
 import { useNavigate } from 'react-router-dom'
 import socketManager from "../MesSockets";
 import { SetParamsToGetPost } from "../Headers/HeaderManager";
-const info = {
-	name : 'name'
-}
+
 
 interface chiant {
 	tokenForm : any,
@@ -36,7 +34,6 @@ interface chiant {
 		})
 		.catch(error =>
 		{
-			console.log("WTF?")
 			console.log(error.response)
 		});
 	}
@@ -48,11 +45,9 @@ interface chiant {
 	
 		if (tokenForm.code != null)
 		{
-			console.log(tokenForm.code)
 			 SendTokenRequest(tokenForm)
 			.then(response => 
 			{
-					console.log(response.data)
 					localStorage.setItem('Token', response.data.newtoken);
 					localStorage.setItem('name', response.data.name);
 					localStorage.setItem('UID', response.data.id);
@@ -89,7 +84,6 @@ interface chiant {
         if (codes != null)
 		{
 			setToken({state: second_states, code: codes})
-    		console.log(tokenForm)
     		sendToken();
 		}
 
@@ -115,7 +109,6 @@ interface chiant {
 	{
 		if (Registered !== false)
 		{
-			console.log("wtf")
 
 			setReg(false)
 			
