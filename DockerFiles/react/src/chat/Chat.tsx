@@ -553,7 +553,7 @@ export function Chat() {
           </div>
           <div className="message-container">
             <div key={message.id} className={`message ${messageClass}`}>
-              {messageText && messageText.match(/.{1,50}/g).map((line, index) => (
+              {messageText !== null && messageText.match(/.{1,50}/g).map((line, index) => (
                 <span key={index}>
                   {line}
                   <br />
