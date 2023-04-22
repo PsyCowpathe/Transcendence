@@ -7,42 +7,63 @@ export default function EndScreen()
 {
 	const navigate = useNavigate();
 
-	let message: HTMLElement | null;
-	let player_left: HTMLElement | null;
+	let title: HTMLElement | null;
+	let ps: HTMLElement | null;
 	const params = new URLSearchParams(window.location.search);
 	const result = params.get('result');
 	const forfeit = params.get('forfeit');
+	const flagged = params.get('flagged');
 
 	useEffect(() =>
 	{
-		message = document.getElementById("result");
-		player_left = document.getElementById("player_left");
-		if (message && result == "victory")
+		title = document.getElementById("result");
+		ps = document.getElementById("ps");
+		if (title && result == "victory")
 		{
-			message.style.color = 'green';
-			message.textContent = "VICTORY";
-			if (forfeit && player_left)
+			title.style.color = 'green';
+			title.textContent = "VICTORY";
+			if (forfeit && ps)
 			{
-				player_left.textContent = '(your opponent left)';
-				player_left.style.color = 'green';
-				player_left.style.display = "flex";
+				ps.style.color = 'green';
+				ps.textContent = '(your opponent left)';
+				ps.style.display = "flex";
+			}
+			else if (flagged && ps)
+			{
+				ps.style.color = 'green';
+				ps.textContent = '(your opponent lost on time)';
+				ps.style.display = "flex";
 			}
 		}
-		else if (message && result == "defeat")
+		else if (title && result == "defeat")
 		{
-			message.style.color = 'red';
-			message.textContent = "DEFEAT";
-			if (forfeit && player_left)
+			title.style.color = 'red';
+			title.textContent = "DEFEAT";
+			if (forfeit && ps)
 			{
-				player_left.textContent = '(you just left the game)';
-				player_left.style.color = 'red';
-				player_left.style.display = "flex";
+				ps.style.color = 'red';
+				ps.textContent = '(you just left the game)';
+				ps.style.display = "flex";
+			}
+			else if (flagged && ps)
+			{
+				ps.style.color = 'red';
+				ps.textContent = '(you lost on time)';
+				ps.style.display = "flex";
 			}
 		}
-		else if (message)
+		else if (title && ps && result == "draw")
 		{
-			message.style.color = 'yellow';
-			message.textContent = "dude, get a life";
+			title.style.color = 'yellow';
+			title.textContent = "DRAW";
+			ps.textContent = '(time is up)';
+			ps.style.color = 'yellow';
+			ps.style.display = "flex";
+		}
+		else if (title)
+		{
+			title.style.color = 'yellow';
+			title.textContent = "dude, get a life";
 		}
 	}, []);
 
@@ -53,7 +74,7 @@ export default function EndScreen()
 
 	return (<div className="pong endscreen">
 			<div className="result" id="result">asdf</div>
-			<div className="player_left" id="player_left"></div>
+			<div className="ps" id="ps"></div>
 			<div className="redirect">click this button and you will be redirected to the menu</div>
 			<button className="back_to_menu" onClick={buttonHandler}>click me</button>
 		</div>

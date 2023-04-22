@@ -14,8 +14,11 @@ import Paddle from "./Paddle"
 export default function PongGame ()
 {
 	const VICTORY: string = '/pong/endscreen?result=victory';
-	const VICTORY_FORFEIT: string = '/pong/endscreen?result=victory&forfeit=true';
+	const VICTORY_BY_FORFEIT: string = '/pong/endscreen?result=victory&forfeit=true';
+	const VICTORY_ON_TIME: string = '/pong/endscreen?result=victory&flagged=true';
 	const DEFEAT: string = '/pong/endscreen?result=defeat';
+	const DEFEAT_ON_TIME: string = '/pong/endscreen?result=defeat&flagged=true';
+	const DRAW: string = '/pong/endscreen?result=draw';
 	
 	let socket = socketManager.getPongSocket();
 	if (!socket)
@@ -81,12 +84,15 @@ export default function PongGame ()
 			scores.style.display = "none";
 		if (socket)
 			socket.emit('bringItOn');
+		window.onunload = function(e: any)
+		{
+			window.removeEventListener("mousemove", eMouseMoved);
+		};
 	}, []);
+
 
 	function joinQueue()
 	{
-
-
 		if (socket)
 			socket.emit('joinQueue', window.localStorage.getItem("name"));
 		if (buttonJoinQueue)
@@ -99,13 +105,9 @@ export default function PongGame ()
 		{
 			window.removeEventListener('mousemove', eMouseMoved);
 			
-			if (player_id != 0)
-			{
-				socket.emit('leaveGame');
-				window.alert("You just lost the game.");
-			}
-			else
-				socket.emit('leaveQueue');
+			socket.emit('leaveQueue');
+			socket.emit('leaveGame');
+			window.alert("You just lost the game.");
 		};
 	}
 
@@ -122,7 +124,7 @@ export default function PongGame ()
 	function eMouseMoved(e: any)
 	{
 		p_paddle.setPosition(100 * e.y / window.innerHeight);
-		socket.emit('movePaddle', { player_id: player_id, gametag: (game_id + 1), position: p_paddle.pos });
+		socket.emit('movePaddle', { gametag: (game_id + 1), position: p_paddle.pos });
 	}		
 	
 	useEffect(() =>
@@ -222,21 +224,18 @@ export default function PongGame ()
 				p_paddle.setPosition(gameState.p2_paddlepos);
 				ball.setPosition({ x: (100 - gameState.ballpos.x),  y: gameState.ballpos.y });
 			}
-		});
-	
-		socket.on('GOOOAAAAAAL', (strikerID: number) =>
-		{
-			if (strikerID == player_id)
+			if (p_score && o_score)
 			{
-				player.score++;
-				if (p_score)
-					p_score.textContent = player.score.toString();
-			}
-			else
-			{
-				opponent.score++;
-				if (o_score)
-					o_score.textContent = opponent.score.toString();
+				if (player_id == 1)
+				{
+					p_score.textContent = gameState.p1_score.toString();
+					o_score.textContent = gameState.p2_score.toString();
+				}
+				else
+				{
+					p_score.textContent = gameState.p2_score.toString();
+					o_score.textContent = gameState.p1_score.toString();
+				}
 			}
 		});
 	
@@ -247,23 +246,35 @@ export default function PongGame ()
 
 	
 		socket.on('opponentLeft', () =>
-			{
-			setLeavingPage(VICTORY_FORFEIT);
+		{
+			document.removeEventListener("mousemove", eMouseMoved);
+			setLeavingPage(VICTORY_BY_FORFEIT);
 		});
 	
-		socket.on('theEnd', (winnerID: number) =>
+		socket.on('victory', (flag = false) =>
 		{
-			if (winnerID = player_id)
-				setLeavingPage(VICTORY);
-			else
-				setLeavingPage(DEFEAT);
+			setLeavingPage(VICTORY);
+			if (flag)
+				setLeavingPage(VICTORY_ON_TIME);
+		});
+
+		socket.on('defeat', (flag = false) =>
+		{
+			setLeavingPage(DEFEAT);
+			if (flag)
+				setLeavingPage(DEFEAT_ON_TIME);
+		});
+
+		socket.on('draw', () =>
+		{
+			setLeavingPage(DRAW);
 		});
 	}, []);
 
 	return (
 			<div className="pong game">
 				<div className="text">
-					<h1 className="h1 nº1">PONG</h1>
+					<h1 className="h1 nº2">PONG</h1>
 					<button className="joinQueue" id="joinQueue" onClick={joinQueue}>join queue</button>
 					<div className="waiting" id="waiting">waiting for an opponent...</div>
 					<div className="scores" id="scores">

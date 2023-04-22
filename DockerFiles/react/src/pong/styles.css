@@ -42,6 +42,15 @@
 	color: var(--foreground-color);
 }
 
+.h1.nº2
+{
+	display: flex;
+	justify-content: center;
+	font-weight: bold;
+	font-size: 4vh;
+	color: var(--foreground-color);
+}
+
 .joinQueue
 {
 	display: flex;
@@ -193,6 +202,18 @@
 	
 }
 
+.pong.menu 
+{
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 3vh;
+	height: 100vh;
+	width: 100vw;
+	background-color: var(--background-color);
+}
+
 .result
 {
 	display: flex;
@@ -209,7 +230,7 @@
 	color: white;
 }
 
-.player_left
+.ps
 {
 	display: flex;
 	justify-content: center;

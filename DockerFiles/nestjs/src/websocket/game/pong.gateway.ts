@@ -19,14 +19,15 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 	clients = new Map<User, Socket>();
 	queue = new Map<User, Socket>();
-	games = new Array<Game>();
+	queueVariant = new Map<User, Socket>();
+	games = new Map<number, Game>();
 	duelists = new Map<{uid1: number, uid2: number}, {here1: boolean, here2: boolean}>();
 
 	constructor(private readonly userService: UserService)
 	{
     		setInterval(() =>
 		{
-			for (const game of this.games)
+			for (const game of this.games.values())
 			{
 				const s1 = this.clients.get(game.p1.user);
 				const s2 = this.clients.get(game.p2.user);
@@ -35,23 +36,43 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					const gameState = game.getGameState();
 					s1.emit('update', gameState);
 					s2.emit('update', gameState);
-      					if (game.GOAL)
+					if (game.timeover)
 					{
-						if (game.ball.pos.x > 50)
+						if (game.p1.score > game.p2.score)
 						{
-							s1.emit('GOOOAAAAAAL', 1);
-							s2.emit('GOOOAAAAAAL', 1);
+							s1.emit('victory', true)
+							s2.emit('defeat', true);
+						}
+						else if (game.p2.score > game.p1.score)
+						{
+							s2.emit('victory', true)
+							s1.emit('defeat', true);
 						}
 						else
 						{
-							s1.emit('GOOOAAAAAAL', 2);
-							s2.emit('GOOOAAAAAAL', 2);
+							s1.emit('draw');
+							s2.emit('draw');
 						}
-						game.GOAL = false;
+						this.games.delete(game.tag);
+					}
+					else
+					{
+						if (game.p1.score == 11)
+						{
+							s1.emit('victory');
+							s2.emit('defeat');
+							this.games.delete(game.tag);
+						}
+						else if (game.p2.score == 11)
+						{
+							s1.emit('defeat');
+							s2.emit('victory');
+							this.games.delete(game.tag);
+						}
 					}
 				}
 			}
-    		}, 1);
+    		}, 14);
 	}
 
 	afterInit()
@@ -96,6 +117,19 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		this.leaveGame(socket);
 	}
 
+	addGame(p1: User, p2: User)
+	{
+		let s1 = this.clients.get(p1);
+		let s2 = this.clients.get(p2);
+		if (s1 && s2)
+		{
+			s1.emit('gameFound', this.games.size, p1.name, p2.name, 1);
+			s2.emit('gameFound', this.games.size, p2.name, p1.name, 2);
+			this.games.set(this.games.size, new Game(new Player(p1, s1.id), new Player(p2, s2.id), this.games.size));
+		}
+		console.log(`game launched : ${p1.name} was matched up with ${p2.name}`);
+	}
+
 	@UseGuards(SocketGuard)
 	@SubscribeMessage('joinQueue')
 	joinQueue(socket: Socket, username: string)
@@ -122,8 +156,8 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
-	@SubscribeMessage('duel')
-	async duel(s1: Socket, uid1: numberDto, uid2: numberDto)
+	@SubscribeMessage('duelAccepted')
+	async duelAccepted(s1: Socket, uid1: numberDto, uid2: numberDto)
 	{
 		let player1: User | null = await this.userService.findOneByUid(uid1.input); 
 		let player2: User | null = await this.userService.findOneByUid(uid2.input); 
@@ -134,7 +168,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			s2 = this.clients.get(player2);
 
 			if (s2)
-				s2.emit('duelInvitationAccepted');
+				s2.emit('duelAccepted');
 			else
 				s1.emit('GameError', errorMessages.INVALIDUSER);
 			this.addGame(player1, player2);	
@@ -143,7 +177,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		else
 			s1.emit('GameError', errorMessages.INVALIDUSER);
 	}
-
 
 	@UseGuards(SocketGuard)
 	@SubscribeMessage('bringItOn')
@@ -189,7 +222,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		if (leaver)
 		{
 			let oppSock: Socket | undefined;
-			for (const game of this.games)
+			for (const game of this.games.values())
 			{
 				if (game.p1.user.uid === leaver.uid)
 					oppSock = this.clients.get(game.p2.user);
@@ -198,25 +231,11 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				if (oppSock)
 				{
 					oppSock.emit('opponentLeft');
-					this.games.splice(game.tag);
+					this.games.delete(game.tag);
 					break;
 				}
 			}
 		}
-	}
-
-
-	addGame(p1: User, p2: User)
-	{
-		let s1 = this.clients.get(p1);
-		let s2 = this.clients.get(p2);
-		if (s1 && s2)
-		{
-			s1.emit('gameFound', this.games.length, p1.name, p2.name, 1);
-			s2.emit('gameFound', this.games.length, p2.name, p1.name, 2);
-			this.games.push(new Game(new Player(p1), new Player(p2), this.games.length));
-		}
-		console.log(`game launched : ${p1.name} was matched up with ${p2.name}`);
 	}
 
 	@UseGuards(SocketGuard)
@@ -224,22 +243,29 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	@SubscribeMessage('playerReady')
 	playerReady(socket: Socket, gametag: numberDto)
 	{
-		const s1 = this.clients.get(this.games[gametag.input - 1].p1.user);
-		const s2 = this.clients.get(this.games[gametag.input - 1].p2.user);
-		let player_id: number = 0;
-	
-		const user = this.getUser(socket);
-		if (user && this.games.length > gametag.input - 1)
+		let s1: Socket | undefined;
+		let s2: Socket | undefined;
+		const game = this.games.get(gametag.input - 1);
+
+		if (game)
 		{
-			if (user.uid === this.games[gametag.input - 1].p1.user.uid)
+			s1 = this.clients.get(game.p1.user);
+			s2 = this.clients.get(game.p2.user);
+		}
+	
+		let player_id: number = 0;	
+		const user = this.getUser(socket);
+		if (user && game)
+		{
+			if (user.uid === game.p1.user.uid)
 			{
 				player_id = 1;
-				this.games[gametag.input - 1].p1_ready = true;
+				game.p1_ready = true;
 			}
-			else if (user.uid === this.games[gametag.input - 1].p2.user.uid)
+			else if (user.uid === game.p2.user.uid)
 			{
 				player_id = 2;
-				this.games[gametag.input - 1].p2_ready = true;
+				game.p2_ready = true;
 			}
 			else
 			{
@@ -250,23 +276,26 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				s2.emit("opponentReady");
 			else if (s1)
 				s1.emit("opponentReady");
-			if (this.games[gametag.input - 1].p1_ready && this.games[gametag.input - 1].p2_ready)
+			if (game.p1_ready && game.p2_ready)
 			{
-				console.log(`game [${gametag.input - 1}] is playing`);
-				this.games[gametag.input - 1].update();
+				console.log(`game [${game.tag}] is playing`);
+				game.update();
 			}
 		}
-
 	}
 
-	@UseGuards(SocketGuard)
+	//@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('movePaddle')
 	movePaddle(socket: Socket, data: posDto)
 	{
-		if (data.player_id == 1)
-    			this.games[data.gametag - 1].p1_paddle.setPosition(data.position);
-		else
-    			this.games[data.gametag - 1].p2_paddle.setPosition(data.position);
+		const game = this.games.get(data.gametag - 1);
+		if (game)
+		{
+			if (game.p1.sockid == socket.id)
+    				game.p1_paddle.setPosition(data.position);
+			else if	(game.p2.sockid == socket.id)
+    				game.p2_paddle.setPosition(data.position);
+		}
   	}
 }

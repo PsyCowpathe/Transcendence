@@ -11,14 +11,17 @@ export default class Game
 	p1: Player;
 	p2: Player;
 	tag: number;
-	deltaTime: number = 0;
+	startTime:number = 0;
 	prevTime: number = 0;
+	deltaTime: number = 0;
 	ball = new Ball();
 	p1_paddle = new Paddle(3);
 	p2_paddle = new Paddle(96);
+	bot_paddle = new Paddle(49);
 	p1_ready: boolean = false;
 	p2_ready: boolean = false;
 	GOAL:boolean = false;
+	timeover:boolean = false;
 
 	constructor(p1: Player, p2: Player, tag: number)
 	{
@@ -55,7 +58,7 @@ export default class Game
 				this.ball.speed = this.ball.GAME_SPEED;
 			}
 		}
-		else if (this.ball.pos.x > 75)
+		else if (this.ball.pos.x > 85)
 		{
 			const p2_paddlerect = this.p2_paddle.getRect();
 			
@@ -72,7 +75,7 @@ export default class Game
 				this.ball.wasHit = true;
 			}
 		}
-	
+
 		newpos = {	x: this.ball.pos.x + (this.ball.dir.x * this.ball.speed * this.deltaTime),
 				y: this.ball.pos.y + (this.ball.dir.y * this.ball.speed * this.deltaTime)	};
 		
@@ -91,7 +94,8 @@ export default class Game
 
 	update()
 	{
-		this.prevTime = Date.now();
+		this.startTime = Date.now()
+		this.prevTime = this.startTime;
     		setInterval(() =>
 		{
 			const time = Date.now();
@@ -99,7 +103,9 @@ export default class Game
 			this.prevTime = time;
 			this.moveBall();
 			if (this.ball.pos.x >= 99.9 || this.ball.pos.x <= 0.1)
-				this.GOOOAAAAAAL();	
+				this.GOOOAAAAAAL();
+			else if (time - this.startTime > 30000)
+				this.timeover = true;
     		}, 1);
 	}
 
@@ -109,6 +115,8 @@ export default class Game
 				ballpos: this.ball.pos,
 				p1_paddlepos: this.p1_paddle.pos.y,
 				p2_paddlepos: this.p2_paddle.pos.y,
+				p1_score: this.p1.score,
+				p2_score: this.p2.score,
 			});
 	}
 }
