@@ -8067,7 +8067,7 @@ react-scripts@5.0.1:
     tailwindcss "^3.0.2"
     terser-webpack-plugin "^5.2.5"
     webpack "^5.64.4"
-    webpack-dev-SERVER "^4.6.0"
+    webpack-dev-server "^4.6.0"
     webpack-manifest-plugin "^4.0.2"
     workbox-webpack-plugin "^6.4.1"
   optionalDependencies:
@@ -9442,9 +9442,9 @@ webpack-dev-middleware@^5.3.1:
     range-parser "^1.2.1"
     schema-utils "^4.0.0"
 
-webpack-dev-SERVER@^4.6.0:
+webpack-dev-server@^4.6.0:
   version "4.13.3"
-  resolved "https://registry.yarnpkg.com/webpack-dev-SERVER/-/webpack-dev-SERVER-4.13.3.tgz#9feb740b8b56b886260bae1360286818a221bae8"
+  resolved "https://registry.yarnpkg.com/webpack-dev-server/-/webpack-dev-server-4.13.3.tgz#9feb740b8b56b886260bae1360286818a221bae8"
   integrity sha512-KqqzrzMRSRy5ePz10VhjyL27K2dxqwXQLP5rAKwRJBPUahe7Z2bBWzHw37jeb8GCPKxZRO79ZdQUAPesMh/Nug==
   dependencies:
     "@types/bonjour" "^3.5.9"
