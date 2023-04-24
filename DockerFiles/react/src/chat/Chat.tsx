@@ -552,7 +552,7 @@ export function Chat() {
           </div>
           <div className="message-container">
             <div key={message.id} className={`message ${messageClass}`}>
-              <span>{message.text}</span>
+              <span>{message.textmatch(/.{1,50}/g)}</span>
             </div>
           </div>
         </div>
