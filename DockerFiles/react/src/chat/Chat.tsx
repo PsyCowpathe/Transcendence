@@ -545,7 +545,10 @@ export function Chat() {
         return
       else if (message.isPriv == true && (message.user !== UserTo && message.user !== UserName))
         return
-      
+        const MESSAGE_LINE_LENGTH = 25;
+        const messageText = message.text.match(new RegExp(`.{1,${MESSAGE_LINE_LENGTH}}`, "g"));
+        if (messageText === null)
+          return
       return (
         <div key={message.id}>
           <div className={`message ${userClass}`} onClick={() => handleUserClick({ name: message.user, uid: message.userUID })}>
@@ -553,7 +556,7 @@ export function Chat() {
           </div>
           <div className="message-container">
             <div key={message.id} className={`message ${messageClass}`}>
-              <span>{message.text.match(/.{1,50}/g)}</span>
+              <span>{messageText}</span>
             </div>
           </div>
         </div>
