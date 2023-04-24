@@ -167,3 +167,9 @@ form > * {
     margin-right: 0;
   }
 }
+
+
+
+.break-word {
+  word-wrap: break-word;
+}

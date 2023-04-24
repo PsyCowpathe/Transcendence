@@ -556,7 +556,7 @@ export function Chat() {
           </div>
           <div className="message-container">
             <div key={message.id} className={`message ${messageClass}`}>
-              <span>{messageText}</span>
+              <span className="break-word">{messageText}</span>
             </div>
           </div>
         </div>
