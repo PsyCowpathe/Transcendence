@@ -513,7 +513,7 @@ export function Chat() {
 
   const HandleNewMessage = (e: any) => {
     e.preventDefault();
-    if (newMessage !== '' || newMessage.length > 135) {
+    if (newMessage !== '' || newMessage.length < 135) {
       if (selectedChannel) {
         socket.emit("channelmsg", { destination: selectedChannel, message: newMessage })
         const newMessageObj = { id: Date.now(), channel: selectedChannel, user: UserName, userUID: UserUID, text: newMessage, isSent: true, isPriv: false };
