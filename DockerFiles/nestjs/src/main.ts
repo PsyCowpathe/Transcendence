@@ -24,7 +24,7 @@ async function bootstrap()
 	({
 		allowedHeaders: ['content-type', 'authorization', 'TwoFAToken'],
 		credentials : true,
-		origin: [ORIGIN],
+		origin: [ORIGIN, "http://localhost:3000"],
 		methods: 'GET, POST',
 	});
 	app.useGlobalPipes(new ValidationPipe());
