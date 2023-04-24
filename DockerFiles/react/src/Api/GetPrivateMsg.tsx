@@ -1,11 +1,9 @@
 import axios from 'axios'
-import { urls } from "../global"
 import { SetParamsToGetPost4 } from '../Headers/HeaderManager';
-
 
 export async function GetPrivMsg(user : number)
 {
     const config : any = SetParamsToGetPost4(user)
-    let ret = await axios.get(`${urls.SERVER}/main/resumeprivate`, config);
+    let ret = await axios.get(`${process.env.SERVER}:3630/main/resumeprivate`, config);
     return(ret);
 }

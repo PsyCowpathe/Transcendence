@@ -1,5 +1,4 @@
 import io from 'socket.io-client';
-import { urls } from './global';
 import { SetParamsToGetPost } from './Headers/HeaderManager';
 class SocketManager {
   private chatSocket: any;
@@ -15,7 +14,7 @@ class SocketManager {
   }
  
   initializeChatSocket(token: string) {
-      this.chatSocket = io(`${urls.SOCKETCHAT}/`, {
+      this.chatSocket = io(`${process.env.SERVER}:3632/`, {
         auth: {
           token: token,
           twoFAToken: localStorage.getItem('2FA')
@@ -26,7 +25,7 @@ class SocketManager {
 
   }
   initializeFriendRequestSocket(token: string) {
-      this.FriendRequestSocket = io(`${urls.SOCKETFRIENDSHIP}`, {
+      this.FriendRequestSocket = io(`${process.env.SERVER}:3631`, {
         auth: {
           token: token,
           twoFAToken: localStorage.getItem('2FA')
@@ -35,7 +34,7 @@ class SocketManager {
   }
 
   initializePongSocket(token: string) {
-      this.PongSocket = io(`${urls.SOCKETGAME}`, {
+      this.PongSocket = io(`${process.env.SERVER}:3633`, {
         auth: {
           token: token,
           twoFAToken: localStorage.getItem('2FA')
@@ -43,7 +42,7 @@ class SocketManager {
       });
   }
   initializeStatusSocket(token: string) {
-      this.StatusSocket = io(`${urls.SOCKETSTATUS}`, { 
+      this.StatusSocket = io(`${process.env.SERVER}:3634`, { 
         auth: {
           token: token,
           twoFAToken: localStorage.getItem('2FA')
