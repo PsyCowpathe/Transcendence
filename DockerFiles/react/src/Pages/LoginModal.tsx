@@ -53,7 +53,7 @@ export function ChangeLoginMod()
               }
             }
           }
-            console.log(err.response.data.message[0])
+            console.log(err.response.data.message)
         })
         setwait({name:''})
     }

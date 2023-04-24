@@ -1,13 +1,9 @@
 import React, { useState } from "react";
 import {useEffect } from 'react';
-import { AffMyUserPage } from "../Pages/UserPage";
 import '../css/modal.css'
 
-import { AffTheUser } from "../Pages/UserModalPage";
 import ProfilePictureUploader from "../Pages/NewProfilPic";
-interface User {
-  name: string;
-}
+
 
 interface Props {
 

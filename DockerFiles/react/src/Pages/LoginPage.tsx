@@ -45,7 +45,7 @@ export function ChangeLogin() {
           }
         }
         // if(err.message === "Invalid 2FA token") erreur de 2FA ==> redirection vers la page de 2FA
-        console.log(err.response.data.message[0])
+        console.log(err.response.data.message)
       })
     setwait({ name: '' })
   }

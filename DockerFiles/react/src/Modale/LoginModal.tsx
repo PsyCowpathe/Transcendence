@@ -3,9 +3,7 @@ import {useEffect } from 'react';
 import '../css/modal.css'
 
 import { ChangeLoginMod } from "../Pages/LoginModal";
-interface User {
-  name: string;
-}
+
 
 interface Props {
 
@@ -23,8 +21,6 @@ useEffect(() => {
     setShowModal(false);
     onClose();
   };
-  console.log("nfdcjhvbdlkhfcnzfdc-")
-  const pute : boolean = true
   return (
     <>
 

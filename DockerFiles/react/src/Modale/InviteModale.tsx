@@ -2,9 +2,6 @@ import React, { useState } from "react";
 import {useEffect } from 'react';
 import '../css/modal.css';
 import { Invite } from "../Pages/Invite";
-interface User {
-  name: string;
-}
 
 interface Props {
 
@@ -23,8 +20,6 @@ useEffect(() => {
     setShowModal(false);
     onClose();
   };
-  console.log("nfdcjhvbdlkhfcnzfdc-")
-  const pute : boolean = true
   return (
     <>
 

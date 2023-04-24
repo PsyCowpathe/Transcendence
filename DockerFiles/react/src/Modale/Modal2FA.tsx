@@ -1,11 +1,7 @@
 import React, { useState } from "react";
 import {useEffect } from 'react';
-import { AffMyUserPage } from "../Pages/UserPage";
 import '../css/modal.css'
 
-import { AffTheUser } from "../Pages/UserModalPage";
-import ProfilePictureUploader from "../Pages/NewProfilPic";
-import { ChangeLogin } from "../Pages/LoginPage";
 import { Set2FA } from "../Pages/Set2FA";
 interface User {
   name: string;
@@ -27,8 +23,6 @@ useEffect(() => {
     setShowModal(false);
     onClose();
   };
-  console.log("nfdcjhvbdlkhfcnzfdc-")
-  const pute : boolean = true
   return (
     <>
 

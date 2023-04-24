@@ -14,7 +14,7 @@ class SocketManager {
   }
  
   initializeChatSocket(token: string) {
-      this.chatSocket = io(`${process.env.SERVER}:3632/`, {
+      this.chatSocket = io(`${process.env.REACT_APP_SERVER}:3632/`, {
         auth: {
           token: token,
           twoFAToken: localStorage.getItem('2FA')
@@ -25,7 +25,7 @@ class SocketManager {
 
   }
   initializeFriendRequestSocket(token: string) {
-      this.FriendRequestSocket = io(`${process.env.SERVER}:3631`, {
+      this.FriendRequestSocket = io(`${process.env.REACT_APP_SERVER}:3631`, {
         auth: {
           token: token,
           twoFAToken: localStorage.getItem('2FA')
@@ -34,7 +34,7 @@ class SocketManager {
   }
 
   initializePongSocket(token: string) {
-      this.PongSocket = io(`${process.env.SERVER}:3633`, {
+      this.PongSocket = io(`${process.env.REACT_APP_SERVER}:3633`, {
         auth: {
           token: token,
           twoFAToken: localStorage.getItem('2FA')
@@ -42,7 +42,7 @@ class SocketManager {
       });
   }
   initializeStatusSocket(token: string) {
-      this.StatusSocket = io(`${process.env.SERVER}:3634`, { 
+      this.StatusSocket = io(`${process.env.REACT_APP_SERVER}:3634`, { 
         auth: {
           token: token,
           twoFAToken: localStorage.getItem('2FA')

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {useEffect } from 'react';
-import { AffMyUserPage } from "../Pages/UserPage";
 import '../css/modal.css'
 
 import { AffTheUser } from "../Pages/UserModalPage";
@@ -26,8 +25,6 @@ useEffect(() => {
     setShowModal(false);
     onClose();
   };
-  console.log("nfdcjhvbdlkhfcnzfdc-")
-  const pute : boolean = true
   return (
     <>
 

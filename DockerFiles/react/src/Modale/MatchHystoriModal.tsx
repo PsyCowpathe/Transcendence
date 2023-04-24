@@ -23,8 +23,6 @@ useEffect(() => {
     setShowModal(false);
     onClose();
   };
-  console.log("nfdcjhvbdlkhfcnzfdc-")
-  const pute : boolean = true
   return (
     <>
 
