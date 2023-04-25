@@ -7,7 +7,6 @@ export default class Ball
 	dir = { x: 0, y: 0 };
 	rect = { up: 0, down: 0, left: 0, right: 0 };
 	speed: number = 0;
-	wasHit = true;
 
 	constructor ()
 	{
@@ -52,6 +51,5 @@ export default class Ball
 		this.setPosition(pos);
 		this.dir = this.getRandomDirection();
 		this.speed = this.BASE_SPEED;
-		this.wasHit = false;
 	}
 }

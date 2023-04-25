@@ -19,9 +19,9 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 	clients = new Map<User, Socket>();
 	queue = new Map<User, Socket>();
-	queueVariant = new Map<User, Socket>();
 	games = new Map<number, Game>();
 	duelists = new Map<{uid1: number, uid2: number}, {here1: boolean, here2: boolean}>();
+	duelInvites = new Map<number, number>();
 
 	constructor(private readonly userService: UserService)
 	{
@@ -38,6 +38,8 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					s2.emit('update', gameState);
 					if (game.timeover)
 					{
+						s1.emit("status", "Connected");
+						s2.emit("status", "Connected");
 						if (game.p1.score > game.p2.score)
 						{
 							s1.emit('victory', true)
@@ -59,12 +61,16 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					{
 						if (game.p1.score == 11)
 						{
+							s1.emit("status", "Connected");
+							s2.emit("status", "Connected");
 							s1.emit('victory');
 							s2.emit('defeat');
 							this.games.delete(game.tag);
 						}
 						else if (game.p2.score == 11)
 						{
+							s1.emit("status", "Connected");
+							s2.emit("status", "Connected");
 							s1.emit('defeat');
 							s2.emit('victory');
 							this.games.delete(game.tag);
@@ -90,6 +96,8 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		{
 			this.clients.set(user, socket);
 			console.log(`Client connected : ${user.name} identified as ${socket.id}`);
+			await this.userService.updateStatus("In game", user);
+			socket.emit("status", "Connected");
 		}
 		else
 		{
@@ -108,11 +116,15 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		return (undefined);
     	}
 
-	handleDisconnect(socket: Socket)
+	async handleDisconnect(socket: Socket)
 	{
 		const leaver = this.getUser(socket);
 		if (leaver)
+		{
+			await this.userService.updateStatus("In game", leaver);
+			socket.emit("status", "Disconnected");
 			console.log(`Client disconnected : ${leaver.name} identified as ${socket.id}`);
+		}
 		this.leaveQueue(socket);
 		this.leaveGame(socket);
 	}
@@ -140,6 +152,15 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		user = this.getUser(socket);
 		if (user)
 		{
+			for (const game of this.games.values())
+			{
+				if (game.p1.user.uid == user.uid)
+				{
+					socket.emit("GameError", "already in game"); // A CHANGER
+					break;
+				}
+			}
+
 			this.queue.set(user, socket);
 			console.log(`user ${username} identified as ${socket.id} joined the queue`);
 			if (this.queue.size % 2 == 0)
@@ -151,7 +172,62 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			}
 		}
 		else
-			socket.emit("GameError", errorMessages.INVALIDUSER)
+			socket.emit("GameError", errorMessages.INVALIDUSER);
+	}
+
+	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
+	@SubscribeMessage('sendDuel')
+	sendDuel(socket: Socket, opp_uid: numberDto)
+	{
+		let user: User | undefined;
+		let cli: User[];
+
+		user = this.getUser(socket);
+		if (user)
+		{
+			for (const game of this.games.values())
+			{
+				if (game.p1.user.uid === user.uid)
+				{
+					socket.emit("GameError", "already in game"); // A CHANGER
+					return;
+				}
+			}
+			for (const usr of this.queue.keys())
+			{
+				if (usr.uid === user.uid)
+				{
+					socket.emit("GameError", "already in queue"); // A CHANGER
+					return;
+				}
+			}
+			for (const duel of this.duelists.keys())
+			{
+				if (duel.uid1 === user.uid)
+				{
+					socket.emit("GameError", "already in a duel"); // A CHANGER
+					return;
+				}
+			}
+			for (const [inviting, invited] of this.duelInvites.entries())
+			{
+				if (inviting === user.uid)
+				{
+					socket.emit("GameError", "already a duel invite pending"); // A CHANGER
+					return;
+				}
+				if (inviting === opp_uid.input && invited === user.uid)
+				{
+					socket.emit("GameError", "you were already invited by this player"); // A CHANGER
+					return;
+				}
+			}
+				
+			this.duelInvites.set(user.uid, opp_uid.input);
+		}
+		else
+			socket.emit("GameError", errorMessages.INVALIDUSER);
 	}
 
 	@UseGuards(SocketGuard)
@@ -162,25 +238,71 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		let player1: User | null = await this.userService.findOneByUid(uid1.input); 
 		let player2: User | null = await this.userService.findOneByUid(uid2.input); 
 		let s2!: Socket | undefined;
+		let wasInvited: boolean = false;
 		
 		if (player1 && player2)
 		{
+			for (const game of this.games.values())
+			{
+				if (this.queue.get(player1) != undefined ||
+					this.queue.get(player2) != undefined ||
+					game.p1.user.uid == player1.uid ||
+					game.p2.user.uid == player1.uid ||
+					game.p1.user.uid == player2.uid ||
+					game.p2.user.uid == player2.uid)
+				{
+					s1.emit("GameError", "already in game"); // A CHANGER
+					return;
+				}
+			}
+			for (const usr of this.queue.keys())
+			{
+				if (usr.uid === player1.uid || usr.uid === player2.uid)
+				{
+					s1.emit("GameError", "already in queue"); // A CHANGER
+					return;
+				}
+			}
+			for (const duel of this.duelists.keys())
+			{
+				if (duel.uid1 === player1.uid || duel.uid2 === player1.uid ||
+				   	duel.uid1 === player2.uid || duel.uid2 === player2.uid)
+				{
+					s1.emit("GameError", "already in a duel"); // A CHANGER
+					return;
+				}
+			}
+			for (const [inviting, invited] of this.duelInvites.entries())
+			{
+				if (inviting === uid2.input && invited === uid1.input)
+				{
+					wasInvited = true;
+					break;
+				}
+			}
+			if (!wasInvited)
+			{
+				s1.emit("GameError", "not invited"); // A CHANGER
+				return;
+			}
+			
 			s2 = this.clients.get(player2);
-
 			if (s2)
 				s2.emit('duelAccepted');
 			else
-				s1.emit('GameError', errorMessages.INVALIDUSER);
+				s1.emit('GameError', "opponent unavailable"); // A CHANGER
 			this.addGame(player1, player2);	
 			this.duelists.set({uid1: player1.uid, uid2: player2.uid}, {here1: false, here2: false});
+			this.duelInvites.delete(uid1.input);
 		}
 		else
 			s1.emit('GameError', errorMessages.INVALIDUSER);
 	}
 
 	@UseGuards(SocketGuard)
-	@SubscribeMessage('bringItOn')
-	bringItOn(socket: Socket)
+	@UsePipes(new ValidationPipe())
+	@SubscribeMessage('accessDuel')
+	accessDuel(socket: Socket)
 	{
 		let player: User | undefined = this.getUser(socket); 
 
@@ -190,7 +312,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			{
 				if (players.uid1 == player.uid)
 				{
-					socket.emit('startDuel');
+					socket.emit('gameFound');
 					if (!status.here2)
 						this.duelists.set(players, {here1: true, here2: false});
 					else
@@ -200,6 +322,19 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		}
 		else
 			socket.emit('GameError', errorMessages.INVALIDUSER);
+	}
+
+	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
+	@SubscribeMessage('useSpell')
+	useSpell(socket: Socket, tag: numberDto)
+	{
+		const game = this.games.get(tag.input - 1);
+
+		if (game && game.variant && game.p1.sockid == socket.id)
+			game.useSpell(1);
+		else if (game && game.variant && game.p2.sockid == socket.id)
+			game.useSpell(2);
 	}
 
 	@UseGuards(SocketGuard)
@@ -216,7 +351,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('leaveGame')
-	leaveGame(socket: Socket)
+	async leaveGame(socket: Socket)
 	{
 		const leaver = this.getUser(socket);
 		if (leaver)
@@ -225,11 +360,17 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			for (const game of this.games.values())
 			{
 				if (game.p1.user.uid === leaver.uid)
+				{
 					oppSock = this.clients.get(game.p2.user);
+				}
 				else if (game.p2.user.uid === leaver.uid)
+				{
 					oppSock = this.clients.get(game.p1.user);
+				}
 				if (oppSock)
 				{
+					await this.userService.updateStatus("Connected", leaver);
+					socket.emit("status", "Connected");
 					oppSock.emit('opponentLeft');
 					this.games.delete(game.tag);
 					break;
@@ -240,8 +381,79 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
+	@SubscribeMessage('activateVariant')
+	activateVariant(socket: Socket, tag: numberDto)
+	{
+		const game = this.games.get(tag.input - 1);
+		let s1!: Socket | undefined;
+		let s2!: Socket | undefined;
+		
+		if (game)
+		{
+			if (game.p1.sockid == socket.id)
+			{
+    				game.p1_variant = true;
+				if (game.p2_variant == false)
+				{
+					s2 = this.clients.get(game.p2.user);
+					if (s2)
+						s2.emit('variantProposed');
+				}
+			}
+			else if	(game.p2.sockid == socket.id)
+			{
+    				game.p2_variant = true;
+				if (game.p1_variant == false)
+				{
+					s1 = this.clients.get(game.p1.user);
+					if (s1)
+						s1.emit('variantProposed');
+				}
+			}
+			if (game.p1_variant && game.p2_variant)
+			{
+				game.variant = true;
+				if (s1 && s2)
+				{
+					s1.emit('variantOnOff', true);
+					s2.emit('variantOnOff', true);
+				}
+			}
+		}	
+	}
+
+	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
+	@SubscribeMessage('rejectVariant')
+	rejectVariant(socket: Socket, tag: numberDto)
+	{
+		const game = this.games.get(tag.input - 1);
+		let s1!: Socket | undefined;
+		let s2!: Socket | undefined;
+		
+		if (game)
+		{
+			if (game.p1.sockid == socket.id)
+			{
+    				game.p1_variant = true;
+				s2 = this.clients.get(game.p2.user);
+				if (s2)
+					s2.emit('variantOff', false);
+			}
+			else if	(game.p2.sockid == socket.id)
+			{
+    				game.p2_variant = true;
+				s1 = this.clients.get(game.p1.user);
+				if (s1)
+					s1.emit('variantOnOff', false);
+			}
+		}	
+	}
+
+	@UseGuards(SocketGuard)
+	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('playerReady')
-	playerReady(socket: Socket, gametag: numberDto)
+	async playerReady(socket: Socket, gametag: numberDto)
 	{
 		let s1: Socket | undefined;
 		let s2: Socket | undefined;
@@ -280,6 +492,11 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			{
 				console.log(`game [${game.tag}] is playing`);
 				game.update();
+				if (s1 && s2)
+				{
+					s1.emit('playing');
+					s2.emit('playing');
+				}
 			}
 		}
 	}

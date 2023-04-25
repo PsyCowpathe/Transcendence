@@ -12,16 +12,22 @@ export default class Game
 	p2: Player;
 	tag: number;
 	startTime:number = 0;
+	elapsedTime: number = 0;
 	prevTime: number = 0;
 	deltaTime: number = 0;
+	lastSpellTime: number = 0;
 	ball = new Ball();
 	p1_paddle = new Paddle(3);
 	p2_paddle = new Paddle(96);
 	bot_paddle = new Paddle(49);
 	p1_ready: boolean = false;
 	p2_ready: boolean = false;
+	p1_variant: boolean = false;
+	p2_variant: boolean = false;
 	GOAL:boolean = false;
 	timeover:boolean = false;
+	variant: boolean = false;
+	spellInUse: boolean = false;
 
 	constructor(p1: Player, p2: Player, tag: number)
 	{
@@ -51,7 +57,7 @@ export default class Game
 				ballrect.down >= p1_paddlerect.up &&
 				this.ball.pos.x >= p1_paddlerect.left	)
 				{
-				let rad:number = ((this.ball.pos.y - this.p1_paddle.pos.y) / 20);	
+				let rad:number = ((this.ball.pos.y - this.p1_paddle.pos.y) / (2 * this.p1_paddle.size));	
 				newdir = {	x: Math.cos(rad * Math.PI),
 						y: Math.sin(rad * Math.PI)	};
 				this.ball.setDirection(newdir);
@@ -67,12 +73,11 @@ export default class Game
 				ballrect.down >= p2_paddlerect.up &&
 				this.ball.pos.x <= p2_paddlerect.right	)
 			{
-				let rad:number = ((this.ball.pos.y - this.p2_paddle.pos.y) / 20);
+				let rad:number = ((this.ball.pos.y - this.p2_paddle.pos.y) / (2 * this.p2_paddle.size));
 				newdir = {	x: -Math.cos(rad * Math.PI),
 						y: Math.sin(rad * Math.PI)	};
 				this.ball.setDirection(newdir);
 				this.ball.speed = this.ball.GAME_SPEED;
-				this.ball.wasHit = true;
 			}
 		}
 
@@ -92,6 +97,30 @@ export default class Game
 		this.ball.reset();
 	}
 
+	useSpell(player: number)
+	{
+		if (player == 1 && this.p1.spellsUsed++ < 3)
+		{
+			this.p1_paddle.size = 60;
+			this.p1_paddle.pos.y = 50;
+			this.spellInUse = true;
+			setTimeout(() => {
+  				this.p1_paddle.size = 10;
+				this.spellInUse = false;
+			}, 420);
+		}
+		else if (this.p2.spellsUsed++ < 3)
+		{
+			this.p2_paddle.size = 60;
+			this.p2_paddle.pos.y = 50;
+			this.spellInUse = true;
+			setTimeout(() => {
+  				this.p2_paddle.size = 10;
+				this.spellInUse = false;
+			}, 420);
+		}
+	}
+
 	update()
 	{
 		this.startTime = Date.now()
@@ -101,10 +130,16 @@ export default class Game
 			const time = Date.now();
 			this.deltaTime = time - this.prevTime;
 			this.prevTime = time;
+			this.elapsedTime = time - this.startTime;
+			if (this.variant && !this.spellInUse)
+			{
+				this.p1_paddle.shrink(0.00015);
+				this.p2_paddle.shrink(0.00015);
+			}
 			this.moveBall();
 			if (this.ball.pos.x >= 99.9 || this.ball.pos.x <= 0.1)
 				this.GOOOAAAAAAL();
-			else if (time - this.startTime > 30000)
+			else if (this.elapsedTime > 180000)
 				this.timeover = true;
     		}, 1);
 	}
@@ -113,8 +148,10 @@ export default class Game
 	{
 		return ({
 				ballpos: this.ball.pos,
-				p1_paddlepos: this.p1_paddle.pos.y,
-				p2_paddlepos: this.p2_paddle.pos.y,
+				p1_paddle_pos: this.p1_paddle.pos.y,
+				p2_paddle_pos: this.p2_paddle.pos.y,
+				p1_paddle_size: this.p1_paddle.size,
+				p2_paddle_size: this.p2_paddle.size,
 				p1_score: this.p1.score,
 				p2_score: this.p2.score,
 			});

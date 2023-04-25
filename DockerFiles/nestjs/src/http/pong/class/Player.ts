@@ -6,6 +6,7 @@ export default class Player
 	user: User;
 	sockid: string;
 	score: number;
+	spellsUsed: number;
 
 	constructor(user: User, sockid: string)
 	{
@@ -13,5 +14,6 @@ export default class Player
 		this.user = user;
 		this.sockid = sockid;
 		this.score = 0;
+		this.spellsUsed = 0;
 	}
 }
