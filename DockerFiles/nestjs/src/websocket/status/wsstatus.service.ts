@@ -37,7 +37,9 @@ export class WsStatusService
 
     async changeStatus(user: User, status: string)
     {
+        let socket = await this.sockets.get(user.id);
         await this.userService.updateStatus(status, user);
+        socket.broadcast.emit("status", {id: user.id, status: status});
     }
 
     async connection(client: Socket)
@@ -49,8 +51,6 @@ export class WsStatusService
         if (user === null)
             return;
         await this.userService.updateStatus("Online", user);
-        let friendList : any = await this.relationService.getFriendUser(user);
-        let i = 0;
         client.broadcast.emit("status", {id: user.id, status: "Online"});
     }
 
@@ -63,8 +63,6 @@ export class WsStatusService
         if (user === null)
             return;
         await this.userService.updateStatus("Offline", user);
-        let friendList : any = await this.relationService.getFriendUser(user);
-        let i = 0;
         client.broadcast.emit("status", {id: user.id, status: "Offline"});
     }
 }
