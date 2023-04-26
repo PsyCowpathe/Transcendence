@@ -44,8 +44,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		{
 			this.clients.set(user, socket);
 			console.log(`Client connected : ${user.name} identified as ${socket.id}`);
-			await this.userService.updateStatus("In game", user);
-			socket.emit("status", "Connected");
 		}
 		else
 		{
@@ -69,20 +67,24 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		const leaver = this.getUser(socket);
 		if (leaver)
 		{
-			await this.userService.updateStatus("In game", leaver);
-			socket.emit("status", "Disconnected");
+			await this.userService.updateStatus("Online", leaver);
+			socket.emit("status", "Online");
 			console.log(`Client disconnected : ${leaver.name} identified as ${socket.id}`);
 		}
 		this.leaveQueue(socket);
 		this.leaveGame(socket);
 	}
 
-	addGame(p1: User, p2: User)
+	async addGame(p1: User, p2: User)
 	{
 		let s1 = this.clients.get(p1);
 		let s2 = this.clients.get(p2);
 		if (s1 && s2)
 		{
+			await this.userService.updateStatus("InGame", p1);
+			await this.userService.updateStatus("InGame", p2);
+			s1.emit("status", "InGame");
+			s2.emit("status", "InGame");
 			s1.emit('gameFound', this.games.size, p1.name, p2.name, 1);
 			s2.emit('gameFound', this.games.size, p2.name, p1.name, 2);
 			this.games.set(this.games.size, new Game(new Player(p1, s1.id), new Player(p2, s2.id), this.games.size));
@@ -187,7 +189,17 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	@SubscribeMessage('getInvites')
 	async getInvites(socket: Socket)
 	{
+		let player = this.getUser(socket);
+		let invitesList = new Map<string, number>();
 		
+		if (player && invitesList)
+		{
+			for (const [inviting, invited] of this.duelInvites.entries())
+			{
+				if (invited === player.uid)
+					invitesList.set("name", inviting);
+			}
+		}
 	}
 
 	@UseGuards(SocketGuard)
@@ -341,6 +353,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	@SubscribeMessage('leaveGame')
 	async leaveGame(socket: Socket)
 	{
+		let opp: User | undefined;
 		const leaver = this.getUser(socket);
 		if (leaver)
 		{
@@ -348,17 +361,19 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			for (const game of this.games.values())
 			{
 				if (game.p1.user.uid === leaver.uid)
-				{
 					oppSock = this.clients.get(game.p2.user);
-				}
 				else if (game.p2.user.uid === leaver.uid)
 				{
 					oppSock = this.clients.get(game.p1.user);
 				}
 				if (oppSock)
 				{
-					await this.userService.updateStatus("Connected", leaver);
-					socket.emit("status", "Connected");
+					oppSock.emit("status", "Online");
+					opp = this.getUser(oppSock);
+					if (opp)
+						await this.userService.updateStatus("Online", opp);
+					socket.emit("status", "Online");
+					await this.userService.updateStatus("Online", leaver);
 					oppSock.emit('opponentLeft');
 					this.games.delete(game.tag);
 					break;
@@ -520,8 +535,8 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				s2.emit('update', gameState);
 				if (game.timeover)
 				{
-					s1.emit("status", "Connected");
-					s2.emit("status", "Connected");
+					s1.emit("status", "Online");
+					s2.emit("status", "Online");
 					if (game.p1.score > game.p2.score)
 					{
 						s1.emit('victory', true)
@@ -543,16 +558,16 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				{
 					if (game.p1.score == 11)
 					{
-						s1.emit("status", "Connected");
-						s2.emit("status", "Connected");
+						s1.emit("status", "Online");
+						s2.emit("status", "Online");
 						s1.emit('victory');
 						s2.emit('defeat');
 						this.games.delete(game.tag);
 					}
 					else if (game.p2.score == 11)
 					{
-						s1.emit("status", "Connected");
-						s2.emit("status", "Connected");
+						s1.emit("status", "Online");
+						s2.emit("status", "Online");
 						s1.emit('defeat');
 						s2.emit('victory');
 						this.games.delete(game.tag);
