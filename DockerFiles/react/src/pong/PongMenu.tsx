@@ -42,7 +42,7 @@ export default function PongMenu ()
 		{
 
 		socket.emit('getInvites');
-		socket.on('invitesList', (invitesList: Map<string, number>, uid: number) =>
+		socket.on('invitesList', (invitesList: Map<string, number>) =>
 		{
 			invites = invitesList;
 		});

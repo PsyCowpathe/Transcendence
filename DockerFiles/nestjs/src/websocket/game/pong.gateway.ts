@@ -192,11 +192,16 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		
 		if (player && invitesList)
 		{
-			for (const [inviting, invited] of this.duelInvites.entries())
+			for (const [inviting_uid, invited_uid] of this.duelInvites.entries())
 			{
-				if (invited === player.uid)
-					invitesList.set("name", inviting);
+				if (invited_uid === player.uid)
+				{
+					const invit = await this.userService.findOneByUid(inviting_uid);
+					if (opponent)
+						invitesList.set(opponent.name, inviting_uid);
+				}
 			}
+			socket.emit('invitesList', invitesList);
 		}
 	}
 
@@ -423,8 +428,8 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
-	@SubscribeMessage('rejectVariant')
-	rejectVariant(socket: Socket, tag: numberDto)
+	@SubscribeMessage('declineVariant')
+	declineVariant(socket: Socket, tag: numberDto)
 	{
 		const game = this.games.get(tag.input - 1);
 		let s1!: Socket | undefined;
