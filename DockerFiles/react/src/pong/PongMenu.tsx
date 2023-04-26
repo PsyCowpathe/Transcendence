@@ -1,67 +1,139 @@
-import './styles.css'
+import './pong_menu.css'
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { useNavigate, } from 'react-router-dom'
 import axios from 'axios'
 
-import socketManager from '../Pages/HomePage'
+import socketManager from '../MesSockets'
+import { SetParamsToGetPost } from '../Headers/HeaderManager'
 import Pong from './Pong'
 
 export default function PongMenu ()
 {
-	const gameList = document.getElementById('gameList');
-	let games = new Array<String>;
-	let gameToSpec: number;
 	const navigate = useNavigate();
+	let myUid: number = 0;
 
-	if (gameList)
-		gameList.style.display = "none";
+	let socket = socketManager.getPongSocket();
+	while (!socket)
+	{
+		try
+		{
 
-	async function onClickPlayClassic()
+		const token = SetParamsToGetPost().headers.Authorization;
+		if (token !== null)
+		{
+			socketManager.initializePongSocket(token);
+			socket = socketManager.getPongSocket();
+		}
+
+		}
+		catch(error)
+		{
+			console.log("i'm a teapot");
+		}
+	}
+
+	let invites = new Map<string, number>();
+
+	useEffect(() => {
+		try
+		{
+
+		socket.emit('getInvites');
+		socket.on('invitesList', (invitesList: Map<string, number>, uid: number) =>
+		{
+			invites = invitesList;
+			myUid = uid;
+		});
+		socket.on('duelInviteReceived', () =>
+		{
+			socket.emit('getInvites');
+		});
+		socket.on('duelInviteAnswered', (opp_name: string, accepted: boolean) =>
+		{
+			if (accepted)
+				console.log(opp_name + " accepted your duel invitation");
+			else
+				console.log(opp_name + " rejected your duel invitation");
+		});
+		socket.on('GameError', (response: any) =>
+		{
+			console.log(response);
+		});
+
+		}
+		catch(error)
+		{
+			console.log("i'm a teapot");
+		}
+	}, []);
+
+	function acceptDuel(uid: number | undefined)
+	{
+		try
+		{
+
+
+		if (uid)
+			socket.emit('answerDuel', myUid, uid, true);
+
+		}
+		catch(error)
+		{
+			console.log("i'm a teapot");
+		}
+	}
+
+	function rejectDuel(uid: number | undefined)
+	{
+		try
+		{
+
+
+		if (uid)
+		{
+			socket.emit('answerDuel', myUid, uid, true);
+		}
+
+		}
+		catch(error)
+		{
+			console.log("i'm a teapot");
+		}
+	}
+
+	function onClickPlay()
 	{	
-		const response = await axios.post('/pong/joinQueue', {
-					uid: window.localStorage.getItem("UID")
-					});
+		try
+		{
+
+
 		navigate('/pong/play');
-	}
-	
-	async function onClickPlayVariant()
-	{
-	/*	const response = await axios.post('/joinQueueVariant', {
-					uid: window.localStorage.getItem("UID")
-					});
-		window.location.assign('/pong/play/variant');*/
-	}
-	
-	async function onClickSpectate()
-	{	
-		const response = await axios.post('/pong/getGames');
-		games = response.data;
-		if (gameList)
-			gameList.style.display = "flex";
-	}
-	
-	async function onClickGame(index: number)
-	{
-		const response = await axios.post('/spectateGame', {
-					uid: window.localStorage.getItem("UID"),
-					gameToSpec: index
-					});
-		navigate('/pong/spectate');
+
+		}
+		catch(error)
+		{
+			console.log("i'm a teapot");
+		}
 	}
 
 	return (
 		<div className="pong menu">
-			<h1>PONG</h1>
-			<button className="launch classic" onClick={onClickPlayClassic}>play classic</button>
-			<button className="launch variant" onClick={onClickPlayVariant}>play variant</button>
-			<button className="launch spectate" onClick={onClickSpectate}>spectate</button>
-			<div className="menu gameList" id="gameList">
+			<div className="h1nº2">PONG</div>
+			<button className="play" onClick={onClickPlay}>play</button>
+			<div className="duelInvites">
+				<div className="invitesTitle">Invitations :</div>
 				<ul>
-					{ games.map((game, index) => (
-						<li key={index} onClick={() => { onClickGame(index) }}>{game}</li>
+					{Array.from(invites.keys()).map((item: string, index: number) => (
+						<li key={index}>
+							duel invite from: {item}
+							<button className="acceptDuel" onClick={() => { acceptDuel(invites.get(item)) }}></button>
+							<button className="rejectDuel" onClick={() => { rejectDuel(invites.get(item)) }}></button>
+						</li>
 					))}
 				</ul>
 			</div>
 		</div>
 	);
+
 }

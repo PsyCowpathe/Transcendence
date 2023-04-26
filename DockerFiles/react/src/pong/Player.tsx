@@ -7,11 +7,10 @@ import Paddle from "./Paddle";
 export default class Player
 {
 	paddle!: Paddle;
-	name:string = "";
+	name:string | null = "";
 	score:number = 0;
-	id: number = 0;
 
-	constructor(name: string)
+	constructor(name: string | null)
 	{
 		this.name = name;
 	}

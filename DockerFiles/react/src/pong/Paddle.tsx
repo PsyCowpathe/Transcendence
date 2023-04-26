@@ -1,31 +1,33 @@
 export default class Paddle
 {
 	paddle!: HTMLElement;
-	pos = { x: 0, y: 0 };
-	//rect = { right: 0, left: 0, up: 0, down: 0 };
+	pos: number = 50;
+	y_min: number = 0;
+	y_max: number = 0;
 
 	constructor(paddle: HTMLElement | null)
 	{
 		if (paddle)
 			this.paddle = paddle;
-		this.pos = {	x: parseFloat(getComputedStyle(this.paddle).getPropertyValue("--x")),
-				y: parseFloat(getComputedStyle(this.paddle).getPropertyValue("--y")) };
-//		this.rect = { right: 4, left: 3, up: 45, down: 55 };
+		this.pos = parseFloat(getComputedStyle(this.paddle).getPropertyValue("--y"));
+		this.y_min = 25;
+		this.y_max = 75;
 	}
 
-/*	getRect()
+	setSize(h: any)
 	{
-		this.rect = { right: this.pos.x + 0.5, left: this.pos.x - 0.5, up: this.pos.y - 5, down: this.pos.y + 5 };
-		return (this.rect);
-	}*/
+		this.paddle.style.setProperty("--h", h);
+		this.y_min = 20 + (h * 0.5);
+		this.y_max = 80 - (h * 0.5);
+	}
 
 	setPosition(y: any)
 	{
-		if (y < 25)
-			y = 25;
-		else if (y > 75)
-			y = 75;
-		this.pos.y = y;
+		if (y < this.y_min)
+			y = this.y_min;
+		if (y > this.y_max)
+			y = this.y_max;
+		this.pos = y;
 		this.paddle.style.setProperty("--y", y);
 	}
 }

@@ -262,7 +262,23 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
   }
 
 
+/***************************************************************************** */
+  const sendDuelInvite = () =>
+{
+	let s = socketManager.getPongSocket();
+	if (!s)
+	{
+		const token = SetParamsToGetPost().headers.Authorization;
+		if (token !== null)
+		{
+			socketManager.initializePongSocket(token);
+			s = socketManager.getPongSocket();
+		}
+	}
+	socket.emit('sendDuel', { input: User.uid });
+}
 
+/***************************************************************************** */
 
 
 
@@ -315,7 +331,7 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
             </form>
           </div>
         }
-        <button className="add-message-button" onClick={DuelManager}>DUEL</button>
+        <button className="add-message-button" onClick={sendDuelInvite}>DUEL</button>
 
 
       </div><ToastContainer />

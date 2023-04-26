@@ -11,6 +11,8 @@ export function TopBar(){
 
 		<li><MyNavLink to="/chat" label="chat"/></li>
 		<li><MyNavLink to="/affUser" label="My User page"/></li>
+		<li><MyNavLink to="/pong/menu" label="pong"/></li>
+
 		</div>
 	)
 };
