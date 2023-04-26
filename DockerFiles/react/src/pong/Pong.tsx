@@ -324,6 +324,9 @@ export default function PongGame ()
 
 			window.onpopstate = function(e: any)
 			{
+				document.removeEventListener("mousemove", eMouseMoved);
+				document.removeEventListener("keydown", eKeyPressed);
+				document.removeEventListener("keyup", eKeyReleased);
 				socket.emit('leaveGame');
 				window.alert("You just lost the game.");
 			};

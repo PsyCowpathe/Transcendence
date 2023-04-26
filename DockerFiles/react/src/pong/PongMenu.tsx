@@ -11,7 +11,9 @@ import Pong from './Pong'
 export default function PongMenu ()
 {
 	const navigate = useNavigate();
-	let myUid: number = parseInt(window.localStorage.getItem("UID"));
+	let myUid: any = window.localStorage.getItem("UID");
+	if (myUid)
+		myUid = parseInt(myUid);
 
 	let socket = socketManager.getPongSocket();
 	while (!socket)
@@ -53,7 +55,7 @@ export default function PongMenu ()
 			if (accepted)
 				console.log(opp_name + " accepted your duel invitation");
 			else
-				console.log(opp_name + " rejected your duel invitation");
+				console.log(opp_name + " declined your duel invitation");
 		});
 		socket.on('GameError', (response: any) =>
 		{
@@ -73,7 +75,7 @@ export default function PongMenu ()
 		{
 
 
-		if (uid)
+		if (uid && myUid)
 			socket.emit('answerDuel', myUid, uid, true);
 
 		}
@@ -83,7 +85,7 @@ export default function PongMenu ()
 		}
 	}
 
-	function rejectDuel(uid: number | undefined)
+	function declineDuel(uid: number | undefined)
 	{
 		try
 		{
@@ -127,7 +129,7 @@ export default function PongMenu ()
 						<li key={index}>
 							duel invite from: {item}
 							<button className="acceptDuel" onClick={() => { acceptDuel(invites.get(item)) }}></button>
-							<button className="rejectDuel" onClick={() => { rejectDuel(invites.get(item)) }}></button>
+							<button className="declineDuel" onClick={() => { declineDuel(invites.get(item)) }}></button>
 						</li>
 					))}
 				</ul>
