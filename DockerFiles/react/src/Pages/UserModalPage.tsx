@@ -14,6 +14,7 @@ import MatchHistMod from '../Modale/MatchHystoriModal';
 let test: boolean = false;
 let tt: boolean = true;
 let test2: boolean = false;
+let test3: boolean = false;
 interface User {
   name: string;
   uid: number;
@@ -38,6 +39,7 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
 
 
   let socketFr = socketManager.getFriendRequestSocket();
+  let socketpong = socketManager.getPongSocket();
   const socket = socketManager.getChatSocket();
   let socketCo = socketManager.getStatusSocket();
 
@@ -47,6 +49,14 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
       socketCo = socketManager.getStatusSocket();
 
       test = true
+    }
+  }
+  if (socketpong == null) {
+    if (test3 === false && SetParamsToGetPost().headers.Authorization !== null) {
+      socketpong = socketManager.initializePongSocket(SetParamsToGetPost().headers.Authorization)
+      socketpong = socketManager.getPongSocket();
+
+      test3 = true
     }
   }
 
@@ -95,12 +105,15 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
     socket.removeListener("banuser", handleBanUser);
     socketFr.removeListener('blockuser');
     socketCo.removeListener("status", handleDeco)
+    socketpong.removeListener("status", handleDeco)
     socketCo.on("status", handleDeco)
+    socketpong.on("status", handleDeco)
     socketFr.on("blockuser", handleFriendRequest);
 
     socket.on("banuser", handleBanUser);
     return () => {
       socketCo.off("status", handleDeco)
+      socketpong.off("status", handleDeco)
       socket.off("blockuser");
 
       socketFr.off("banuser", handleBanUser);
