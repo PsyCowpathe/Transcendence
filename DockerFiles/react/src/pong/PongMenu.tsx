@@ -15,25 +15,29 @@ export default function PongMenu ()
 	if (myUid)
 		myUid = parseInt(myUid);
 
-	let socket = socketManager.getPongSocket();
-	while (!socket)
+	//let socket = socketManager.getPongSocket();
+	let socket: any = null;
+	useEffect(() =>
 	{
-		try
+		while (!socket)
 		{
-
-		const token = SetParamsToGetPost().headers.Authorization;
-		if (token !== null)
-		{
-			socketManager.initializePongSocket(token);
-			socket = socketManager.getPongSocket();
+			try
+			{
+	
+			const token = SetParamsToGetPost().headers.Authorization;
+			if (token !== null)
+			{
+				socketManager.initializePongSocket(token);
+				socket = socketManager.getPongSocket();
+			}
+	
+			}
+			catch(error)
+			{
+				console.log("i'm a teapot");
+			}
 		}
-
-		}
-		catch(error)
-		{
-			console.log("i'm a teapot");
-		}
-	}
+	}, []);
 
 	let invites = new Map<string, number>();
 
@@ -74,7 +78,6 @@ export default function PongMenu ()
 		try
 		{
 
-
 		if (uid && myUid)
 			socket.emit('answerDuel', myUid, uid, true);
 
@@ -89,7 +92,6 @@ export default function PongMenu ()
 	{
 		try
 		{
-
 
 		if (uid)
 		{
@@ -107,7 +109,6 @@ export default function PongMenu ()
 	{	
 		try
 		{
-
 
 		navigate('/pong/play');
 

@@ -126,8 +126,9 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('sendDuel')
-	async sendDuelInvite(socket: Socket, opp_uid: numberDto)
+	async sendDuel(socket: Socket, opp_uid: numberDto)
 	{
+		console.log("duel sent");
 		let user: User | undefined;
 		let opp: User | null = await this.userService.findOneByUid(opp_uid.input);
 
@@ -184,31 +185,9 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	}
 
 	@UseGuards(SocketGuard)
-	@SubscribeMessage('getInvites')
-	async getInvites(socket: Socket)
-	{
-		let player = this.getUser(socket);
-		let invitesList = new Map<string, number>();
-		
-		if (player && invitesList)
-		{
-			for (const [inviting_uid, invited_uid] of this.duelInvites.entries())
-			{
-				if (invited_uid === player.uid)
-				{
-					const invit = await this.userService.findOneByUid(inviting_uid);
-					if (opponent)
-						invitesList.set(opponent.name, inviting_uid);
-				}
-			}
-			socket.emit('invitesList', invitesList);
-		}
-	}
-
-	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('answerDuel')
-	async answerDuelInvite(s1: Socket, uid1: numberDto, uid2: numberDto, inviteAccepted: boolean)
+	async answerDuel(s1: Socket, uid1: numberDto, uid2: numberDto, inviteAccepted: boolean)
 	{
 		let player1: User | null = await this.userService.findOneByUid(uid1.input); 
 		let player2: User | null = await this.userService.findOneByUid(uid2.input); 
@@ -277,6 +256,29 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		}
 		else
 			s1.emit('GameError', errorMessages.INVALIDUSER);
+	}
+
+	@UseGuards(SocketGuard)
+	@SubscribeMessage('getInvites')
+	async getInvites(socket: Socket)
+	{
+		let player = this.getUser(socket);
+		let invitesList = new Map<string, number>();
+		
+		if (player && invitesList)
+		{
+			for (const [inviting_uid, invited_uid] of this.duelInvites.entries())
+			{
+				if (invited_uid === player.uid)
+				{
+					const opponent = await this.userService.findOneByUid(inviting_uid);
+					if (opponent)
+						invitesList.set(opponent.name, inviting_uid);
+				}
+			}
+			socket.emit('invitesList', invitesList);
+			console.log(`${invitesList.size} invites sent to ${player.name}`);
+		}
 	}
 
 	@UseGuards(SocketGuard)

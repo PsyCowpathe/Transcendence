@@ -329,6 +329,7 @@ export default function PongGame ()
 				document.removeEventListener("keyup", eKeyReleased);
 				socket.emit('leaveGame');
 				window.alert("You just lost the game.");
+				window.onpopstate = (e: any) => {};
 			};
 	
 			}
