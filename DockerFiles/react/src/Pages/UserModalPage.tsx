@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react';
 import { PicGetRequest } from '../Api/PicGetRequest';
 import { GetUserInfo } from '../Api/GetUserInfo';
+import { SetParamsToGetPost } from '../Headers/HeaderManager';
 import socketManager from '../MesSockets';
 
 interface User {
@@ -237,15 +238,19 @@ const onClickfour = (() =>
 
 const navigate = useNavigate();
 /***************************************************************************POUR LEO LE DUEL PONG ********************************/
-const DuelManager = () =>
+const sendDuelInvite = () =>
 {
-  // => User.uid
-  //socket.emit("TAROUTE", { id(ou name jsp comme tu l aura appeller dansle back): User.uid )
-
-  alert("Duel Manager")
-
-
-
+	let s = socketManager.getPongSocket();
+	if (!s)
+	{
+		const token = SetParamsToGetPost().headers.Authorization;
+		if (token !== null)
+		{
+			socketManager.initializePongSocket(token);
+			s = socketManager.getPongSocket();
+		}
+	}
+	socket.emit('sendDuel', { input: User.uid });
 }
 /***************************************************************************POUR LEO LE DUeK PONG ********************************/
 
@@ -297,7 +302,7 @@ return(
       </form>
     </div>
       } 
-      <button  className="add-message-button"onClick={DuelManager}>DUEL</button>
+      <button  className="add-message-button"onClick={sendDuelInvite}>DUEL</button>
 
 
   </div><ToastContainer/>

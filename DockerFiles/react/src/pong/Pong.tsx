@@ -22,13 +22,22 @@ export default function PongGame ()
 	const USE_SPELL: any = "+";
 
 	let socket = socketManager.getPongSocket();
-	if (!socket)
+	while (!socket)
 	{
+		try
+		{
+
 		const token = SetParamsToGetPost().headers.Authorization;
 		if (token !== null)
 		{
 			socketManager.initializePongSocket(token);
 			socket = socketManager.getPongSocket();
+		}
+
+		}
+		catch(error)
+		{
+			console.log("i'm a teapot");
 		}
 	}
 
@@ -43,6 +52,7 @@ export default function PongGame ()
 	let buttonAcceptVariant: HTMLElement | null;
 	let buttonRejectVariant: HTMLElement | null;
 	let variantMessage: HTMLElement | null;
+
 	let p_score: HTMLElement | null;
 	let o_score: HTMLElement | null;
 	let p_name: HTMLElement | null;
@@ -61,58 +71,14 @@ export default function PongGame ()
 	let input: number; 
 	let keyPressed: boolean = false;
 	let GOAL:boolean = false;
-
-	/*	useEffect(() => {
-		ball = new Ball(document.getElementById("ball"));
-		p_paddle = new Paddle(document.getElementById("p_paddle"));
-		o_paddle = new Paddle(document.getElementById("o_paddle"));
-		p_name = document.getElementById("p_name");
-		o_name = document.getElementById("o_name");
-		if (p_name && o_name)
-		{
-		p_name.textContent = player.name;
-		o_name.textContent = opponent.name;
-		}
-		p_score = document.getElementById("p_score");
-		o_score = document.getElementById("o_score");
-		if (p_score && o_score)
-		{
-		p_score.textContent = player.score.toString();
-		o_score.textContent = opponent.score.toString();
-		}
-		buttonJoinQueue = document.getElementById("joinQueue");	
-		buttonActivateVariant = document.getElementById("activateVariant");	
-		buttonAcceptVariant = document.getElementById("acceptVariant");	
-		buttonRejectVariant = document.getElementById("rejectVariant");	
-		variantMessage = document.getElementById("variantMessage");	
-		waiting = document.getElementById("waiting");
-		scores = document.getElementById("scores");
-		buttonReady = document.getElementById("player_ready");
-		if (buttonReady)
-		buttonReady.style.display = "none";
-		if (waiting)
-		waiting.style.display = "none";
-		if (scores)
-		scores.style.display = "none";
-		if (buttonActivateVariant)
-		buttonActivateVariant.style.display = "none";
-		if (variantMessage)
-		variantMessage.style.display = "none";
-		if (buttonAcceptVariant)
-		buttonAcceptVariant.style.display = "none";
-		if (buttonRejectVariant)
-		buttonRejectVariant.style.display = "none";
-		if (socket)
-		socket.emit('accessDuel');
-		window.onunload = function(e: any)
-		{
-		window.removeEventListener("mousemove", eMouseMoved);
-		};
-		}, []);*/
-
+	
+	let time: number = 0;
 
 	function joinQueue()
 	{
+		try
+		{
+
 		if (socket)
 			socket.emit('joinQueue', window.localStorage.getItem("name"));
 		if (buttonJoinQueue)
@@ -123,16 +89,21 @@ export default function PongGame ()
 		}
 		window.onpopstate = function(e: any)
 		{
-			//window.removeEventListener('mousemove', eMouseMoved);
-
 			socket.emit('leaveQueue');
-			socket.emit('leaveGame');
-			window.alert("You just lost the game.");
 		};
+
+		}
+		catch (error)
+		{
+			console.log("i'm a teapot");
+		}
 	}
 
 	function activateVariant(action: string)
 	{
+		try
+		{
+
 		if (action == "activate" && buttonActivateVariant)
 		{
 			buttonActivateVariant.remove();
@@ -148,10 +119,19 @@ export default function PongGame ()
 				buttonRejectVariant.remove();
 		}
 		socket.emit('activateVariant', {input: (game_id + 1)});
+
+		}
+		catch (error)
+		{
+			console.log("i'm a teapot");
+		}
 	}
 
 	function rejectVariant()
 	{
+		try
+		{
+
 		if (buttonRejectVariant)
 		{
 			socket.emit('rejectVariant', {input: (game_id + 1)});
@@ -159,40 +139,85 @@ export default function PongGame ()
 				buttonAcceptVariant.remove();
 			buttonRejectVariant.remove();
 		}
+
+		}
+		catch (error)
+		{
+			console.log("i'm a teapot");
+		}
 	}
 
 	function playerReady()
 	{
+		try
+		{
+
 		if (buttonReady)
 		{
 			socket.emit('playerReady', { input: game_id + 1 });
 			buttonReady.remove();
 		}
+
+		}
+		catch (error)
+		{
+			console.log("i'm a teapot");
+		}
 	}
 
 	function eKeyPressed(e: any)
 	{
+		try
+		{
+
 		if (e.key === USE_SPELL && !keyPressed)
 		{
 			keyPressed = true;
 			socket.emit('useSpell', { input: (game_id + 1) });
 		}
+
+		}
+		catch (error)
+		{
+			console.log("i'm a teapot");
+		}
 	}
 
 	function eKeyReleased(e: any)
 	{
+		try
+		{
+
 		if (e.key === USE_SPELL)
 			keyPressed = false;
+
+		}
+		catch (error)
+		{
+			console.log("i'm a teapot");
+		}
 	}
 
 	function eMouseMoved(e: any)
 	{
+		try
+		{
+
 		p_paddle.setPosition(100 * e.y / window.innerHeight);
 		socket.emit('movePaddle', { gametag: (game_id + 1), position: p_paddle.pos });
+
+		}
+		catch (error)
+		{
+			console.log("i'm a teapot");
+		}
 	}
 
 	useEffect(() =>
 	{
+		try
+		{
+
 		ball = new Ball(document.getElementById("ball"));
 		p_paddle = new Paddle(document.getElementById("p_paddle"));
 		o_paddle = new Paddle(document.getElementById("o_paddle"));
@@ -248,38 +273,30 @@ export default function PongGame ()
 
 		socket.on('GameError', (response: any) =>
 		{
-			console.log(response);
-		});
-
-	/*	socket.on('startDuel', (game_tag: number, player_name: string, opponent_name: string, player_tag: number) =>
-		{
-			socket.off('joinQueue');
-			socket.off('gameFound');
-
-			if (waiting)
-				waiting.remove();
-			if (buttonJoinQueue)
-				buttonJoinQueue.remove();
-			if (buttonActivateVariant)
-				buttonActivateVariant.style.display = "flex";
-
-			player.name = player_name;
-			opponent.name = opponent_name;
-			if (o_name && p_name)
+			try
 			{
-				p_name.textContent = player.name;
-				o_name.textContent = opponent.name;
+
+			console.log(response);
+			if (response == "no duel pending")
+			{
+				if (buttonJoinQueue)
+					buttonJoinQueue.remove();
+				if (waiting)
+					waiting.style.display = "flex";
 			}
-			game_id = game_tag;
-			player_id = player_tag;
-			if (buttonReady)
-				buttonReady.style.display = "flex";
-			if (scores)
-				scores.style.display = "flex";
-		});*/
+	
+			}
+			catch (error)
+			{
+				console.log("i'm a teapot");
+			}
+		});
 
 		socket.on('gameFound', (game_tag: number, player_name: string, opponent_name: string, player_tag: number) =>
 		{
+			try
+			{
+
 			socket.off('joinQueue');
 			socket.off('gameFound');
 			
@@ -310,10 +327,19 @@ export default function PongGame ()
 				socket.emit('leaveGame');
 				window.alert("You just lost the game.");
 			};
+	
+			}
+			catch (error)
+			{
+				console.log("i'm a teapot");
+			}
 		});
 
 		socket.on('playing', () =>
 		{
+			try
+			{
+
 			document.addEventListener("keydown", eKeyPressed);
 			document.addEventListener("keyup", eKeyReleased);
 			document.addEventListener("mousemove", eMouseMoved);
@@ -323,10 +349,21 @@ export default function PongGame ()
 				buttonAcceptVariant.remove();
 			if (buttonRejectVariant)
 				buttonRejectVariant.remove();
+	
+			}
+			catch (error)
+			{
+				console.log("i'm a teapot");
+			}
+	
 		});
+		
 
 		socket.on('update', (gameState: any) =>
 		{
+			try
+			{
+
 			if (player_id == 1)
 			{
 				o_paddle.setPosition(gameState.p2_paddle_pos);
@@ -353,10 +390,19 @@ export default function PongGame ()
 					o_score.textContent = gameState.p1_score.toString();
 				}
 			}
+	
+			}
+			catch (error)
+			{
+				console.log("i'm a teapot");
+			}
 		});
 
 		socket.on('variantProposed', () =>
 		{
+			try
+			{
+
 			if (buttonActivateVariant)
 				buttonActivateVariant.remove();
 			if (variantMessage)
@@ -368,59 +414,138 @@ export default function PongGame ()
 				buttonAcceptVariant.style.display = "flex";
 			if (buttonRejectVariant)
 				buttonRejectVariant.style.display = "flex";
+	
+			}
+			catch (error)
+			{
+				console.log("i'm a teapot");
+			}
 		});
 
 		socket.on('variantOnOff', (activate: boolean) =>
 		{
+			try
+			{
+
+			console.log("variant onoff");
 			let message: string;
 			if (activate)
-				message = "variant is off"
+				message = "variant is on";
 			else
-				message = "variant is off"
+				message = "variant is off";
 			if (variantMessage)
+			{
 				variantMessage.textContent = message;
+				variantMessage.style.display = "flex";
+			}
 			if (buttonAcceptVariant)
 				buttonAcceptVariant.remove();
 			if (buttonRejectVariant)
 				buttonRejectVariant.remove();
+	
+			}
+			catch (error)
+			{
+				console.log("i'm a teapot");
+			}
 		});
 
 		socket.on('opponentReady', () =>
 		{
+			try
+			{
+
 			console.log("opponent is ready");
+	
+			}
+			catch (error)
+			{
+				console.log("i'm a teapot");
+			}
 		});
 
 		socket.on('opponentLeft', () =>
 		{
+			try
+			{
+
 			setLeavingPage(VICTORY_BY_FORFEIT);
+	
+			}
+			catch (error)
+			{
+				console.log("i'm a teapot");
+			}
 		});
 
 		socket.on('victory', (flag = false) =>
 		{
+			try
+			{
+
 			if (flag)
 				setLeavingPage(VICTORY_ON_TIME);
 			else
 				setLeavingPage(VICTORY);
+	
+			}
+			catch (error)
+			{
+				console.log("i'm a teapot");
+			}
 		});
 
 		socket.on('defeat', (flag = false) =>
 		{
+			try
+			{
+
 			if (flag)
 				setLeavingPage(DEFEAT_ON_TIME);
 			else
 				setLeavingPage(DEFEAT);
+	
+			}
+			catch (error)
+			{
+				console.log("i'm a teapot");
+			}
 		});
 
 		socket.on('draw', () =>
 		{
+			try
+			{
+
 			setLeavingPage(DRAW);
+	
+			}
+			catch (error)
+			{
+				console.log("i'm a teapot");
+			}
 		});
+	
+		}
+		catch (error)
+		{
+			console.log("i'm a teapot");
+		}
 	}, []);		
 
 	useEffect(() =>
 	{
+		try
+		{
+
 		if (leavingPage != "")
 			navigate(leavingPage);
+	
+		}
+		catch (error)
+		{
+			console.log("i'm a teapot");
+		}
 	}, [leavingPage]);
 
 	return (
@@ -453,5 +578,5 @@ export default function PongGame ()
 					<button className="variant reject" id="rejectVariant" onClick={rejectVariant}>reject</button>
 				</div>
 			</div>
-			);
+	);
 }

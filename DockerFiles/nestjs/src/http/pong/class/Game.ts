@@ -109,7 +109,7 @@ export default class Game
 				this.spellInUse = false;
 			}, 420);
 		}
-		else if (this.p2.spellsUsed++ < 3)
+		else if (player == 2 && this.p2.spellsUsed++ < 3)
 		{
 			this.p2_paddle.size = 60;
 			this.p2_paddle.pos.y = 50;
@@ -121,28 +121,31 @@ export default class Game
 		}
 	}
 
-	update()
+	start()
 	{
 		this.startTime = Date.now()
 		this.prevTime = this.startTime;
-    		setInterval(() =>
-		{
-			const time = Date.now();
-			this.deltaTime = time - this.prevTime;
-			this.prevTime = time;
-			this.elapsedTime = time - this.startTime;
-			if (this.variant && !this.spellInUse)
-			{
-				this.p1_paddle.shrink(0.00015);
-				this.p2_paddle.shrink(0.00015);
-			}
-			this.moveBall();
-			if (this.ball.pos.x >= 99.9 || this.ball.pos.x <= 0.1)
-				this.GOOOAAAAAAL();
-			else if (this.elapsedTime > 180000)
-				this.timeover = true;
-    		}, 1);
+		this.update();
 	}
+
+	update = () =>
+	{
+		const time = Date.now();
+		this.deltaTime = time - this.prevTime;
+		this.prevTime = time;
+		this.elapsedTime = time - this.startTime;
+		if (this.variant && !this.spellInUse)
+		{
+			this.p1_paddle.shrink(0.00015);
+			this.p2_paddle.shrink(0.00015);
+		}
+		this.moveBall();
+		if (this.ball.pos.x >= 99.9 || this.ball.pos.x <= 0.1)
+			this.GOOOAAAAAAL();
+		else if (this.elapsedTime > 180000)
+			this.timeover = true;
+		setTimeout(this.update, 13);
+	};
 
 	getGameState()
 	{
