@@ -22,7 +22,7 @@ import { GetChannelInvite } from "../Api/GetChannelInvite";
 let test: boolean = false
 let socket: any
 let socketFriend: any
-
+let socketStatus : any
 
 interface IUser {
   username: string;
@@ -72,12 +72,20 @@ export function Chat() {
 
   socket = socketManager.getChatSocket()
   socketFriend = socketManager.getFriendRequestSocket()
+  socketStatus = socketManager.getFriendRequestSocket()
 
   if (!socketFriend) {
     const token = SetParamsToGetPost().headers.Authorization;
     if (token !== null) {
       socketManager.initializeFriendRequestSocket(token);
       socketFriend = socketManager.getFriendRequestSocket();
+    }
+  }
+    if (!socketStatus) {
+    const token = SetParamsToGetPost().headers.Authorization;
+    if (token !== null) {
+      socketManager.initializeStatusSocket(token);
+      socketStatus = socketManager.getStatusSocket();
     }
   }
 
@@ -274,6 +282,13 @@ export function Chat() {
         progressClassName: "my-progress-bar"
       })
     }
+        const handleErrorRequest = (response: any) => {
+      toast.error(response, {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 2000,
+        progressClassName: "my-progress-bar"
+      })
+    }
 
     const handleFriend = (response: any) => {
       GetFriend()
@@ -286,6 +301,7 @@ export function Chat() {
     socket.removeListener("ChatError", handleChatError);
     socket.removeListener("createinvitation", handleInvite);
     socket.removeListener("kickuser", handleKickuser);
+    socketStatus.removeListener('status');
     socketFriend.removeListener("acceptfriendrequest", handleFriend);
 
     socket.on("deletechannel", handleDeleteUser);//
@@ -295,6 +311,7 @@ export function Chat() {
     socket.on("muteuser", handleMuteUser);
     socket.on("createchannel", handleCreateChannel);
     socket.on("ChatError", handleChatError);
+    socketStatus.on("status", handleErrorRequest);
     socket.on("kickuser", handleKickuser);
 
     return () => {
@@ -306,6 +323,7 @@ export function Chat() {
       socket.off("muteuser", handleMuteUser);
       socket.off("leavechannel", handleLeaveChannel);
       socket.off("createchannel", handleCreateChannel);
+      socketStatus.off("status", handleErrorRequest);
       socket.off("ChatError", handleChatError);
     }
   }, [])
