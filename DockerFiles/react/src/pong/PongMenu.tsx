@@ -11,7 +11,7 @@ import Pong from './Pong'
 export default function PongMenu ()
 {
 	const navigate = useNavigate();
-	let myUid: number = 0;
+	let myUid: number = parseInt(window.localStorage.getItem("UID"));
 
 	let socket = socketManager.getPongSocket();
 	while (!socket)
@@ -43,7 +43,6 @@ export default function PongMenu ()
 		socket.on('invitesList', (invitesList: Map<string, number>, uid: number) =>
 		{
 			invites = invitesList;
-			myUid = uid;
 		});
 		socket.on('duelInviteReceived', () =>
 		{

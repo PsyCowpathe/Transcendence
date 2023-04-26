@@ -39,7 +39,8 @@ export class WsStatusService
     {
         let socket = await this.sockets.get(user.id);
         await this.userService.updateStatus(status, user);
-        socket.broadcast.emit("status", {id: user.id, status: status});
+		if (socket)
+        	socket.broadcast.emit("status", {id: user.id, status: status});
     }
 
     async connection(client: Socket)
