@@ -1,4 +1,4 @@
-import './styles.css'
+import './pong_menu.css'
 import React from 'react'
 import { useEffect } from 'react'
 import { useNavigate, } from 'react-router-dom'
@@ -119,7 +119,7 @@ export default function PongMenu ()
 
 	return (
 		<div className="pong menu">
-			<div className="h1 nº1">PONG</div>
+			<div className="h1nº2">PONG</div>
 			<button className="play" onClick={onClickPlay}>play</button>
 			<div className="duelInvites">
 				<div className="invitesTitle">Invitations :</div>

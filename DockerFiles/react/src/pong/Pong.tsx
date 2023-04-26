@@ -1,4 +1,4 @@
-import "./styles.css"
+import "./pong_game.css"
 import React from "react"
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom'
@@ -45,7 +45,7 @@ export default function PongGame ()
 	let [leavingPage, setLeavingPage] = useState("");
 
 	let waiting: HTMLElement | null;
-	let scores: HTMLElement | null;
+	let cancer: HTMLElement | null;
 	let buttonReady: HTMLElement | null;
 	let buttonJoinQueue: HTMLElement | null;
 	let buttonActivateVariant: HTMLElement | null;
@@ -241,14 +241,14 @@ export default function PongGame ()
 		buttonRejectVariant = document.getElementById("rejectVariant");	
 		variantMessage = document.getElementById("variantMessage");	
 		waiting = document.getElementById("waiting");
-		scores = document.getElementById("scores");
+		cancer = document.getElementById("cancer");
 		buttonReady = document.getElementById("player_ready");
 		if (buttonReady)
 			buttonReady.style.display = "none";
 		if (waiting)
 			waiting.style.display = "none";
-		if (scores)
-			scores.style.display = "none";
+		if (cancer)
+			cancer.style.display = "none";
 		if (buttonActivateVariant)
 			buttonActivateVariant.style.display = "none";
 		if (variantMessage)
@@ -317,8 +317,8 @@ export default function PongGame ()
 			}
 			if (waiting)
 				waiting.remove();
-			if (scores)
-				scores.style.display = "flex";
+			if (cancer)
+				cancer.style.display = "flex";
 			if (buttonJoinQueue)
 				buttonJoinQueue.remove();
 
@@ -408,7 +408,7 @@ export default function PongGame ()
 			if (variantMessage)
 			{
 				variantMessage.style.display = "flex";
-				variantMessage.textContent = "your opponent wants to activate the variant";
+				variantMessage.textContent = "variant ?";
 			}
 			if (buttonAcceptVariant)
 				buttonAcceptVariant.style.display = "flex";
@@ -525,7 +525,7 @@ export default function PongGame ()
 				console.log("i'm a teapot");
 			}
 		});
-	
+
 		}
 		catch (error)
 		{
@@ -549,20 +549,20 @@ export default function PongGame ()
 	}, [leavingPage]);
 
 	return (
-			<div className="pong game">
+			<div className="pong_game">
 				<div className="top">
-					<h1 className="h1 nº1">PONG</h1>
+					<h1 className="h1nº1">PONG</h1>
 					<button className="joinQueue" id="joinQueue" onClick={joinQueue}>join queue</button>
 					<div className="waiting" id="waiting">waiting for an opponent...</div>
-					<div className="scores" id="scores">
-						<div className="name p1" id="p_name"></div>
-						<div className= "score p1" id="p_score"></div>
-						<div className= "score bar">|</div>
-						<div className="score o" id="o_score"></div>
-						<div className="name o" id="o_name"></div>
+					<div className="cancer" id="cancer">
+						<div className="name_p" id="p_name"></div>
+						<div className="name_o" id="o_name"></div>
+						<div className="score_p" id="p_score"></div>
+						<div className="score_o" id="o_score"></div>
+						<div className= "bar">|</div>
+						<button className="player_ready" onClick={playerReady} id="player_ready"></button>
 					</div>
 				</div>
-				<button className="player_ready" onClick={playerReady} id="player_ready"></button>
 				<div className="game">
 					<div className="ball" id="ball"></div>
 					<div className="paddle left" id="p_paddle"></div>

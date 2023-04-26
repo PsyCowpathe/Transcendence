@@ -21,7 +21,7 @@
 	overflow: hidden;
 }
 
-.pong
+.pong_game
 {
 	position: absolute;
 	display: flex;
@@ -33,96 +33,111 @@
 	background-color: var(--background-color);
 }
 
-.h1.nº1
+.top
 {
+	flex: 1;
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
+}
+
+.game
+{
+	flex: 3;
+}
+
+.bot	
+{
+	flex: 1;
+	display: flex;
+}
+
+.h1nº1
+{
+	flex: 3;
 	font-weight: bold;
 	font-size: 4vh;
 	color: var(--foreground-color);
 }
 
-.pong.joinQueue
+.joinQueue
 {
-	display: flex;
-	justify-content:center;
+	flex: 1;
+	margin-bottom: 2vh;
 }
 
 .waiting
 {
-	display: flex;
-	flex-direction: row;
+	flex: 1;
 	justify-content: center;
-	align-items: center;
-	font-size: 1.5vh;
-	color: var(--foreground-color);
 	font-size: 2vh;
+	color: var(--foreground-color);
 	font-weight: bold;
+	margin-bottom: 2vh;
 }
 
-.scores
+.cancer
 {
+	flex: 1;
+	font-size: 2vh;
+	font-weight: bold;
+	color: var(--foreground-color);
 	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
+	margin-bottom: 2vh;
+	justify-content: space-between;
+}
+
+.name_p	
+{
+	flex: 1;
 	gap: 2vw;
-	width: 100vw;
-	font-size: 1.5vh;
-	color: var(--foreground-color);
 	font-size: 2vh;
 	font-weight: bold;
+	color: var(--foreground-color);
+	order: 1;
 }
 
-.score.bar 
+.score_p	
 {
-	display: flex;
+	flex: 1;
+	gap: 2vw;
+	font-size: 2vh;
+	font-weight: bold;
+	color: var(--foreground-color);
+	order: 2;
+}
+
+.bar 
+{
+	flex: 1;
 	justify-content: center;
-	width: 0;
+	gap: 2vw;
+	font-size: 2vh;
+	font-weight: bold;
+	color: var(--foreground-color);
+	order: 3;
+	margin-right: auto;
+	margin-left: auto;
 }
 
-.pong.game
+.name_o
 {
-	display: flex;
+	flex: 1;
+	gap: 2vw;
+	font-size: 2vh;
+	font-weight: bold;
+	color: var(--foreground-color);
+	order: 4;
 }
 
-.central_line
+.score_o	
 {
-	position: absolute;
-	display: flex;
-	top: 20vh;
-	left: 49.5vw;
-	height: 60vh;
-	border-left: 1vh dashed grey;
-	z-index: 0;
-}
-
-.upperbound
-{
-	position: absolute;
-	display: flex;
-	top: 19vh;
-	left: 0;
-	height: 0;
-	width: 100vw;
-	border-top: 1vh solid grey;
-}
-
-.lowerbound
-{
-	position: absolute;
-	bottom: 19vh;
-	left: 0;
-	height: 0;
-	width: 100vw;
-	border-bottom: 1vh solid grey;
-}
-
-.launch
-{
-	display: flex;
-	width: 30vw;
-	justify-content: center;
+	flex: 1;
+	gap: 2vw;
+	font-size: 2vh;
+	font-weight: bold;
+	color: var(--foreground-color);
+	order: 5;
 }
 
 .player_ready
@@ -139,6 +154,38 @@
 	border-top-color: transparent;
 	border-bottom-color: orange;
 	border-left-color: blue;
+}
+
+.upperbound
+{
+	position: absolute;
+	display: flex;
+	top: 19vh;
+	left: 0;
+	height: 0;
+	width: 100vw;
+	border-top: 1vh solid grey;
+}
+
+.central_line
+{
+	position: absolute;
+	display: flex;
+	top: 20vh;
+	left: 49.5vw;
+	height: 60vh;
+	border-left: 1vh dashed grey;
+	z-index: 0;
+}
+
+.lowerbound
+{
+	position: absolute;
+	bottom: 19vh;
+	left: 0;
+	height: 0;
+	width: 100vw;
+	border-bottom: 1vh solid grey;
 }
 
 .paddle {
@@ -181,14 +228,16 @@
 	border-radius: 50%;
 }
 
-.variant
+.variant.message
 {
-	position: absolute;
 	display: flex;
 	flex-direction: row;
-	align-items: center;
-	gap: 3vh;
-	font-color: var(--foreground-color);
+	width: 19vw;
+	font-size: 2vh;
+	font-weight: bold;
+	color: var(--foreground-color);
+	margin-top: auto;
+	margin-bottom: auto;
 }
 
 .variant.button
@@ -196,83 +245,20 @@
 	display: flex;
 	flex-direction: row;
 	width: 12vw;
+	margin: auto;
 }
 .variant.accept
 {
 	display: flex;
 	flex-direction: row;
+	margin-top: auto;
+	margin-bottom: auto;
 }
 
 .variant.reject
 {
 	display: flex;
 	flex-direction: row;
-}
-
-.variant.message
-{
-	display: flex;
-	flex-direction: row;
-	width: 19vw;
-	font-size: 1.5vh;
-	color: var(--foreground-color);
-}
-
-.pong.endscreen
-{
-	position: absolute;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 3vh;
-	height: 100vh;
-	width: 100vw;
-	background-color: var(--background-color);
-	
-}
-
-.pong.menu 
-{
-	position: absolute;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 3vh;
-	height: 100vh;
-	width: 100vw;
-	background-color: var(--background-color);
-}
-
-.result
-{
-	display: flex;
-	justify-content: center;
-	margin-top: 2vh; 
-	font-weight: bold;
-	font-size: 4vh;
-}
-
-.redirect
-{
-	display: flex;
-	font-size: 1.5vh;
-	color: white;
-}
-
-.ps
-{
-	display: flex;
-	justify-content: center;
-	font-weight: bold;
-	font-size: 2vh;
-}
-
-.back_to_menu
-{
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	font-size: 1.5vh;
-	height: 4vh;
-	width: 10vw;
+	margin-top: auto;
+	margin-bottom: auto;
 }

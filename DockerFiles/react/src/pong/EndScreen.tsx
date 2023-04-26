@@ -1,4 +1,4 @@
-import "./styles.css"
+import "./pong_menu.css"
 import React from "react"
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef, Ref } from "react"
