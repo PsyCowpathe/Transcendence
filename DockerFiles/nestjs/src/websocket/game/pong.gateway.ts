@@ -11,7 +11,7 @@ import { errorMessages } from '../../common/global';
 import { mouseDto, numberDto } from './pong.entity'
 
 @UseFilters(WsExceptionFilter)
-@WebSocketGateway()
+@WebSocketGateway(3633, {cors: true})
 export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit
 {
 	@WebSocketServer()

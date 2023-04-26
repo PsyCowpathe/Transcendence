@@ -8,7 +8,7 @@ RUN apk upgrade \
 
 RUN apk add curl
 
-RUN  apk add nodejs npm
+RUN apk add nodejs npm
 
 RUN apk add git
 
@@ -16,15 +16,6 @@ RUN npm install --global yarn@latest
 
 RUN cd  && \
 echo 'y' | echo | yarn create react-app frontend --template=typescript
-
-COPY ./config/package.json /root/frontend/ 
-
-COPY ./config/tsconfig.json /root/frontend/ 
-
-COPY ./config/yarn.lock /root/frontend/ 
-
-RUN cd ~/frontend/ \
-&& yarn install
 
 RUN rm -rf ~/frontend/src
 
