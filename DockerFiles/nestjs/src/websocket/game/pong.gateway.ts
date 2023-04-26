@@ -10,6 +10,7 @@ import { SocketGuard } from '../guard/socket.guard';
 import { errorMessages } from '../../common/global';
 import { mouseDto, numberDto, posDto } from './pong.entity'
 
+
 @UseFilters(WsExceptionFilter)
 @WebSocketGateway(3633, {cors: true})
 export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit
