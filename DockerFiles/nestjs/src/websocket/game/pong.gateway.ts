@@ -3,15 +3,13 @@ import { UseFilters, UsePipes, UseGuards, ValidationPipe } from '@nestjs/common'
 import { Server, Socket } from 'socket.io';
 import { User } from '../../db/user/user.entity'
 import { UserService } from '../../db/user/user.service'
-import { StatusService } from '../status/status.service'
+import { WsStatusService } from '../status/wsstatus.service'
 import Game from '../../http/pong/class/Game';
 import Player from '../../http/pong/class/Player'
 import { WsExceptionFilter } from '../guard/ws.filter';
 import { SocketGuard } from '../guard/socket.guard';
 import { errorMessages } from '../../common/global';
 import { mouseDto, numberDto, posDto } from './pong.entity'
-
-this.statusService.changeStatus(UnUser, UnStatus);
 
 @UseFilters(WsExceptionFilter)
 @WebSocketGateway(3633, {cors: true})
@@ -27,7 +25,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	duelInvites = new Map<number, number>();
 
 	constructor(private readonly userService: UserService,
-				private readonly statusService: StatusService)
+				private readonly statusService: WsStatusService)
 	{
 	       this.update();
 	}
@@ -70,8 +68,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		const leaver = this.getUser(socket);
 		if (leaver)
 		{
-			await this.userService.updateStatus("Online", leaver);
-			socket.emit("status", "Online");
+			await this.statusService.changeStatus(leaver, "Online");
 			console.log(`Client disconnected : ${leaver.name} identified as ${socket.id}`);
 		}
 		this.leaveQueue(socket);
@@ -84,10 +81,8 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		let s2 = this.clients.get(p2);
 		if (s1 && s2)
 		{
-			await this.userService.updateStatus("InGame", p1);
-			await this.userService.updateStatus("InGame", p2);
-			s1.emit("status", "InGame");
-			s2.emit("status", "InGame");
+			await this.statusService.changeStatus(p1, "InGame");
+			await this.statusService.changeStatus(p2, "InGame");
 			s1.emit('gameFound', this.games.size, p1.name, p2.name, 1);
 			s2.emit('gameFound', this.games.size, p2.name, p1.name, 2);
 			this.games.set(this.games.size, new Game(new Player(p1, s1.id), new Player(p2, s2.id), this.games.size));
@@ -371,11 +366,9 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				}
 				if (oppSock)
 				{
-					oppSock.emit("status", "Online");
 					opp = this.getUser(oppSock);
 					if (opp)
-						await this.userService.updateStatus("Online", opp);
-					socket.emit("status", "Online");
+						await this.statusService.changeStatus(opp, "Online");
 					await this.userService.updateStatus("Online", leaver);
 					oppSock.emit('opponentLeft');
 					this.games.delete(game.tag);
@@ -525,7 +518,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		}
   	}
 
-	update = () =>
+	update = async () =>
 	{
 		for (const game of this.games.values())
 		{
@@ -538,8 +531,8 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				s2.emit('update', gameState);
 				if (game.timeover)
 				{
-					s1.emit("status", "Online");
-					s2.emit("status", "Online");
+					await this.userService.updateStatus("Online", game.p1.user);
+					await this.userService.updateStatus("Online", game.p2.user);
 					if (game.p1.score > game.p2.score)
 					{
 						s1.emit('victory', true)
@@ -561,16 +554,16 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				{
 					if (game.p1.score == 11)
 					{
-						s1.emit("status", "Online");
-						s2.emit("status", "Online");
+						await this.userService.updateStatus("Online", game.p1.user);
+						await this.userService.updateStatus("Online", game.p2.user);
 						s1.emit('victory');
 						s2.emit('defeat');
 						this.games.delete(game.tag);
 					}
 					else if (game.p2.score == 11)
 					{
-						s1.emit("status", "Online");
-						s2.emit("status", "Online");
+						await this.userService.updateStatus("Online", game.p1.user);
+						await this.userService.updateStatus("Online", game.p2.user);
 						s1.emit('defeat');
 						s2.emit('victory');
 						this.games.delete(game.tag);
