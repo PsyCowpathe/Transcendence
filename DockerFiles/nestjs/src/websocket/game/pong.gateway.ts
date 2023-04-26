@@ -3,6 +3,7 @@ import { UseFilters, UsePipes, UseGuards, ValidationPipe } from '@nestjs/common'
 import { Server, Socket } from 'socket.io';
 import { User } from '../../db/user/user.entity'
 import { UserService } from '../../db/user/user.service'
+import { StatusService } from '../status/status.service'
 import Game from '../../http/pong/class/Game';
 import Player from '../../http/pong/class/Player'
 import { WsExceptionFilter } from '../guard/ws.filter';
@@ -10,6 +11,7 @@ import { SocketGuard } from '../guard/socket.guard';
 import { errorMessages } from '../../common/global';
 import { mouseDto, numberDto, posDto } from './pong.entity'
 
+this.statusService.changeStatus(UnUser, UnStatus);
 
 @UseFilters(WsExceptionFilter)
 @WebSocketGateway(3633, {cors: true})
@@ -24,7 +26,8 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	duelists = new Map<{uid1: number, uid2: number}, {here1: boolean, here2: boolean}>();
 	duelInvites = new Map<number, number>();
 
-	constructor(private readonly userService: UserService)
+	constructor(private readonly userService: UserService,
+				private readonly statusService: StatusService)
 	{
 	       this.update();
 	}

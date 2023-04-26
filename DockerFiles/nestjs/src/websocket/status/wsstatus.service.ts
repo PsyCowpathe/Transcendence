@@ -32,6 +32,11 @@ export class WsStatusService
   		}
 	}
 
+    async changeStatus(user: User, status: string)
+    {
+        await this.userService.updateStatus(status, user);
+    }
+
     async connection(client: Socket)
     {
         let uid = await this.isRegistered(client);

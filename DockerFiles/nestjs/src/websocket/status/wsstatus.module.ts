@@ -12,6 +12,7 @@ import { WsStatusService } from './wsstatus.service';
 ({
 	imports: [UserModule, RelationModule],
 	providers: [WsStatusGateway, SocketStrategy, WsStatusService],
+	export:	[StatusService],
 })
 export class WsStatusModule
 {
