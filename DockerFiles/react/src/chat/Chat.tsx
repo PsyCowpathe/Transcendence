@@ -283,6 +283,8 @@ export function Chat() {
       })
     }
         const handleErrorRequest = (response: any) => {
+          console.log("status : ")
+          console.log(response.status)
       toast.error(response, {
         position: toast.POSITION.TOP_RIGHT,
         autoClose: 2000,

@@ -266,6 +266,8 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
     }
     const handleErrorRequest = (response: any) => {
       MAJList()
+      console.log("status : ")
+      console.log(response.status)
       toast.error(response, {
         position: toast.POSITION.TOP_RIGHT,
         autoClose: 2000,
