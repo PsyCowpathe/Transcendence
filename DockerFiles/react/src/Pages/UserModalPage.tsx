@@ -76,6 +76,8 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
     }
 
     const handleDeco = (data: any) => {
+      console.log("status : ")
+      console.log(data.status)
       if (data.id === User.uid && data.status === "Offline")
         setStatus("Offline")
       if (data.id === User.uid && data.status === "Online")
