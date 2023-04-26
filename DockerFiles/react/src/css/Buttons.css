@@ -1,4 +1,4 @@
-button {
+.button {
   background-color: #093c46; /* couleur de fond */
   border: none;
   color: white; /* couleur du texte */
@@ -15,7 +15,7 @@ button {
   float:inline-start;
 }
 
-button:hover {
+.button:hover {
   background-color: #3e8e41; /* changer la couleur de fond au survol */
   box-shadow: 0 12px 20px rgba(0, 0, 0, 0.4); /* changer l'ombre au survol */
   box-shadow: 0 8px 16px rgba(66, 207, 19, 0.752); /* ajouter une ombre */
