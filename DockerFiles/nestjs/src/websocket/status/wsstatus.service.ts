@@ -5,6 +5,9 @@ import { Socket, Server } from 'socket.io';
 import { UserService } from '../../db/user/user.service';
 import { RelationService } from '../../db/relation/relation.service';
 
+import { User } from '../../db/user/user.entity'
+
+
 @Injectable()
 export class WsStatusService
 {
