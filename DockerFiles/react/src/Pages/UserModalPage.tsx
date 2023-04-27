@@ -287,6 +287,7 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
 			socketpong = socketManager.getPongSocket();
 		}
 	}
+  console.log("invitation")
 	socketpong.emit('sendDuel', { input: User.uid });
 }
 

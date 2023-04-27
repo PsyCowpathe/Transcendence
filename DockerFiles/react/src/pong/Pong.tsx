@@ -13,6 +13,7 @@ import Paddle from "./Paddle"
 
 export default function PongGame ()
 {
+	const BACK_TO_MENU: string = '/pong/menu';
 	const VICTORY: string = '/pong/endscreen?result=victory';
 	const VICTORY_BY_FORFEIT: string = '/pong/endscreen?result=victory&forfeit=true';
 	const VICTORY_ON_TIME: string = '/pong/endscreen?result=victory&flagged=true';
@@ -47,6 +48,7 @@ export default function PongGame ()
 	let waiting: HTMLElement | null;
 	let cancer: HTMLElement | null;
 	let buttonReady: HTMLElement | null;
+	let buttonBack: HTMLElement | null;
 	let buttonJoinQueue: HTMLElement | null;
 	let buttonActivateVariant: HTMLElement | null;
 	let buttonAcceptVariant: HTMLElement | null;
@@ -58,7 +60,7 @@ export default function PongGame ()
 	let p_name: HTMLElement | null;
 	let o_name: HTMLElement | null;
 
-	let game_id = 0;
+	let game_id = -1;
 	let player_id = 0;
 	let playing: boolean = false;
 
@@ -73,6 +75,22 @@ export default function PongGame ()
 	let GOAL:boolean = false;
 	
 	let time: number = 0;
+
+	function back()
+	{
+
+		document.removeEventListener("mousemove", eMouseMoved);
+		document.removeEventListener("keydown", eKeyPressed);
+		document.removeEventListener("keyup", eKeyReleased);
+		socket.emit('leaveQueue');
+		if (game_id != -1)
+		{
+			socket.emit('leaveGame');
+			window.alert("You just lost the game.");
+		}
+		window.onpopstate = (e: any) => {};
+		setLeavingPage(BACK_TO_MENU);
+	}
 
 	function joinQueue()
 	{
@@ -90,6 +108,7 @@ export default function PongGame ()
 		window.onpopstate = function(e: any)
 		{
 			socket.emit('leaveQueue');
+			window.onpopstate = (e: any) => {};
 		};
 
 		}
@@ -235,6 +254,7 @@ export default function PongGame ()
 			p_score.textContent = player.score.toString();
 			o_score.textContent = opponent.score.toString();
 		}
+		buttonBack = document.getElementById("buttonBack");	
 		buttonJoinQueue = document.getElementById("joinQueue");	
 		buttonActivateVariant = document.getElementById("activateVariant");	
 		buttonAcceptVariant = document.getElementById("acceptVariant");	
@@ -277,13 +297,13 @@ export default function PongGame ()
 			{
 
 			console.log(response);
-			if (response == "no duel pending")
+		/*	if (response == "no duel pending")
 			{
 				if (buttonJoinQueue)
 					buttonJoinQueue.remove();
 				if (waiting)
 					waiting.style.display = "flex";
-			}
+			}*/
 	
 			}
 			catch (error)
@@ -324,8 +344,12 @@ export default function PongGame ()
 
 			window.onpopstate = function(e: any)
 			{
+				document.removeEventListener("mousemove", eMouseMoved);
+				document.removeEventListener("keydown", eKeyPressed);
+				document.removeEventListener("keyup", eKeyReleased);
 				socket.emit('leaveGame');
 				window.alert("You just lost the game.");
+				window.onpopstate = (e: any) => {};
 			};
 	
 			}
@@ -551,6 +575,7 @@ export default function PongGame ()
 	return (
 			<div className="pong_game">
 				<div className="top">
+					<button className="buttonBack" id="buttonBack" onClick={back}>back</button>
 					<h1 className="h1nº1">PONG</h1>
 					<button className="joinQueue" id="joinQueue" onClick={joinQueue}>join queue</button>
 					<div className="waiting" id="waiting">waiting for an opponent...</div>
@@ -563,7 +588,7 @@ export default function PongGame ()
 						<button className="player_ready" onClick={playerReady} id="player_ready"></button>
 					</div>
 				</div>
-				<div className="game">
+				<div className="mid">
 					<div className="ball" id="ball"></div>
 					<div className="paddle left" id="p_paddle"></div>
 					<div className="paddle right" id="o_paddle"></div>

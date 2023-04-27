@@ -18,6 +18,13 @@
 	var(--bg_brightness)
 	);
 
+	/*--lgbtbgcoloriaplus: linear-gradient(to bottom, rgb(255, 105, 180, 0.42), rgba(255, 0, 0, 0.42), rgba(255, 165, 0, 0.42), rgba(255, 255, 0, 0.42), rgba(0, 128, 0, 0.42), rgba(0, 206, 209, 0.42), rgba(75, 0, 130, 0.42), rgba(139, 0, 139, 0.42),
+	rgb(255, 105, 180, 0.42), rgba(255, 0, 0, 0.42), rgba(255, 165, 0, 0.42), rgba(255, 255, 0, 0.42), rgba(0, 128, 0, 0.42), rgba(0, 206, 209, 0.42), rgba(75, 0, 130, 0.42), rgba(139, 0, 139, 0.42),
+	rgb(255, 105, 180, 0.42), rgba(255, 0, 0, 0.42), rgba(255, 165, 0, 0.42), rgba(255, 255, 0, 0.42), rgba(0, 128, 0, 0.42), rgba(0, 206, 209, 0.42), rgba(75, 0, 130, 0.42), rgba(139, 0, 139, 0.42),
+	rgb(255, 105, 180, 0.42), rgba(255, 0, 0, 0.42), rgba(255, 165, 0, 0.42), rgba(255, 255, 0, 0.42), rgba(0, 128, 0, 0.42), rgba(0, 206, 209, 0.42), rgba(75, 0, 130, 0.42), rgba(139, 0, 139, 0.42),
+	rgb(255, 105, 180, 0.42), rgba(255, 0, 0, 0.42), rgba(255, 165, 0, 0.42), rgba(255, 255, 0, 0.42), rgba(0, 128, 0, 0.42), rgba(0, 206, 209, 0.42), rgba(75, 0, 130, 0.42), rgba(139, 0, 139, 0.42));*/
+
+
 	overflow: hidden;
 }
 
@@ -30,25 +37,26 @@
 	gap: 3vh;
 	height: 100vh;
 	width: 100vw;
-	background-color: var(--background-color);
+	background: var(--lgbtbgcoloriaplus);
 }
 
 .top
 {
-	flex: 1;
+	height: 17vh;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
 }
 
-.game
+.mid
 {
-	flex: 3;
+	width: 101vw;
+	height: 65vh;
+	background-color: var(--background-color);
 }
 
 .bot	
 {
-	flex: 1;
+	height: 17vh;
 	display: flex;
 }
 
@@ -60,10 +68,17 @@
 	color: var(--foreground-color);
 }
 
+.back
+{
+	flex: 1;
+	margin: auto;
+}
+
 .joinQueue
 {
 	flex: 1;
-	margin-bottom: 2vh;
+	margin: auto;
+/*	margin-bottom: 2vh;*/
 }
 
 .waiting
@@ -159,18 +174,16 @@
 .upperbound
 {
 	position: absolute;
-	display: flex;
 	top: 19vh;
-	left: 0;
+	left: -1;
 	height: 0;
-	width: 100vw;
+	width: 101vw;
 	border-top: 1vh solid grey;
 }
 
 .central_line
 {
 	position: absolute;
-	display: flex;
 	top: 20vh;
 	left: 49.5vw;
 	height: 60vh;
@@ -182,10 +195,10 @@
 {
 	position: absolute;
 	bottom: 19vh;
-	left: 0;
+	left: -1;
 	height: 0;
-	width: 100vw;
-	border-bottom: 1vh solid grey;
+	width: 101vw;
+	border-top: 1vh solid grey;
 }
 
 .paddle {
@@ -255,7 +268,7 @@
 	margin-bottom: auto;
 }
 
-.variant.reject
+.variant.decline
 {
 	display: flex;
 	flex-direction: row;

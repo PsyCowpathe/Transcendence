@@ -1,4 +1,5 @@
 import { WebSocketServer, WebSocketGateway, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage } from '@nestjs/websockets';
+
 import { UseFilters, UsePipes, UseGuards, ValidationPipe } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { User } from '../../db/user/user.entity'
@@ -126,8 +127,9 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('sendDuel')
-	async sendDuelInvite(socket: Socket, opp_uid: numberDto)
+	async sendDuel(socket: Socket, opp_uid: numberDto)
 	{
+		console.log("duel sent");
 		let user: User | undefined;
 		let opp: User | null = await this.userService.findOneByUid(opp_uid.input);
 
@@ -138,7 +140,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			{
 				if (inviting === user.uid)
 				{
-					socket.emit("GameError", "already a duel invite pending"); // A CHANGER
+					socket.emit("GameError", "you already have a duel invite pending"); // A CHANGER
 					return;
 				}
 				if (inviting === opp.uid && invited === user.uid)
@@ -149,7 +151,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			}
 			for (const usr of this.queue.keys())
 			{
-				if (usr.uid === user.uid || usr.uid === opp.uid)
+				if (usr.uid === user.uid)
 				{
 					socket.emit("GameError", "already in queue"); // A CHANGER
 					return;
@@ -157,7 +159,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			}
 			for (const game of this.games.values())
 			{
-				if (game.p1.user.uid === user.uid || game.p1.user.uid === opp.uid)
+				if (game.p1.user.uid === user.uid)
 				{
 					socket.emit("GameError", "already in game"); // A CHANGER
 					return;
@@ -172,38 +174,19 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				}
 			}
 		
+			this.duelInvites.set(user.uid, opp.uid);
 			const opp_sock = this.clients.get(opp);
 			if (opp_sock)
-			{
-				this.duelInvites.set(user.uid, opp_uid.input);
 				opp_sock.emit('duelInviteReceived');
-			}
 		}
 		else
 			socket.emit("GameError", errorMessages.INVALIDUSER);
 	}
 
 	@UseGuards(SocketGuard)
-	@SubscribeMessage('getInvites')
-	async getInvites(socket: Socket)
-	{
-		let player = this.getUser(socket);
-		let invitesList = new Map<string, number>();
-		
-		if (player && invitesList)
-		{
-			for (const [inviting, invited] of this.duelInvites.entries())
-			{
-				if (invited === player.uid)
-					invitesList.set("name", inviting);
-			}
-		}
-	}
-
-	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('answerDuel')
-	async answerDuelInvite(s1: Socket, uid1: numberDto, uid2: numberDto, inviteAccepted: boolean)
+	async answerDuel(s1: Socket, uid1: numberDto, uid2: numberDto, inviteAccepted: boolean)
 	{
 		let player1: User | null = await this.userService.findOneByUid(uid1.input); 
 		let player2: User | null = await this.userService.findOneByUid(uid2.input); 
@@ -275,6 +258,29 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	}
 
 	@UseGuards(SocketGuard)
+	@SubscribeMessage('getInvites')
+	async getInvites(socket: Socket)
+	{
+		let player = this.getUser(socket);
+		let invitesList = new Map<string, number>();
+		
+		if (player && invitesList)
+		{
+			for (const [inviting_uid, invited_uid] of this.duelInvites.entries())
+			{
+				if (invited_uid === player.uid)
+				{
+					const opponent = await this.userService.findOneByUid(inviting_uid);
+					if (opponent)
+						invitesList.set(opponent.name, inviting_uid);
+				}
+			}
+			socket.emit('invitesList', invitesList);
+			console.log(`${invitesList.size} invites sent to ${player.name}`);
+		}
+	}
+
+	@UseGuards(SocketGuard)
 	@SubscribeMessage('accessDuel')
 	accessDuel(socket: Socket)
 	{
@@ -299,6 +305,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 						this.duelists.set(players, {here1: true, here2: false});
 					else
 						this.duelists.delete(players);
+					return;
 				}
 				else if (players.uid2 == player.uid)
 				{
@@ -315,11 +322,11 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 						this.duelists.set(players, {here1: false, here2: true});
 					else
 						this.duelists.delete(players);
+					return;
 				}
 			}
-		}
-		else
 			socket.emit('GameError', "no duel pending");
+		}
 	}
 
 	@UseGuards(SocketGuard)
@@ -423,8 +430,8 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
-	@SubscribeMessage('rejectVariant')
-	rejectVariant(socket: Socket, tag: numberDto)
+	@SubscribeMessage('declineVariant')
+	declineVariant(socket: Socket, tag: numberDto)
 	{
 		const game = this.games.get(tag.input - 1);
 		let s1!: Socket | undefined;
