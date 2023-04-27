@@ -13,6 +13,7 @@ import Paddle from "./Paddle"
 
 export default function PongGame ()
 {
+	const BACK_TO_MENU: string = '/pong/menu';
 	const VICTORY: string = '/pong/endscreen?result=victory';
 	const VICTORY_BY_FORFEIT: string = '/pong/endscreen?result=victory&forfeit=true';
 	const VICTORY_ON_TIME: string = '/pong/endscreen?result=victory&flagged=true';
@@ -88,6 +89,7 @@ export default function PongGame ()
 			window.alert("You just lost the game.");
 		}
 		window.onpopstate = (e: any) => {};
+		setLeavingPage(BACK_TO_MENU);
 	}
 
 	function joinQueue()
@@ -586,7 +588,7 @@ export default function PongGame ()
 						<button className="player_ready" onClick={playerReady} id="player_ready"></button>
 					</div>
 				</div>
-				<div className="game">
+				<div className="mid">
 					<div className="ball" id="ball"></div>
 					<div className="paddle left" id="p_paddle"></div>
 					<div className="paddle right" id="o_paddle"></div>
