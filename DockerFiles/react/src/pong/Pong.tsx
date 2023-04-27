@@ -47,6 +47,7 @@ export default function PongGame ()
 	let waiting: HTMLElement | null;
 	let cancer: HTMLElement | null;
 	let buttonReady: HTMLElement | null;
+	let buttonBack: HTMLElement | null;
 	let buttonJoinQueue: HTMLElement | null;
 	let buttonActivateVariant: HTMLElement | null;
 	let buttonAcceptVariant: HTMLElement | null;
