@@ -1,0 +1,52 @@
+	let spong = spongManager.getPongSocket();
+	useEffect(() =>
+	{
+		try
+		{
+
+		while (!spong)
+		{
+			const token = SetParamsToGetPost().headers.Authorization;
+			if (token !== null)
+			{
+				spongManager.initializePongSocket(token);
+				spong = spongManager.getPongSocket();
+			}
+		}
+
+		spong.on('duelInviteReceived', (opponent: string) =>
+		{
+		});
+
+		spong.on('duelInviteCanceled', (opponent: string) =>
+		{
+		});
+
+		spong.on('duelInviteAnswered', (opp_name: string, accepted: boolean) =>
+		{
+			if (accepted)
+			{
+				console.log(opp_name + " accepted your duel invitation");
+			}
+			else
+			{
+				console.log(opp_name + " declined your duel invitation");
+			}
+		});
+
+		spong.on('joinDuel', () =>
+		{
+				navigate('/pong/play');
+		});
+
+		spong.on('GameError', (response: any) =>
+		{
+			console.log(response);
+		});
+
+		}
+		catch(error)
+		{
+			console.log("i'm a teapot");
+		}
+	}, []);

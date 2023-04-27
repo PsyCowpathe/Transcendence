@@ -22,7 +22,6 @@ export default function PongMenu ()
 		myUid = parseInt(myUid);
 
 	let socket = socketManager.getPongSocket();
-	//let socket: any = null;
 	useEffect(() =>
 	{
 		while (!socket)
@@ -45,53 +44,73 @@ export default function PongMenu ()
 		}
 	}, []);
 
-	let [invites, setInvites] = useState<Invite[]>([]);
+	let [invitesReceived, setInvitesReceived] = useState<Invite[]>([]);
+	let [invitesSent, setInvitesSent] = useState<Invite[]>([]);
 
-	useEffect(() => {
+	useEffect(() =>
+	{
 		try
 		{
 
-		socket.emit('getInvites');
-		socket.on('invitesList', (invitesList: any) =>
-		{
-			setInvites(invitesList.map((elem: { name: string, uid: number}) => 
-			{
-				return ({ name: elem.name, uid: elem.uid });
-			}));
-			for (const data of invites)
-			{
-				console.log(data.name);
-				console.log(data.uid);
-			}
-		});
-		socket.on('duelInviteReceived', () =>
+		socket.on('refreshInvites', () =>
 		{
 			socket.emit('getInvites');
 		});
+
+		socket.on('invitesList', (invitesReceived: any, invitesSent: any) =>
+		{
+			setInvitesReceived(invitesReceived.map((elem: { name: string, uid: number}) => 
+			{
+				return ({ name: elem.name, uid: elem.uid });
+			}));
+			setInvitesSent(invitesSent.map((elem: { name: string, uid: number}) => 
+			{
+				return ({ name: elem.name, uid: elem.uid });
+			}));
+		});
+
+		socket.on('duelInviteReceived', (opponent: string) =>
+		{
+			socket.emit('getInvites');
+		});
+
+		socket.on('duelInviteCanceled', (opponent: string) =>
+		{
+			socket.emit('getInvites');
+		});
+
 		socket.on('duelInviteAnswered', (opp_name: string, accepted: boolean) =>
 		{
 			if (accepted)
 			{
 				console.log(opp_name + " accepted your duel invitation");
-				socket.emit('getInvites');
-				navigate('/pong/play');
 			}
 			else
 			{
 				console.log(opp_name + " declined your duel invitation");
-				socket.emit('getInvites');
 			}
+			socket.emit('getInvites');
 		});
+
+		socket.on('joinDuel', () =>
+		{
+				navigate('/pong/play');
+		});
+
 		socket.on('GameError', (response: any) =>
 		{
 			console.log(response);
 		});
 
+		socket.emit('getInvites');
+		
 		}
 		catch(error)
 		{
 			console.log("i'm a teapot");
 		}
+		
+
 	}, []);
 
 	function acceptDuel(uid: number | undefined)
@@ -100,10 +119,7 @@ export default function PongMenu ()
 		{
 
 		if (uid && myUid)
-		{
 			socket.emit('answerDuel', { id1: myUid, id2: uid, inviteAccepted: true });
-			navigate('/pong/play');
-		}
 
 		}
 		catch(error)
@@ -118,9 +134,22 @@ export default function PongMenu ()
 		{
 
 		if (uid && myUid)
-		{
 			socket.emit('answerDuel', { id1: myUid, id2: uid, inviteAccepted: false });
+
 		}
+		catch(error)
+		{
+			console.log("i'm a teapot");
+		}
+	}
+
+	function cancelInvite(uid: number)
+	{
+		try
+		{
+
+		if (uid && myUid)
+			socket.emit('cancelInvite', { input: uid });
 
 		}
 		catch(error)
@@ -148,14 +177,25 @@ export default function PongMenu ()
 	<TopBar />
 			<div className="h1nº2">PONG</div>
 			<button className="play" onClick={onClickPlay}>play</button>
-			<div className="duelInvites">
-				<div className="invitesTitle">Invitations :</div>
+			<div className="invitesReceived">
+				<div className="invitesTitle">Received :</div>
 				<ul>
-					{invites.map((elem: {name: string, uid: number}, index: number) => (
+					{invitesReceived.map((elem: {name: string, uid: number}, index: number) => (
 						<li key={index}>
-							duel invite from: {elem.name}
+							duel invitation from: {elem.name}
 							<button className="acceptDuel" onClick={() => { acceptDuel(elem.uid) }}></button>
 							<button className="declineDuel" onClick={() => { declineDuel(elem.uid) }}></button>
+						</li>
+					))}
+				</ul>
+			</div>
+			<div className="invitesSent">
+				<div className="invitesTitle">Sent :</div>
+				<ul>
+					{invitesSent.map((elem: {name: string, uid: number}, index: number) => (
+						<li key={index}>
+							invitation sent to: {elem.name}
+							<button className="cancelDuelInvite" onClick={() => { cancelInvite(elem.uid) }}></button>
 						</li>
 					))}
 				</ul>

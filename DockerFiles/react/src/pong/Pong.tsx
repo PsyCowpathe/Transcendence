@@ -52,7 +52,7 @@ export default function PongGame ()
 	let buttonJoinQueue: HTMLElement | null;
 	let buttonActivateVariant: HTMLElement | null;
 	let buttonAcceptVariant: HTMLElement | null;
-	let buttonRejectVariant: HTMLElement | null;
+	let buttonDeclineVariant: HTMLElement | null;
 	let variantMessage: HTMLElement | null;
 
 	let p_score: HTMLElement | null;
@@ -128,14 +128,14 @@ export default function PongGame ()
 			buttonActivateVariant.remove();
 			if (buttonAcceptVariant)
 				buttonAcceptVariant.remove();
-			if (buttonRejectVariant)
-				buttonRejectVariant.remove();
+			if (buttonDeclineVariant)
+				buttonDeclineVariant.remove();
 		}
 		else if (action == "accept" && buttonAcceptVariant)
 		{
 			buttonAcceptVariant.remove();
-			if (buttonRejectVariant)
-				buttonRejectVariant.remove();
+			if (buttonDeclineVariant)
+				buttonDeclineVariant.remove();
 		}
 		socket.emit('activateVariant', {input: (game_id + 1)});
 
@@ -146,17 +146,17 @@ export default function PongGame ()
 		}
 	}
 
-	function rejectVariant()
+	function declineVariant()
 	{
 		try
 		{
 
-		if (buttonRejectVariant)
+		if (buttonDeclineVariant)
 		{
-			socket.emit('rejectVariant', {input: (game_id + 1)});
+			socket.emit('declineVariant', {input: (game_id + 1)});
 			if (buttonAcceptVariant)
 				buttonAcceptVariant.remove();
-			buttonRejectVariant.remove();
+			buttonDeclineVariant.remove();
 		}
 
 		}
@@ -170,6 +170,19 @@ export default function PongGame ()
 	{
 		try
 		{
+
+		socket.emit('declineVariant', {input: (game_id + 1)});
+		if (buttonActivateVariant)
+			buttonActivateVariant.remove();
+		if (buttonAcceptVariant)
+			buttonAcceptVariant.remove();
+		if (buttonDeclineVariant)
+			buttonDeclineVariant.remove();
+		if (variantMessage)
+		{
+			variantMessage.textContent = "variant is off";
+			variantMessage.style.display = "flex";
+		}
 
 		if (buttonReady)
 		{
@@ -208,7 +221,10 @@ export default function PongGame ()
 		{
 
 		if (e.key === USE_SPELL)
+		{
+			console.log("spell used");
 			keyPressed = false;
+		}
 
 		}
 		catch (error)
@@ -258,7 +274,7 @@ export default function PongGame ()
 		buttonJoinQueue = document.getElementById("joinQueue");	
 		buttonActivateVariant = document.getElementById("activateVariant");	
 		buttonAcceptVariant = document.getElementById("acceptVariant");	
-		buttonRejectVariant = document.getElementById("rejectVariant");	
+		buttonDeclineVariant = document.getElementById("declineVariant");	
 		variantMessage = document.getElementById("variantMessage");	
 		waiting = document.getElementById("waiting");
 		cancer = document.getElementById("cancer");
@@ -275,8 +291,8 @@ export default function PongGame ()
 			variantMessage.style.display = "none";
 		if (buttonAcceptVariant)
 			buttonAcceptVariant.style.display = "none";
-		if (buttonRejectVariant)
-			buttonRejectVariant.style.display = "none";
+		if (buttonDeclineVariant)
+			buttonDeclineVariant.style.display = "none";
 		if (socket)
 			socket.emit('accessDuel');
 		if (!socket)
@@ -296,14 +312,8 @@ export default function PongGame ()
 			try
 			{
 
-			console.log(response);
-		/*	if (response == "no duel pending")
-			{
-				if (buttonJoinQueue)
-					buttonJoinQueue.remove();
-				if (waiting)
-					waiting.style.display = "flex";
-			}*/
+			if (response != "no duel pending")
+				console.log(response);
 	
 			}
 			catch (error)
@@ -363,7 +373,6 @@ export default function PongGame ()
 		{
 			try
 			{
-
 			document.addEventListener("keydown", eKeyPressed);
 			document.addEventListener("keyup", eKeyReleased);
 			document.addEventListener("mousemove", eMouseMoved);
@@ -371,8 +380,8 @@ export default function PongGame ()
 				buttonActivateVariant.remove();
 			if (buttonAcceptVariant)
 				buttonAcceptVariant.remove();
-			if (buttonRejectVariant)
-				buttonRejectVariant.remove();
+			if (buttonDeclineVariant)
+				buttonDeclineVariant.remove();
 	
 			}
 			catch (error)
@@ -436,8 +445,8 @@ export default function PongGame ()
 			}
 			if (buttonAcceptVariant)
 				buttonAcceptVariant.style.display = "flex";
-			if (buttonRejectVariant)
-				buttonRejectVariant.style.display = "flex";
+			if (buttonDeclineVariant)
+				buttonDeclineVariant.style.display = "flex";
 	
 			}
 			catch (error)
@@ -464,8 +473,8 @@ export default function PongGame ()
 			}
 			if (buttonAcceptVariant)
 				buttonAcceptVariant.remove();
-			if (buttonRejectVariant)
-				buttonRejectVariant.remove();
+			if (buttonDeclineVariant)
+				buttonDeclineVariant.remove();
 	
 			}
 			catch (error)
@@ -480,6 +489,18 @@ export default function PongGame ()
 			{
 
 			console.log("opponent is ready");
+
+			if (buttonActivateVariant)
+				buttonActivateVariant.remove();
+			if (buttonAcceptVariant)
+				buttonAcceptVariant.remove();
+			if (buttonDeclineVariant)
+				buttonDeclineVariant.remove();
+			if (variantMessage)
+			{
+				variantMessage.textContent = "variant is off";
+				variantMessage.style.display = "flex";
+			}
 	
 			}
 			catch (error)
@@ -575,7 +596,6 @@ export default function PongGame ()
 	return (
 			<div className="pong_game">
 				<div className="top">
-					<button className="buttonBack" id="buttonBack" onClick={back}>back</button>
 					<h1 className="h1nº1">PONG</h1>
 					<button className="joinQueue" id="joinQueue" onClick={joinQueue}>join queue</button>
 					<div className="waiting" id="waiting">waiting for an opponent...</div>
@@ -600,7 +620,8 @@ export default function PongGame ()
 					<button className="variant button" id="activateVariant" onClick={() => {activateVariant("activate")}}>activate variant</button>
 					<div className="variant message" id="variantMessage"></div>
 					<button className="variant accept" id="acceptVariant" onClick={() => {activateVariant("accept")}}>accept</button>
-					<button className="variant reject" id="rejectVariant" onClick={rejectVariant}>reject</button>
+					<button className="variant decline" id="declineVariant" onClick={declineVariant}>decline</button>
+					<button className="buttonBack" id="buttonBack" onClick={back}>back</button>
 				</div>
 			</div>
 	);

@@ -27,6 +27,7 @@ export default class Game
 	GOAL:boolean = false;
 	timeover:boolean = false;
 	variant: boolean = false;
+	playing: boolean = false;
 	spellInUse: boolean = false;
 
 	constructor(p1: Player, p2: Player, tag: number)
@@ -123,6 +124,7 @@ export default class Game
 
 	start()
 	{
+		this.playing = true;
 		this.startTime = Date.now()
 		this.prevTime = this.startTime;
 		this.update();
