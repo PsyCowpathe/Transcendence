@@ -86,8 +86,6 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
     }
 
     const handleDeco = (data: any) => {
-      console.log("status : ")
-      console.log(data.status)
       if (data.id === User.uid && data.status === "Offline")
         setStatus("Offline")
       if (data.id === User.uid && data.status === "Online")
@@ -159,10 +157,9 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
 
   const [PicUp, setPic] = React.useState("non")
   let Pic: any = localStorage.getItem(`UserPic${User.uid}`)
-  // if(Pic === null)
-  // {
-  //   Pic = Profil
-  // }
+  if (Pic === null) {
+    Pic = "nan"
+  }
   const [redirectedd, setRedirectedd] = useState(false)
 
   useEffect(() => {
@@ -280,17 +277,17 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
 /***************************************************************************** */
   const sendDuelInvite = () =>
 {
-	let s = socketManager.getPongSocket();
-	if (!s)
+	// let s = socketManager.getPongSocket();
+	if (!socketpong)
 	{
 		const token = SetParamsToGetPost().headers.Authorization;
 		if (token !== null)
 		{
 			socketManager.initializePongSocket(token);
-			s = socketManager.getPongSocket();
+			socketpong = socketManager.getPongSocket();
 		}
 	}
-	socket.emit('sendDuel', { input: User.uid });
+	socketpong.emit('sendDuel', { input: User.uid });
 }
 
 /***************************************************************************** */
