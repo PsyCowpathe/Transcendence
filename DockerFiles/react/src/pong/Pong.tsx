@@ -58,7 +58,7 @@ export default function PongGame ()
 	let p_name: HTMLElement | null;
 	let o_name: HTMLElement | null;
 
-	let game_id = 0;
+	let game_id = -1;
 	let player_id = 0;
 	let playing: boolean = false;
 
@@ -73,6 +73,21 @@ export default function PongGame ()
 	let GOAL:boolean = false;
 	
 	let time: number = 0;
+
+	function back()
+	{
+
+		document.removeEventListener("mousemove", eMouseMoved);
+		document.removeEventListener("keydown", eKeyPressed);
+		document.removeEventListener("keyup", eKeyReleased);
+		socket.emit('leaveQueue');
+		if (game_id != -1)
+		{
+			socket.emit('leaveGame');
+			window.alert("You just lost the game.");
+		}
+		window.onpopstate = (e: any) => {};
+	}
 
 	function joinQueue()
 	{
@@ -90,6 +105,7 @@ export default function PongGame ()
 		window.onpopstate = function(e: any)
 		{
 			socket.emit('leaveQueue');
+			window.onpopstate = (e: any) => {};
 		};
 
 		}
@@ -235,6 +251,7 @@ export default function PongGame ()
 			p_score.textContent = player.score.toString();
 			o_score.textContent = opponent.score.toString();
 		}
+		buttonBack = document.getElementById("buttonBack");	
 		buttonJoinQueue = document.getElementById("joinQueue");	
 		buttonActivateVariant = document.getElementById("activateVariant");	
 		buttonAcceptVariant = document.getElementById("acceptVariant");	
@@ -555,6 +572,7 @@ export default function PongGame ()
 	return (
 			<div className="pong_game">
 				<div className="top">
+					<button className="buttonBack" id="buttonBack" onClick={back}>back</button>
 					<h1 className="h1nº1">PONG</h1>
 					<button className="joinQueue" id="joinQueue" onClick={joinQueue}>join queue</button>
 					<div className="waiting" id="waiting">waiting for an opponent...</div>
