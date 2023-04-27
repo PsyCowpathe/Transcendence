@@ -3,7 +3,7 @@ import React from 'react'
 import { useEffect } from 'react'
 import { useNavigate, } from 'react-router-dom'
 import axios from 'axios'
-
+import {TopBar} from '../Pages/NavBar'
 import socketManager from '../MesSockets'
 import { SetParamsToGetPost } from '../Headers/HeaderManager'
 import Pong from './Pong'
@@ -120,7 +120,8 @@ export default function PongMenu ()
 	}
 
 	return (
-		<div className="pong menu">
+		<div className="pong menue">
+	<TopBar />
 			<div className="h1nº2">PONG</div>
 			<button className="play" onClick={onClickPlay}>play</button>
 			<div className="duelInvites">
