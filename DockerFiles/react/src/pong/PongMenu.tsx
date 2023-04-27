@@ -1,12 +1,18 @@
 import './pong_menu.css'
 import React from 'react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, } from 'react-router-dom'
 import axios from 'axios'
 import {TopBar} from '../Pages/NavBar'
 import socketManager from '../MesSockets'
 import { SetParamsToGetPost } from '../Headers/HeaderManager'
 import Pong from './Pong'
+
+interface Invite
+{
+	name: string;
+	uid: number;
+}
 
 export default function PongMenu ()
 {
@@ -39,16 +45,24 @@ export default function PongMenu ()
 		}
 	}, []);
 
-	let invites = new Map<string, number>();
+	let [invites, setInvites] = useState<Invite[]>([]);
 
 	useEffect(() => {
 		try
 		{
 
 		socket.emit('getInvites');
-		socket.on('invitesList', (invitesList: Map<string, number>) =>
+		socket.on('invitesList', (invitesList: any) =>
 		{
-			invites = invitesList;
+			setInvites(invitesList.map((elem: { name: string, uid: number}) => 
+			{
+				return ({ name: elem.name, uid: elem.uid });
+			}));
+			for (const data of invites)
+			{
+				console.log(data.name);
+				console.log(data.uid);
+			}
 		});
 		socket.on('duelInviteReceived', () =>
 		{
@@ -57,9 +71,16 @@ export default function PongMenu ()
 		socket.on('duelInviteAnswered', (opp_name: string, accepted: boolean) =>
 		{
 			if (accepted)
+			{
 				console.log(opp_name + " accepted your duel invitation");
+				socket.emit('getInvites');
+				navigate('/pong/play');
+			}
 			else
+			{
 				console.log(opp_name + " declined your duel invitation");
+				socket.emit('getInvites');
+			}
 		});
 		socket.on('GameError', (response: any) =>
 		{
@@ -79,7 +100,10 @@ export default function PongMenu ()
 		{
 
 		if (uid && myUid)
-			socket.emit('answerDuel', myUid, uid, true);
+		{
+			socket.emit('answerDuel', { id1: myUid, id2: uid, inviteAccepted: true });
+			navigate('/pong/play');
+		}
 
 		}
 		catch(error)
@@ -93,9 +117,9 @@ export default function PongMenu ()
 		try
 		{
 
-		if (uid)
+		if (uid && myUid)
 		{
-			socket.emit('answerDuel', myUid, uid, true);
+			socket.emit('answerDuel', { id1: myUid, id2: uid, inviteAccepted: false });
 		}
 
 		}
@@ -127,11 +151,11 @@ export default function PongMenu ()
 			<div className="duelInvites">
 				<div className="invitesTitle">Invitations :</div>
 				<ul>
-					{Array.from(invites.keys()).map((item: string, index: number) => (
+					{invites.map((elem: {name: string, uid: number}, index: number) => (
 						<li key={index}>
-							duel invite from: {item}
-							<button className="acceptDuel" onClick={() => { acceptDuel(invites.get(item)) }}></button>
-							<button className="declineDuel" onClick={() => { declineDuel(invites.get(item)) }}></button>
+							duel invite from: {elem.name}
+							<button className="acceptDuel" onClick={() => { acceptDuel(elem.uid) }}></button>
+							<button className="declineDuel" onClick={() => { declineDuel(elem.uid) }}></button>
 						</li>
 					))}
 				</ul>
