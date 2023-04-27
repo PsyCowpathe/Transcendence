@@ -304,6 +304,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 						this.duelists.set(players, {here1: true, here2: false});
 					else
 						this.duelists.delete(players);
+					return;
 				}
 				else if (players.uid2 == player.uid)
 				{
@@ -320,11 +321,11 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 						this.duelists.set(players, {here1: false, here2: true});
 					else
 						this.duelists.delete(players);
+					return;
 				}
 			}
-		}
-		else
 			socket.emit('GameError', "no duel pending");
+		}
 	}
 
 	@UseGuards(SocketGuard)

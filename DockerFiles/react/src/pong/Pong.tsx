@@ -295,13 +295,13 @@ export default function PongGame ()
 			{
 
 			console.log(response);
-			if (response == "no duel pending")
+		/*	if (response == "no duel pending")
 			{
 				if (buttonJoinQueue)
 					buttonJoinQueue.remove();
 				if (waiting)
 					waiting.style.display = "flex";
-			}
+			}*/
 	
 			}
 			catch (error)
