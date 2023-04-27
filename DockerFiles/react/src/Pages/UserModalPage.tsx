@@ -275,7 +275,16 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
 
 
 /***************************************************************************** */
-  const sendDuelInvite = () =>
+useEffect(() =>
+{
+	socketpong.on('GameError', (response: any) =>
+	{
+		console.log(response);
+	});
+}, []);
+
+
+const sendDuelInvite = () =>
 {
 	// let s = socketManager.getPongSocket();
 	if (!socketpong)
