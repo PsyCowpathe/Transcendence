@@ -139,7 +139,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			{
 				if (inviting === user.uid)
 				{
-					socket.emit("GameError", "already a duel invite pending"); // A CHANGER
+					socket.emit("GameError", "you already have a duel invite pending"); // A CHANGER
 					return;
 				}
 				if (inviting === opp.uid && invited === user.uid)
@@ -150,7 +150,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			}
 			for (const usr of this.queue.keys())
 			{
-				if (usr.uid === user.uid || usr.uid === opp.uid)
+				if (usr.uid === user.uid)
 				{
 					socket.emit("GameError", "already in queue"); // A CHANGER
 					return;
@@ -158,7 +158,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			}
 			for (const game of this.games.values())
 			{
-				if (game.p1.user.uid === user.uid || game.p1.user.uid === opp.uid)
+				if (game.p1.user.uid === user.uid)
 				{
 					socket.emit("GameError", "already in game"); // A CHANGER
 					return;
@@ -173,12 +173,10 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				}
 			}
 		
+			this.duelInvites.set(user.uid, opp.uid);
 			const opp_sock = this.clients.get(opp);
 			if (opp_sock)
-			{
-				this.duelInvites.set(user.uid, opp_uid.input);
 				opp_sock.emit('duelInviteReceived');
-			}
 		}
 		else
 			socket.emit("GameError", errorMessages.INVALIDUSER);

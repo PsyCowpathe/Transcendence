@@ -299,10 +299,12 @@ const sendDuelInvite = () =>
 			s = socketManager.getPongSocket();
 		}
 	}
-	socket.emit('sendDuel', { input: User.uid });
+	if (s)
+	{
+		s.emit('sendDuel', { input: User.uid });
 
-	console.log(`duel invite sent to ${User.name}`);
-	console.log(`duel invite sent to ${User.uid}`);
+		console.log(`duel invite sent to ${User.name} identified by ${User.uid}`);
+	}
 }
 
 /***************************************************************************** */

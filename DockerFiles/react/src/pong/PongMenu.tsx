@@ -15,8 +15,8 @@ export default function PongMenu ()
 	if (myUid)
 		myUid = parseInt(myUid);
 
-	//let socket = socketManager.getPongSocket();
-	let socket: any = null;
+	let socket = socketManager.getPongSocket();
+	//let socket: any = null;
 	useEffect(() =>
 	{
 		while (!socket)
