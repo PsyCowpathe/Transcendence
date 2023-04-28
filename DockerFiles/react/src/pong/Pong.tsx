@@ -1,4 +1,5 @@
-import "./pong_game.css"
+import "./pong.game.css"
+
 import React from "react"
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom'
@@ -88,7 +89,6 @@ export default function PongGame ()
 			socket.emit('leaveGame');
 			window.alert("You just lost the game.");
 		}
-		window.onpopstate = (e: any) => {};
 		setLeavingPage(BACK_TO_MENU);
 	}
 
@@ -108,7 +108,6 @@ export default function PongGame ()
 		window.onpopstate = function(e: any)
 		{
 			socket.emit('leaveQueue');
-			window.onpopstate = (e: any) => {};
 		};
 
 		}
@@ -326,10 +325,11 @@ export default function PongGame ()
 		{
 			try
 			{
+	
+			document.removeEventListener("mousemove", eMouseMoved);
+			document.removeEventListener("keydown", eKeyPressed);
+			document.removeEventListener("keyup", eKeyReleased);
 
-			socket.off('joinQueue');
-			socket.off('gameFound');
-			
 			player.name = player_name;
 			opponent.name = opponent_name;
 			if (o_name && p_name)
@@ -354,12 +354,8 @@ export default function PongGame ()
 
 			window.onpopstate = function(e: any)
 			{
-				document.removeEventListener("mousemove", eMouseMoved);
-				document.removeEventListener("keydown", eKeyPressed);
-				document.removeEventListener("keyup", eKeyReleased);
 				socket.emit('leaveGame');
 				window.alert("You just lost the game.");
-				window.onpopstate = (e: any) => {};
 			};
 	
 			}
@@ -373,9 +369,15 @@ export default function PongGame ()
 		{
 			try
 			{
+	
+			document.removeEventListener("mousemove", eMouseMoved);
+			document.removeEventListener("keydown", eKeyPressed);
+			document.removeEventListener("keyup", eKeyReleased);
+			
+			document.addEventListener("mousemove", eMouseMoved);
 			document.addEventListener("keydown", eKeyPressed);
 			document.addEventListener("keyup", eKeyReleased);
-			document.addEventListener("mousemove", eMouseMoved);
+			
 			if (buttonActivateVariant)
 				buttonActivateVariant.remove();
 			if (buttonAcceptVariant)
@@ -389,8 +391,7 @@ export default function PongGame ()
 				console.log("i'm a teapot");
 			}
 	
-		});
-		
+		});	
 
 		socket.on('update', (gameState: any) =>
 		{
@@ -441,7 +442,7 @@ export default function PongGame ()
 			if (variantMessage)
 			{
 				variantMessage.style.display = "flex";
-				variantMessage.textContent = "variant ?";
+				variantMessage.textContent = "your opponent wants to activate the variant";
 			}
 			if (buttonAcceptVariant)
 				buttonAcceptVariant.style.display = "flex";
@@ -460,7 +461,6 @@ export default function PongGame ()
 			try
 			{
 
-			console.log("variant onoff");
 			let message: string;
 			if (activate)
 				message = "variant is on";
@@ -487,8 +487,6 @@ export default function PongGame ()
 		{
 			try
 			{
-
-			console.log("opponent is ready");
 
 			if (buttonActivateVariant)
 				buttonActivateVariant.remove();
@@ -571,12 +569,20 @@ export default function PongGame ()
 			}
 		});
 
+		return (() =>
+		{
+				document.removeEventListener("mousemove", eMouseMoved);
+				document.removeEventListener("keydown", eKeyPressed);
+				document.removeEventListener("keyup", eKeyReleased);
+				window.onpopstate = (e: any) => {};
+		});
+
 		}
 		catch (error)
 		{
 			console.log("i'm a teapot");
 		}
-	}, []);		
+	}, []);
 
 	useEffect(() =>
 	{
@@ -594,34 +600,46 @@ export default function PongGame ()
 	}, [leavingPage]);
 
 	return (
-			<div className="pong_game">
-				<div className="top">
-					<h1 className="h1nº1">PONG</h1>
-					<button className="joinQueue" id="joinQueue" onClick={joinQueue}>join queue</button>
-					<div className="waiting" id="waiting">waiting for an opponent...</div>
-					<div className="cancer" id="cancer">
-						<div className="name_p" id="p_name"></div>
-						<div className="name_o" id="o_name"></div>
-						<div className="score_p" id="p_score"></div>
-						<div className="score_o" id="o_score"></div>
-						<div className= "bar">|</div>
-						<button className="player_ready" onClick={playerReady} id="player_ready"></button>
+			<div className="pongGame">
+				<div className="pongTop">
+					<div className="firstRow">
+						<button className="buttonBack" id="buttonBack" onClick={back}>back</button>
+						<h1 className="h1n1">PONG</h1>
+					</div>
+					<div className="secondRow">
+						<button className="joinQueue" id="joinQueue" onClick={joinQueue}>join queue</button>
+						<div className="waiting" id="waiting">waiting for an opponent...</div>
+						<div className="cancer" id="cancer">
+							<div className="name_p" id="p_name"></div>
+							<div className="score_p" id="p_score"></div>
+							<div className= "bar">|</div>
+							<div className="name_o" id="o_name"></div>
+							<div className="score_o" id="o_score"></div>
+						</div>
 					</div>
 				</div>
-				<div className="mid">
+				<div className="pongMid">
+					<button className="player_ready" onClick={playerReady} id="player_ready">READY</button>
+					<div className="upperbound"></div>
 					<div className="ball" id="ball"></div>
 					<div className="paddle left" id="p_paddle"></div>
 					<div className="paddle right" id="o_paddle"></div>
-					<div className="upperbound"></div>
 					<div className="central_line"></div>
 					<div className="lowerbound"></div>
 				</div>
-				<div className="bot">
-					<button className="variant button" id="activateVariant" onClick={() => {activateVariant("activate")}}>activate variant</button>
-					<div className="variant message" id="variantMessage"></div>
-					<button className="variant accept" id="acceptVariant" onClick={() => {activateVariant("accept")}}>accept</button>
-					<button className="variant decline" id="declineVariant" onClick={declineVariant}>decline</button>
-					<button className="buttonBack" id="buttonBack" onClick={back}>back</button>
+				<div className="pongBot">
+
+					<div className="variant">
+
+						<button className="buttonVariant" id="activateVariant" onClick={() => {activateVariant("activate")}}>activate variant</button>
+						<div className="variantMessage" id="variantMessage"></div>
+
+					</div>
+					<div className="choice">
+
+						<button className="buttonAcceptVariant" id="acceptVariant" onClick={() => {activateVariant("accept")}}>accept</button>
+						<button className="buttonDeclineVariant" id="declineVariant" onClick={declineVariant}>decline</button>
+					</div>
 				</div>
 			</div>
 	);
