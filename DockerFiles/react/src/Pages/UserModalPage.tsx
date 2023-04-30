@@ -39,7 +39,7 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
 
 
   let socketFr = socketManager.getFriendRequestSocket();
-  let socketpong = socketManager.getPongSocket();
+  let socketPong = socketManager.getPongSocket();
   const socket = socketManager.getChatSocket();
   let socketCo = socketManager.getStatusSocket();
 
@@ -51,10 +51,10 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
       test = true
     }
   }
-  if (socketpong == null) {
+  if (socketPong == null) {
     if (test3 === false && SetParamsToGetPost().headers.Authorization !== null) {
-      socketpong = socketManager.initializePongSocket(SetParamsToGetPost().headers.Authorization)
-      socketpong = socketManager.getPongSocket();
+      socketPong = socketManager.initializePongSocket(SetParamsToGetPost().headers.Authorization)
+      socketPong = socketManager.getPongSocket();
 
       test3 = true
     }
@@ -103,15 +103,15 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
     socket.removeListener("banuser", handleBanUser);
     socketFr.removeListener('blockuser');
     socketCo.removeListener("status", handleDeco)
-    socketpong.removeListener("status", handleDeco)
+    socketPong.removeListener("status", handleDeco)
     socketCo.on("status", handleDeco)
-    socketpong.on("status", handleDeco)
+    socketPong.on("status", handleDeco)
     socketFr.on("blockuser", handleFriendRequest);
 
     socket.on("banuser", handleBanUser);
     return () => {
       socketCo.off("status", handleDeco)
-      socketpong.off("status", handleDeco)
+      socketPong.off("status", handleDeco)
       socket.off("blockuser");
 
       socketFr.off("banuser", handleBanUser);
@@ -274,39 +274,14 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
   }
 
 
-/***************************************************************************** */
-useEffect(() =>
-{
-	socketpong.on('GameError', (response: any) =>
+	const sendDuelInvite = () =>
 	{
-		console.log(response);
-	});
-}, []);
-
-
-const sendDuelInvite = () =>
-{
-	// let s = socketManager.getPongSocket();
-	if (!socketpong)
-	{
-		const token = SetParamsToGetPost().headers.Authorization;
-		if (token !== null)
-		{
-			socketManager.initializePongSocket(token);
-			socketpong = socketManager.getPongSocket();
-		}
+		socketPong.emit('sendDuel', { input: User.uid });
+		console.log("you challenged " + User.name +  " to a pong duel");
 	}
-  console.log("invitation")
-	socketpong.emit('sendDuel', { input: User.uid });
-}
-
-/***************************************************************************** */
-
-
-
+	
   return (
     <div className="App">
-
       <img src={Pic} alt="Profile" style={{ borderRadius: "50%", width: "200px", height: "200px", objectFit: "cover", boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)" }} />
       <div className="person-stats-mod">
         <h2>{user.name}</h2>

@@ -8,6 +8,8 @@ import Paddle from "./Paddle";
 
 export default class Game 
 {
+	TIME_OVER: number = 180000;
+
 	p1: Player;
 	p2: Player;
 	tag: number;
@@ -19,16 +21,17 @@ export default class Game
 	ball = new Ball();
 	p1_paddle = new Paddle(3);
 	p2_paddle = new Paddle(96);
-	bot_paddle = new Paddle(49);
 	p1_ready: boolean = false;
 	p2_ready: boolean = false;
 	p1_variant: boolean = false;
 	p2_variant: boolean = false;
 	GOAL:boolean = false;
-	timeover:boolean = false;
 	variant: boolean = false;
 	playing: boolean = false;
-	spellInUse: boolean = false;
+	spellInUse1: boolean = false;
+	spellInUse2: boolean = false;
+	timeisover:boolean = false;
+	winner: number = 0;
 
 	constructor(p1: Player, p2: Player, tag: number)
 	{
@@ -44,16 +47,16 @@ export default class Game
 		let newdir = { x: 0, y: 0};
 		let newpos = { x: 0, y: 0};
 	
-		if (ballrect.up <= 20)
+		if (ballrect.up <= 0.9)
 			this.ball.dir.y = Math.abs(this.ball.dir.y);
-		else if (ballrect.down >= 80)
+		else if (ballrect.down >= 99.1)
 			this.ball.dir.y = -Math.abs(this.ball.dir.y);
 		
 		if (this.ball.pos.x < 15)
 		{
 			const p1_paddlerect = this.p1_paddle.getRect();
 			
-			if (	ballrect.left <= p1_paddlerect.right &&
+			if (	ballrect.left <= 4.7 &&
 				ballrect.up <= p1_paddlerect.down &&
 				ballrect.down >= p1_paddlerect.up &&
 				this.ball.pos.x >= p1_paddlerect.left	)
@@ -62,14 +65,14 @@ export default class Game
 				newdir = {	x: Math.cos(rad * Math.PI),
 						y: Math.sin(rad * Math.PI)	};
 				this.ball.setDirection(newdir);
-				this.ball.speed = this.ball.GAME_SPEED;
+				this.ball.speed = this.ball.GAME_SPEED + (Number(this.variant) * (0.000000185 * this.elapsedTime));
 			}
 		}
 		else if (this.ball.pos.x > 85)
 		{
 			const p2_paddlerect = this.p2_paddle.getRect();
 			
-			if (	ballrect.right >= p2_paddlerect.left &&
+			if (	ballrect.right >= 95.4 &&
 				ballrect.up <= p2_paddlerect.down &&
 				ballrect.down >= p2_paddlerect.up &&
 				this.ball.pos.x <= p2_paddlerect.right	)
@@ -78,7 +81,7 @@ export default class Game
 				newdir = {	x: -Math.cos(rad * Math.PI),
 						y: Math.sin(rad * Math.PI)	};
 				this.ball.setDirection(newdir);
-				this.ball.speed = this.ball.GAME_SPEED;
+				this.ball.speed = this.ball.GAME_SPEED + (Number(this.variant) * (0.000000185 * this.elapsedTime));
 			}
 		}
 
@@ -94,30 +97,31 @@ export default class Game
 			this.p1.score++;
 		else
 			this.p2.score++;
-		this.GOAL = true;
 		this.ball.reset();
 	}
 
 	useSpell(player: number)
 	{
-		if (player == 1 && this.p1.spellsUsed++ < 3)
+		if (player == 1 && !this.spellInUse1 && this.p1.spellsUsed < 3)
 		{
+			this.spellInUse1 = true;
 			this.p1_paddle.size = 60;
 			this.p1_paddle.pos.y = 50;
-			this.spellInUse = true;
 			setTimeout(() => {
   				this.p1_paddle.size = 10;
-				this.spellInUse = false;
+				this.p1.spellsUsed++;
+				this.spellInUse1 = false;
 			}, 420);
 		}
-		else if (player == 2 && this.p2.spellsUsed++ < 3)
+		else if (player == 2 && !this.spellInUse2 && this.p2.spellsUsed < 3)
 		{
+			this.spellInUse2 = true;
 			this.p2_paddle.size = 60;
 			this.p2_paddle.pos.y = 50;
-			this.spellInUse = true;
 			setTimeout(() => {
   				this.p2_paddle.size = 10;
-				this.spellInUse = false;
+				this.p2.spellsUsed++;
+				this.spellInUse2 = false;
 			}, 420);
 		}
 	}
@@ -136,16 +140,27 @@ export default class Game
 		this.deltaTime = time - this.prevTime;
 		this.prevTime = time;
 		this.elapsedTime = time - this.startTime;
-		if (this.variant && !this.spellInUse)
+		if (this.variant)
 		{
-			this.p1_paddle.shrink(0.00015);
-			this.p2_paddle.shrink(0.00015);
+			if (!this.spellInUse1)
+				this.p1_paddle.shrink(0.0021);
+			if (!this.spellInUse2)
+				this.p2_paddle.shrink(0.0021);
 		}
 		this.moveBall();
 		if (this.ball.pos.x >= 99.9 || this.ball.pos.x <= 0.1)
 			this.GOOOAAAAAAL();
-		else if (this.elapsedTime > 180000)
-			this.timeover = true;
+		if (this.elapsedTime > this.TIME_OVER) 
+			this.timeisover = true;
+		if (this.timeisover || this.p1.score == 11 || this.p2.score == 11)
+		{
+			if (this.p1.score > this.p2.score)
+				this.winner = 1;
+			else if (this.p2.score > this.p1.score)
+				this.winner = 1;
+			else
+				this.winner = 3;
+		}
 		setTimeout(this.update, 13);
 	};
 

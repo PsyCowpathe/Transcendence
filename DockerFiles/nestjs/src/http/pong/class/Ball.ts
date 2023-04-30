@@ -1,7 +1,7 @@
 export default class Ball
 {
 	BASE_SPEED:number = 0.0333;
-	GAME_SPEED:number = 0.0667;
+	GAME_SPEED:number = 0.0666;
 	
 	pos = { x: 0, y: 0 };
 	dir = { x: 0, y: 0 };
@@ -29,7 +29,7 @@ export default class Ball
 	{
 		if (pos.x >= -1 && pos.x <= 101)
 			this.pos.x = pos.x;
-		if (pos.y >= -1 && pos.y <= 101)
+		if (pos.y >= 0.9 && pos.y <= 99.1)
 			this.pos.y = pos.y;
 	}
 	
@@ -50,6 +50,7 @@ export default class Ball
 		const pos = { x: 50, y:50 };
 		this.setPosition(pos);
 		this.dir = this.getRandomDirection();
+		this.dir = { x: 1, y: 0};
 		this.speed = this.BASE_SPEED;
 	}
 }

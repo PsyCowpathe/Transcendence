@@ -424,7 +424,7 @@ export default function PongGame ()
 					o_score.textContent = gameState.p1_score.toString();
 				}
 			}
-	
+
 			}
 			catch (error)
 			{

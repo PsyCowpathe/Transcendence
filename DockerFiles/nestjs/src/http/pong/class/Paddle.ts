@@ -4,6 +4,8 @@ export default class Paddle
 	pos = { x: 0, y: 0 };
 	y_min: number = 0;
 	y_max: number = 0;
+	sWidth: number = 0;
+	sHeight: number = 0;
 	rect = { up: 0, down: 0, left: 0, right: 0 };
 
 	constructor(posx: number)
@@ -11,13 +13,13 @@ export default class Paddle
 		this.pos.x = posx;
 		this.pos.y = 50;
 		this.size = 10;
-		this.y_min = 25;
-		this.y_max = 75;
+		this.y_min = 8.3;
+		this.y_max = 93;
 	}
 
 	getRect()
 	{
-		this.rect = { right: this.pos.x + 0.5, left: this.pos.x - 0.5, up: this.pos.y - (this.size * 0.5), down: this.pos.y + (this.size * 0.5) };
+		this.rect = { right: this.pos.x, left: this.pos.x, up: this.pos.y - (this.size * 1.66 * 0.5), down: this.pos.y + (this.size * 1.66 * 0.5) };
 		return (this.rect);
 	}
 

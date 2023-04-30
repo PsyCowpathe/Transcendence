@@ -223,8 +223,6 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
   socketStatus = socketManager.getStatusSocket();
   socketChat = socketManager.getChatSocket();
 
-
-
   if (!socket) {
     const tokennn = SetParamsToGetPost().headers.Authorization;
     if (tokennn !== null) {
@@ -248,12 +246,10 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
       socketChat = socketManager.getChatSocket();
     }
   }
+
   interface user {
     user: number;
   }
-
-
-
 
   useEffect(() => {
     const handleFriendRequest = (response: any) => {
@@ -281,8 +277,8 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
         autoClose: 2000,
         progressClassName: "my-progress-bar"
       })
-
     }
+
     socket.removeListener('sendfriendrequest');
     socket.removeListener('acceptfriendrequest');
     socket.removeListener('refusefriendrequest');
@@ -309,8 +305,6 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
       socket.off("unblockuser", handleFriendRequest);
       socket.off("acceptfriendrequest", handleFriendRequest);
       socket.off("RelationError", handleErrorRequest);
-      socketStatus.off("status", handleErrorRequest);
-
     }
   }, [])
 

@@ -72,11 +72,13 @@ export default function PongMenu ()
 		socket.on('duelInviteReceived', (opponent: string) =>
 		{
 			socket.emit('getInvites');
+			console.log(opponent + " challenged you to a duel");
 		});
 
 		socket.on('duelInviteCanceled', (opponent: string) =>
 		{
 			socket.emit('getInvites');
+			console.log(opponent + " canceled his/her duel invitation");
 		});
 
 		socket.on('duelInviteAnswered', (opp_name: string, accepted: boolean) =>
@@ -173,32 +175,41 @@ export default function PongMenu ()
 	}
 
 	return (
-		<div className="pong menue">
+		<div className="pongMenu">
 	<TopBar />
-			<div className="h1nº2">PONG</div>
-			<button className="play" onClick={onClickPlay}>play</button>
-			<div className="invitesReceived">
-				<div className="invitesTitle">Received :</div>
-				<ul>
-					{invitesReceived.map((elem: {name: string, uid: number}, index: number) => (
-						<li key={index}>
-							duel invitation from: {elem.name}
-							<button className="acceptDuel" onClick={() => { acceptDuel(elem.uid) }}></button>
-							<button className="declineDuel" onClick={() => { declineDuel(elem.uid) }}></button>
-						</li>
-					))}
-				</ul>
+			<div className="menuTop">
+				<h1 className="h1n2">PONG</h1>
+				<button className="play" onClick={onClickPlay}>play</button>
 			</div>
-			<div className="invitesSent">
-				<div className="invitesTitle">Sent :</div>
-				<ul>
-					{invitesSent.map((elem: {name: string, uid: number}, index: number) => (
-						<li key={index}>
-							invitation sent to: {elem.name}
-							<button className="cancelDuelInvite" onClick={() => { cancelInvite(elem.uid) }}></button>
-						</li>
-					))}
-				</ul>
+			<div className="menuMid">
+				<h2 className="h2n1">Invitations</h2>
+				<div className="invitesReceived">
+					<div className="invitesTitle">Received :</div>
+					<ul>
+						{invitesReceived.map((elem: {name: string, uid: number}, index: number) => (
+							<li key={index}>
+								• duel invitation from: {elem.name}
+									<button className="acceptDuel" onClick={() => { acceptDuel(elem.uid) }}>✓</button>
+								<button className="declineDuel" onClick={() => { declineDuel(elem.uid) }}>✗</button>
+							</li>
+						))}
+					</ul>
+				</div>
+				<div className="invitesSent">
+					<div className="invitesTitle">Sent :</div>
+					<ul>
+						{invitesSent.map((elem: {name: string, uid: number}, index: number) => (
+							<li key={index}>
+								• invitation sent to: {elem.name}
+								<button className="cancelDuelInvite" onClick={() => { cancelInvite(elem.uid) }}></button>
+							</li>
+						))}
+					</ul>
+				</div>
+			</div>
+			<div className="menuBot">
+				<h2 className="h2n3">Rules</h2>
+				<div className="Rules"></div>
 			</div>
 		</div>
 	);

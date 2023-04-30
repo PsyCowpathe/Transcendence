@@ -18,12 +18,11 @@
 	var(--bg_brightness)
 	);
 
-	/*--lgbtbgcoloriaplus: linear-gradient(to bottom, rgb(255, 105, 180, 0.42), rgba(255, 0, 0, 0.42), rgba(255, 165, 0, 0.42), rgba(255, 255, 0, 0.42), rgba(0, 128, 0, 0.42), rgba(0, 206, 209, 0.42), rgba(75, 0, 130, 0.42), rgba(139, 0, 139, 0.42),
+	--lgbtbgcoloriaplus: linear-gradient(to bottom, rgb(255, 105, 180, 0.42), rgba(255, 0, 0, 0.42), rgba(255, 165, 0, 0.42), rgba(255, 255, 0, 0.42), rgba(0, 128, 0, 0.42), rgba(0, 206, 209, 0.42), rgba(75, 0, 130, 0.42), rgba(139, 0, 139, 0.42),
 	rgb(255, 105, 180, 0.42), rgba(255, 0, 0, 0.42), rgba(255, 165, 0, 0.42), rgba(255, 255, 0, 0.42), rgba(0, 128, 0, 0.42), rgba(0, 206, 209, 0.42), rgba(75, 0, 130, 0.42), rgba(139, 0, 139, 0.42),
 	rgb(255, 105, 180, 0.42), rgba(255, 0, 0, 0.42), rgba(255, 165, 0, 0.42), rgba(255, 255, 0, 0.42), rgba(0, 128, 0, 0.42), rgba(0, 206, 209, 0.42), rgba(75, 0, 130, 0.42), rgba(139, 0, 139, 0.42),
 	rgb(255, 105, 180, 0.42), rgba(255, 0, 0, 0.42), rgba(255, 165, 0, 0.42), rgba(255, 255, 0, 0.42), rgba(0, 128, 0, 0.42), rgba(0, 206, 209, 0.42), rgba(75, 0, 130, 0.42), rgba(139, 0, 139, 0.42),
-	rgb(255, 105, 180, 0.42), rgba(255, 0, 0, 0.42), rgba(255, 165, 0, 0.42), rgba(255, 255, 0, 0.42), rgba(0, 128, 0, 0.42), rgba(0, 206, 209, 0.42), rgba(75, 0, 130, 0.42), rgba(139, 0, 139, 0.42));*/
-
+	rgb(255, 105, 180, 0.42), rgba(255, 0, 0, 0.42), rgba(255, 165, 0, 0.42), rgba(255, 255, 0, 0.42), rgba(0, 128, 0, 0.42), rgba(0, 206, 209, 0.42), rgba(75, 0, 130, 0.42), rgba(139, 0, 139, 0.42));
 
 }
 
@@ -84,6 +83,7 @@ body
 {
 	position: absolute;
 	--x: 50;
+	top: 0;
 	margin-left: calc(var(--x) * 1%);
 	transform: translateX(-50%);
 	height: 100%;
@@ -105,10 +105,11 @@ body
 	--y: 50;
 
 	position: absolute;
-	top: calc(var(--y) * 1%);
+	
+	top: clamp(calc(0% + (var(--h) / 2 * 1vh)), calc(var(--y) * 1%), calc(100% - (var(--h) / 2 * 1vh)));
 	transform: translateY(-50%);
 
-	width: 1vw;
+	width: 1vh;
 	height: calc(var(--h) * 1vh);
 	background-color: var(--foreground-color);
 	z-index: 1;
@@ -175,6 +176,7 @@ body
 	display: flex;
   	justify-content: center;
   	align-items: center;
+	cursor: pointer;
 	z-index: 1;
 }
 
@@ -187,6 +189,7 @@ body
 	display: flex;
   	justify-content: center;
   	align-items: center;
+	cursor: pointer;
 	z-index: 1;
 }
 
@@ -201,11 +204,15 @@ body
 
 .player_ready
 {
-	width: 50vh;
-	height: 50vh;
+	width: 15vw;
+	height: 20vh;
+	margin: auto;
+	margin-top: 20vh;
+	margin-left: 19vw;
 	display: flex;
   	justify-content: center;
   	align-items: center;
+	cursor: pointer;
 	z-index: 9000;
 }
 
@@ -296,6 +303,7 @@ body
   	align-items: center;
 	margin-top: auto;
 	margin-bottom: 1vh;
+	cursor: pointer;
 	z-index: 1;
 }
 
@@ -331,6 +339,7 @@ body
 	display: flex;
   	justify-content: center;
   	align-items: center;
+	cursor: pointer;
 	z-index: 1;
 }
 
@@ -343,5 +352,6 @@ body
 	display: flex;
   	justify-content: center;
   	align-items: center;
+	cursor: pointer;
 	z-index: 1;
 }

@@ -281,7 +281,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			this.duelInvites.set(user.id, opp.id);
 			const opp_sock = this.getSocket(this.clients, opp.id);
 			if (opp_sock)
-				opp_sock.emit('duelInviteReceived', "bbl");
+				opp_sock.emit('duelInviteReceived', user.name);
 		}
 		else
 			socket.emit("GameError", errorMessages.INVALIDUSER);
@@ -653,6 +653,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		}
   	}
 
+
 	update = async () =>
 	{
 		for (const game of this.games.values())
@@ -664,44 +665,26 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				const gameState = game.getGameState();
 				s1.emit('update', gameState);
 				s2.emit('update', gameState);
-				if (game.timeover)
+			  	if (game.winner)
 				{
 					await this.userService.updateStatus("Online", game.p1.user);
 					await this.userService.updateStatus("Online", game.p2.user);
-					if (game.p1.score > game.p2.score)
+					this.games.delete(game.tag);
+
+					if (game.winner == 1)
 					{
-						s1.emit('victory', true)
-						s2.emit('defeat', true);
+						s1.emit('victory', game.timeisover);
+						s2.emit('defeat', game.timeisover);	
 					}
-					else if (game.p2.score > game.p1.score)
+					else if (game.winner == 2)
 					{
-						s2.emit('victory', true)
-						s1.emit('defeat', true);
+						s2.emit('victory', game.timeisover);
+						s1.emit('defeat', game.timeisover);
 					}
 					else
 					{
 						s1.emit('draw');
 						s2.emit('draw');
-					}
-					this.games.delete(game.tag);
-				}
-				else
-				{
-					if (game.p1.score == 11)
-					{
-						await this.userService.updateStatus("Online", game.p1.user);
-						await this.userService.updateStatus("Online", game.p2.user);
-						s1.emit('victory');
-						s2.emit('defeat');
-						this.games.delete(game.tag);
-					}
-					else if (game.p2.score == 11)
-					{
-						await this.userService.updateStatus("Online", game.p1.user);
-						await this.userService.updateStatus("Online", game.p2.user);
-						s1.emit('defeat');
-						s2.emit('victory');
-						this.games.delete(game.tag);
 					}
 				}
 			}

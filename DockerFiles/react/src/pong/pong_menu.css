@@ -1,90 +1,140 @@
-:root
-{
-	--fg_hue: 315;
-	--fg_saturation: 50%;
-	--fg_brightness: 50%;
-	--foreground-color: hsl(
-	var(--fg_hue),
-	var(--fg_saturation),
-	var(--fg_brightness)
-	);
-	
-	--bg_hue: 0;
-	--bg_saturation: 0%;
-	--bg_brightness: 13%;
-	--background-color: hsl(
-	var(--bg_hue),
-	var(--bg_saturation),
-	var(--bg_brightness)
-	);
-
-	overflow: hidden;
+html, body {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	width: 100%;
 }
 
-.h1nº2
+.pongMenu
 {
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
+	align-items: center;
+	background-color: var(--background-color);
+	height: 100vh;
+	width: 100vw;
+}
+
+.menuTop
+{
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.menuMid
+{
+	flex: 2;
+	border: 0.2vw solid black;
+	padding: 1vw 2vw;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.menuBot
+{
+	flex: 1;
+	width: 90vw;
+	margin-left: 1vw;
+	margin-right: 1vw;
+	border: 0.2vw solid black;
+}
+
+.h1n2
+{
+	font-size: 5vh;
 	font-weight: bold;
-	font-size: 4vh;
 	color: var(--foreground-color);
+	color: white;
+	margin-top: 0;
+	text-align: center;
 }
 
-.pong.menue 
+.h2n1
 {
-	position: absolute;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 3vh;
-	height: 100vh;
-	width: 100vw;
-	background-color: var(--background-color);
-}
-
-.pong.endscreen
-{
-	position: absolute;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 3vh;
-	height: 100vh;
-	width: 100vw;
-	background-color: var(--background-color);
-	
-}
-
-.result
-{
-	display: flex;
-	justify-content: center;
-	margin-top: 2vh; 
+	font-size:2.3vh;
 	font-weight: bold;
-	font-size: 4vh;
+	color: var(--foreground-color);
+	color: white;
+	margin: 2vh;
+	text-align: center;
 }
 
-.redirect
+.play
 {
-	display: flex;
-	font-size: 1.5vh;
+	width: 15vw;
+	margin-top: 0;
+	background-color: white;
+	color: var(--background-color);
+	border: none;
+	border-radius: 10px;
+	padding: 1vh 2vh;
+	font-size: 2vh;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.invitesTitle
+{
+	font-size: 2vh;
+	font-weight: bold;
+	margin-bottom: 1vw;
 	color: white;
 }
 
-.ps
+.invitesReceived li
 {
+	font-size: 1.5vh;
+	color: yellow;
 	display: flex;
-	justify-content: center;
-	font-weight: bold;
-	font-size: 2vh;
+	align-items: center;
+	margin-left: 0;
 }
 
-.back_to_menu
+.invitesSent li
 {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	font-size: 1.5vh;
-	height: 4vh;
-	width: 10vw;
+	font-size: 1.5rem;
+}
+
+.acceptDuel, .declineDuel
+{
+
+	margin-left: 1vw;
+	background-color: var(--foreground-color);
+	color: white;
+	border: none;
+	border-radius: 10%;
+	padding: 0.5vh;
+	font-size: 1vh;
+	font-weight: bold;
+	cursor: pointer;
+	opacity: 60%;
+}
+
+.acceptDuel
+{
+	background-color: green;
+}
+
+.declineDuel
+{
+	background-color: red;
+}
+
+.cancelDuelInvite
+{
+	background-color: var(--foreground-color);
+	color: white;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	padding: 0.5rem;
+	font-size: 1rem;
+	font-weight: bold;
+	cursor: pointer;
+	opacity: 50%;
 }
