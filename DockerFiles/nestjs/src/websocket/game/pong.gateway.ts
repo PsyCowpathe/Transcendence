@@ -697,7 +697,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					await this.userService.updateStatus("Online", game.p2.user);
 					this.games.delete(game.tag);
 					let newMatchHistory = new MatchHistory();
-					this.gameService.createMatchHistory(newMatchHistory);
 					if (game.winner == 1)
 					{
 						newMatchHistory.score1 = game.p1.score; 
@@ -725,6 +724,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 						s1.emit('draw');
 						s2.emit('draw');
 					}
+					await this.gameService.createMatchHistory(newMatchHistory);
 				}
 			}
 		}
