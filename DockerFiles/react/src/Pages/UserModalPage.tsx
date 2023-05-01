@@ -161,9 +161,7 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
   const [PicUp, setPic] = React.useState("non")
   const [Pic, setPicUrl] = useState("")
 
-    if (Pic === null) {
-      Pic = "nan"
-    }
+   
     const [redirectedd, setRedirectedd] = useState(false)
 
     useEffect(() => {
