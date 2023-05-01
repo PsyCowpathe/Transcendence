@@ -3,7 +3,9 @@ import { WebSocketServer, WebSocketGateway, OnGatewayConnection, OnGatewayDiscon
 import { UseFilters, UsePipes, UseGuards, ValidationPipe } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { User } from '../../db/user/user.entity'
+import { MatchHistory } from '../../db/game/game.entity'
 import { UserService } from '../../db/user/user.service'
+import { GameService } from '../../db/game/game.service'
 import { WsStatusService } from '../status/wsstatus.service'
 import Game from './class/Game';
 import Player from './class/Player'
@@ -27,7 +29,8 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	inviteMUTEX = false;
 
 	constructor(private readonly userService: UserService,
-				private readonly statusService: WsStatusService)
+				private readonly statusService: WsStatusService,
+			    private readonly gameService: GameService)
 	{
 	       this.update();
 	}
@@ -51,7 +54,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				{
                 	if (Date.now().toString() > user.TwoFAExpire)
                 	{
-                    	//socket.emit("GameError", errorMessages.2FAEXPIRED)
+                    	socket.emit("GameError", errorMessages.INVALID2FA)
                     	socket.disconnect();
                     	console.log("2FA TOKEN IS EXPIRED");
                 	}
@@ -67,7 +70,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
                 	}
                 	else
                 	{
-                 		//socket.emit("GameError", errorMessages.INVALID2FA)
+                 		socket.emit("GameError", errorMessages.INVALID2FA)
                   		socket.disconnect();
                   		console.log("2FA TOKEN IS invalid");
                 	} 
@@ -86,14 +89,14 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         	}
         	else
         	{
-           		//socket.emit("GameError", errorMessages.INVALIDTOKEN)
+           		socket.emit("GameError", errorMessages.INVALIDTOKEN)
             	socket.disconnect();
             	console.log("invalid token bearer");
         	}
     	}
     	else
     	{
-       		socket.emit("GameError", errorMessages.INVALIDUSER)
+       		socket.emit("GameError", errorMessages.MISSINGUSER)
         	socket.disconnect();
         	console.log("no corresponding user in db");
     	}
@@ -131,7 +134,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		return (undefined);
     }
 
-	@UseGuards(SocketGuard)
 	@SubscribeMessage('joinQueue')
 	joinQueue(socket: Socket, username: string)
 	{
@@ -195,7 +197,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		console.log(`game launched : ${p1.name} was matched up with ${p2.name}`);
 	}
 
-	@UseGuards(SocketGuard)
 	@SubscribeMessage('leaveQueue')
 	leaveQueue(socket: Socket)
 	{
@@ -206,7 +207,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			this.queue.delete(user);
 	}
 
-	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('leaveGame')
 	async leaveGame(socket: Socket)
@@ -238,7 +238,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		}
 	}
 
-	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('sendDuel')
 	async sendDuel(socket: Socket, opp_id: numberDto)
@@ -305,7 +304,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	}
 
 
-	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('answerDuel')
 	async answerDuel(s1: Socket, answer: answerDto)
@@ -418,7 +416,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		this.inviteMUTEX = false;
 	}
 
-	@UseGuards(SocketGuard)
 	@SubscribeMessage('accessDuel')
 	accessDuel(socket: Socket)
 	{
@@ -466,7 +463,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		}
 	}
 
-	@UseGuards(SocketGuard)
 	@SubscribeMessage('getInvites')
 	async getInvites(socket: Socket)
 	{
@@ -495,7 +491,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		}
 	}
 
-	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('cancelInvite')
 	async cancelInvite(socket: Socket, id: numberDto)
@@ -529,7 +524,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		this.inviteMUTEX = false;
 	}
 
-	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('activateVariant')
 	activateVariant(socket: Socket, tag: numberDto)
@@ -573,7 +567,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		}	
 	}
 
-	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('declineVariant')
 	declineVariant(socket: Socket, tag: numberDto)
@@ -604,7 +597,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		}	
 	}
 
-	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('playerReady')
 	async playerReady(socket: Socket, gametag: numberDto)
@@ -661,7 +653,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		}
 	}
 
-	@UseGuards(SocketGuard)
 	@UsePipes(new ValidationPipe())
 	@SubscribeMessage('useSpell')
 	useSpell(socket: Socket, tag: numberDto)
@@ -705,22 +696,35 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					await this.userService.updateStatus("Online", game.p1.user);
 					await this.userService.updateStatus("Online", game.p2.user);
 					this.games.delete(game.tag);
-
+					let newMatchHistory = new MatchHistory();
 					if (game.winner == 1)
 					{
+						newMatchHistory.score1 = game.p1.score; 
+						newMatchHistory.user1 = game.p1.user;
+						newMatchHistory.score2 = game.p2.score;
+						newMatchHistory.user2 = game.p2.user;
 						s1.emit('victory', game.timeisover);
 						s2.emit('defeat', game.timeisover);	
 					}
 					else if (game.winner == 2)
 					{
+						newMatchHistory.score1 = game.p2.score; 
+						newMatchHistory.user1 = game.p2.user;
+						newMatchHistory.score2 = game.p1.score;
+						newMatchHistory.user2 = game.p1.user;
 						s2.emit('victory', game.timeisover);
 						s1.emit('defeat', game.timeisover);
 					}
 					else
 					{
+						newMatchHistory.score1 = game.p2.score; 
+						newMatchHistory.user1 = game.p2.user;
+						newMatchHistory.score2 = game.p1.score;
+						newMatchHistory.user2 = game.p1.user;
 						s1.emit('draw');
 						s2.emit('draw');
 					}
+					await this.gameService.createMatchHistory(newMatchHistory);
 				}
 			}
 		}

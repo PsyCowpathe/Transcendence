@@ -33,5 +33,3 @@ export class SocketStrategy
 		return (-4);
 	}
 }
-
-

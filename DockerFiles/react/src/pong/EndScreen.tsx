@@ -96,12 +96,19 @@ export default function EndScreen()
 
 		const handleGameError = (response: any) =>
 		{
-		    toast.error(response, {
-   	     		position: toast.POSITION.TOP_RIGHT,
-   	     		autoClose: 2000,
-   	     		progressClassName: "my-progress-bar"
+			toast.error(response, {
+   	     			position: toast.POSITION.TOP_RIGHT,
+   	     			autoClose: 2000,
+   	     			progressClassName: "my-progress-bar"
 			});
 			console.log(response);
+			if (response === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+              			navigate('/')
+            		if (response === "User not registered")// ==> redirection vers la page de register
+              			navigate('/Change')
+            		if (response === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+              			navigate('/Send2FA')
+
 		};
 
 		const handleDuelInviteReceived = (opponent: string) =>
