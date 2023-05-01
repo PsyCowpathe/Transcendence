@@ -21,7 +21,7 @@ export default class Ball
 
 			dir = { x: Math.cos(rgn), y: Math.sin(rgn) };
 		}
-		this.rect = { up: this.pos.y - 0.5, down: this.pos.y + 0.5, left: this.pos.x - 0.5, right: this.pos.x + 0.5 };
+		this.rect = { up: this.pos.y - 0.75, down: this.pos.y + 0.75, left: this.pos.x - 0.75, right: this.pos.x + 0.75 };
 		return (dir);
 	}
 
@@ -29,7 +29,7 @@ export default class Ball
 	{
 		if (pos.x >= -1 && pos.x <= 101)
 			this.pos.x = pos.x;
-		if (pos.y >= 0.9 && pos.y <= 99.1)
+		if (pos.y >= -1 && pos.y <= 61)
 			this.pos.y = pos.y;
 	}
 	
@@ -41,16 +41,15 @@ export default class Ball
 
 	getRect()
 	{
-		this.rect = { up: this.pos.y - 0.5, down: this.pos.y + 0.5, left: this.pos.x - 0.5, right: this.pos.x + 0.5 };
+		this.rect = { up: this.pos.y - 0.75, down: this.pos.y + 0.75, left: this.pos.x - 0.75, right: this.pos.x + 0.75 };
 		return (this.rect);
 	}
 
 	reset()
 	{
-		const pos = { x: 50, y:50 };
+		const pos = { x: 50, y:30 };
 		this.setPosition(pos);
 		this.dir = this.getRandomDirection();
-		this.dir = { x: 1, y: 0};
 		this.speed = this.BASE_SPEED;
 	}
 }

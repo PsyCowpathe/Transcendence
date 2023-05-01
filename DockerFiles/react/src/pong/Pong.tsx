@@ -236,8 +236,9 @@ export default function PongGame ()
 	{
 		try
 		{
-
-		p_paddle.setPosition(100 * e.y / window.innerHeight);
+			
+		if ((e.y / window.innerHeight * 100) >= 20 && (e.y / window.innerHeight * 100) <= 80)
+			p_paddle.setPosition(e.y / (window.innerHeight) * 100 - 20);
 		socket.emit('movePaddle', { gametag: (game_id + 1), position: p_paddle.pos });
 
 		}

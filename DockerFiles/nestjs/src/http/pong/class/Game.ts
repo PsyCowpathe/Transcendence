@@ -47,16 +47,16 @@ export default class Game
 		let newdir = { x: 0, y: 0};
 		let newpos = { x: 0, y: 0};
 	
-		if (ballrect.up <= 0.9)
+		if (ballrect.up <= 0.75)
 			this.ball.dir.y = Math.abs(this.ball.dir.y);
-		else if (ballrect.down >= 99.1)
+		else if (ballrect.down >= 59.15)
 			this.ball.dir.y = -Math.abs(this.ball.dir.y);
 		
 		if (this.ball.pos.x < 15)
 		{
 			const p1_paddlerect = this.p1_paddle.getRect();
 			
-			if (	ballrect.left <= 4.7 &&
+			if (	ballrect.left <= 3.7 &&
 				ballrect.up <= p1_paddlerect.down &&
 				ballrect.down >= p1_paddlerect.up &&
 				this.ball.pos.x >= p1_paddlerect.left	)
@@ -72,7 +72,7 @@ export default class Game
 		{
 			const p2_paddlerect = this.p2_paddle.getRect();
 			
-			if (	ballrect.right >= 95.4 &&
+			if (	ballrect.right >= 96.3 &&
 				ballrect.up <= p2_paddlerect.down &&
 				ballrect.down >= p2_paddlerect.up &&
 				this.ball.pos.x <= p2_paddlerect.right	)
@@ -87,7 +87,7 @@ export default class Game
 
 		newpos = {	x: this.ball.pos.x + (this.ball.dir.x * this.ball.speed * this.deltaTime),
 				y: this.ball.pos.y + (this.ball.dir.y * this.ball.speed * this.deltaTime)	};
-		
+
 		this.ball.setPosition(newpos);
 	}
 
@@ -161,7 +161,7 @@ export default class Game
 			else
 				this.winner = 3;
 		}
-		setTimeout(this.update, 13);
+		setTimeout(this.update, 2);
 	};
 
 	getGameState()
