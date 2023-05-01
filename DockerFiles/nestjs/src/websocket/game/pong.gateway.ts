@@ -225,6 +225,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 		if (leaver)
 		{
+			console.log(`${leaver.name} left`);
 			let oppSock: Socket | undefined;
 			for (const game of this.games.values())
 			{
@@ -266,8 +267,9 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					break;
 				}
 			}
-			this.leavingMUTEX = false;
 		}
+		
+		this.leavingMUTEX = false;
 	}
 
 	@UsePipes(new ValidationPipe())
