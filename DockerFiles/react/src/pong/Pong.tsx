@@ -454,6 +454,7 @@ export default function PongGame ()
 			window.onpopstate = function(e: any)
 			{
 				socket.emit('leaveGame');
+				console.log("leaving");
 			};
 	
 			}
