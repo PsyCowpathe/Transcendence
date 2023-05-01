@@ -31,7 +31,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 	constructor(	private readonly userService: UserService,
 			private readonly statusService: WsStatusService,
-			private readonly gameService: GameService
+			private readonly gameService: GameService,
 			private readonly relationService: RelationService )
 	{
 	       this.update();
