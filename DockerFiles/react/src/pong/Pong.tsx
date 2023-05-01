@@ -112,6 +112,7 @@ export default function PongGame ()
 		window.onpopstate = function(e: any)
 		{
 			socket.emit('leaveQueue');
+			socket.emit('leaveGame');
 		};
 
 		}
@@ -453,8 +454,8 @@ export default function PongGame ()
 
 			window.onpopstate = function(e: any)
 			{
+				socket.emit('leaveQueue')
 				socket.emit('leaveGame');
-				console.log("leaving");
 			};
 	
 			}
@@ -686,7 +687,6 @@ export default function PongGame ()
 				socket.off('playing');
 				socket.off('gameFound');
 				socket.off('GameError');
-				window.onpopstate = (e: any) => {};
 		});
 
 		}

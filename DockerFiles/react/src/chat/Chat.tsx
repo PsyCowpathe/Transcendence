@@ -873,7 +873,7 @@ export function Chat() {
 			});
 		};
 
-		function joinDuel()
+		const joinDuel = () =>
 		{
 			navigate('/pong/play');
 		}
