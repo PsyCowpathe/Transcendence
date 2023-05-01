@@ -6,6 +6,7 @@ import { User } from '../../db/user/user.entity'
 import { MatchHistory } from '../../db/game/game.entity'
 import { UserService } from '../../db/user/user.service'
 import { GameService } from '../../db/game/game.service'
+import { RelationService } from '../../db/relation/relation.service'
 import { WsStatusService } from '../status/wsstatus.service'
 import Game from './class/Game';
 import Player from './class/Player'
@@ -28,9 +29,10 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	duelInvites = new Map<number, number>();
 	inviteMUTEX = false;
 
-	constructor(private readonly userService: UserService,
-				private readonly statusService: WsStatusService,
-			    private readonly gameService: GameService)
+	constructor(	private readonly userService: UserService,
+			private readonly statusService: WsStatusService,
+			private readonly gameService: GameService
+			private readonly relationService: RelationService )
 	{
 	       this.update();
 	}
@@ -251,6 +253,19 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			
 		if (user && opp)
 		{
+			const relationStatus = await this.realtionService.getRelationStatus(user, opp);
+			if (relationStatus == "VX" || relation == "ennemy")
+			{
+				socket.emit("GameError", "this player blocked you");
+				this.inviteMUTEX = false;
+				return;
+			}
+			if (relationStatus == "XV" || relationStatus == "ennemy")
+			{
+				socket.emit("GameError", "you blocked this user");
+				this.inviteMUTEX = false;
+				return;
+			}
 			for (const [inviting, invited] of this.duelInvites.entries())
 			{
 				if (inviting === user.id && invited == opp.id)
@@ -319,6 +334,19 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			
 		if (player1 && player2)
 		{
+			const relationStatus = await this.realtionService.getRelationStatus(user, opp);
+			if (relationStatus == "VX" || relation == "enemy")
+			{
+				socket.emit("GameError", "this player blocked you");
+				this.inviteMUTEX = false;
+				return;
+			}
+			if (relationStatus == "XV" || relationStatus == "enemy")
+			{
+				socket.emit("GameError", "you blocked this user");
+				this.inviteMUTEX = false;
+				return;
+			}
 			for (const game of this.games.values())
 			{
 				if (game.p1.user.id == player1.id || game.p2.user.id == player1.id)
