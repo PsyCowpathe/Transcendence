@@ -151,7 +151,7 @@ export default class Game
 		if (this.ball.pos.x >= 99.9 || this.ball.pos.x <= 0.1)
 			this.GOOOAAAAAAL();
 		if (this.elapsedTime > this.TIME_OVER) 
-			this.timeisover = true;
+			this.timeisover = this.variant;
 		if ((this.variant && this.timeisover) || this.p1.score == 11 || this.p2.score == 11)
 		{
 			if (this.p1.score > this.p2.score)
@@ -161,7 +161,6 @@ export default class Game
 			else
 				this.winner = 3;
 		}
-		console.log(`elapsed time: ${this.elapsedTime / 1000 / 60}`);
 		setTimeout(this.update, 2);
 	};
 
