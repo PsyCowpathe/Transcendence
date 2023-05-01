@@ -74,6 +74,7 @@ export default function PongMenu ()
 		{
 			socket.emit('getInvites');
 			console.log(opponent + " challenged you to a duel");
+			const message: string = opponent + " challenged you to a duel";
 			toast.success(message, {
    			 	position: toast.POSITION.TOP_RIGHT,
        			autoClose: 2000,
@@ -85,6 +86,7 @@ export default function PongMenu ()
 		{
 			socket.emit('getInvites');
 			console.log(opponent + " canceled his/her duel invitation");
+			const message: string = opponent + " canceled his/her duel invitation";
 			toast.success(message, {
    			 	position: toast.POSITION.TOP_RIGHT,
        			autoClose: 2000,
@@ -97,10 +99,12 @@ export default function PongMenu ()
 			if (accepted)
 			{
 				console.log(opp_name + " accepted your duel invitation");
+				const message: string = opp_name + " accepted your duel invitation";
 			}
 			else
 			{
 				console.log(opp_name + " declined your duel invitation");
+				const message: string = opp_name + " declined your duel invitation";
 			}
 			socket.emit('getInvites');
 			toast.success(message, {
@@ -135,11 +139,11 @@ export default function PongMenu ()
 		socket.emit('getInvites');
 
 		return () => {
-			socketPong.off('duelInviteReceived');
-			socketPong.off('duelInviteCanceled');
-			socketPong.off('duelInviteAnswered');
-			socketPong.off('joinDuel');
-			socketPong.off('GameError');
+			socket.off('duelInviteReceived');
+			socket.off('duelInviteCanceled');
+			socket.off('duelInviteAnswered');
+			socket.off('joinDuel');
+			socket.off('GameError');
 		
 		}
 
