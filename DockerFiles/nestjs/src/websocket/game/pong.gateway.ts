@@ -217,14 +217,28 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		const leaver = this.getUser(socket);
 		if (leaver)
 		{
+			let newMatchHistory = new MatchHistory();
 			let oppSock: Socket | undefined;
 			for (const game of this.games.values())
 			{
 				if (game.p1.user.id === leaver.id)
+				{
 					oppSock = this.getSocket(this.clients, game.p2.user.id);
+						newMatchHistory.score1 = game.p2.score; 
+						newMatchHistory.user1 = game.p2.user;
+						newMatchHistory.score2 = game.p1.score;
+						newMatchHistory.user2 = game.p1.user;
+						s2.emit('victory', game.timeisover);
+						s1.emit('defeat', game.timeisover);
+				}
 				else if (game.p2.user.id === leaver.id)
 				{
-					oppSock = this.getSocket(this.clients, game.p1.user.id);
+					oppSock = this.getSocket(this.clients, game.p1.user.id);						newMatchHistory.score1 = game.p1.score; 
+						newMatchHistory.user1 = game.p1.user;
+						newMatchHistory.score2 = game.p2.score;
+						newMatchHistory.user2 = game.p2.user;
+						s1.emit('victory', game.timeisover);
+						s2.emit('defeat', game.timeisover);	
 				}
 				if (oppSock)
 				{
@@ -237,6 +251,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					break;
 				}
 			}
+			await this.gameService.createMatchHistory(newMatchHistory);
 		}
 	}
 
