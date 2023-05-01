@@ -22,6 +22,8 @@ export default function PongGame ()
 	const DEFEAT_ON_TIME: string = '/pong/endscreen?result=defeat&flagged=true';
 	const DRAW: string = '/pong/endscreen?result=draw';
 	const USE_SPELL: any = "+";
+	const PROGRESS_THEME: any = "p";
+	const MIDDLE_AGE_THEME: any = "m";
 
 	let socket = socketManager.getPongSocket();
 	while (!socket)
@@ -44,8 +46,9 @@ export default function PongGame ()
 	}
 
 	const navigate = useNavigate();
-	let [leavingPage, setLeavingPage] = useState("");
+	const [leavingPage, setLeavingPage] = useState("");
 
+	let page: HTMLElement | null;
 	let waiting: HTMLElement | null;
 	let cancer: HTMLElement | null;
 	let buttonReady: HTMLElement | null;
@@ -72,7 +75,9 @@ export default function PongGame ()
 	let opponent: Player = new Player("name");
 
 	let input: number; 
-	let keyPressed: boolean = false;
+	let spellKeyPressed: boolean = false;
+	let pThemeKeyPressed: boolean = false;
+	let mThemeKeyPressed: boolean = false;
 	let GOAL:boolean = false;
 	
 	let time: number = 0;
@@ -81,8 +86,10 @@ export default function PongGame ()
 	{
 
 		document.removeEventListener("mousemove", eMouseMoved);
-		document.removeEventListener("keydown", eKeyPressed);
-		document.removeEventListener("keyup", eKeyReleased);
+		document.removeEventListener("keydown", eSpellKeyPressed);
+		document.removeEventListener("keyup", eSpellKeyReleased);
+		document.removeEventListener("keydown", eThemeKeyPressed);
+		document.removeEventListener("keyup", eThemeKeyReleased);
 		socket.emit('leaveQueue');
 		if (game_id != -1)
 		{
@@ -196,15 +203,22 @@ export default function PongGame ()
 		}
 	}
 
-	function eKeyPressed(e: any)
+	function eThemeKeyPressed(e: any)
 	{
 		try
 		{
 
-		if (e.key === USE_SPELL && !keyPressed)
+		if (page && e.key == PROGRESS_THEME && !pThemeKeyPressed && !mThemeKeyPressed)
 		{
-			keyPressed = true;
-			socket.emit('useSpell', { input: (game_id + 1) });
+			pThemeKeyPressed = true;
+			page.style.setProperty('background', getComputedStyle(page).getPropertyValue('--lgbtqbgcoloriaplus'));
+			page.style.setProperty('text-shadow', getComputedStyle(page).getPropertyValue('--glow'));
+		}
+		else if (page && e.key == MIDDLE_AGE_THEME &&  !pThemeKeyPressed && !mThemeKeyPressed)
+		{
+			mThemeKeyPressed = true;
+			page.style.setProperty('background', 'none');
+			page.style.setProperty('text-shadow', 'none')
 		}
 
 		}
@@ -214,15 +228,77 @@ export default function PongGame ()
 		}
 	}
 
-	function eKeyReleased(e: any)
+	function eThemeKeyReleased(e: any)
+	{
+		try
+		{
+
+		if (e.key === PROGRESS_THEME)
+		{
+			pThemeKeyPressed = false;
+		}
+		else if (e.key === MIDDLE_AGE_THEME)
+		{
+			mThemeKeyPressed = false;
+		}
+
+		}
+		catch (error)
+		{
+			console.log("i'm a teapot");
+		}
+	}
+
+	function eSpellKeyPressed(e: any)
+	{
+		try
+		{
+
+		if (e.key === USE_SPELL && !spellKeyPressed)
+		{
+			spellKeyPressed = true;
+			socket.emit('useSpell', { input: (game_id + 1) });
+		}
+		else if (page && e.key == PROGRESS_THEME && !pThemeKeyPressed && !mThemeKeyPressed)
+		{
+			console.log("theme changed");
+			pThemeKeyPressed = true;
+			mThemeKeyPressed = true;
+			page.style.setProperty('background', getComputedStyle(page).getPropertyValue('--lgbtqbgcoloriaplus'));
+			page.style.setProperty('text-shadow', getComputedStyle(page).getPropertyValue('--glow'));
+		}
+		else if (page && e.key == MIDDLE_AGE_THEME &&  !pThemeKeyPressed && !mThemeKeyPressed)
+		{
+			console.log("theme changed");
+			pThemeKeyPressed = true;
+			mThemeKeyPressed = true;
+			page.style.setProperty('background', 'none');
+			page.style.setProperty('text-shadow', 'none')
+		}
+
+		}
+		catch (error)
+		{
+			console.log("i'm a teapot");
+		}
+	}
+
+	function eSpellKeyReleased(e: any)
 	{
 		try
 		{
 
 		if (e.key === USE_SPELL)
 		{
-			console.log("spell used");
-			keyPressed = false;
+			spellKeyPressed = false;
+		}
+		else if (e.key === PROGRESS_THEME)
+		{
+			pThemeKeyPressed = false;
+		}
+		else if (e.key === MIDDLE_AGE_THEME)
+		{
+			mThemeKeyPressed = false;
 		}
 
 		}
@@ -270,6 +346,7 @@ export default function PongGame ()
 			p_score.textContent = player.score.toString();
 			o_score.textContent = opponent.score.toString();
 		}
+		page = document.getElementById("pongGame");
 		buttonBack = document.getElementById("buttonBack");	
 		buttonJoinQueue = document.getElementById("joinQueue");	
 		buttonActivateVariant = document.getElementById("activateVariant");	
@@ -304,6 +381,12 @@ export default function PongGame ()
 				socket = socketManager.getPongSocket();
 			}
 		}
+	
+		document.removeEventListener("keydown", eThemeKeyPressed);
+		document.removeEventListener("keyup", eThemeKeyReleased);
+		
+		document.addEventListener("keydown", eThemeKeyPressed);
+		document.addEventListener("keyup", eThemeKeyReleased);
 
 		// SOCKET EVENT LISTENERS //////////////////////////////////////////////////////////
 
@@ -328,8 +411,8 @@ export default function PongGame ()
 			{
 	
 			document.removeEventListener("mousemove", eMouseMoved);
-			document.removeEventListener("keydown", eKeyPressed);
-			document.removeEventListener("keyup", eKeyReleased);
+			document.removeEventListener("keydown", eSpellKeyPressed);
+			document.removeEventListener("keyup", eSpellKeyReleased);
 
 			player.name = player_name;
 			opponent.name = opponent_name;
@@ -372,12 +455,12 @@ export default function PongGame ()
 			{
 	
 			document.removeEventListener("mousemove", eMouseMoved);
-			document.removeEventListener("keydown", eKeyPressed);
-			document.removeEventListener("keyup", eKeyReleased);
+			document.removeEventListener("keydown", eSpellKeyPressed);
+			document.removeEventListener("keyup", eSpellKeyReleased);
 			
 			document.addEventListener("mousemove", eMouseMoved);
-			document.addEventListener("keydown", eKeyPressed);
-			document.addEventListener("keyup", eKeyReleased);
+			document.addEventListener("keydown", eSpellKeyPressed);
+			document.addEventListener("keyup", eSpellKeyReleased);
 			
 			if (buttonActivateVariant)
 				buttonActivateVariant.remove();
@@ -437,6 +520,8 @@ export default function PongGame ()
 		{
 			try
 			{
+
+			console.log("fuck");
 
 			if (buttonActivateVariant)
 				buttonActivateVariant.remove();
@@ -573,8 +658,21 @@ export default function PongGame ()
 		return (() =>
 		{
 				document.removeEventListener("mousemove", eMouseMoved);
-				document.removeEventListener("keydown", eKeyPressed);
-				document.removeEventListener("keyup", eKeyReleased);
+				document.removeEventListener("keydown", eSpellKeyPressed);
+				document.removeEventListener("keyup", eSpellKeyReleased);
+				document.removeEventListener("keydown", eThemeKeyPressed);
+				document.removeEventListener("keyup", eThemeKeyReleased);
+				socket.off('draw');
+				socket.off('defeat');
+				socket.off('victory');
+				socket.off('opponentLeft');
+				socket.off('opponentReady');
+				socket.off('variantOnOff');
+				socket.off('variantProposed');
+				socket.off('update');
+				socket.off('playing');
+				socket.off('gameFound');
+				socket.off('GameError');
 				window.onpopstate = (e: any) => {};
 		});
 
@@ -601,7 +699,7 @@ export default function PongGame ()
 	}, [leavingPage]);
 
 	return (
-			<div className="pongGame">
+			<div className="pongGame" id="pongGame">
 				<div className="pongTop">
 					<div className="firstRow">
 						<button className="buttonBack" id="buttonBack" onClick={back}>back</button>

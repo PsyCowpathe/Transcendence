@@ -1,4 +1,4 @@
-import './pong_menu.css'
+import './pong.menu.css'
 import React from 'react'
 import { useEffect, useState } from 'react'
 import { useNavigate, } from 'react-router-dom'
@@ -201,15 +201,19 @@ export default function PongMenu ()
 						{invitesSent.map((elem: {name: string, uid: number}, index: number) => (
 							<li key={index}>
 								• invitation sent to: {elem.name}
-								<button className="cancelDuelInvite" onClick={() => { cancelInvite(elem.uid) }}></button>
+								<button className="cancelDuelInvite" onClick={() => { cancelInvite(elem.uid) }}>✗</button>
 							</li>
 						))}
 					</ul>
 				</div>
 			</div>
-			<div className="menuBot">
-				<h2 className="h2n3">Rules</h2>
-				<div className="Rules"></div>
+			<div className="menuBot">Rules
+				<div className="Rules">• use the mouse to control the paddle</div>
+				<div className="Rules">• 11 points to win</div>
+				<div className="Rules">• 3mn timer</div>
+				<div className="Rules">• variant : paddles shrink with time, ball is speeding up, press + for blowfish boost (3 uses)</div>
+				<div className="Rules">• theme: press p for the progress theme, press m (like "middle age") to revert to the default one</div>
+				<div className="Rules"><br/>• we may collect data to improve user experience</div>
 			</div>
 		</div>
 	);

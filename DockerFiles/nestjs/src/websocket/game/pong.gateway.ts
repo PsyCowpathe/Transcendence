@@ -146,7 +146,23 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				if (game.p1.user.id == user.id)
 				{
 					socket.emit("GameError", "already in game"); // A CHANGER
-					break;
+					return;
+				}
+			}
+			for (const usr of this.queue.keys())
+			{
+				if (usr.id == user.id)
+				{
+					socket.emit("GameError", "already in queue"); // A CHANGER
+					return;
+				}
+			}
+			for (const duel of this.duelists.keys())
+			{
+				if (duel.id1 == user.id || duel.id2 == user.id)
+				{
+					socket.emit("GameError", "already in game"); // A CHANGER
+					return;
 				}
 			}
 
@@ -307,33 +323,46 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		{
 			for (const game of this.games.values())
 			{
-				if (this.getSocket(this.queue, player1.id) != undefined ||
-					this.getSocket(this.queue, player2.id) != undefined ||
-					game.p1.user.id == player1.id ||
-					game.p2.user.id == player1.id ||
-					game.p1.user.id == player2.id ||
-					game.p2.user.id == player2.id)
+				if (game.p1.user.id == player1.id || game.p2.user.id == player1.id)
 				{
 					s1.emit("GameError", "in game"); // A CHANGER
+					this.inviteMUTEX = false;
+					return;
+				}
+				if (	(answer.inviteAccepted && 
+					 ((game.p1.user.id == player2.id) || (game.p2.user.id == player2.id))))
+				{
+					s1.emit("GameError", `${player2.name} is currently in game`); // A CHANGER
 					this.inviteMUTEX = false;
 					return;
 				}
 			}
 			for (const usr of this.queue.keys())
 			{
-				if (usr.id === player1.id || usr.id === player2.id)
+				if (usr.id === player1.id)
 				{
 					s1.emit("GameError", "in queue"); // A CHANGER
+					this.inviteMUTEX = false;
+					return;
+				}
+				if (answer.inviteAccepted && (usr.id === player2.id))
+				{
+					s1.emit("GameError", `${player2.name} is currently in queue`); // A CHANGER
 					this.inviteMUTEX = false;
 					return;
 				}
 			}
 			for (const duel of this.duelists.keys())
 			{
-				if (duel.id1 === player1.id || duel.id2 === player1.id ||
-				   	duel.id1 === player2.id || duel.id2 === player2.id)
+				if (duel.id1 === player1.id || duel.id2 === player1.id)
 				{
-					s1.emit("GameError", "in a duel"); // A CHANGER
+					s1.emit("GameError", "in game"); // A CHANGER
+					this.inviteMUTEX = false;
+					return;
+				}
+				if (answer.inviteAccepted && ((duel.id1 === player2.id) || (duel.id2 === player2.id)))
+				{
+					s1.emit("GameError", `${player2.name} is currently in game`); // A CHANGER
 					this.inviteMUTEX = false;
 					return;
 				}
@@ -367,14 +396,14 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					{
 						this.addGame(player1, player2);	
 						this.duelists.set({id1: player1.id, id2: player2.id}, {here1: false, here2: false});
-						s1.emit('joinDuel', "a parameter cause it allows none but it doesnt work");
+						s1.emit('joinDuel', "a parameter cause it allows none but it doesnt work without one");
 						if (s2)
-							s2.emit('joinDuel', "a parameter cause it allows none but it doesnt work");
+							s2.emit('joinDuel', "a parameter cause it allows none but it doesnt work without one");
 					}
 				}
 				else if (player2.Status === "Offline") 
 				{
-					s1.emit('GameError', "opponent unavailable"); // A CHANGER
+					s1.emit('GameError', "opponent unavailable (status: Offline)"); // A CHANGER
 					if (answer.inviteAccepted === false)
 					{
 						this.duelInvites.delete(answer.id2);
@@ -434,7 +463,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					return;
 				}
 			}
-			socket.emit('GameError', "no duel pending");
 		}
 	}
 
@@ -510,8 +538,9 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		let s1!: Socket | undefined;
 		let s2!: Socket | undefined;
 		
-		if (game && !game.playing)
+		if (game && !game.playing && !game.p1_ready && !game.p2_ready)
 		{
+			console.log("variant proposed2");
 			s1 = this.getSocket(this.clients, game.p1.user.id);
 			s2 = this.getSocket(this.clients, game.p2.user.id);
 			if (game.p1.sockid == socket.id)
@@ -553,17 +582,17 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		let s1!: Socket | undefined;
 		let s2!: Socket | undefined;
 		
-		if (game && !game.playing)
+		if (game && !game.playing && !game.p1_ready && !game.p2_ready)
 		{
 			s1 = this.getSocket(this.clients, game.p1.user.id);
 			s2 = this.getSocket(this.clients, game.p2.user.id);
-			if (game.p1.sockid == socket.id)
+			if (game.p1.sockid == socket.id && !game.p1_ready)
 			{
     				game.p1_variant = true;
 				if (s2)
 					s2.emit('variantOff', false);
 			}
-			else if	(game.p2.sockid == socket.id)
+			else if	(game.p2.sockid == socket.id && !game.p2_ready)
 			{
     				game.p2_variant = true;
 				if (s1 && s2)
@@ -590,39 +619,45 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			s2 = this.getSocket(this.clients, game.p2.user.id);
 		}
 	
-		let player_id: number = 0;	
 		const user = this.getUser(socket);
-		if (user && game)
+		if (user && game && !game.playing)
 		{
 			if (user.id === game.p1.user.id)
 			{
-				player_id = 1;
 				game.p1_ready = true;
+				if (s2)
+					s2.emit("opponentReady");
+				if (game.p1_ready && game.p2_ready)
+				{
+					game.start();
+					if (s1 && s2)
+					{
+						s1.emit('playing');
+						s2.emit('playing');
+					}
+				}
 			}
 			else if (user.id === game.p2.user.id)
 			{
-				player_id = 2;
 				game.p2_ready = true;
+				if (s1)
+					s1.emit("opponentReady");
+				if (game.p1_ready && game.p2_ready)
+				{
+					game.start();
+					if (s1 && s2)
+					{
+						s1.emit('playing');
+						s2.emit('playing');
+					}
+				}
 			}
 			else
 			{
 				socket.emit('GameError', errorMessages.NOTAPLAYER);
 				return;
 			}
-			if (s2 && player_id == 1)
-				s2.emit("opponentReady");
-			else if (s1)
-				s1.emit("opponentReady");
-			if (game.p1_ready && game.p2_ready)
-			{
-				console.log(`game [${game.tag}] is playing`);
-				game.start();
-				if (s1 && s2)
-				{
-					s1.emit('playing');
-					s2.emit('playing');
-				}
-			}
+			console.log(`game [${game.tag}] is playing`);
 		}
 	}
 

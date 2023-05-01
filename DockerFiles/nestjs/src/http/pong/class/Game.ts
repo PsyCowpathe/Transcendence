@@ -143,9 +143,9 @@ export default class Game
 		if (this.variant)
 		{
 			if (!this.spellInUse1)
-				this.p1_paddle.shrink(0.0021);
+				this.p1_paddle.shrink(0.0000755287);
 			if (!this.spellInUse2)
-				this.p2_paddle.shrink(0.0021);
+				this.p2_paddle.shrink(0.0000755287);
 		}
 		this.moveBall();
 		if (this.ball.pos.x >= 99.9 || this.ball.pos.x <= 0.1)

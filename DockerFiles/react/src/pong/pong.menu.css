@@ -11,7 +11,6 @@ html, body {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	background-color: var(--background-color);
 	height: 100vh;
 	width: 100vw;
 }
@@ -28,8 +27,9 @@ html, body {
 .menuMid
 {
 	flex: 2;
-	border: 0.2vw solid black;
+	border: 0.15vw solid white;
 	padding: 1vw 2vw;
+	margin-bottom: 2vh;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
@@ -38,10 +38,17 @@ html, body {
 .menuBot
 {
 	flex: 1;
-	width: 90vw;
-	margin-left: 1vw;
-	margin-right: 1vw;
-	border: 0.2vw solid black;
+	width: 50vw;
+	margin-top: 0vw;
+	margin-bottom: 1vw;
+	border: 0.15vw solid white;
+	color: var(--foreground-color);
+	font-size: 2.3vh;
+	font-weight: bold;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 }
 
 .h1n2
@@ -49,7 +56,6 @@ html, body {
 	font-size: 5vh;
 	font-weight: bold;
 	color: var(--foreground-color);
-	color: white;
 	margin-top: 0;
 	text-align: center;
 }
@@ -58,9 +64,9 @@ html, body {
 {
 	font-size:2.3vh;
 	font-weight: bold;
-	color: var(--foreground-color);
 	color: white;
 	margin: 2vh;
+	margin-top: 0;
 	text-align: center;
 }
 
@@ -82,7 +88,6 @@ html, body {
 {
 	font-size: 2vh;
 	font-weight: bold;
-	margin-bottom: 1vw;
 	color: white;
 }
 
@@ -93,18 +98,24 @@ html, body {
 	display: flex;
 	align-items: center;
 	margin-left: 0;
+	display: flex;
 }
 
 .invitesSent li
 {
-	font-size: 1.5rem;
+	display: flex;
+	font-size: 1.5vh;
+	color: yellow;
+	display: flex;
+	align-items: center;
+	margin-left: 0;
+	display: flex;
 }
 
-.acceptDuel, .declineDuel
+.acceptDuel, .declineDuel, .cancelDuelInvite
 {
-
-	margin-left: 1vw;
-	background-color: var(--foreground-color);
+	margin-top: 0vw;
+	margin-left: 1vh;
 	color: white;
 	border: none;
 	border-radius: 10%;
@@ -123,18 +134,40 @@ html, body {
 .declineDuel
 {
 	background-color: red;
+	margin-top: 0vw;
+	margin-left: 1vh;
+	color: white;
+	border: none;
+	border-radius: 10%;
+	padding: 0.5vh;
+	font-size: 1vh;
+	font-weight: bold;
+	cursor: pointer;
+	opacity: 60%;
 }
 
 .cancelDuelInvite
 {
-	background-color: var(--foreground-color);
-	color: white;
+	background-color: red;
+	margin-top: 0vw;
+	margin-left: 1vh;
 	color: white;
 	border: none;
-	border-radius: 5px;
-	padding: 0.5rem;
-	font-size: 1rem;
+	border-radius: 10%;
+	padding: 0.5vh;
+	font-size: 1vh;
 	font-weight: bold;
 	cursor: pointer;
-	opacity: 50%;
+	opacity: 60%;
+}
+
+.Rules
+{
+	color: white;
+	font-size: 1.5vh;
+	font-weight: bold;
+	margin-top: 1vh;
+	margin-left: 2vh;
+	margin-right: 2vh;
+	order: 2;
 }

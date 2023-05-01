@@ -1,0 +1,47 @@
+.pong.endscreen
+{
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 3vh;
+	height: 100vh;
+	width: 100vw;
+	background-color: var(--background-color);
+	
+}
+
+.result
+{
+	display: flex;
+	justify-content: center;
+	margin-top: 2vh; 
+	font-weight: bold;
+	font-size: 5vh;
+}
+
+.redirect
+{
+	display: flex;
+	font-size: 1.5vh;
+	color: white;
+}
+
+.ps
+{
+	display: flex;
+	justify-content: center;
+	font-weight: bold;
+	font-size: 2vh;
+}
+
+.back_to_menu
+{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 1.5vh;
+	height: 4vh;
+	width: 10vw;
+}
+
