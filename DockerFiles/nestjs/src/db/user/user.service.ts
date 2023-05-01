@@ -70,7 +70,7 @@ export class UserService
 		return (ret);
 	}
 
-	async addMatch(newStatus: string, user: User)
+	async addMatch(user: User)
 	{
 		await this.usersRepository.createQueryBuilder()
 		.update(User)
@@ -78,7 +78,7 @@ export class UserService
 		.execute();
 	}
 
-	async addVictory(newStatus: string, user: User)
+	async addVictory(user: User)
 	{
 		await this.usersRepository.createQueryBuilder()
 		.update(User)
@@ -86,7 +86,7 @@ export class UserService
 		.execute();
 	}
 
-	async addDefeat(newStatus: string, user: User)
+	async addDefeat(user: User)
 	{
 		await this.usersRepository.createQueryBuilder()
 		.update(User)
