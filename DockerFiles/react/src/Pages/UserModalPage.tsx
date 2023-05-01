@@ -160,8 +160,8 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
 
   const [PicUp, setPic] = React.useState("non")
   let Pic: any = localStorage.getItem(`UserPic${User.uid}`)
-  if (Pic === null) {
-    Pic = "nan"
+  if (PicUp === "non") {
+    Pic = "non"
   }
   const [redirectedd, setRedirectedd] = useState(false)
 
