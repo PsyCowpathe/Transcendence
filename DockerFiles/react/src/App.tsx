@@ -45,7 +45,6 @@ function App()
 			<Route path='/chat' element={<Chat/>}/>
 			<Route path='/affUser' element={<AffMyUserPage ShowBar={true}/>}/>
 			<Route path='/LoadingPage' element={<LoadingPage/>}/>
-			<Route path='/changepic' element={<ProfilePictureUploader />}/>
 			<Route path='/Send2FA' element={<Resend2FA />}/>
 			<Route path='/*' element={<NotFound />}/> 
 			<Route path='/pong/menu' element={<PongMenu/>}/> 
