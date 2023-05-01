@@ -152,7 +152,7 @@ export default class Game
 			this.GOOOAAAAAAL();
 		if (this.elapsedTime > this.TIME_OVER) 
 			this.timeisover = true;
-		if (this.timeisover || this.p1.score == 11 || this.p2.score == 11)
+		if ((this.variant && this.timeisover) || this.p1.score == 11 || this.p2.score == 11)
 		{
 			if (this.p1.score > this.p2.score)
 				this.winner = 1;
@@ -161,6 +161,7 @@ export default class Game
 			else
 				this.winner = 3;
 		}
+		console.log(`elapsed time: ${this.elapsedTime / 1000 / 60}`);
 		setTimeout(this.update, 2);
 	};
 
