@@ -168,6 +168,8 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
   useEffect(() => {
     GetUserInfo(UserID)
       .then((res) => {
+        console.log("------------------------ Victoire : ---------------------------")
+        console.log(res.data)
         setUser({ name: res.data.name, victory: res.data.Victory, defeate: res.data.Defeat, gameplayed: res.data.Match })
       })
       .catch((err) => {
@@ -381,6 +383,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
   ///////////////////////////////////////////////////////////////////////// request unblock      ///////////////////////////////////////////////////////
 
 
+  /*FAIT*/
 
   const unblock = async (user: any) => {
     await socket.emit("unblockuser", { user });
