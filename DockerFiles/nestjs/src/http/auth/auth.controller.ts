@@ -17,6 +17,8 @@ import * as fs from "fs";
 let crypto = require("crypto");
 let random: string; 
 
+//Les erreurs 418 devraient etre des erreurs 500 mais le sujet l'interdit
+
 @Controller("auth")
 export class AuthController
 {
@@ -36,7 +38,7 @@ export class AuthController
 		{
 			let URI = process.env.URI;
 			if (URI === undefined)
-				return (sendError(res, 500, errorMessages.MISSINGURI));
+				return (sendError(res, 418, errorMessages.MISSINGURI));
 			let CLIENT_ID = process.env.UID;
 			random = crypto.randomBytes(20).toString('hex');
 			let link = `https://api.intra.42.fr/oauth/authorize?client_id=${CLIENT_ID}
@@ -59,15 +61,15 @@ export class AuthController
 			const apiToken = await this.authService.getUserToken(tokenForm);
 			if (apiToken === undefined)
 				return (sendError(res, 400, errorMessages.INVALIDCODE));
-			await new Promise(r => setTimeout(r, 500));
+			await new Promise(r => setTimeout(r, 418));
 			const hashedToken = await this.authService.hashMyToken(apiToken);
 			if (hashedToken === undefined)
-				return (sendError(res, 500, errorMessages.HASHFAIL));
+				return (sendError(res, 418, errorMessages.HASHFAIL));
 			const data = await this.authService.createUser(apiToken, hashedToken);
 			if (data === -1)
-				return (sendError(res, 500, errorMessages.APIFAIL));
+				return (sendError(res, 418, errorMessages.APIFAIL));
 			if (data === null)
-				return (sendError(res, 500, errorMessages.CREATEFAIL));
+				return (sendError(res, 418, errorMessages.CREATEFAIL));
 			return (sendSuccess(res, 201, data));
 		}
 	}

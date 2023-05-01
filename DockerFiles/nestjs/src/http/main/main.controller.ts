@@ -17,6 +17,8 @@ import * as fs from "fs";
 let crypto = require("crypto");
 let random: string; 
 
+//Les erreurs 418 devraient etre des erreurs 500 mais le sujet l'interdit
+
 @Controller("main")
 export class MainController
 {
@@ -38,9 +40,9 @@ export class MainController
 		if (ret === -1)
 			return (sendError(res, 400, errorMessages.INVALIDIMAGE));
 		if (ret === -2)
-			return (sendError(res, 500, errorMessages.CANTSAVE));
+			return (sendError(res, 418, errorMessages.CANTSAVE));
 		if (ret === -3)
-			return (sendError(res, 500, errorMessages.DBFAIL));
+			return (sendError(res, 418, errorMessages.DBFAIL));
 		return (sendSuccess(res, 200, "You successfully changed your avatar !"));
 	}
 

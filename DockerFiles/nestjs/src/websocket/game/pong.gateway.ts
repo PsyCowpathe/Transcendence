@@ -5,8 +5,8 @@ import { Server, Socket } from 'socket.io';
 import { User } from '../../db/user/user.entity'
 import { UserService } from '../../db/user/user.service'
 import { WsStatusService } from '../status/wsstatus.service'
-import Game from '../../http/pong/class/Game';
-import Player from '../../http/pong/class/Player'
+import Game from './class/Game';
+import Player from './class/Player'
 import { WsExceptionFilter } from '../guard/ws.filter';
 import { SocketGuard } from '../guard/socket.guard';
 import { errorMessages } from '../../common/global';

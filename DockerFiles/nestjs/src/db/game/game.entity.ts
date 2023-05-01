@@ -22,14 +22,3 @@ export class MatchHistory
     @Column()
     score2: number;
 }
-
-@Entity()
-export class MatchMaking
-{
-	@PrimaryGeneratedColumn()
-	id: number;
-
-	@ManyToOne(() => User, {eager: true, onDelete : 'CASCADE'})
-	@JoinColumn()
-	user: User;
-}

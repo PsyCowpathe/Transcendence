@@ -7,7 +7,7 @@ import { Relation } from './relation/relation.entity';
 
 import { Channel, Bans, Mutes, Admins, JoinChannel, InviteList, Message, Private } from './chat/chat.entity';
 
-import { MatchHistory, MatchMaking } from './game/game.entity';
+import { MatchHistory } from './game/game.entity';
 
 @Module
 ({
@@ -21,9 +21,12 @@ import { MatchHistory, MatchMaking } from './game/game.entity';
       		username: 'postgres',
 			password: process.env.DB_PSWD,
       		database: 'postgres',
-      		entities: [User, Relation, Channel, Bans,
-						Mutes, Admins, JoinChannel, InviteList,
-						Message, Private, MatchHistory, MatchMaking],
+      		entities:
+			[
+				User, Relation, Channel, Bans,
+				Mutes, Admins, JoinChannel, InviteList,
+				Message, Private, MatchHistory
+			],
 			synchronize: true,
 		}),
 	],
