@@ -233,8 +233,10 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					newMatchHistory.user1 = game.p2.user;
 					newMatchHistory.score2 = game.p1.score;
 					newMatchHistory.user2 = game.p1.user;
-					await this.gameService.createMatchHistory(newMatchHistory);
 					socket.emit('defeat', game.timeisover);
+					await this.gameService.createMatchHistory(newMatchHistory);
+					await this.userService.addVictory(game.p2.user);
+					await this.userService.addDefeat(game.p1.user);
 				}
 				else if (game.p2.user.id === leaver.id)
 				{
@@ -246,6 +248,8 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					newMatchHistory.user2 = game.p2.user;
 					socket.emit('victory', game.timeisover);
 					await this.gameService.createMatchHistory(newMatchHistory);
+					await this.userService.addVictory(game.p1.user);
+					await this.userService.addDefeat(game.p2.user);
 				}
 				if (oppSock)
 				{
