@@ -8,6 +8,8 @@ import { ChangeLogin } from "./Pages/LoginPage";
 import "./css/List.css"; 
 import "./css/NavLink.css"; 
 import "./css/TopBar.css"
+import 'react-toastify/dist/ReactToastify.css';
+
 import {AffMyUserPage} from "./Pages/UserPage";
 import { Chat } from './chat/Chat';
 import  ProfilePictureUploader  from './Pages/NewProfilPic';
