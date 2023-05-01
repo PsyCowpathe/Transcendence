@@ -20,6 +20,11 @@ export enum errorMessages
 	INGAME = "You can\'t join the queue when you are in game !",
 	NOTAPLAYER = "You are not a player of this game stop lying !",
 	MISSINGURI = "No URI specified in env please contatc a server administrator !",
+	INVALID2FA = "Invalid 2FA token",
+	INVALIDTOKEN = "Invalid bearer token",
+	USERNOTREGISTERED = "User not registered",
+	MISSINGUSER = "Invalid user",
+
 
 //=====				Relation			=====
 
