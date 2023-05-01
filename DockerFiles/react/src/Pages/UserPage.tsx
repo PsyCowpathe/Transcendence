@@ -429,7 +429,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
       </div>
       <div className="user-buttons">
         <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" className="user-button">
-          Visiter mon site web
+          Check out my website
         </a>
       </div>
 

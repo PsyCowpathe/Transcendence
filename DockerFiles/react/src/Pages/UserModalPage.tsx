@@ -296,7 +296,7 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
         {activeHist && <MatchHistMod onClose={ActiveHist} User={User} />}
       </div>
       <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
-        <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"><button style={{ fontSize: "1.2em", padding: "0.5em 2em", borderRadius: "5px", backgroundColor: "#4285F4", color: "#FFFFFF", border: "none", boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)", cursor: "pointer" }}>Visiter mon site web</button></a>
+        <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"><button style={{ fontSize: "1.2em", padding: "0.5em 2em", borderRadius: "5px", backgroundColor: "#4285F4", color: "#FFFFFF", border: "none", boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)", cursor: "pointer" }}>Check out my website</button></a>
         {!ShowBan && <button className="add-message-button" onClick={onClickTwo}>Ban</button>}
         {ShowBan &&
           <div>

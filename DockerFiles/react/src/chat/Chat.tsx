@@ -932,7 +932,7 @@ export function Chat() {
               {!isChecked && (
                 <form onSubmit={ChannelsMdp} >
                   <input type="text" placeholder="New chan" value={Channame} onChange={(e) => setChanname(e.target.value)} />
-                  <input type="password" placeholder="Mot de passe" value={ChanMdp} onChange={(e) => setChanMdp(e.target.value)} />
+                  <input type="password" placeholder="Password" value={ChanMdp} onChange={(e) => setChanMdp(e.target.value)} />
                   <button type="submit" className="add-message-button"  >Add Channel</button>
                 </form>
               )}
@@ -946,7 +946,7 @@ export function Chat() {
               </label>
               <form onSubmit={JoinChannelMdp} >
                 <input type="text" placeholder="channel name" value={ChanTo} onChange={(e) => setChanTo(e.target.value)} />
-                <input type="password" placeholder="Mot de passe" value={ChanMdpTo} onChange={(e) => setChanMdpTo(e.target.value)} />
+                <input type="password" placeholder="Password" value={ChanMdpTo} onChange={(e) => setChanMdpTo(e.target.value)} />
                 <button type="submit" className="add-message-button" >Join Channel</button>
               </form>
             </div>
