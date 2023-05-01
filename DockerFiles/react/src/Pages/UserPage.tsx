@@ -3,7 +3,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { FaCog } from 'react-icons/fa';
-import '../css/Buttons.css';
 import { useNavigate } from 'react-router-dom'
 import { TopBar } from './NavBar';
 import { useEffect, useState } from 'react';
@@ -12,8 +11,9 @@ import { GetUserInfo } from '../Api/GetUserInfo';
 import React from 'react';
 import PicModal from '../Modale/PicModale';
 import LoginModal from '../Modale/LoginModal';
-import '../css/UserPage.css';
 import ModalSet2FA from '../Modale/Modal2FA';
+import '../css/Buttons.css';
+import '../css/UserPage.css';
 import '../css/sidebar_info.css'
 import '../css/styleUser.css'
 import { GetFriendList } from '../Api/GetFriendList';

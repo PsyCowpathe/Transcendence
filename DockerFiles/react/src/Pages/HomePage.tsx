@@ -7,6 +7,8 @@ import { SendTokenRequest } from "../Api/SendToken";
 import '../css/App.css'
 import { useNavigate } from 'react-router-dom'
 import socketManager from "../MesSockets";
+import '../css/UserPage.css';
+
 import { SetParamsToGetPost } from "../Headers/HeaderManager";
 import { ToastContainer, toast } from 'react-toastify';
 

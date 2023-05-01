@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import {useEffect } from 'react';
 import '../css/modal.css';
+import '../css/UserPage.css';
+
 import { Invite } from "../Pages/Invite";
 
 interface Props {
@@ -28,7 +30,7 @@ useEffect(() => {
           <div className="modal">
             <div className="modal-header">
               <h2>Invite</h2>
-              <button onClick={handleCloseModal}>Close</button>
+              <button className="user-button"  onClick={handleCloseModal}>Close</button>
             </div>
             <div className="modal-body">
              <div className="test">
