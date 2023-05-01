@@ -8,6 +8,7 @@ import { io } from 'socket.io-client'
 
 import socketManager from '../MesSockets'
 import { SetParamsToGetPost } from "../Headers/HeaderManager"
+import { ToastContainer, toast } from 'react-toastify';
 import Player from "./Player"
 import Ball from "./Ball"
 import Paddle from "./Paddle"
