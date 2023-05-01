@@ -299,60 +299,6 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
 			}
 		}
 
-		const handleGameError = (response: any) =>
-		{
-		    toast.error(response, {
-   	     		position: toast.POSITION.TOP_RIGHT,
-   	     		autoClose: 2000,
-   	     		progressClassName: "my-progress-bar"
-			});
-			console.log(response);
-		};
-
-		const handleDuelInviteReceived = (opponent: string) =>
-		{
-			const message = opponent + " challenged you to a pong duel";
-			console.log(message);
-	
-		    toast.success(message, {
-    			position: toast.POSITION.TOP_RIGHT,
-       			autoClose: 2000,
-       	 		progressClassName: "my-progress-bar"
-      		});
-		};
-
-		const handleDuelInviteCanceled = (opponent: string) =>
-		{
-			const message = opponent + " canceled his/her duel invitation";
-			console.log(message);
-	
-		    toast.success(message, {
-   		     	position: toast.POSITION.TOP_RIGHT,
-   		     	autoClose: 2000,
-   	    		progressClassName: "my-progress-bar"
-    	 	});
-		}
-
-		const handleDuelInviteAnswered = (opponent: string, accepted: boolean) =>
-		{
-			let message: string = "";
-			if (accepted)
-			{
-				message = opponent + " accepted your duel invitation";
-				console.log(message);
-			}
-			else
-			{
-				message = opponent + " delined your duel invitation";
-				console.log(message);
-			}
-		    toast.success(message, {
-   			 	position: toast.POSITION.TOP_RIGHT,
-       			autoClose: 2000,
-        		progressClassName: "my-progress-bar"
-			});
-		};
-
 		function joinDuel()
 		{
 			navigate('/pong/play');
@@ -362,25 +308,12 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
 		{
 			joinDuel();
 		};
-
-		socketPong.removeListener('duelInviteReceived');
-		socketPong.removeListener('duelInviteCanceled');
-		socketPong.removeListener('duelInviteAnswered');
-		socketPong.removeListener('GameError', handleGameError);
 		socketPong.removeListener('joinDuel');
 
-		socketPong.on('duelInviteReceived', handleDuelInviteReceived);
-		socketPong.on('duelInviteCanceled', handleDuelInviteCanceled);
-		socketPong.on('duelInviteAnswered', handleDuelInviteAnswered);
 		socketPong.on('joinDuel', handleJoinDuel);
-		socketPong.on('GameError', handleGameError);
 
 	    return () => {
-			socketPong.off('duelInviteReceived', handleDuelInviteReceived);
-			socketPong.off('duelInviteCanceled', handleDuelInviteCanceled);
-			socketPong.off('duelInviteAnswered', handleDuelInviteAnswered);
 			socketPong.off('joinDuel', handleJoinDuel);
-			socketPong.off('GameError', handleGameError);
     	}
 
 	}, []);
