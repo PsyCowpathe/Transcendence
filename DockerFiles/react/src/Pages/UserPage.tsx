@@ -429,7 +429,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
       </div>
       <div className="user-buttons">
         <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" className="user-button">
-          Check out my website
+          Checkout my website
         </a>
       </div>
 
@@ -441,13 +441,13 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
           placeholder='friend request'
           onChange={ChangeAsk}
         />
-        <button className="profile-pic-button" >send</button>
+        <button className="user-buttons">send</button>
       </form>
 
 
 
       <div>
-        <button className="profile-pic-button" onClick={set2FA}>Set 2FA</button>
+        <button className="user-buttons" onClick={set2FA}>Set 2FA</button>
         {open2FA && <ModalSet2FA onClose={set2FA} />}
       </div>
       <div className="friends-list">

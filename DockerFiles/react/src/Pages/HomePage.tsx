@@ -228,7 +228,7 @@ interface chiant {
 
 
 	return (
-			<div className="profile-pic-button"  style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh" }}>
+			<div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh" }}>
 			  <Button onClick={onClick} >Sign In</Button>
 			</div>
 		  );
