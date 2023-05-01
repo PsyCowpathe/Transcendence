@@ -217,26 +217,30 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		const leaver = this.getUser(socket);
 		if (leaver)
 		{
-			let newMatchHistory = new MatchHistory();
 			let oppSock: Socket | undefined;
 			for (const game of this.games.values())
 			{
 				if (game.p1.user.id === leaver.id)
 				{
 					oppSock = this.getSocket(this.clients, game.p2.user.id);
-						newMatchHistory.score1 = game.p2.score; 
-						newMatchHistory.user1 = game.p2.user;
-						newMatchHistory.score2 = game.p1.score;
-						newMatchHistory.user2 = game.p1.user;
-						socket.emit('defeat', game.timeisover);
+					let newMatchHistory = new MatchHistory();
+					newMatchHistory.score1 = game.p2.score; 
+					newMatchHistory.user1 = game.p2.user;
+					newMatchHistory.score2 = game.p1.score;
+					newMatchHistory.user2 = game.p1.user;
+					await this.gameService.createMatchHistory(newMatchHistory);
+					socket.emit('defeat', game.timeisover);
 				}
 				else if (game.p2.user.id === leaver.id)
 				{
-					oppSock = this.getSocket(this.clients, game.p1.user.id);						newMatchHistory.score1 = game.p1.score; 
-						newMatchHistory.user1 = game.p1.user;
-						newMatchHistory.score2 = game.p2.score;
-						newMatchHistory.user2 = game.p2.user;
-						socket.emit('victory', game.timeisover);
+					oppSock = this.getSocket(this.clients, game.p1.user.id);
+					let newMatchHistory = new MatchHistory();
+					newMatchHistory.score1 = game.p1.score; 
+					newMatchHistory.user1 = game.p1.user;
+					newMatchHistory.score2 = game.p2.score;
+					newMatchHistory.user2 = game.p2.user;
+					socket.emit('victory', game.timeisover);
+					await this.gameService.createMatchHistory(newMatchHistory);
 				}
 				if (oppSock)
 				{
@@ -249,7 +253,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					break;
 				}
 			}
-			await this.gameService.createMatchHistory(newMatchHistory);
 		}
 	}
 
