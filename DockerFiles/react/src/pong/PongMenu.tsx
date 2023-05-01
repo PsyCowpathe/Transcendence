@@ -139,7 +139,14 @@ export default function PongMenu ()
             		if (response === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
               			navigate('/Send2FA')
 
-		socket.emit('getInvites');
+			socket.emit('getInvites');
+		
+			}
+			catch(error)
+			{
+				console.log("i'm a teapot");
+			}	
+		});
 
 		return () => {
 			socket.off('duelInviteReceived');
@@ -156,7 +163,6 @@ export default function PongMenu ()
 			console.log("i'm a teapot");
 		}	
 		
-		});
 
 	}, []);
 
