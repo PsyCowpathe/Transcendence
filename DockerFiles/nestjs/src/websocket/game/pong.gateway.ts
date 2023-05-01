@@ -28,6 +28,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	duelists = new Map<{id1: number, id2: number}, {here1: boolean, here2: boolean}>();
 	duelInvites = new Map<number, number>();
 	inviteMUTEX = false;
+	leavingMUTEX = false;
 
 	constructor(	private readonly userService: UserService,
 			private readonly statusService: WsStatusService,
@@ -217,6 +218,11 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	{
 		let opp: User | undefined;
 		const leaver = this.getUser(socket);
+
+		while (this.leavingMUTEX)
+			;
+		this.leavingMUTEX = true;
+
 		if (leaver)
 		{
 			let oppSock: Socket | undefined;
@@ -234,6 +240,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					await this.gameService.createMatchHistory(newMatchHistory);
 					await this.userService.addVictory(game.p2.user);
 					await this.userService.addDefeat(game.p1.user);
+					this.games.delete(game.tag);
 				}
 				else if (game.p2.user.id === leaver.id)
 				{
@@ -247,6 +254,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					await this.gameService.createMatchHistory(newMatchHistory);
 					await this.userService.addVictory(game.p1.user);
 					await this.userService.addDefeat(game.p2.user);
+					this.games.delete(game.tag);
 				}
 				if (oppSock)
 				{
@@ -255,10 +263,10 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 						await this.statusService.changeStatus(opp, "Online");
 					await this.userService.updateStatus("Online", leaver);
 					oppSock.emit('opponentLeft');
-					this.games.delete(game.tag);
 					break;
 				}
 			}
+			this.leavingMUTEX = false;
 		}
 	}
 
