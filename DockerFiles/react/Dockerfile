@@ -33,6 +33,7 @@ COPY ./config/yarn.lock /root/frontend/
 
 RUN cd /root/frontend/ \
 && yarn install
+&& yarn upgrade
 
 RUN chmod +x init.sh
 

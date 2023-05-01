@@ -13,6 +13,7 @@ interface User {
   }
   
 interface Match {
+	id 	: number; 
   scoreP1 : number;
   scoreP2 : number;
   nameP1  : string;
@@ -32,12 +33,13 @@ export function MatchHist({User} : {User : User})
         .then((res) => {
 			console.log("------------------------ Victoire : ---------------------------")
 			console.log(res.data)
-          setHistory(res.data.map((match : any) => {
+          setHistory(res.data.map((match : any, index : any) => {
             return ({
+			id 	: index,
               scoreP1 : match.scoreP1,
               scoreP2 : match.scoreP2,
-              nameP1  : match.nameP1,
-              nameP2  : match.nameP2
+              nameP1  : match.P1,
+              nameP2  : match.P2
             })
           })
           )
@@ -172,7 +174,7 @@ return(
             {History.map((match) => {
                 return (
                     <div>
-                        <p>{match.nameP1} {match.scoreP1} - {match.scoreP2} {match.nameP2}</p>
+                        <p key={match.id}>{match.nameP1} {match.scoreP1} - {match.scoreP2} {match.nameP2}</p>
                     </div>)
             })}
         </div>

@@ -166,7 +166,7 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
 
     useEffect(() => {
       if (redirectedd) {
-        return
+        return  
       }
       PicGetRequest(User.uid)
         .then((res) => {
