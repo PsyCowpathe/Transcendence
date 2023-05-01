@@ -159,44 +159,45 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
 
 
   const [PicUp, setPic] = React.useState("non")
-  let Pic: any = localStorage.getItem(`UserPic${User.uid}`)
-  if (Pic === null) {
-    Pic = "nan"
-  }
-  const [redirectedd, setRedirectedd] = useState(false)
+  const [Pic, setPicUrl] = useState("")
 
-  useEffect(() => {
-    if (redirectedd) {
-      return
+    if (Pic === null) {
+      Pic = "nan"
     }
-    PicGetRequest(User.uid)
-      .then((res) => {
-        const url = window.URL.createObjectURL(new Blob([res.data]));
-        localStorage.setItem(`UserPic${User.uid}`, url)
+    const [redirectedd, setRedirectedd] = useState(false)
 
+    useEffect(() => {
+      if (redirectedd) {
+        return
+      }
+      PicGetRequest(User.uid)
+        .then((res) => {
+          const url = window.URL.createObjectURL(new Blob([res.data]));
+          localStorage.setItem(`UserPic${User.uid}`, url)
 
-        setPic("oui")
-      })
-      .catch((err) => {
-        toast.error(err, {
-          position: toast.POSITION.TOP_RIGHT,
-          autoClose: 2000,
-          progressClassName: "my-progress-bar"
+          setPicUrl(url)
+          setPic("oui")
         })
+        .catch((err) => {
+          toast.error(err, {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 2000,
+            progressClassName: "my-progress-bar"
+          })
 
-        if (err.response) {
-          if (err.message !== "Request aborted") {
-            if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
-              navigate('/')
-            if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
-              navigate('/Change')
-            if (err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
-              navigate('/Send2FA')
+          if (err.response) {
+            if (err.message !== "Request aborted") {
+              if (err.response.data.message === "Invalid user" || err.response.data.message === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+                navigate('/')
+              if (err.response.data.message === "User not registered")// ==> redirection vers la page de register
+                navigate('/Change')
+              if (err.response.data.message === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+                navigate('/Send2FA')
+            }
+
           }
-
-        }
-      })
-  }, [redirectedd])
+        })
+    }, [redirectedd])
 
 
 
