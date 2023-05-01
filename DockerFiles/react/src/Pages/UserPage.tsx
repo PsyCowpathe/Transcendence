@@ -441,13 +441,13 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
           placeholder='friend request'
           onChange={ChangeAsk}
         />
-        <button className="user-buttons">send</button>
+        <button className="user-button">send</button>
       </form>
 
 
 
       <div>
-        <button className="user-buttons" onClick={set2FA}>Set 2FA</button>
+        <button className="user-button" onClick={set2FA}>Set 2FA</button>
         {open2FA && <ModalSet2FA onClose={set2FA} />}
       </div>
       <div className="friends-list">
