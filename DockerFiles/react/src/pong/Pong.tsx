@@ -84,7 +84,6 @@ export default function PongGame ()
 
 	function back()
 	{
-
 		document.removeEventListener("mousemove", eMouseMoved);
 		document.removeEventListener("keydown", eSpellKeyPressed);
 		document.removeEventListener("keyup", eSpellKeyReleased);
@@ -395,8 +394,27 @@ export default function PongGame ()
 			try
 			{
 
-			if (response != "no duel pending")
 				console.log(response);
+				toast.error(response, {
+   	     				position: toast.POSITION.TOP_RIGHT,
+   	     				autoClose: 2000,
+   	     				progressClassName: "my-progress-bar"
+				});
+				console.log(response);
+
+				document.removeEventListener("mousemove", eMouseMoved);
+				document.removeEventListener("keydown", eSpellKeyPressed);
+				document.removeEventListener("keyup", eSpellKeyReleased);
+				document.removeEventListener("keydown", eThemeKeyPressed);
+				document.removeEventListener("keyup", eThemeKeyReleased);
+				socket.emit('leaveQueue');
+				socket.emit('leaveGame');
+				if (response === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+              				setLeavingPage('/')
+            			if (response === "User not registered")// ==> redirection vers la page de register
+              				setLeavingPage('/Change')
+            			if (response === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+              				setLeavingPage('/Send2FA')
 	
 			}
 			catch (error)
@@ -520,8 +538,6 @@ export default function PongGame ()
 		{
 			try
 			{
-
-			console.log("fuck");
 
 			if (buttonActivateVariant)
 				buttonActivateVariant.remove();

@@ -6,6 +6,7 @@ import axios from 'axios'
 import {TopBar} from '../Pages/NavBar'
 import socketManager from '../MesSockets'
 import { SetParamsToGetPost } from '../Headers/HeaderManager'
+import { ToastContainer, toast } from 'react-toastify';
 import Pong from './Pong'
 
 interface Invite
@@ -73,12 +74,22 @@ export default function PongMenu ()
 		{
 			socket.emit('getInvites');
 			console.log(opponent + " challenged you to a duel");
+			toast.success(message, {
+   			 	position: toast.POSITION.TOP_RIGHT,
+       			autoClose: 2000,
+        		progressClassName: "my-progress-bar"
+			});
 		});
 
 		socket.on('duelInviteCanceled', (opponent: string) =>
 		{
 			socket.emit('getInvites');
 			console.log(opponent + " canceled his/her duel invitation");
+			toast.success(message, {
+   			 	position: toast.POSITION.TOP_RIGHT,
+       			autoClose: 2000,
+        		progressClassName: "my-progress-bar"
+			});
 		});
 
 		socket.on('duelInviteAnswered', (opp_name: string, accepted: boolean) =>
@@ -92,6 +103,11 @@ export default function PongMenu ()
 				console.log(opp_name + " declined your duel invitation");
 			}
 			socket.emit('getInvites');
+			toast.success(message, {
+   			 	position: toast.POSITION.TOP_RIGHT,
+       			autoClose: 2000,
+        		progressClassName: "my-progress-bar"
+			});
 		});
 
 		socket.on('joinDuel', () =>
@@ -102,16 +118,35 @@ export default function PongMenu ()
 		socket.on('GameError', (response: any) =>
 		{
 			console.log(response);
+			toast.error(response, {
+   	     			position: toast.POSITION.TOP_RIGHT,
+   	     			autoClose: 2000,
+   	     			progressClassName: "my-progress-bar"
+			});
+			console.log(response);
+			if (response === "Invalid Bearer token")// erreur de token ==> redirection vers la page de change login
+              			navigate('/')
+            		if (response === "User not registered")// ==> redirection vers la page de register
+              			navigate('/Change')
+            		if (response === "Invalid 2FA token") //erreur de 2FA ==> redirection vers la page de 2FA
+              			navigate('/Send2FA')
 		});
 
 		socket.emit('getInvites');
+
+		return () => {
+			socketPong.off('duelInviteReceived');
+			socketPong.off('duelInviteCanceled');
+			socketPong.off('duelInviteAnswered');
+			socketPong.off('joinDuel');
+			socketPong.off('GameError');
 		
 		}
+
 		catch(error)
 		{
 			console.log("i'm a teapot");
-		}
-		
+		}	
 
 	}, []);
 
