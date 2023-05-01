@@ -184,7 +184,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			socket.emit("GameError", errorMessages.INVALIDUSER);
 	}
 
-	async addGame(p1: User, p2: User, duel: boolean = false)
+	async addGame(p1: User, p2: User)
 	{
 		let s1 = this.getSocket(this.clients, p1.id);
 		let s2 = this.getSocket(this.clients, p2.id);
@@ -192,11 +192,8 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		{
 			await this.statusService.changeStatus(p1, "InGame");
 			await this.statusService.changeStatus(p2, "InGame");
-			if (!duel)
-			{
 				s1.emit('gameFound', this.games.size, p1.name, p2.name, 1);
 				s2.emit('gameFound', this.games.size, p2.name, p1.name, 2);
-			}
 			await this.userService.addMatch(p1);
 			await this.userService.addMatch(p2);
 			this.games.set(this.games.size, new Game(new Player(p1, s1.id), new Player(p2, s2.id), this.games.size));
@@ -445,7 +442,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					s1.emit('refreshInvites', "that parameters system is dumb");
 					if (answer.inviteAccepted === true)
 					{
-						this.addGame(player1, player2, true);	
+						this.addGame(player1, player2);	
 						this.duelists.set({id1: player1.id, id2: player2.id}, {here1: false, here2: false});
 						s1.emit('joinDuel', "a parameter cause it allows none but it doesnt work without one");
 						if (s2)
