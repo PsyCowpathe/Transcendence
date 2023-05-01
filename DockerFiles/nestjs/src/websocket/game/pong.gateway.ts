@@ -337,13 +337,13 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			const relationStatus = await this.relationService.getRelationStatus(player1, player2);
 			if (relationStatus == "VX" || relationStatus == "enemy")
 			{
-				socket.emit("GameError", "this player blocked you");
+				s1.emit("GameError", "this player blocked you");
 				this.inviteMUTEX = false;
 				return;
 			}
 			if (relationStatus == "XV" || relationStatus == "enemy")
 			{
-				socket.emit("GameError", "you blocked this user");
+				s1.emit("GameError", "you blocked this user");
 				this.inviteMUTEX = false;
 				return;
 			}
