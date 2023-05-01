@@ -228,8 +228,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 						newMatchHistory.user1 = game.p2.user;
 						newMatchHistory.score2 = game.p1.score;
 						newMatchHistory.user2 = game.p1.user;
-						s2.emit('victory', game.timeisover);
-						s1.emit('defeat', game.timeisover);
+						socket.emit('defeat', game.timeisover);
 				}
 				else if (game.p2.user.id === leaver.id)
 				{
@@ -237,8 +236,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 						newMatchHistory.user1 = game.p1.user;
 						newMatchHistory.score2 = game.p2.score;
 						newMatchHistory.user2 = game.p2.user;
-						s1.emit('victory', game.timeisover);
-						s2.emit('defeat', game.timeisover);	
+						socket.emit('victory', game.timeisover);
 				}
 				if (oppSock)
 				{
@@ -492,7 +490,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 						if (game.p2.user.id === player.id)
 						{
 							game.p2.sockid = socket.id;
-							socket.emit('gameFound', game.tag, game.p1.name, game.p2.name, 2);
+							socket.emit('gameFound', game.tag, game.p2.name, game.p1.name, 2);
 							break;
 						}
 					}
