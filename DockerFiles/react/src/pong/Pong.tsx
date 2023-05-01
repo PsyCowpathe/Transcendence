@@ -9,6 +9,7 @@ import { io } from 'socket.io-client'
 import socketManager from '../MesSockets'
 import { SetParamsToGetPost } from "../Headers/HeaderManager"
 import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Player from "./Player"
 import Ball from "./Ball"
 import Paddle from "./Paddle"
@@ -457,6 +458,7 @@ export default function PongGame ()
 			window.onpopstate = function(e: any)
 			{
 				socket.emit('leaveGame');
+				console.log("state popped");
 				window.alert("You just lost the game.");
 			};
 	
@@ -756,6 +758,7 @@ export default function PongGame ()
 						<button className="buttonDeclineVariant" id="declineVariant" onClick={declineVariant}>decline</button>
 					</div>
 				</div>
+			<ToastContainer />
 			</div>
 	);
 }

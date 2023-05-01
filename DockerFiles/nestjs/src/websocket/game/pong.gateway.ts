@@ -578,7 +578,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		
 		if (game && !game.playing && !game.p1_ready && !game.p2_ready)
 		{
-			console.log("variant proposed2");
 			s1 = this.getSocket(this.clients, game.p1.user.id);
 			s2 = this.getSocket(this.clients, game.p2.user.id);
 			if (game.p1.sockid == socket.id)
@@ -686,6 +685,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 						s1.emit('playing');
 						s2.emit('playing');
 					}
+					console.log(`game [${game.tag}] is playing`);
 				}
 			}
 			else
@@ -693,7 +693,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				socket.emit('GameError', errorMessages.NOTAPLAYER);
 				return;
 			}
-			console.log(`game [${game.tag}] is playing`);
 		}
 	}
 
