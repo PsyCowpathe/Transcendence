@@ -52,7 +52,8 @@ COPY ./config/nest-cli.json /root/backend/
 COPY ./config/tsconfig.json /root/backend/
 
 RUN cd /root/backend \
-&& yarn install
+&& yarn install \
+&& yarn upgrade
 
 RUN chmod +x init.sh
 

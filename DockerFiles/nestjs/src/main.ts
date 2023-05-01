@@ -10,7 +10,6 @@ import { urls } from './common/global';
 
 async function bootstrap()
 {
-
   	const app = await NestFactory.create(AppModule);
 
 	app.use(cookieParser());
@@ -28,7 +27,6 @@ async function bootstrap()
 		methods: 'GET, POST',
 	});
 	app.useGlobalPipes(new ValidationPipe());
-
   	await app.listen(3630);
 }
 bootstrap();

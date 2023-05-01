@@ -241,6 +241,8 @@ export class MainService
 		let matchHistory = await this.gameService.getMatchHistory(askMan);
 		let i = 0;
 		let data = [];
+		console.log("history = ");
+		console.log(matchHistory);
 		while (matchHistory && matchHistory[i])
 		{
 			let tmp =
@@ -251,6 +253,7 @@ export class MainService
 				P2 : matchHistory[i].user2.name,
 			}
 			data.push(tmp);
+			i++;
 		}
 		return (data);
 	}

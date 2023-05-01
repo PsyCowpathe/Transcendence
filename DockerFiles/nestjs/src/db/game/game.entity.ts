@@ -9,14 +9,12 @@ export class MatchHistory
 	id: number;
 
 	@ManyToOne(() => User, {eager: true, onDelete : 'CASCADE'})
-	@JoinColumn()
 	user1: User;
 
     @Column()
     score1: number;
 
 	@ManyToOne(() => User, {eager: true, onDelete : 'CASCADE'})
-	@JoinColumn()
 	user2: User;
 
     @Column()

@@ -219,7 +219,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		const leaver = this.getUser(socket);
 		if (leaver)
 		{
-			console.log("user " + leaver.name + " leaved the game");
+			console.log("user " + leaver.name + "leaved the game");
 			let oppSock: Socket | undefined;
 			for (const game of this.games.values())
 			{
@@ -664,6 +664,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		const user = this.getUser(socket);
 		if (user && game && !game.playing)
 		{
+			console.log(`user ready`);
 			if (user.id === game.p1.user.id)
 			{
 				game.p1_ready = true;
