@@ -253,7 +253,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			
 		if (user && opp)
 		{
-			const relationStatus = await this.relationService.getRelationStatus(user, opp);
+			/*const relationStatus = await this.relationService.getRelationStatus(user, opp);
 			if (relationStatus == "VX" || relationStatus == "ennemy")
 			{
 				socket.emit("GameError", "this player blocked you");
@@ -265,7 +265,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				socket.emit("GameError", "you blocked this user");
 				this.inviteMUTEX = false;
 				return;
-			}
+			}*/
 			for (const [inviting, invited] of this.duelInvites.entries())
 			{
 				if (inviting === user.id && invited == opp.id)
