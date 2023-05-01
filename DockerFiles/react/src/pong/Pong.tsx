@@ -177,7 +177,6 @@ export default function PongGame ()
 		try
 		{
 
-		socket.emit('declineVariant', {input: (game_id + 1)});
 		if (buttonActivateVariant)
 			buttonActivateVariant.remove();
 		if (buttonAcceptVariant)
@@ -186,7 +185,7 @@ export default function PongGame ()
 			buttonDeclineVariant.remove();
 		if (variantMessage)
 		{
-			variantMessage.textContent = "variant is off";
+			socket.emit('declineVariant', {input: (game_id + 1)});
 			variantMessage.style.display = "flex";
 		}
 

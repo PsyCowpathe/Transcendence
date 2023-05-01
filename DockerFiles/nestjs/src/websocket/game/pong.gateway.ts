@@ -608,7 +608,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					s2.emit('variantOnOff', true);
 				}
 			}
-		}	
+		}
 	}
 
 	@UsePipes(new ValidationPipe())
@@ -623,15 +623,15 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		{
 			s1 = this.getSocket(this.clients, game.p1.user.id);
 			s2 = this.getSocket(this.clients, game.p2.user.id);
-			if (game.p1.sockid == socket.id && !game.p1_ready)
+			if (game.p1.sockid == socket.id && !game.p1_ready && game.p1_variant == false)
 			{
-    				game.p1_variant = true;
+    				game.p1_variant = false;
 				if (s2)
 					s2.emit('variantOff', false);
 			}
-			else if	(game.p2.sockid == socket.id && !game.p2_ready)
+			else if	(game.p2.sockid == socket.id && !game.p2_ready && game.p2_variant == false)
 			{
-    				game.p2_variant = true;
+    				game.p2_variant = false;
 				if (s1 && s2)
 				{
 					s1.emit('variantOnOff', false);

@@ -136,11 +136,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
   const [Click, setClick] = useState(false)
   const [PicUp, setPic] = React.useState("non")
   const [Pic, setPicUrl] = useState(localStorage.getItem('ProfilPic') || "Profil")
-  if (PicUp === 'non')
-  { 
-    setPicUrl("non")
 
-  }
   useEffect(() => {
     PicGetRequest(UserID)
       .then((res) => {
