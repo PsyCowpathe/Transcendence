@@ -135,13 +135,12 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
   const [Clickde, setClickde] = useState(false)
   const [Click, setClick] = useState(false)
   const [PicUp, setPic] = React.useState("non")
-  const [Pic, setPicUrl] = useState(localStorage.getItem('ProfilPic') || "Profil")
-  let PICTURE : any;
+  const [Pic, setPicUrl] = useState("")
+
   useEffect(() => {
     PicGetRequest(UserID)
       .then((res) => {
         const url = window.URL.createObjectURL(new Blob([res.data]));
-        PICTURE = url;
         localStorage.setItem('ProfilPic', url)
         setPicUrl(url)
         setPic("oui")
@@ -407,7 +406,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
       <TopBar />
       <div className="user-info">
         <div className="profile-pic-container">
-          <img className="profile-pic" src={PICTURE} alt="Profile" />
+          <img className="profile-pic" src={Pic} alt="Profile" />
           <button className="profile-pic-button" onClick={CloseMod}>
             Change your image
           </button>
