@@ -92,9 +92,9 @@ export default function PongGame ()
 		document.removeEventListener("keydown", eThemeKeyPressed);
 		document.removeEventListener("keyup", eThemeKeyReleased);
 		socket.emit('leaveQueue');
+		socket.emit('leaveGame');
 		if (game_id != -1)
 		{
-			socket.emit('leaveGame');
 			window.alert("You just lost the game.");
 		}
 		setLeavingPage(BACK_TO_MENU);
@@ -458,7 +458,6 @@ export default function PongGame ()
 			window.onpopstate = function(e: any)
 			{
 				socket.emit('leaveGame');
-				console.log("state popped");
 				window.alert("You just lost the game.");
 			};
 	

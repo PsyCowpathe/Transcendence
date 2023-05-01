@@ -663,7 +663,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		const user = this.getUser(socket);
 		if (user && game && !game.playing)
 		{
-			console.log(`user ready`);
 			if (user.id === game.p1.user.id)
 			{
 				game.p1_ready = true;
