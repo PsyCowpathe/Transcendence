@@ -184,7 +184,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			socket.emit("GameError", errorMessages.INVALIDUSER);
 	}
 
-	async addGame(p1: User, p2: User)
+	async addGame(p1: User, p2: User, duel: boolean = false)
 	{
 		let s1 = this.getSocket(this.clients, p1.id);
 		let s2 = this.getSocket(this.clients, p2.id);
@@ -192,8 +192,13 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		{
 			await this.statusService.changeStatus(p1, "InGame");
 			await this.statusService.changeStatus(p2, "InGame");
-			s1.emit('gameFound', this.games.size, p1.name, p2.name, 1);
-			s2.emit('gameFound', this.games.size, p2.name, p1.name, 2);
+			if (!duel)
+			{
+				s1.emit('gameFound', this.games.size, p1.name, p2.name, 1);
+				s2.emit('gameFound', this.games.size, p2.name, p1.name, 2);
+			}
+			await this.userService.addMatch(p1);
+			await this.userService.addMatch(p2);
 			this.games.set(this.games.size, new Game(new Player(p1, s1.id), new Player(p2, s2.id), this.games.size));
 		}
 		console.log(`game launched : ${p1.name} was matched up with ${p2.name}`);
@@ -436,7 +441,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					s1.emit('refreshInvites', "that parameters system is dumb");
 					if (answer.inviteAccepted === true)
 					{
-						this.addGame(player1, player2);	
+						this.addGame(player1, player2, true);	
 						this.duelists.set({id1: player1.id, id2: player2.id}, {here1: false, here2: false});
 						s1.emit('joinDuel', "a parameter cause it allows none but it doesnt work without one");
 						if (s2)
@@ -747,7 +752,9 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 						newMatchHistory.score2 = game.p2.score;
 						newMatchHistory.user2 = game.p2.user;
 						s1.emit('victory', game.timeisover);
-						s2.emit('defeat', game.timeisover);	
+						s2.emit('defeat', game.timeisover);
+						await this.userService.addVictory(game.p1.user);
+						await this.userService.addDefeat(game.p2.user);
 					}
 					else if (game.winner == 2)
 					{
@@ -757,6 +764,8 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 						newMatchHistory.user2 = game.p1.user;
 						s2.emit('victory', game.timeisover);
 						s1.emit('defeat', game.timeisover);
+						await this.userService.addVictory(game.p2.user);
+						await this.userService.addDefeat(game.p1.user);
 					}
 					else
 					{
@@ -766,6 +775,8 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 						newMatchHistory.user2 = game.p1.user;
 						s1.emit('draw');
 						s2.emit('draw');
+						await this.userService.addVictory(game.p1.user);
+						await this.userService.addVictory(game.p2.user);
 					}
 					await this.gameService.createMatchHistory(newMatchHistory);
 				}
