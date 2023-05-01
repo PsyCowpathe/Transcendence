@@ -177,7 +177,7 @@ export function Resend2FA() {
       <h1 className="title">You have to resend your 2FA Code</h1>
 
       <Resend />
-
+	  <ToastContainer />
     </div>
   );
 }

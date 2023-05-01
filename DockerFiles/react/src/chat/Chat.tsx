@@ -1039,7 +1039,7 @@ export function Chat() {
           </ul>
         </div>
         {/* </div> */}
-      </div><ToastContainer />
-    </div>
+    </div><ToastContainer />
+      </div>
   );
 }

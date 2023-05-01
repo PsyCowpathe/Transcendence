@@ -149,6 +149,7 @@ export function Invite({channel} : {channel : string | null})
                     onChange={(e) => setDeleteInvite(e.target.value)} />
                 <button className="add-message-button" >Delete Invite</button>
             </form>
+			<ToastContainer />
         </div>
 
     )
