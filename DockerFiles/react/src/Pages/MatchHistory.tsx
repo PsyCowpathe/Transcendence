@@ -35,7 +35,7 @@ export function MatchHist({User} : {User : User})
 			console.log(res.data)
           setHistory(res.data.map((match : any, index : any) => {
             return ({
-			id 	: index,
+				id 	: index,
               scoreP1 : match.scoreP1,
               scoreP2 : match.scoreP2,
               nameP1  : match.P1,
@@ -173,7 +173,7 @@ return(
         <div>
             {History.map((match) => {
                 return (
-                    <div>
+                    <div key={match.id}>
                         <p key={match.id}>{match.nameP1} {match.scoreP1} - {match.scoreP2} {match.nameP2}</p>
                     </div>)
             })}
