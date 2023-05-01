@@ -7,6 +7,7 @@ import {TopBar} from '../Pages/NavBar'
 import socketManager from '../MesSockets'
 import { SetParamsToGetPost } from '../Headers/HeaderManager'
 import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Pong from './Pong'
 
 interface Invite
@@ -266,6 +267,7 @@ export default function PongMenu ()
 				<div className="Rules">• theme: press p for the progress theme, press m (like "middle age") to revert to the default one</div>
 				<div className="Rules"><br/>• we may collect data to improve user experience</div>
 			</div>
+			<ToastContainer />
 		</div>
 	);
 
