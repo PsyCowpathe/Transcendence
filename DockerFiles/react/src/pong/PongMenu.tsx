@@ -96,15 +96,16 @@ export default function PongMenu ()
 
 		socket.on('duelInviteAnswered', (opp_name: string, accepted: boolean) =>
 		{
+			let message: string = "";
 			if (accepted)
 			{
 				console.log(opp_name + " accepted your duel invitation");
-				const message: string = opp_name + " accepted your duel invitation";
+				message = opp_name + " accepted your duel invitation";
 			}
 			else
 			{
 				console.log(opp_name + " declined your duel invitation");
-				const message: string = opp_name + " declined your duel invitation";
+				message = opp_name + " declined your duel invitation";
 			}
 			socket.emit('getInvites');
 			toast.success(message, {
