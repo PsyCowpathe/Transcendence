@@ -29,6 +29,7 @@ export function MatchHist({User} : {User : User})
     const [History , setHistory] = useState<Match[]>([])
 
     useEffect(() => {
+		console.log("GET HISTORY")
         GetMatchHistory(User.uid)
         .then((res) => {
 			console.log("------------------------ Victoire : ---------------------------")
