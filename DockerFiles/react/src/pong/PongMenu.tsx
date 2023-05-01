@@ -122,6 +122,9 @@ export default function PongMenu ()
 
 		socket.on('GameError', (response: any) =>
 		{
+			try
+			{
+
 			console.log(response);
 			toast.error(response, {
    	     			position: toast.POSITION.TOP_RIGHT,
@@ -148,6 +151,7 @@ export default function PongMenu ()
 		
 		}
 
+		}
 		catch(error)
 		{
 			console.log("i'm a teapot");
