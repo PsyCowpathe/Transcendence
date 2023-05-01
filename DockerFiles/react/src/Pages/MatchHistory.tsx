@@ -30,6 +30,8 @@ export function MatchHist({User} : {User : User})
     useEffect(() => {
         GetMatchHistory(User.uid)
         .then((res) => {
+			console.log("------------------------ Victoire : ---------------------------")
+			console.log(res.data)
           setHistory(res.data.map((match : any) => {
             return ({
               scoreP1 : match.scoreP1,
