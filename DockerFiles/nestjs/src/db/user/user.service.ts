@@ -66,32 +66,43 @@ export class UserService
 
 	updateStatus(newStatus: string, user: User)
 	{
+		console.log("change status for " + user.name + " " + user.id);
 		let ret = this.usersRepository.update(user.id, {Status: newStatus});
+		console.log("DONE");
 		return (ret);
 	}
 
 	async addMatch(user: User)
 	{
-		await this.usersRepository.createQueryBuilder()
-		.update(User)
+		console.log("j´ajoute un match a " + user.name + " " + user.id);
+		await this.usersRepository.createQueryBuilder("user")
+		.update()
 		.set({ Match: () => "Match + 1" })
+		.where("id = :id", {id: user.id})
 		.execute();
+		console.log("DONE" + user.name);
 	}
 
 	async addVictory(user: User)
 	{
-		await this.usersRepository.createQueryBuilder()
-		.update(User)
+		console.log("j´ajoute une victoire a " + user.name + " " + user.id);
+		await this.usersRepository.createQueryBuilder("user")
+		.update()
 		.set({ Victory: () => "Victory + 1" })
+		.where("id = :id", {id: user.id})
 		.execute();
+		console.log("DONE" + user.name);
 	}
 
 	async addDefeat(user: User)
 	{
-		await this.usersRepository.createQueryBuilder()
-		.update(User)
+		console.log("j´ajoute une defaite a " + user.name + " " + user.id);
+		await this.usersRepository.createQueryBuilder("user")
+		.update()
 		.set({ Defeat: () => "Defeat + 1" })
+		.where("id = :id", {id: user.id})
 		.execute();
+		console.log("DONE" + user.name);
 	}
 
 	create(newUser : User)

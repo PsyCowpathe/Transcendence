@@ -55,10 +55,10 @@ export class MainService
 		else
 		{
 			if (file.buffer[0] !== 0xff || file.buffer[1] !== 0xd8 || file.buffer[2] !== 0xff)
-			return (-3);
+				return (-1);
 		}
-		if (file.size > 8000000)
-			return (-4);
+		if (file.size > 1500000)
+			return (-1);
 		const user = await this.userService.findOneByToken(token);
 		if (user === null)
 			return (-2);
@@ -66,7 +66,7 @@ export class MainService
 			(err) =>
 			{
         		if (err)
-					return (-2);
+					return (-3);
       		});
 		return (1);
 	}
