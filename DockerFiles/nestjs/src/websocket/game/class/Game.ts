@@ -152,8 +152,8 @@ export default class Game
 		if (this.ball.pos.x >= 99.9 || this.ball.pos.x <= 0.1)
 			this.GOOOAAAAAAL();
 		if (this.elapsedTime > this.TIME_OVER) 
-			this.timeisover = this.variant;
-		if ((this.variant && this.timeisover) || this.p1.score == 11 || this.p2.score == 11)
+			this.timeisover = true;
+		if (this.timeisover || this.p1.score == 11 || this.p2.score == 11)
 		{
 			if (this.p1.score > this.p2.score)
 				this.winner = 1;
