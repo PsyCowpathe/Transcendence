@@ -40,9 +40,9 @@ export class MainController
 		if (ret === -1)
 			return (sendError(res, 400, errorMessages.INVALIDIMAGE));
 		if (ret === -2)
-			return (sendError(res, 418, errorMessages.CANTSAVE));
+			return (sendError(res, 418, errorMessages.MISSINGUSER));
 		if (ret === -3)
-			return (sendError(res, 418, errorMessages.DBFAIL));
+			return (sendError(res, 418, errorMessages.CANTSAVE));
 		return (sendSuccess(res, 200, "You successfully changed your avatar !"));
 	}
 

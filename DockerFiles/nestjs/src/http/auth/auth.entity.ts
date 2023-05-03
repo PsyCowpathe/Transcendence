@@ -45,5 +45,3 @@ export class Profile
 	Victory: number;
 	Defeat: number;
 }
-
-

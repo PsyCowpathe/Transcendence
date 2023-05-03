@@ -32,6 +32,7 @@ export default class Game
 	spellInUse2: boolean = false;
 	timeisover:boolean = false;
 	winner: number = 0;
+	isFinished: boolean = false;
 
 	constructor(p1: Player, p2: Player, tag: number)
 	{
