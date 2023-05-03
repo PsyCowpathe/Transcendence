@@ -226,67 +226,104 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		let opp: User | undefined;
 		const leaver = this.getUser(socket);
 
-		while (this.leavingMUTEX)
-			;
+	/*	while (this.leavingMUTEX)
+			;*/
 		this.leavingMUTEX = true;
 		console.log("leaving ...");
 		if (leaver)
 			console.log("leave game for " + leaver.name)
 		if (leaver)
 		{
-
 			let oppSock: Socket | undefined;
 			for (const game of this.games.values())
 			{
+				console.log("haha");
 				if (game.p1.user.id === leaver.id)
 				{
+				console.log("hoho");
 					oppSock = this.getSocket(this.clients, game.p2.user.id);
+				console.log("hoho1");
 					let newMatchHistory = new MatchHistory();
+				console.log("hoho2");
 					newMatchHistory.score1 = game.p2.score; 
+				console.log("hoho3");
 					newMatchHistory.user1 = game.p2.user;
+				console.log("hoho4");
 					newMatchHistory.score2 = game.p1.score;
+				console.log("hoho5");
 					newMatchHistory.user2 = game.p1.user;
+				console.log("hoho6");
 					socket.emit('defeat', game.timeisover);
+				console.log("hoho7");
 					await this.gameService.createMatchHistory(newMatchHistory);
+				console.log("hoho8");
 					await this.userService.addVictory(game.p2.user);
+				console.log("hoho9");
 					await this.userService.addDefeat(game.p1.user);
+				console.log("hoho10");
 					await this.userService.addMatch(game.p1.user);
+				console.log("hoho11");
 					await this.userService.addMatch(game.p2.user);
+				console.log("hoho12");
 				}
 				else if (game.p2.user.id === leaver.id)
 				{
+				console.log("hihi");
 					oppSock = this.getSocket(this.clients, game.p1.user.id);
+				console.log("hihi1");
 					let newMatchHistory = new MatchHistory();
+				console.log("hihi2");
 					newMatchHistory.score1 = game.p1.score; 
+				console.log("hihi3");
 					newMatchHistory.user1 = game.p1.user;
+				console.log("hihi4");
 					newMatchHistory.score2 = game.p2.score;
+				console.log("hihi5");
 					newMatchHistory.user2 = game.p2.user;
+				console.log("hihi6");
 					socket.emit('victory', game.timeisover);
+				console.log("hihi7");
 					await this.gameService.createMatchHistory(newMatchHistory);
+				console.log("hihi8");
 					await this.userService.addVictory(game.p1.user);
+				console.log("hihi9");
 					await this.userService.addDefeat(game.p2.user);
+				console.log("hihi10");
 					await this.userService.addMatch(game.p1.user);
+				console.log("hihi11");
 					await this.userService.addMatch(game.p2.user);
+				console.log("hihi");
 				}
+				console.log("hlhl1");
 				this.games.delete(game.tag);
+				console.log("hlhl2");
 				if (oppSock)
 				{
+				console.log("hghg");
 					opp = this.getUser(oppSock);
+				console.log("hghg1");
 					if (opp)
 						await this.statusService.changeStatus(opp, "Online");
+				console.log("hghg2");
 					await this.userService.updateStatus("Online", leaver);
+				console.log("hghg3");
 					oppSock.emit('opponentLeft');
+				console.log("hghg4");
 					break;
 				}
+				console.log("hzhz");
 			}
 		}
 		else if (id != -1)
 		{
+				console.log("hxhx");
 			let oppSock: Socket | undefined;
 			for (const game of this.games.values())
 			{
+				console.log("test");
 				if (game.p1.user.id === id)
 				{
+				console.log("hvhv");
 					oppSock = this.getSocket(this.clients, game.p2.user.id);
 					let newMatchHistory = new MatchHistory();
 					newMatchHistory.score1 = game.p2.score; 
@@ -302,6 +339,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				}
 				else if (game.p2.user.id === id)
 				{
+				console.log("hbhb");
 					oppSock = this.getSocket(this.clients, game.p1.user.id);
 					let newMatchHistory = new MatchHistory();
 					newMatchHistory.score1 = game.p1.score; 
@@ -315,18 +353,26 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					await this.userService.addMatch(game.p1.user);
 					await this.userService.addMatch(game.p2.user);
 				}
+				console.log("hnhn");
 				this.games.delete(game.tag);
+				console.log("hnhn1");
 				if (oppSock)
 				{
+				console.log("hmhm");
 					opp = this.getUser(oppSock);
+				console.log("hmhm2");
 					if (opp)
 						await this.statusService.changeStatus(opp, "Online");
+				console.log("hmhm3");
 					oppSock.emit('opponentLeft');
+				console.log("hmhm4");
 					break;
 				}
+				console.log("hkhk");
 			}
 		}
 		this.leavingMUTEX = false;
+		console.log("leaved");
 	}
 
 	@UsePipes(new ValidationPipe())
