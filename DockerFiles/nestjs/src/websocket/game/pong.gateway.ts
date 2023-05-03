@@ -51,6 +51,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     	user = await this.userService.findOneByToken(token); 
     	if (user)
   	 	{
+			console.log("User " + user.name + " connected !");
 			if (user.token === token)
         	{
         	    if (user.TwoFA === true)
@@ -228,7 +229,9 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		while (this.leavingMUTEX)
 			;
 		this.leavingMUTEX = true;
-
+		console.log("leaving ...");
+		if (leaver)
+			console.log("leave game for " + leaver.name)
 		if (leaver)
 		{
 			let oppSock: Socket | undefined;
