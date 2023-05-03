@@ -27,8 +27,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	games = new Map<number, Game>();
 	duelists = new Map<{id1: number, id2: number}, {here1: boolean, here2: boolean}>();
 	duelInvites = new Map<number, number>();
-	inviteMUTEX = false;
-	leavingMUTEX = false;
 
 	constructor(	private readonly userService: UserService,
 			private readonly statusService: WsStatusService,
@@ -330,7 +328,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				}
 			}
 		}
-		this.leavingMUTEX = false;
 	}
 
 	@UsePipes(new ValidationPipe())
@@ -342,24 +339,20 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 		if (user && opp)
 		{
-
-		/*	const relationStatus = await this.relationService.getRelationStatus(user, opp);
-			if (relationStatus == "VX" || relationStatus == "ennemy")
+			const relationStatus = await this.relationService.getRelationStatus(user, opp);
+			if (relationStatus == "VX" || relationStatus == "enemy")
 			{
 				socket.emit("GameError", "this player blocked you");
-				this.inviteMUTEX = false;
 				return;
 			}
-			if (relationStatus == "XV" || relationStatus == "ennemy")
+			if (relationStatus == "XV" || relationStatus == "enemy")
 			{
 				socket.emit("GameError", "you blocked this user");
-				this.inviteMUTEX = false;
 				return;
-			}*/
+			}
 			if (user.id == opp.id)
 			{
 				socket.emit("GameError", "SOS Amitie : 04 73 37 37 37"); // A CHANGER
-				this.inviteMUTEX = false;
 				return;
 			
 			}
@@ -368,13 +361,11 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				if (inviting === user.id && invited == opp.id)
 				{
 					socket.emit("GameError", "you already invited that player"); // A CHANGER
-					this.inviteMUTEX = false;
 					return;
 				}
 				if (inviting === opp.id && invited === user.id)
 				{
 					socket.emit("GameError", "you were already invited by this player"); // A CHANGER
-					this.inviteMUTEX = false;
 					return;
 				}
 			}
@@ -383,7 +374,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				if (usr.id === user.id)
 				{
 					socket.emit("GameError", "already in queue"); // A CHANGER
-					this.inviteMUTEX = false;
 					return;
 				}
 			}
@@ -392,7 +382,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				if (game.p1.user.id === user.id)
 				{
 					socket.emit("GameError", "already in game"); // A CHANGER
-					this.inviteMUTEX = false;
 					return;
 				}
 			}
@@ -401,7 +390,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				if (duel.id1 === user.id)
 				{
 					socket.emit("GameError", "already in a duel"); // A CHANGER
-					this.inviteMUTEX = false;
 					return;
 				}
 			}
@@ -413,7 +401,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		}
 		else
 			socket.emit("GameError", errorMessages.INVALIDUSER);
-		this.inviteMUTEX = false;
 	}
 
 
@@ -426,38 +413,30 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		let s2!: Socket | undefined;
 		let wasInvited: boolean = false;
 
-		/*while (this.inviteMUTEX)
-			;*/
-		this.inviteMUTEX = true;
-			
 		if (player1 && player2)
 		{
 			const relationStatus = await this.relationService.getRelationStatus(player1, player2);
-			/*if (relationStatus == "VX" || relationStatus == "enemy")
+			if (answer.inviteAccepted && (relationStatus == "VX" || relationStatus == "enemy"))
 			{
 				s1.emit("GameError", "this player blocked you");
-				this.inviteMUTEX = false;
 				return;
 			}
-			if (relationStatus == "XV" || relationStatus == "enemy")
+			if (answer.inviteAccepted && (relationStatus == "XV" || relationStatus == "enemy"))
 			{
 				s1.emit("GameError", "you blocked this user");
-				this.inviteMUTEX = false;
 				return;
-			}*/
+			}
 			for (const game of this.games.values())
 			{
 				if (game.p1.user.id == player1.id || game.p2.user.id == player1.id)
 				{
 					s1.emit("GameError", "in game"); // A CHANGER
-					this.inviteMUTEX = false;
 					return;
 				}
 				if (	(answer.inviteAccepted && 
 					 ((game.p1.user.id == player2.id) || (game.p2.user.id == player2.id))))
 				{
 					s1.emit("GameError", `${player2.name} is currently in game`); // A CHANGER
-					this.inviteMUTEX = false;
 					return;
 				}
 			}
@@ -466,13 +445,11 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				if (usr.id === player1.id)
 				{
 					s1.emit("GameError", "in queue"); // A CHANGER
-					this.inviteMUTEX = false;
 					return;
 				}
 				if (answer.inviteAccepted && (usr.id === player2.id))
 				{
 					s1.emit("GameError", `${player2.name} is currently in queue`); // A CHANGER
-					this.inviteMUTEX = false;
 					return;
 				}
 			}
@@ -481,13 +458,11 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				if (duel.id1 === player1.id || duel.id2 === player1.id)
 				{
 					s1.emit("GameError", "in game"); // A CHANGER
-					this.inviteMUTEX = false;
 					return;
 				}
 				if (answer.inviteAccepted && ((duel.id1 === player2.id) || (duel.id2 === player2.id)))
 				{
 					s1.emit("GameError", `${player2.name} is currently in game`); // A CHANGER
-					this.inviteMUTEX = false;
 					return;
 				}
 			}
@@ -502,7 +477,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			if (!wasInvited)
 			{
 				s1.emit("GameError", "not invited"); // A CHANGER
-				this.inviteMUTEX = false;
 				return;
 			}
 			
@@ -540,8 +514,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		}
 		else
 			s1.emit('GameError', errorMessages.INVALIDUSER);
-
-		this.inviteMUTEX = false;
 	}
 
 	async spamJoinDuel(socket: Socket, id: number, player: number)
@@ -659,9 +631,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		let player = this.getUser(socket);
 		let opp = await this.userService.findOneById(id.input);
 
-		/*while (this.inviteMUTEX)
-			;*/
-		this.inviteMUTEX = true;
 		if (player)
 		{
 			for (const [inviting_id, invited_id] of this.duelInvites.entries())
@@ -681,7 +650,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			}
 		}
 
-		this.inviteMUTEX = false;
 	}
 
 	@UsePipes(new ValidationPipe())

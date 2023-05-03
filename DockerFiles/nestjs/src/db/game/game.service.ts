@@ -20,7 +20,7 @@ export class GameService
 
     async getMatchHistory(user : User) : Promise<MatchHistory[] | null>
     {
-		console.log("add match history for " + user.name);
+		console.log("get match history for " + user.name);
 		let ret = await this.historyRepository
 			.find
 			({

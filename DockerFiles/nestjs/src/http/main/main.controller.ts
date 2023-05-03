@@ -40,7 +40,7 @@ export class MainController
 		if (ret === -1)
 			return (sendError(res, 400, errorMessages.INVALIDIMAGE));
 		if (ret === -2)
-			return (sendError(res, 418, errorMessages.MISSINGUSER));
+			return (sendError(res, 400, errorMessages.INVALIDUSER));
 		if (ret === -3)
 			return (sendError(res, 418, errorMessages.CANTSAVE));
 		return (sendSuccess(res, 200, "You successfully changed your avatar !"));
@@ -152,11 +152,14 @@ export class MainController
 
 	@Get('matchresume')
 	@UseGuards(AuthGuard)
-	async getHistory(@Req() req: Request, @Res() res: Response)
+	async getHistory(@Req() req: Request, @Res() res: Response, @Query('user') userId: numberParameterDto)
 	{
-		let ret = await this.mainService.getHistory(req.headers.authorization);
+		console.log("resume match for " + userId.id);
+		let ret = await this.mainService.getHistory(req.headers.authorization, userId.id);
 		if (ret === -1)
 			return (sendError(res, 401, errorMessages.INVALIDUSER));
+		if (ret === -2)
+			return (sendError(res, 400, errorMessages.MISSINGUSER));
 		return (sendSuccess(res, 200, ret));
 	}
 }

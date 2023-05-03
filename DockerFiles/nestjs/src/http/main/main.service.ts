@@ -233,16 +233,19 @@ export class MainService
 		return (data);
 	}
 
-	async getHistory(token: string | undefined) : Promise<number | any[]>
+	async getHistory(token: string | undefined, id: number) : Promise<number | any[]>
 	{
 		const askMan = await this.userService.findOneByToken(token);
+		const toGet = await this.userService.findOneById(id);
 		if (askMan === null)
 			return (-1);
-		let matchHistory = await this.gameService.getMatchHistory(askMan);
+		if (toGet === null)
+			return (-2);
+		let matchHistory = await this.gameService.getMatchHistory(toGet);
 		let i = 0;
 		let data = [];
-		console.log("history = ");
-		console.log(matchHistory);
+		//console.log("history = ");
+		//console.log(matchHistory);
 		while (matchHistory && matchHistory[i])
 		{
 			let tmp =
