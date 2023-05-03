@@ -171,11 +171,11 @@ export function MatchHist({User} : {User : User})
 return(
     <div>
         <h1>Match History</h1>
-        <div>
+        <div className="class_hist" >
             {History.map((match) => {
                 return (
                     <div key={match.id}>
-                        <p className="class_hist"  key={match.id} >{match.nameP1} {match.scoreP1} - {match.scoreP2} {match.nameP2}</p>
+                        <p   key={match.id} >{match.nameP1} {match.scoreP1} - {match.scoreP2} {match.nameP2}</p>
                     </div>)
             })}
         </div>
