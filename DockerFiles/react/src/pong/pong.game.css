@@ -43,7 +43,9 @@ body
 
 .pongTop
 {
-	height: 20vh !important;
+	height: 19vh !important;
+	margin-top: 0;
+	margin-bottom: 1vh;
 	display: flex;
 	flex-direction: column;
 	z-index: 1;
@@ -65,7 +67,6 @@ body
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	gap: 1vw;
 	z-index: 1;
 }
 
@@ -145,46 +146,52 @@ body
 
 .firstRow
 {
-	flex: 2;
+	position: relative;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
-	align-items: center;
 	height: 100%;
 	z-index: 1;
 }
 
 .h1n1
 {
-	flex: 1;
+	position: absolute;
+	margin-top: 5.5vh;
 	font-weight: bold;
 	font-size: 5vh;
+	width: 98vw;
+	margin-left: 1vw;
+	margin-right: 1vw;
+	text-align: center;
 	color: var(--foreground-color);
-	margin: 1.5vh;
-	order: 2;
 	z-index: 1;
+	order: 2;
 }
 
 .buttonBack
 {
-	flex: 1;
-	order: 1;
-	width: 4%;
-	height: 20%;
+	position: absolute;
+	margin-top: 1.5vh;
+	margin-left: 48vw;
+	margin-right: 48vw;
+	width: 4vw;
+	height: 2vh;
 	font-size: 16px;
 	display: flex;
   	justify-content: center;
   	align-items: center;
 	cursor: pointer;
 	z-index: 1;
+	order: 1;
 }
 
 .joinQueue
 {
-	width: 9%;
-	height: 30%;
+	position: absolute;
+	width: 12vw;
+	height: 2vh;
+	bottom: 1.5vh;
 	font-size: 16px;
-	margin: auto;
 	display: flex;
   	justify-content: center;
   	align-items: center;
@@ -194,6 +201,8 @@ body
 
 .waiting
 {
+	position: absolute;
+	bottom: 0.5vh;
 	font-size: 2vh;
 	color: var(--foreground-color);
 	font-weight: bold;
@@ -217,7 +226,7 @@ body
 
 .secondRow
 {
-	flex: 1;
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -228,12 +237,12 @@ body
 
 .cancer
 {
-	flex: 1;
+	position: absolute;
 	display: flex;
 	width: 100vw;
 	justify-content: center;
 	align-items: center;
-
+	bottom: 0.5vh;
 	font-size: 2vh;
 	color: var(--foreground-color);
 	font-weight: bold;
@@ -283,58 +292,62 @@ body
 
 .variant
 {
-	flex: 1;
+	position: relative;
+	width: 100vw;
+	height: 9vh;
+	margin-top: 1vh;
 	color: var(--foreground-color);
 	font-size: 2vh;
 	font-weight: bold;
-	display: flex;
-  	justify-content: center;
-  	align-items: center;
 	z-index: 1;
 }
 
 .buttonVariant
 {
-	flex: 1;
-	width: 9%;
+	position: absolute;
+	width: 12vw;
+	height: 2vh;
 	display: flex;
   	justify-content: center;
   	align-items: center;
-	margin-top: auto;
+	margin-top: 5.5vh;
 	margin-bottom: 1vh;
+	margin-left: 44vw;
 	cursor: pointer;
 	z-index: 1;
 }
 
 .variantMessage
 {
-	text-align: end;
-	color: var(--foreground-color);
-	margin-top: auto;
-	margin-bottom: 1vh;
+	position: absolute;
+	top: 4vh;
+	width: 98vw;
+	margin-left: 1vw;
+	margin-right: 1vw;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	z-index: 1;
 }
 
 .choice
 {
-	flex: 1;
+	position: relative;
+	height: 10vh !important;
+	width: 100vw;
 	color: var(--foreground-color);
 	font-size: 2vh;
 	font-weight: bold;
-	width: 100%;
-	display: flex;
-  	justify-content: center;
-  	align-items: center;
-	gap: 1vh;
 	z-index: 1;
 }
 
 .buttonAcceptVariant
 {
-	width: 6%;
-	height: 27%;
+	position: absolute;
+	width: 6vw;
+	height: 2.5vh;
 	margin-top: 0;
-	margin-bottom: auto;
+	margin-left: 43.5vw;
 	display: flex;
   	justify-content: center;
   	align-items: center;
@@ -344,10 +357,11 @@ body
 
 .buttonDeclineVariant
 {
-	width: 6%;
-	height: 27%;
+	position: absolute;
+	width: 6vw;
+	height: 2.5vh;
 	margin-top: 0;
-	margin-bottom: auto;
+	margin-left: 50.5vw;
 	display: flex;
   	justify-content: center;
   	align-items: center;

@@ -113,8 +113,8 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			await this.statusService.changeStatus(leaver, "Offline");
 			console.log(`Client disconnected : ${leaver.name} identified as ${socket.id}`);
 		}
-		this.leaveQueue(socket);
 		this.leaveGame(socket);
+		this.leaveQueue(socket);
 	}
 
 	getUser(socket: Socket) : User | undefined
@@ -240,7 +240,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					await this.gameService.createMatchHistory(newMatchHistory);
 					await this.userService.addVictory(game.p2.user);
 					await this.userService.addDefeat(game.p1.user);
-					this.games.delete(game.tag);
 				}
 				else if (game.p2.user.id === leaver.id)
 				{
@@ -254,8 +253,8 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					await this.gameService.createMatchHistory(newMatchHistory);
 					await this.userService.addVictory(game.p1.user);
 					await this.userService.addDefeat(game.p2.user);
-					this.games.delete(game.tag);
 				}
+				this.games.delete(game.tag);
 				if (oppSock)
 				{
 					opp = this.getUser(oppSock);
@@ -267,7 +266,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				}
 			}
 		}
-		
 		this.leavingMUTEX = false;
 	}
 
@@ -284,7 +282,8 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			
 		if (user && opp)
 		{
-			/*const relationStatus = await this.relationService.getRelationStatus(user, opp);
+
+		/*	const relationStatus = await this.relationService.getRelationStatus(user, opp);
 			if (relationStatus == "VX" || relationStatus == "ennemy")
 			{
 				socket.emit("GameError", "this player blocked you");
@@ -297,6 +296,13 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				this.inviteMUTEX = false;
 				return;
 			}*/
+			if (user.id == opp.id)
+			{
+				socket.emit("GameError", "SOS Amitie : 04 73 37 37 37"); // A CHANGER
+				this.inviteMUTEX = false;
+				return;
+			
+			}
 			for (const [inviting, invited] of this.duelInvites.entries())
 			{
 				if (inviting === user.id && invited == opp.id)
@@ -343,6 +349,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			const opp_sock = this.getSocket(this.clients, opp.id);
 			if (opp_sock)
 				opp_sock.emit('duelInviteReceived', user.name);
+
 		}
 		else
 			socket.emit("GameError", errorMessages.INVALIDUSER);
@@ -737,7 +744,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		}
   	}
 
-
 	update = async () =>
 	{
 		for (const game of this.games.values())
@@ -795,3 +801,4 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		setTimeout(this.update, 16);
 	};
 }
+
