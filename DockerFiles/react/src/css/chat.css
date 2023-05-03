@@ -173,3 +173,9 @@ form > * {
 .break-word {
   word-wrap: break-word;
 }
+
+
+.class_hist{
+overflow-y: auto;
+
+}
