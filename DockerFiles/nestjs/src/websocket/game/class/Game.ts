@@ -157,7 +157,7 @@ export default class Game
 			if (this.p1.score > this.p2.score)
 				this.winner = 1;
 			else if (this.p2.score > this.p1.score)
-				this.winner = 1;
+				this.winner = 2;
 			else
 				this.winner = 3;
 		}
