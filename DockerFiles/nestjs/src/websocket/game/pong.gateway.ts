@@ -231,6 +231,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 		if (leaver)
 		{
+
 			let oppSock: Socket | undefined;
 			for (const game of this.games.values())
 			{
