@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import socketManager from '../MesSockets';
 import { SetParamsToGetPost } from '../Headers/HeaderManager';
-
+import '../css/chat.css';
 
 interface User {
     name: string;
@@ -175,7 +175,7 @@ return(
             {History.map((match) => {
                 return (
                     <div key={match.id}>
-                        <p key={match.id}>{match.nameP1} {match.scoreP1} - {match.scoreP2} {match.nameP2}</p>
+                        <p className="class_hist"  key={match.id} >{match.nameP1} {match.scoreP1} - {match.scoreP2} {match.nameP2}</p>
                     </div>)
             })}
         </div>
