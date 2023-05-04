@@ -71,14 +71,14 @@
   }
   
   .new_modal-body {
-    height: 80%;
+    height: 60%;
     overflow-y: auto;
     margin-top: 20px;
   }
 
   .new_modal {
     position: relative;
-    height: 80%;
+    height: 70%;
     width: 80%;
     max-width: 700px;
     background-color: #fff;
