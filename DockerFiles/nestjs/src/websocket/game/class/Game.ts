@@ -58,9 +58,10 @@ export default class Game
 			const p1_paddlerect = this.p1_paddle.getRect();
 			
 			if (	ballrect.left <= 3.7 &&
-				ballrect.up <= p1_paddlerect.down &&
+				((ballrect.up <= p1_paddlerect.down &&
 				ballrect.down >= p1_paddlerect.up &&
-				this.ball.pos.x >= p1_paddlerect.left	)
+				this.ball.pos.x >= p1_paddlerect.left) ||
+				(this.spellInUse1))	)
 				{
 				let rad:number = ((this.ball.pos.y - this.p1_paddle.pos.y) / (2 * this.p1_paddle.size));	
 				newdir = {	x: Math.cos(rad * Math.PI),
@@ -74,9 +75,10 @@ export default class Game
 			const p2_paddlerect = this.p2_paddle.getRect();
 			
 			if (	ballrect.right >= 96.3 &&
-				ballrect.up <= p2_paddlerect.down &&
+				((ballrect.up <= p2_paddlerect.down &&
 				ballrect.down >= p2_paddlerect.up &&
-				this.ball.pos.x <= p2_paddlerect.right	)
+				this.ball.pos.x <= p2_paddlerect.right) ||
+				(this.spellInUse2))	)
 			{
 				let rad:number = ((this.ball.pos.y - this.p2_paddle.pos.y) / (2 * this.p2_paddle.size));
 				newdir = {	x: -Math.cos(rad * Math.PI),

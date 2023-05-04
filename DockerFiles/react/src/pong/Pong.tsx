@@ -596,7 +596,9 @@ export default function PongGame ()
 				buttonDeclineVariant.remove();
 			if (variantMessage)
 			{
-				variantMessage.textContent = "variant is off";
+				const curr = getComputedStyle(variantMessage, "textContent");
+				if (curr = "variant is on")
+					variantMessage.textContent = "variant is off";
 				variantMessage.style.display = "flex";
 			}
 	
