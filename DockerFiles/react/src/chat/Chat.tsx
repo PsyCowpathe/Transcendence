@@ -1005,6 +1005,7 @@ export function Chat() {
             <div className="message-item sent">
               <form className="message-input" onSubmit={HandleNewMessage} >
                 <input
+                maxlength="135"
                   type="text"
                   placeholder="New message"
                   value={newMessage}
