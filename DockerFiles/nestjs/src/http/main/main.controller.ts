@@ -154,7 +154,6 @@ export class MainController
 	@UseGuards(AuthGuard)
 	async getHistory(@Req() req: Request, @Res() res: Response, @Query('user') userId: numberParameterDto)
 	{
-		console.log("resume match for " + userId.id);
 		let ret = await this.mainService.getHistory(req.headers.authorization, userId.id);
 		if (ret === -1)
 			return (sendError(res, 401, errorMessages.INVALIDUSER));

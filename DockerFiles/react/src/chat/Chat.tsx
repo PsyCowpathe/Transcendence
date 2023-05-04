@@ -285,8 +285,7 @@ export function Chat() {
       })
     }
         const handleErrorRequest = (response: any) => {
-          console.log("status : ")
-          console.log(response.status)
+   
       toast.error(response, {
         position: toast.POSITION.TOP_RIGHT,
         autoClose: 2000,
@@ -828,13 +827,11 @@ export function Chat() {
    	     		autoClose: 2000,
    	     		progressClassName: "my-progress-bar"
 			});
-			console.log(response);
 		};
 
 		const handleDuelInviteReceived = (opponent: string) =>
 		{
 			const message = opponent + " challenged you to a pong duel";
-			console.log(message);
 	
 		    toast.success(message, {
     			position: toast.POSITION.TOP_RIGHT,
@@ -846,7 +843,6 @@ export function Chat() {
 		const handleDuelInviteCanceled = (opponent: string) =>
 		{
 			const message = opponent + " canceled his/her duel invitation";
-			console.log(message);
 	
 		    toast.success(message, {
    		     	position: toast.POSITION.TOP_RIGHT,
@@ -861,12 +857,10 @@ export function Chat() {
 			if (accepted)
 			{
 				message = opponent + " accepted your duel invitation";
-				console.log(message);
 			}
 			else
 			{
 				message = opponent + " delined your duel invitation";
-				console.log(message);
 			}
 		    toast.success(message, {
    			 	position: toast.POSITION.TOP_RIGHT,

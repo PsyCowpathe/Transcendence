@@ -244,8 +244,6 @@ export class MainService
 		let matchHistory = await this.gameService.getMatchHistory(toGet);
 		let i = 0;
 		let data = [];
-		//console.log("history = ");
-		//console.log(matchHistory);
 		while (matchHistory && matchHistory[i])
 		{
 			let tmp =

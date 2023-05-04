@@ -17,7 +17,7 @@ import { mouseDto, numberDto, posDto, answerDto } from './pong.entity'
 
 @UseFilters(WsExceptionFilter)
 @WebSocketGateway(3633, {cors: true})
-export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit
+export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect
 {
 	@WebSocketServer()
 	server: Server;
@@ -36,10 +36,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	       this.update();
 	}
 
-	afterInit()
-	{
-		console.log("gateway initialized");
-	}
 
 	async handleConnection(socket: Socket)
 	{
@@ -57,7 +53,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
                 	{
                     	socket.emit("GameError", errorMessages.INVALID2FA)
                     	socket.disconnect();
-                    	console.log("2FA TOKEN IS EXPIRED");
                 	}
                		else if (TWOFA === user.TwoFAToken)
                 	{
@@ -67,13 +62,11 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 								this.clients.delete(usr);
 						}
                 		this.clients.set(user, socket);
-                  		console.log(`Client connected : ${user.name} identified as ${socket.id}`);
                 	}
                 	else
                 	{
                  		socket.emit("GameError", errorMessages.INVALID2FA)
                   		socket.disconnect();
-                  		console.log("2FA TOKEN IS invalid");
                 	} 
             	}
             	else
@@ -85,7 +78,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					}
              		this.clients.set(user, socket);
 					await this.statusService.changeStatus(user, "Online");
-               		console.log(`Client connected : ${user.name} identified as ${socket.id}`);
             	}
         	}
 
@@ -93,14 +85,12 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         	{
            		socket.emit("GameError", errorMessages.INVALIDTOKEN)
             	socket.disconnect();
-            	console.log("invalid token bearer");
         	}
     	}
     	else
     	{
        		socket.emit("GameError", errorMessages.MISSINGUSER)
         	socket.disconnect();
-        	console.log("no corresponding user in db");
     	}
 	}
 
@@ -110,11 +100,9 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		if (leaver)
 		{
 			await this.statusService.changeStatus(leaver, "Offline");
-			console.log(`Client disconnected : ${leaver.name} identified as ${socket.id}`);
 			this.leaveGame(socket,leaver.id);
 			this.leaveQueue(socket, leaver.id);
 		}
-		console.log("someone left");
 	}
 
 	getUser(socket: Socket) : User | undefined
@@ -172,7 +160,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			}
 
 			this.queue.set(user, socket);
-			console.log(`user ${username} identified as ${socket.id} joined the queue`);
 			if (this.queue.size % 2 == 0)
 			{
 				cli = Array.from(this.queue.keys());
@@ -197,7 +184,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				s2.emit('gameFound', this.games.size, p2.name, p1.name, 2);
 			this.games.set(this.games.size, new Game(new Player(p1, s1.id), new Player(p2, s2.id), this.games.size));
 		}
-		console.log(`game launched : ${p1.name} was matched up with ${p2.name}`);
 	}
 
 	@SubscribeMessage('leaveQueue')
@@ -772,7 +758,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 						s1.emit('playing');
 						s2.emit('playing');
 					}
-					console.log(`game [${game.tag}] is playing`);
 				}
 			}
 			else
@@ -828,7 +813,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					let newMatchHistory = new MatchHistory();
 					if (game.winner == 1)
 					{
-					console.log("SOMEONE LOST");
 						newMatchHistory.score1 = game.p1.score; 
 						newMatchHistory.user1 = game.p1.user;
 						newMatchHistory.score2 = game.p2.score;

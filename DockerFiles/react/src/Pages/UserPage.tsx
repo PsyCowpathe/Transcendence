@@ -49,6 +49,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
   const [user, setUser] = useState<User>({ name: "?", victory: "0", defeate: "0", gameplayed: "0" })
 
   const MAJFriendList = async () => {
+    console.log("je connect les flash bngo")
     await GetFriendList()
       .then((res) => {
         // setFriend([])
@@ -169,8 +170,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
   useEffect(() => {
     GetUserInfo(UserID)
       .then((res) => {
-        console.log("------------------------ Victoire : ---------------------------")
-        console.log(res.data)
+     
         setUser({ name: res.data.name, victory: res.data.Victory, defeate: res.data.Defeat, gameplayed: res.data.Match })
       })
       .catch((err) => {

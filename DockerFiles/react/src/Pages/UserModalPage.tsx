@@ -132,8 +132,7 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
 
     GetUserInfo(User.uid)
       .then((res) => {
-           console.log("------------------------ Victoire : ---------------------------")
-        console.log(res.data)
+        
         setUser({ name: res.data.name, victory: res.data.Victory, defeate: res.data.Defeat, gameplayed: res.data.Match, isConnect: res.data.Status })
         setStatus(res.data.Status)
       })
