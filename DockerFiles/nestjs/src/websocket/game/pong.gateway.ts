@@ -246,6 +246,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					await this.userService.addDefeat(game.p1.user);
 					await this.userService.addMatch(game.p1.user);
 					await this.userService.addMatch(game.p2.user);
+					this.games.delete(game.tag);
 				}
 				else if (game.p2.user.id === leaver.id)
 				{
@@ -264,8 +265,8 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					await this.userService.addDefeat(game.p2.user);
 					await this.userService.addMatch(game.p1.user);
 					await this.userService.addMatch(game.p2.user);
+					this.games.delete(game.tag);
 				}
-				this.games.delete(game.tag);
 				if (oppSock)
 				{
 					opp = this.getUser(oppSock);
@@ -298,6 +299,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					await this.userService.addDefeat(game.p1.user);
 					await this.userService.addMatch(game.p1.user);
 					await this.userService.addMatch(game.p2.user);
+					this.games.delete(game.tag);
 				}
 				else if (game.p2.user.id === id)
 				{
@@ -316,8 +318,8 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					await this.userService.addDefeat(game.p2.user);
 					await this.userService.addMatch(game.p1.user);
 					await this.userService.addMatch(game.p2.user);
+					this.games.delete(game.tag);
 				}
-				this.games.delete(game.tag);
 				if (oppSock)
 				{
 					opp = this.getUser(oppSock);
