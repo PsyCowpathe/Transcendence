@@ -548,7 +548,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect
 		}
 	}
 
-
 	@SubscribeMessage('accessDuel')
 	async accessDuel(socket: Socket)
 	{

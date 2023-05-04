@@ -401,6 +401,107 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
   /*                                                                                               */
   /*                                                                                               */
   /*************************************************************************************************/
+
+
+	//////////////////////////// <PONG INVITES/> //////////////////////////////
+	
+	useEffect(() =>
+	{
+		let socketPong: any;
+		
+		socketPong = socketManager.getPongSocket();
+		if (!socketPong)
+		{
+			const token = SetParamsToGetPost().headers.Authorization;
+			if (token !== null)
+			{
+				socketManager.initializePongSocket(token);
+				socketPong = socketManager.getPongSocket();
+			}
+		}
+
+		const handleGameError = (response: any) =>
+		{
+		    toast.error(response, {
+   	     		position: toast.POSITION.TOP_RIGHT,
+   	     		autoClose: 2000,
+   	     		progressClassName: "my-progress-bar"
+			});
+		};
+
+		const handleDuelInviteReceived = (opponent: string) =>
+		{
+			const message = opponent + " challenged you to a pong duel";
+	
+		    toast.success(message, {
+    			position: toast.POSITION.TOP_RIGHT,
+       			autoClose: 2000,
+       	 		progressClassName: "my-progress-bar"
+      		});
+		};
+
+		const handleDuelInviteCanceled = (opponent: string) =>
+		{
+			const message = opponent + " canceled his/her duel invitation";
+	
+		    toast.success(message, {
+   		     	position: toast.POSITION.TOP_RIGHT,
+   		     	autoClose: 2000,
+   	    		progressClassName: "my-progress-bar"
+    	 	});
+		}
+
+		const handleDuelInviteAnswered = (opponent: string, accepted: boolean, join: string = "") =>
+		{
+			let message: string = "";
+			if (join == "join")
+			{
+				navigate('/pong/play');
+				return ;
+			}
+			if (accepted)
+			{
+				message = opponent + " accepted your duel invitation";
+			}
+			else
+			{
+				message = opponent + " delined your duel invitation";
+			}
+		    toast.success(message, {
+   			 	position: toast.POSITION.TOP_RIGHT,
+       			autoClose: 2000,
+        		progressClassName: "my-progress-bar"
+			});
+		};
+
+		const handleJoinDuel = () =>
+		{
+			navigate('/pong/play');
+		};
+
+		socketPong.removeListener('duelInviteReceived');
+		socketPong.removeListener('duelInviteCanceled');
+		socketPong.removeListener('duelInviteAnswered');
+		socketPong.removeListener('joinDuel');
+
+		socketPong.on('duelInviteReceived', handleDuelInviteReceived);
+		socketPong.on('duelInviteCanceled', handleDuelInviteCanceled);
+		socketPong.on('duelInviteAnswered', handleDuelInviteAnswered);
+		socketPong.on('joinDuel', handleJoinDuel);
+		socketPong.on('GameError', handleGameError);
+
+	    return () => {
+			socketPong.off('duelInviteReceived', handleDuelInviteReceived);
+			socketPong.off('duelInviteCanceled', handleDuelInviteCanceled);
+			socketPong.off('duelInviteAnswered', handleDuelInviteAnswered);
+			socketPong.off('joinDuel', handleJoinDuel);
+			socketPong.off('GameError', handleGameError);
+    	}
+
+	}, []);
+
+
+	//////////////////////////// <PONG INVITES/> //////////////////////////////
   
   return (
     <div className="user-page">
