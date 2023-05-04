@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink, NavLinkProps } from "react-router-dom";
 import "../css/NavLink.css";
+import { ToastContainer, toast } from 'react-toastify';
 
 interface MyNavLinkProps extends NavLinkProps {
   label: string;
@@ -8,6 +9,7 @@ interface MyNavLinkProps extends NavLinkProps {
 }
 
 const MyNavLink = ({ to, label, ...rest }: MyNavLinkProps) => {
+  toast.dismiss();
   return (
     <NavLink
       to={to}
