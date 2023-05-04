@@ -922,7 +922,7 @@ export function Chat() {
                 <li className="active" key={chanName.id} onClick={() => OpenChannel(chanName.name)} >
                   {chanName.name}
                 </li>
-      fdf        ))}
+              ))}
             </ul>
             <div >
               {isChecked && <form onSubmit={Channels} >
