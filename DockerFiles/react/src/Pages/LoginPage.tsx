@@ -16,6 +16,10 @@ export function ChangeLogin() {
     name: string;
   }
 
+toast.configure({
+	toastLimit: 3,
+  });
+
   const [wait, setwait] = useState<user>({ name: '' })
   const [Ok, setOk] = useState<boolean>(false)
 

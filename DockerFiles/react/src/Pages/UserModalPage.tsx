@@ -39,6 +39,10 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
   const [reason, setReason] = useState<string>("")
 
 
+toast.configure({
+  toastLimit: 3,
+});
+
   let socketFr = socketManager.getFriendRequestSocket();
   let socketPong = socketManager.getPongSocket();
   const socket = socketManager.getChatSocket();

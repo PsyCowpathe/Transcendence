@@ -15,6 +15,9 @@ interface code {
 
 function Resend() {
 
+	toast.configure({
+		toastLimit: 3,
+	  });
   const navigate = useNavigate();
   const [Code, setCode] = useState<code>({ code: 0 })
 

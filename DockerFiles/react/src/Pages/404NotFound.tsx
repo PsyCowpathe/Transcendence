@@ -14,6 +14,10 @@ const NotFound: React.FC = () => {
         navigate("/affUser");
     };
 
+toast.configure({
+	toastLimit: 3,
+  });
+
 	//////////////////////////// <PONG INVITES/> //////////////////////////////
 	
 	useEffect(() =>

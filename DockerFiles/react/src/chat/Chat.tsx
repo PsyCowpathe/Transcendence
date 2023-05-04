@@ -61,6 +61,10 @@ interface Message {
 }
 
 export function Chat() {
+
+toast.configure({
+  toastLimit: 3,
+});
   const [GeneralName, setGeneralName] = useState<string>('');
   ////////////////////////////////////////////////////////////////////// chan manager //////////////////////////////////////////////////////////////////
   const UserName: any = localStorage.getItem('name')

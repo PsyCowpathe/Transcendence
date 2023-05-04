@@ -15,7 +15,12 @@ interface code {
   code: number
 }
 export function Set2FA() {
-  const [Open, setOpen] = useState(false)
+ 
+
+toast.configure({
+	toastLimit: 3,
+  });
+	const [Open, setOpen] = useState(false)
   const navigate = useNavigate();
   const [Code2FA, setCode2FA] = useState<code>({ code: 0 })
   const HandleCode = (e: any) => {

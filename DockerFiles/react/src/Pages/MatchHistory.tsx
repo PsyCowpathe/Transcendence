@@ -28,6 +28,9 @@ export function MatchHist({User} : {User : User})
     const navigate = useNavigate()
     const [History , setHistory] = useState<Match[]>([])
 
+	toast.configure({
+		toastLimit: 3,
+	  });
     useEffect(() => {
 		console.log("GET HISTORY")
         GetMatchHistory(User.uid)

@@ -16,6 +16,10 @@ export function Invite({channel} : {channel : string | null})
         setSendInvite("" )
     }
 
+toast.configure({
+	toastLimit: 3,
+  });
+
     const deleteInvite = (e : any) => {
         e.preventDefault()
 
