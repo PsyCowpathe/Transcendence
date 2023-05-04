@@ -30,12 +30,12 @@ useEffect(() => {
 
       {showModal && (
         <div className="modal-overlay">
-          <div className="modal">
+          <div className="new_modal">
             <div className="modal-header">
               <h2>Match History</h2>
               <button className="user-button" onClick={handleCloseModal}>Close</button>
             </div>
-            <div className="modal-body">
+            <div className="new_modal-body">
              <div className="test">
               <MatchHist User={User} />
               </div>
