@@ -56,7 +56,6 @@ function App()
 			<Route path='/pong/endscreen' element={<EndScreen/>}/> 
 
 			</Routes> 
-			<ToastContainer />
 	</BrowserRouter>
 		);
 }
