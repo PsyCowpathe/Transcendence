@@ -477,7 +477,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
           ))}
         </ul>
       </div>
-      <ToastContainer />
+      {/* <ToastContainer /> */}
     </div>
   );
 }
