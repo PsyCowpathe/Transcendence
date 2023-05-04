@@ -207,7 +207,7 @@ export function Set2FA() {
         <button>Send 2FA</button>
       </form>
       }
-	  {/* <ToastContainer /> */}
+	  <ToastContainer />
     </div>
   )
 }

@@ -447,7 +447,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
         <button className="user-button">send</button>
       </form>
 
-
+     
 
       <div>
         <button className="user-button" onClick={set2FA}>Set 2FA</button>
