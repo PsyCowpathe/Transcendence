@@ -25,7 +25,7 @@ COPY ./src/* /root/frontend/src/
 
 RUN cd && cd frontend/public && rm -rf index.html
 
-RUN cd && cd frontend/src && cp index.html /root/frontend/public/
+RUN cd && cd frontend/src && mv index.html /root/frontend/public/
 
 COPY ./tools/init.sh ./
 
