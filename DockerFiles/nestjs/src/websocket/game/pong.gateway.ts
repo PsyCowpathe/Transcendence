@@ -275,6 +275,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					oppSock.emit('opponentLeft');
 					break;
 				}
+				await this.statusService.changeStatus(leaver, "Online");
 			}
 		}
 		else if (id != -1)
