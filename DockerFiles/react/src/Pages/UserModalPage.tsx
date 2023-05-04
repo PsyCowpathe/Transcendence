@@ -375,7 +375,7 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
         <button className="add-message-button" onClick={sendDuelInvite}>DUEL</button>
 
 
-      </div>   <ToastContainer limit={3} />
+      </div>   <ToastContainer /> 
     </div>
   );
 }

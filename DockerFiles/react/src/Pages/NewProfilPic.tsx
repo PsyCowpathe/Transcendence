@@ -215,7 +215,7 @@ function ProfilePictureUploader() {
           <input type="file" accept="image/*" onChange={handleFileChange} />
           <button type="submit">Uploader</button>
         </form>
-      </div>   <ToastContainer limit={3} />
+      </div>   <ToastContainer /> 
     </div>
   );
 }

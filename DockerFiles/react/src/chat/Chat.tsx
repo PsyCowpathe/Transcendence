@@ -1042,7 +1042,7 @@ export function Chat() {
           </ul>
         </div>
         {/* </div> */}
-    </div>    <ToastContainer limit={3} /> 
+    </div>    <ToastContainer />  
       </div>
   );
 }

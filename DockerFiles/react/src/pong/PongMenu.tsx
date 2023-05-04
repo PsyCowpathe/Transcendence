@@ -267,7 +267,7 @@ export default function PongMenu ()
 				<div className="Rules">• theme: press p for the progress theme, press m (like "middle age") to revert to the default one</div>
 				<div className="Rules"><br/>• we may collect data to improve user experience</div>
 			</div>
-			   <ToastContainer limit={3} />
+			   <ToastContainer /> 
 		</div>
 	);
 

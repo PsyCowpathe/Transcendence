@@ -210,7 +210,7 @@ export function Set2FA() {
         <button>Send 2FA</button>
       </form>
       }
-	     <ToastContainer limit={3} />
+	     <ToastContainer /> 
     </div>
   )
 }

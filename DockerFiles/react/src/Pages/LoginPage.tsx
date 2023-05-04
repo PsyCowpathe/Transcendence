@@ -177,7 +177,7 @@ export function ChangeLogin() {
           onChange={(e) => setwait({ name: e.target.value })}
         />
         <button>New Login</button>
-      </form>   <ToastContainer limit={3} />
+      </form>   <ToastContainer /> 
     </div>
 
 

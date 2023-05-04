@@ -478,7 +478,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
           ))}
         </ul>
       </div>
-          <ToastContainer limit={3} /> 
+          <ToastContainer />  
     </div>
   );
 }

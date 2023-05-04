@@ -127,7 +127,7 @@ const NotFound: React.FC = () => {
       <img src={IMGS} alt="404" />
       <p className="not-found-message">The page you are looking for does not exist.</p>
       <button onClick={ComeBackHome}>Come Back Home</button>
-	     <ToastContainer limit={3} />
+	     <ToastContainer /> 
     </div>
   );
 };

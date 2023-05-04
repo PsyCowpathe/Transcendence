@@ -179,7 +179,7 @@ return(
                     </div>)
             })}
         </div>
-		   <ToastContainer limit={3} />
+		   <ToastContainer /> 
     </div>
 
 )
