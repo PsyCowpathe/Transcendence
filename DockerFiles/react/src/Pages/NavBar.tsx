@@ -9,6 +9,7 @@ import MyNavLink from "../style/MynavLink";
 export function TopBar(){
 	const [showMenu, setShowMenu] = React.useState(false);
 	toast.dismiss();
+	console.log("DISMISS");
 	return (     
 		<div className="menu">
 
