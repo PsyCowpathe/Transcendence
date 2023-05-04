@@ -386,7 +386,7 @@ export function Chat() {
     if (Channame === '') {
       toast.error('Channel name is empty', {
         position: toast.POSITION.TOP_RIGHT,
-        autoClose: 1000,
+        autoClose: 2000,
         progressClassName: "my-progress-bar"
       });
       return
@@ -405,7 +405,7 @@ export function Chat() {
     if (Channame === '') {
       toast.error('Channel name is empty', {
         position: toast.POSITION.TOP_RIGHT,
-        autoClose: 1000,
+        autoClose: 2000,
         progressClassName: "my-progress-bar"
       });
       return
@@ -851,9 +851,14 @@ export function Chat() {
     	 	});
 		}
 
-		const handleDuelInviteAnswered = (opponent: string, accepted: boolean) =>
+		const handleDuelInviteAnswered = (opponent: string, accepted: boolean, join: string = "") =>
 		{
 			let message: string = "";
+			if (join == "join")
+			{
+				navigate('/pong/play');
+				return ;
+			}
 			if (accepted)
 			{
 				message = opponent + " accepted your duel invitation";
@@ -869,14 +874,9 @@ export function Chat() {
 			});
 		};
 
-		const joinDuel = () =>
-		{
-			navigate('/pong/play');
-		}
-
 		const handleJoinDuel = () =>
 		{
-			joinDuel();
+			navigate('/pong/play');
 		};
 
 		socketPong.removeListener('duelInviteReceived');

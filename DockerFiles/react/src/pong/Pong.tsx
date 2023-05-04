@@ -135,13 +135,27 @@ export default function PongGame ()
 			if (buttonDeclineVariant)
 				buttonDeclineVariant.remove();
 		}
-		else if (action == "accept" && buttonAcceptVariant)
+		socket.emit('activateVariant', {input: (game_id + 1)});
+
+		}
+		catch (error)
+		{
+			console.log("i'm a teapot");
+		}
+	}
+
+	function acceptVariant(action: string)
+	{
+		try
+		{
+
+		if (action == "accept" && buttonAcceptVariant)
 		{
 			buttonAcceptVariant.remove();
 			if (buttonDeclineVariant)
 				buttonDeclineVariant.remove();
 		}
-		socket.emit('activateVariant', {input: (game_id + 1)});
+		socket.emit('acceptVariant', {input: (game_id + 1)});
 
 		}
 		catch (error)
@@ -561,6 +575,8 @@ export default function PongGame ()
 			try
 			{
 
+			console.log("message received");
+
 			let message: string;
 			if (activate)
 				message = "variant is on";
@@ -596,8 +612,8 @@ export default function PongGame ()
 				buttonDeclineVariant.remove();
 			if (variantMessage)
 			{
-				const curr = getComputedStyle(variantMessage, "textContent");
-				if (curr = "variant is on")
+				const curr = variantMessage.textContent;
+				if (curr != "variant is on")
 					variantMessage.textContent = "variant is off";
 				variantMessage.style.display = "flex";
 			}
@@ -751,7 +767,7 @@ export default function PongGame ()
 					</div>
 					<div className="choice">
 
-						<button className="buttonAcceptVariant" id="acceptVariant" onClick={() => {activateVariant("accept")}}>accept</button>
+						<button className="buttonAcceptVariant" id="acceptVariant" onClick={() => {acceptVariant("accept")}}>accept</button>
 						<button className="buttonDeclineVariant" id="declineVariant" onClick={declineVariant}>decline</button>
 					</div>
 				</div>

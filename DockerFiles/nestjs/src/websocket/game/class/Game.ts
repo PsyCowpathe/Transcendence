@@ -23,6 +23,7 @@ export default class Game
 	p2_paddle = new Paddle(96);
 	p1_ready: boolean = false;
 	p2_ready: boolean = false;
+	variantProposed: boolean = false;
 	p1_variant: boolean = false;
 	p2_variant: boolean = false;
 	GOAL:boolean = false;
@@ -57,10 +58,9 @@ export default class Game
 		{
 			const p1_paddlerect = this.p1_paddle.getRect();
 			
-			if (	ballrect.left <= 3.7 &&
+			if (	ballrect.left <= 3.7 && this.ball.pos.x >= p1_paddlerect.left &&
 				((ballrect.up <= p1_paddlerect.down &&
-				ballrect.down >= p1_paddlerect.up &&
-				this.ball.pos.x >= p1_paddlerect.left) ||
+				ballrect.down >= p1_paddlerect.up) ||
 				(this.spellInUse1))	)
 				{
 				let rad:number = ((this.ball.pos.y - this.p1_paddle.pos.y) / (2 * this.p1_paddle.size));	
@@ -74,10 +74,9 @@ export default class Game
 		{
 			const p2_paddlerect = this.p2_paddle.getRect();
 			
-			if (	ballrect.right >= 96.3 &&
+			if (	ballrect.right >= 96.3 && this.ball.pos.x <= p2_paddlerect.right &&
 				((ballrect.up <= p2_paddlerect.down &&
-				ballrect.down >= p2_paddlerect.up &&
-				this.ball.pos.x <= p2_paddlerect.right) ||
+				ballrect.down >= p2_paddlerect.up) ||
 				(this.spellInUse2))	)
 			{
 				let rad:number = ((this.ball.pos.y - this.p2_paddle.pos.y) / (2 * this.p2_paddle.size));

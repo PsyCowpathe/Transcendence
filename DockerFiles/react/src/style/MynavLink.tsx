@@ -9,7 +9,6 @@ interface MyNavLinkProps extends NavLinkProps {
 }
 
 const MyNavLink = ({ to, label, ...rest }: MyNavLinkProps) => {
-  toast.dismiss();
   return (
     <NavLink
       to={to}

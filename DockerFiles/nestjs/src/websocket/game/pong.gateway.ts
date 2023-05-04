@@ -476,16 +476,24 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect
 				{
 					s2 = this.getSocket(this.clients, player2.id);
 					if (s2)
+					{
+						console.log("====================================");
+						console.log(s2);
 						s2.emit('duelInviteAnswered', player1.name, answer.inviteAccepted);
+						console.log("====================================");
+					}
 					this.duelInvites.delete(answer.id2);
 					s1.emit('refreshInvites', "that parameters system is dumb");
 					if (answer.inviteAccepted === true)
 					{
 						this.addGame(player1, player2);	
 						this.duelists.set({id1: player1.id, id2: player2.id}, {here1: false, here2: false});
-						await this.spamJoinDuel(s1, player1.id, 1);
+						s1.emit('joinDuel');
+						//await this.spamJoinDuel(s1, player1.id, 1);
 						if (s2)
 						{
+							console.log("====================================");
+							console.log(s2);
 							await this.spamJoinDuel(s2, player2.id, 2);
 						}
 					}
@@ -528,8 +536,10 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect
 				}
 				if (duelist_id == id)
 				{
+					console.log("spamming " + player);
 					await socket.emit('joinDuel', "a parameter cause it allows none but it doesnt work without one");
-					await new Promise(r => setTimeout(r, 10));
+					await socket.emit('duelInviteAnswered', "ntm", false, "join");
+					await new Promise(r => setTimeout(r, 500));
 				}
 			}
 			if (!foundem)
@@ -537,6 +547,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect
 			foundem = false;
 		}
 	}
+
 
 	@SubscribeMessage('accessDuel')
 	async accessDuel(socket: Socket)
@@ -649,6 +660,50 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect
 		let s1!: Socket | undefined;
 		let s2!: Socket | undefined;
 		
+		if (game && !game.playing && !game.p1_ready && !game.p2_ready && !game.variantProposed)
+		{
+			game.variantProposed = true;
+			s1 = this.getSocket(this.clients, game.p1.user.id);
+			s2 = this.getSocket(this.clients, game.p2.user.id);
+			if (game.p1.sockid == socket.id)
+			{
+    				game.p1_variant = true;
+				if (game.p2_variant == false)
+				{
+					if (s2)
+						s2.emit('variantProposed');
+				}
+			}
+			else if	(game.p2.sockid == socket.id)
+			{
+    				game.p2_variant = true;
+				if (game.p1_variant == false)
+				{
+					if (s1)
+						s1.emit('variantProposed');
+				}
+			}
+			if (game.p1_variant && game.p2_variant)
+			{
+				game.variant = true;
+				if (s1 && s2)
+				{
+					s1.emit('variantOnOff', true);
+					s2.emit('variantOnOff', true);
+				}
+			}
+		}
+	}
+
+
+	@UsePipes(new ValidationPipe())
+	@SubscribeMessage('acceptVariant')
+	acceptVariant(socket: Socket, tag: numberDto)
+	{
+		const game = this.games.get(tag.input - 1);
+		let s1!: Socket | undefined;
+		let s2!: Socket | undefined;
+		
 		if (game && !game.playing && !game.p1_ready && !game.p2_ready)
 		{
 			s1 = this.getSocket(this.clients, game.p1.user.id);
@@ -695,13 +750,16 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect
 		{
 			s1 = this.getSocket(this.clients, game.p1.user.id);
 			s2 = this.getSocket(this.clients, game.p2.user.id);
-			if (game.p1.sockid == socket.id && !game.p1_ready && game.p1_variant == false)
+			if (game.p1.sockid == socket.id && game.p1_variant == false)
 			{
     				game.p1_variant = false;
-				if (s2)
+				if (s1 && s2)
+				{
+					s1.emit('variantOnOff', false);
 					s2.emit('variantOff', false);
+				}
 			}
-			else if	(game.p2.sockid == socket.id && !game.p2_ready && game.p2_variant == false)
+			else if	(game.p2.sockid == socket.id && game.p2_variant == false)
 			{
     				game.p2_variant = false;
 				if (s1 && s2)

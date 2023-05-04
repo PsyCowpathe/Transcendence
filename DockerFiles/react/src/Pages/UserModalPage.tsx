@@ -283,7 +283,7 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
 		console.log("you challenged " + User.name +  " to a pong duel");
 	}
 
-		//////////////////////////// <PONG INVITES/> //////////////////////////////
+//////////////////////////// <PONG INVITES/> //////////////////////////////
 	
 	useEffect(() =>
 	{
