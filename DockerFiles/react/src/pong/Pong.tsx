@@ -130,10 +130,6 @@ export default function PongGame ()
 		if (action == "activate" && buttonActivateVariant)
 		{
 			buttonActivateVariant.remove();
-			if (buttonAcceptVariant)
-				buttonAcceptVariant.remove();
-			if (buttonDeclineVariant)
-				buttonDeclineVariant.remove();
 		}
 		socket.emit('activateVariant', {input: (game_id + 1)});
 
