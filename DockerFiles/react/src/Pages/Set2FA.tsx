@@ -17,9 +17,7 @@ interface code {
 export function Set2FA() {
  
 
-toast.configure({
-	toastLimit: 3,
-  });
+   
 	const [Open, setOpen] = useState(false)
   const navigate = useNavigate();
   const [Code2FA, setCode2FA] = useState<code>({ code: 0 })
@@ -212,7 +210,7 @@ toast.configure({
         <button>Send 2FA</button>
       </form>
       }
-	  <ToastContainer />
+	     <ToastContainer limit={3} />
     </div>
   )
 }

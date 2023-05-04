@@ -16,9 +16,7 @@ export function ChangeLogin() {
     name: string;
   }
 
-toast.configure({
-	toastLimit: 3,
-  });
+   
 
   const [wait, setwait] = useState<user>({ name: '' })
   const [Ok, setOk] = useState<boolean>(false)
@@ -179,7 +177,7 @@ toast.configure({
           onChange={(e) => setwait({ name: e.target.value })}
         />
         <button>New Login</button>
-      </form><ToastContainer />
+      </form>   <ToastContainer limit={3} />
     </div>
 
 

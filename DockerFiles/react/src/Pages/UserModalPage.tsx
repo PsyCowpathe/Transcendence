@@ -39,9 +39,7 @@ export function AffTheUser({ User, Channel }: { User: User, Channel: string | nu
   const [reason, setReason] = useState<string>("")
 
 
-toast.configure({
-  toastLimit: 3,
-});
+ 
 
   let socketFr = socketManager.getFriendRequestSocket();
   let socketPong = socketManager.getPongSocket();
@@ -377,7 +375,7 @@ toast.configure({
         <button className="add-message-button" onClick={sendDuelInvite}>DUEL</button>
 
 
-      </div><ToastContainer />
+      </div>   <ToastContainer limit={3} />
     </div>
   );
 }

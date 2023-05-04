@@ -16,9 +16,7 @@ export function Invite({channel} : {channel : string | null})
         setSendInvite("" )
     }
 
-toast.configure({
-	toastLimit: 3,
-  });
+   
 
     const deleteInvite = (e : any) => {
         e.preventDefault()
@@ -153,7 +151,7 @@ toast.configure({
                     onChange={(e) => setDeleteInvite(e.target.value)} />
                 <button className="add-message-button" >Delete Invite</button>
             </form>
-			<ToastContainer />
+			   <ToastContainer limit={3} />
         </div>
 
     )

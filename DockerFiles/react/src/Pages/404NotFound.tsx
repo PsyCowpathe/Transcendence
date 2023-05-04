@@ -14,9 +14,7 @@ const NotFound: React.FC = () => {
         navigate("/affUser");
     };
 
-toast.configure({
-	toastLimit: 3,
-  });
+   
 
 	//////////////////////////// <PONG INVITES/> //////////////////////////////
 	
@@ -129,7 +127,7 @@ toast.configure({
       <img src={IMGS} alt="404" />
       <p className="not-found-message">The page you are looking for does not exist.</p>
       <button onClick={ComeBackHome}>Come Back Home</button>
-	  <ToastContainer />
+	     <ToastContainer limit={3} />
     </div>
   );
 };

@@ -37,9 +37,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
     gameplayed: string;
   }
 
-  toast.configure({
-    toastLimit: 3,
-  });
+  
   interface friend {
     id: number
     name: string
@@ -480,7 +478,7 @@ export function AffMyUserPage({ ShowBar }: { ShowBar: boolean }) {
           ))}
         </ul>
       </div>
-       <ToastContainer /> 
+          <ToastContainer limit={3} /> 
     </div>
   );
 }

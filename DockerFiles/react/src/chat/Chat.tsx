@@ -62,9 +62,7 @@ interface Message {
 
 export function Chat() {
 
-toast.configure({
-  toastLimit: 3,
-});
+ 
   const [GeneralName, setGeneralName] = useState<string>('');
   ////////////////////////////////////////////////////////////////////// chan manager //////////////////////////////////////////////////////////////////
   const UserName: any = localStorage.getItem('name')
@@ -1044,7 +1042,7 @@ toast.configure({
           </ul>
         </div>
         {/* </div> */}
-    </div> <ToastContainer /> 
+    </div>    <ToastContainer limit={3} /> 
       </div>
   );
 }

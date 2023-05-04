@@ -753,7 +753,7 @@ export default function PongGame ()
 						<button className="buttonDeclineVariant" id="declineVariant" onClick={declineVariant}>decline</button>
 					</div>
 				</div>
-			<ToastContainer />
+			   <ToastContainer limit={3} />
 			</div>
 	);
 }

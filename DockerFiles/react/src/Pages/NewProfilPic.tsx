@@ -13,9 +13,7 @@ function ProfilePictureUploader() {
   const [image, setImage] = useState<string | null>(null);
   const navigate = useNavigate()
 
-  toast.configure({
-    toastLimit: 3,
-  });
+  
   const SendToBack = (data : any) => {
     UploadPicRequest(data)
     .then(response =>
@@ -217,7 +215,7 @@ function ProfilePictureUploader() {
           <input type="file" accept="image/*" onChange={handleFileChange} />
           <button type="submit">Uploader</button>
         </form>
-      </div><ToastContainer />
+      </div>   <ToastContainer limit={3} />
     </div>
   );
 }
