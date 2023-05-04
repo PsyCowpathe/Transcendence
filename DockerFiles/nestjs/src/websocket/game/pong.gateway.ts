@@ -358,9 +358,9 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			}
 			for (const [inviting, invited] of this.duelInvites.entries())
 			{
-				if (inviting === user.id && invited == opp.id)
+				if (inviting === user.id)
 				{
-					socket.emit("GameError", "you already invited that player"); // A CHANGER
+					socket.emit("GameError", "you already have a duel invite pending"); // A CHANGER
 					return;
 				}
 				if (inviting === opp.id && invited === user.id)
