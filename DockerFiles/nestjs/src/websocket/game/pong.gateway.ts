@@ -27,6 +27,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect
 	games = new Map<number, Game>();
 	duelists = new Map<{id1: number, id2: number}, {here1: boolean, here2: boolean}>();
 	duelInvites = new Map<number, number>();
+	numberOfGames:number = 0;
 
 	constructor(	private readonly userService: UserService,
 			private readonly statusService: WsStatusService,
@@ -178,11 +179,14 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect
 		let s2 = this.getSocket(this.clients, p2.id);
 		if (s1 && s2)
 		{
+			this.numberOfGames = this.numberOfGames + 1;
 			await this.statusService.changeStatus(p1, "InGame");
 			await this.statusService.changeStatus(p2, "InGame");
-				s1.emit('gameFound', this.games.size, p1.name, p2.name, 1);
-				s2.emit('gameFound', this.games.size, p2.name, p1.name, 2);
-			this.games.set(this.games.size, new Game(new Player(p1, s1.id), new Player(p2, s2.id), this.games.size));
+				s1.emit('gameFound', this.numberOfGames, p1.name, p2.name, 1);
+				s2.emit('gameFound', this.numberOfGames, p2.name, p1.name, 2);
+			this.games.set(this.numberOfGames, new Game(new Player(p1, s1.id), new Player(p2, s2.id), this.numberOfGames));
+		console.log("created " + this.numberOfGames);
+
 		}
 	}
 
@@ -232,6 +236,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect
 					await this.userService.addDefeat(game.p1.user);
 					await this.userService.addMatch(game.p1.user);
 					await this.userService.addMatch(game.p2.user);
+		console.log("deleted " + game.tag);
 					this.games.delete(game.tag);
 				}
 				else if (game.p2.user.id === leaver.id)
@@ -251,6 +256,8 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect
 					await this.userService.addDefeat(game.p2.user);
 					await this.userService.addMatch(game.p1.user);
 					await this.userService.addMatch(game.p2.user);
+		console.log("deleted " + game.tag);
+
 					this.games.delete(game.tag);
 				}
 				if (oppSock)
@@ -477,10 +484,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect
 					s2 = this.getSocket(this.clients, player2.id);
 					if (s2)
 					{
-						console.log("====================================");
-						console.log(s2);
 						s2.emit('duelInviteAnswered', player1.name, answer.inviteAccepted);
-						console.log("====================================");
 					}
 					this.duelInvites.delete(answer.id2);
 					s1.emit('refreshInvites', "that parameters system is dumb");
@@ -488,14 +492,9 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect
 					{
 						this.addGame(player1, player2);	
 						this.duelists.set({id1: player1.id, id2: player2.id}, {here1: false, here2: false});
-						s1.emit('joinDuel');
-						//await this.spamJoinDuel(s1, player1.id, 1);
+						this.spamJoinDuel(s1, player1.id, 1);
 						if (s2)
-						{
-							console.log("====================================");
-							console.log(s2);
-							await this.spamJoinDuel(s2, player2.id, 2);
-						}
+							this.spamJoinDuel(s2, player2.id, 2);
 					}
 				}
 				else if (player2.Status === "Offline") 
@@ -536,7 +535,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect
 				}
 				if (duelist_id == id)
 				{
-					console.log("spamming " + player);
 					await socket.emit('joinDuel', "a parameter cause it allows none but it doesnt work without one");
 					await socket.emit('duelInviteAnswered', "ntm", false, "join");
 					await new Promise(r => setTimeout(r, 500));

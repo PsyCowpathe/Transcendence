@@ -161,6 +161,12 @@ export function ChangeLoginMod()
 			socketPong.off('duelInviteAnswered', handleDuelInviteAnswered);
 			socketPong.off('joinDuel', handleJoinDuel);
 			socketPong.off('GameError', handleGameError);
+			const token = SetParamsToGetPost().headers.Authorization;
+			if (token !== null)
+			{
+				socketManager.initializePongSocket(token);
+				socketPong = socketManager.getPongSocket();
+			}
     	}
 
 	}, []);

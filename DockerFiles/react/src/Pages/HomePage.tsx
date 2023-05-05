@@ -59,7 +59,6 @@ interface chiant {
 					const date : any = localStorage.getItem('Token')
 					socketManager.initializeChatSocket(SetParamsToGetPost().headers.Authorization)
 					socketManager.initializeFriendRequestSocket(SetParamsToGetPost().headers.Authorization)
-					socketManager.initializePongSocket(SetParamsToGetPost().headers.Authorization)
 					socketManager.initializeStatusSocket(SetParamsToGetPost().headers.Authorization)
 
 					onLogin()
@@ -118,6 +117,7 @@ interface chiant {
 			setReg(false)
 			
 		
+			socketManager.initializePongSocket(SetParamsToGetPost().headers.Authorization)
 			onLogin()
 			navigate('/affUser')
 

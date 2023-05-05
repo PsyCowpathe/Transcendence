@@ -2,4 +2,4 @@
 
 cd /root/backend
 
-yarn run start:dev
+yarn run start
